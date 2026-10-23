@@ -56,7 +56,8 @@ def _agent(tmp_path: Path, invoices: dict) -> DocumentAgent:
 
 @pytest.fixture
 def agent(tmp_path):
-    return _agent(tmp_path, FOUR)
+    with _agent(tmp_path, FOUR) as a:
+        yield a
 
 
 MIXED = {
@@ -68,7 +69,8 @@ MIXED = {
 
 @pytest.fixture
 def mixed(tmp_path):
-    return _agent(tmp_path, MIXED)
+    with _agent(tmp_path, MIXED) as a:
+        yield a
 
 
 def ask(agent, request, **kw):
@@ -124,6 +126,15 @@ def test_coordinated_vendors(agent):
         ("invoices with a total of at most $50", ["small"]),
         ("invoices from Acme between $1,000 and $10,000", ["large"]),
         ("Find invoices under $100 or over $10,000", ["highest", "small"]),
+        # Possessives (third review): case, straight and curly apostrophes, the s' form, name first.
+        ("Show acme's invoices", ["large", "small"]),
+        ("Show Acme's invoices", ["large", "small"]),
+        ("show ACME'S INVOICES", ["large", "small"]),
+        ("Show acme’s invoices", ["large", "small"]),
+        ("Acme's invoices above $1,000", ["large"]),
+        ("acme’s invoices", ["large", "small"]),
+        ("List Globex's bills", ["other"]),
+        ("show Initech’s and Globex's invoices above $7,500", ["highest"]),
     ],
 )
 def test_combinations(agent, request_, expected):
@@ -347,11 +358,11 @@ class _FakeWriter:
     "generated,shown",
     [("Bob owes Acme $100.", False), ("Bob does not owe Acme $100 for consulting.", True)],
 )
-def test_writer_never_replaces_the_extractive_answer(tmp_path, monkeypatch, generated, shown):
+def test_writer_never_replaces_the_extractive_answer(tmp_path, monkeypatch, closer, generated, shown):
     docs = tmp_path / "docs"
     docs.mkdir()
     (docs / "memo.txt").write_text("Account note.\n\nBob does not owe Acme $100 for consulting.\n", encoding="utf-8")
-    a = DocumentAgent(make_settings(tmp_path / "home"))
+    a = closer(DocumentAgent(make_settings(tmp_path / "home")))
     a.add(docs)
     monkeypatch.setattr(Brain, "writer", property(lambda self: _FakeWriter(generated)))
     result = a.ask("Does Bob owe Acme $100 for consulting?", save=False)
@@ -380,9 +391,9 @@ def generated(tmp_path_factory):
         name = f"g{i:02d}"
         write_invoice(docs, name, f"{vendor} Ltd.", f"USD {total:,.2f}", f"{year}-0{rng.randint(1, 9)}-1{i % 9}", i)
         truth[name] = (vendor, total, year)
-    agent = DocumentAgent(make_settings(folder / "home"))
-    agent.add(docs)
-    return agent, truth
+    with DocumentAgent(make_settings(folder / "home")) as agent:
+        agent.add(docs)
+        yield agent, truth
 
 
 def _cases(seed: int, n: int):

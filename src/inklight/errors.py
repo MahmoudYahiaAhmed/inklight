@@ -49,3 +49,7 @@ class LimitExceeded(InklightError):
 
 class PlanError(InklightError):
     """A plan whose steps would not enforce what it claims; refused before anything runs."""
+
+
+class StoreClosed(InklightError):
+    """The library database was closed (``close()`` or leaving a ``with`` block)."""

@@ -19,6 +19,7 @@ from typing import Any
 import numpy as np
 
 from .chunking import Chunk
+from .errors import StoreClosed
 from .schemas import AgentResult, Block, DocStatus, DocumentContent, DocumentInfo, PageContent, Source, TextLine
 
 SCHEMA_VERSION = 1
@@ -98,24 +99,46 @@ class Store:
         self._db.executescript(_SCHEMA)
         self._db.execute("INSERT OR IGNORE INTO meta VALUES ('schema_version', ?)", (str(SCHEMA_VERSION),))
 
+        self._closed = False
+
+    @property
+    def closed(self) -> bool:
+        return self._closed
+
     def close(self) -> None:
+        """Close the connection. Idempotent; later use raises StoreClosed instead of a sqlite error."""
         with self._lock:
+            if self._closed:
+                return
+            self._closed = True
             self._db.close()
+
+    def __enter__(self) -> Store:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
+
+    def _conn(self) -> sqlite3.Connection:
+        if self._closed:
+            raise StoreClosed(f"The library database {self.path.name} is closed")
+        return self._db
 
     @contextmanager
     def tx(self) -> Iterator[sqlite3.Connection]:
         with self._lock:
-            self._db.execute("BEGIN")
+            db = self._conn()
+            db.execute("BEGIN")
             try:
-                yield self._db
+                yield db
             except BaseException:
-                self._db.execute("ROLLBACK")
+                db.execute("ROLLBACK")
                 raise
-            self._db.execute("COMMIT")
+            db.execute("COMMIT")
 
     def _all(self, sql: str, args: tuple[Any, ...] = ()) -> list[sqlite3.Row]:
         with self._lock:
-            return self._db.execute(sql, args).fetchall()
+            return self._conn().execute(sql, args).fetchall()
 
     # -- documents ---------------------------------------------------------
 

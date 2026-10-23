@@ -61,11 +61,15 @@ class Library:
     ) -> None:
         self.settings = settings or load_settings()
         self.settings.home.mkdir(parents=True, exist_ok=True)
+        # Close only what this library created: a store or brain passed in belongs to the caller.
+        self._owns_store = store is None
+        self._owns_brain = brain is None
         self.store = store or Store(self.settings.db_path)
         self._engine = engine
         self._text_engine = PlainTextEngine()
         self.brain = brain or Brain(self.settings)
         self.retriever = Retriever(self.store, self.brain)
+        self._closed = False
 
     @property
     def engine(self) -> OCREngine:
@@ -215,5 +219,22 @@ class Library:
         report.warnings.extend(f"Source file missing, kept old index: {d.path}" for d in missing)
         return report
 
+    @property
+    def closed(self) -> bool:
+        return self._closed
+
     def close(self) -> None:
-        self.store.close()
+        """Release what this library owns (database connection, loaded models). Idempotent."""
+        if self._closed:
+            return
+        self._closed = True
+        if self._owns_brain:
+            self.brain.close()
+        if self._owns_store:
+            self.store.close()
+
+    def __enter__(self) -> Library:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()

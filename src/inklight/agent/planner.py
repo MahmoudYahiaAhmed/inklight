@@ -78,6 +78,14 @@ def _fields(request: str) -> list[str]:
     if not m:
         return []
     segment = _FIELD_STOP.split(m.group("rest"))[0]
+    # "give me a table of vendor and total": the container words are not a column.
+    segment = re.sub(
+        r"^\s*(?:(?:a|an|the)\s+)?(?:table|list|csv|spreadsheet|json|report|summary|breakdown)\s+"
+        r"(?:file\s+)?(?:of|with)\s+",
+        "",
+        segment,
+        flags=re.IGNORECASE,
+    )
     parts = re.split(r",|\band\b|&|/|\+", segment, flags=re.IGNORECASE)
     out: list[str] = []
     for part in parts:
@@ -88,7 +96,7 @@ def _fields(request: str) -> list[str]:
             continue
         doc_words = set(SINGULAR) | set(SINGULAR.values())
         known_field = resolve_field(word).name in CATALOG
-        if "'" in word or (not known_field and any(w in doc_words for w in word.split())):
+        if any(a in word for a in "'’ʼ") or (not known_field and any(w in doc_words for w in word.split())):
             continue  # "acme's invoices" names documents, not a column ("invoice number" is a column)
         name = resolve_field(word).name
         if name not in out:

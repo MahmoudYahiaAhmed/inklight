@@ -82,6 +82,23 @@ class Brain:
                 self._cache["remote"] = None
         return self._cache["remote"]  # type: ignore[no-any-return]
 
+    def usage(self) -> dict[str, dict[str, Any]]:
+        """Evidence of model execution: what loaded, what failed (fallback to rules), how many inference calls."""
+        out: dict[str, dict[str, Any]] = {}
+        for role in ("reader", "embedder", "writer"):
+            model = self._cache.get(role)
+            out[role] = {
+                "loaded": model is not None,
+                "inference_calls": getattr(model, "calls", 0) if model is not None else 0,
+                "fallback_reason": self._failed.get(role),
+            }
+        return out
+
+    def close(self) -> None:
+        """Drop loaded models so their ONNX Runtime sessions are released. Idempotent."""
+        with self._lock:
+            self._cache.clear()
+
     def label(self) -> str:
         if self.mode == "rules":
             return "rules"

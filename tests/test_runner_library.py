@@ -29,7 +29,8 @@ def fake_agent(tmp_path):
     lib = Library(settings, engine=engine)
     for name in ("a.png", "b.png"):
         (tmp_path / name).write_bytes(b"\x89PNG\r\n\x1a\n" + name.encode())
-    return DocumentAgent(settings, library=lib), engine, tmp_path
+    with lib, DocumentAgent(settings, library=lib) as agent:
+        yield agent, engine, tmp_path
 
 
 def test_ingest_dedupe_and_unchanged(fake_agent):
@@ -55,19 +56,19 @@ def test_changed_file_is_reprocessed_and_removed(fake_agent):
     assert agent.library.remove(doc.id) and agent.library.find("a.png") is None
 
 
-def test_ocr_failure_is_reported_not_raised(tmp_path):
+def test_ocr_failure_is_reported_not_raised(tmp_path, closer):
     settings = make_settings(tmp_path / "home")
-    agent = DocumentAgent(settings, library=Library(settings, engine=FakeEngine(fail=True)))
+    agent = DocumentAgent(settings, library=closer(Library(settings, engine=FakeEngine(fail=True))))
     (tmp_path / "x.png").write_bytes(b"\x89PNG\r\n\x1a\n")
     report = agent.add(tmp_path / "x.png")
     assert report.failed and "exploded" in report.failed[0][1]
     assert agent.library.documents()[0].status.value == "failed"
 
 
-def test_page_limit(tmp_path):
+def test_page_limit(tmp_path, closer):
     settings = make_settings(tmp_path / "home", limits={"max_pages": 1})
     engine = FakeEngine({"m.png": [["p1"], ["p2"], ["p3"]]})
-    lib = Library(settings, engine=engine)
+    lib = closer(Library(settings, engine=engine))
     (tmp_path / "m.png").write_bytes(b"\x89PNG\r\n\x1a\n")
     doc = lib.add(tmp_path / "m.png").added[0]
     assert doc.pages == 1 and doc.total_pages == 3
@@ -189,10 +190,10 @@ def test_timeout_does_not_block_and_result_is_stable(fake_agent, monkeypatch):
     assert "late write" not in result.answer
 
 
-def test_failed_reingest_clears_stale_content(tmp_path):
+def test_failed_reingest_clears_stale_content(tmp_path, closer):
     settings = make_settings(tmp_path / "home")
     engine = FakeEngine({"s.png": [["Total: $10.00 uniqueterm"]]})
-    lib = Library(settings, engine=engine)
+    lib = closer(Library(settings, engine=engine))
     png = bytes([0x89]) + b"PNG" + bytes([13, 10, 26, 10])
     (tmp_path / "s.png").write_bytes(png + b"v1")
     lib.add(tmp_path / "s.png")

@@ -17,6 +17,8 @@ import os
 import re
 import secrets
 import threading
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -63,8 +65,28 @@ def _hostname(raw: str) -> str:
 
 
 def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAPI:
-    app = FastAPI(title=f"{NAME} API", version=__version__, description=TAGLINE, docs_url="/api/docs", redoc_url=None)
-    state: dict[str, Any] = {"agent": agent or DocumentAgent(settings), "jobs": {}}
+    owned = None if agent is not None else DocumentAgent(settings)  # an agent passed in belongs to the caller
+    state: dict[str, Any] = {"agent": agent or owned, "jobs": {}, "swapped": []}
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        yield
+        # Shutdown: agents swapped in by /api/settings share the original store, so close them first.
+        for extra in state["swapped"]:
+            extra.close()
+            extra.library.close()
+        if owned is not None:
+            owned.close()
+
+    app = FastAPI(
+        title=f"{NAME} API",
+        version=__version__,
+        description=TAGLINE,
+        docs_url="/api/docs",
+        redoc_url=None,
+        lifespan=lifespan,
+    )
+    app.state.inklight = state  # read-only introspection (tests, health checks)
     lock = threading.Lock()
     token = os.environ.get("INKLIGHT_SERVER_TOKEN", "")
     # Bound the whole upload before Starlette spools it to disk: per-file limit x a modest batch.
@@ -137,6 +159,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
 
             library = Library(new_settings, store=old.library.store, engine=old.library._engine)
             state["agent"] = DocumentAgent(new_settings, library=library)
+            state["swapped"].append(state["agent"])  # released at shutdown; the store stays with its owner
         return status()
 
     # -- documents -----------------------------------------------------------

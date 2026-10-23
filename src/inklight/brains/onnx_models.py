@@ -61,6 +61,7 @@ class Embedder:
         self.tok.enable_truncation(max_length=512)
         self.tok.enable_padding()
         self._lock = threading.Lock()
+        self.calls = 0  # ONNX Runtime inference calls, for evaluation reports
 
     def embed(self, texts: list[str], query: bool = False, batch: int = 16) -> np.ndarray:
         if query:
@@ -71,6 +72,7 @@ class Embedder:
             ids = np.array([e.ids for e in enc], dtype=np.int64)
             mask = np.array([e.attention_mask for e in enc], dtype=np.int64)
             with self._lock:
+                self.calls += 1
                 hidden = self.session.run(None, _feed(self.session, ids, mask))[0]
             cls = hidden[:, 0, :]  # bge uses the CLS vector
             out.append(cls / np.maximum(np.linalg.norm(cls, axis=1, keepdims=True), 1e-9))
@@ -98,6 +100,7 @@ class Reader:
         self.tok = _tokenizer(files["tokenizer.json"])
         self.tok.enable_truncation(max_length=384)
         self._lock = threading.Lock()
+        self.calls = 0  # ONNX Runtime inference calls, for evaluation reports
 
     def answer(
         self, question: str, passages: list[str], top: int = 3, check: Callable[[], None] | None = None
@@ -126,6 +129,7 @@ class Reader:
         ids = np.array([enc.ids], dtype=np.int64)
         mask = np.ones_like(ids)
         with self._lock:
+            self.calls += 1
             start_logits, end_logits = self.session.run(None, _feed(self.session, ids, mask))[:2]
         seq = enc.sequence_ids
         ctx = np.array([s == 1 for s in seq])
@@ -179,6 +183,7 @@ class Writer:
         self.eos = {self.tok.token_to_id("<|im_end|>"), self.tok.token_to_id("<|endoftext|>")} - {None}
         self.inputs = {i.name for i in self.session.get_inputs()}
         self._lock = threading.Lock()
+        self.calls = 0  # ONNX Runtime inference calls, for evaluation reports
 
     @staticmethod
     def chat(system: str, user: str) -> str:
@@ -201,6 +206,7 @@ class Writer:
         if "position_ids" in self.inputs:
             feed["position_ids"] = np.arange(pos, pos + n, dtype=np.int64)[None, :]
         feed.update(past)
+        self.calls += 1
         outs = self.session.run(None, feed)
         names = [o.name for o in self.session.get_outputs()]
         present = {}

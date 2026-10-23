@@ -53,8 +53,8 @@ def test_reader_and_embedder(tmp_path):
 @pytest.mark.models
 @pytest.mark.ocr
 @pytest.mark.skipif(not have_models, reason="run `inklight models pull` to enable")
-def test_agent_with_models(tmp_path, docs_dir):
-    agent = DocumentAgent(make_settings(tmp_path, models={"brain": "auto"}))
+def test_agent_with_models(tmp_path, docs_dir, closer):
+    agent = closer(DocumentAgent(make_settings(tmp_path, models={"brain": "auto"})))
     agent.add(docs_dir)
     result = agent.ask("What was revenue growth in Q2?")
     assert result.answer.startswith("17%") and "reader" in result.brain
@@ -78,10 +78,10 @@ def _remote_settings(tmp_path, mode="always"):
     )
 
 
-def test_remote_answer_accepted_only_with_real_quote(tmp_path, monkeypatch):
+def test_remote_answer_accepted_only_with_real_quote(tmp_path, monkeypatch, closer):
     httpx = pytest.importorskip("httpx")
     settings = _remote_settings(tmp_path)
-    lib = Library(settings, engine=FakeEngine({"r.png": [["Revenue grew 17% in Q2.", "Costs were flat."]]}))
+    lib = closer(Library(settings, engine=FakeEngine({"r.png": [["Revenue grew 17% in Q2.", "Costs were flat."]]})))
     (tmp_path / "r.png").write_bytes(b"\x89PNG\r\n\x1a\n")
     agent = DocumentAgent(settings, library=lib)
     agent.add(tmp_path / "r.png")
@@ -122,9 +122,9 @@ def test_remote_errors_hide_secrets(tmp_path, monkeypatch):
     assert "sk-secret" not in str(info.value)
 
 
-def test_watcher_waits_for_stable_files(tmp_path):
+def test_watcher_waits_for_stable_files(tmp_path, closer):
     settings = make_settings(tmp_path / "home")
-    lib = Library(settings, engine=FakeEngine({"in.png": [["Total: $5.00"]]}))
+    lib = closer(Library(settings, engine=FakeEngine({"in.png": [["Total: $5.00"]]})))
     agent = DocumentAgent(settings, library=lib)
     inbox = tmp_path / "inbox"
     inbox.mkdir()

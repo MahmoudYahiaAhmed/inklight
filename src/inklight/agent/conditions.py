@@ -441,6 +441,26 @@ def parse(request: str, today: date, known_words: frozenset[str] = frozenset()) 
         )
         add(year, m.start(), m.end(), "date")
 
+    for m in _POSSESSIVE_RE.finditer(request):
+        # "Show acme's invoices", "Acme Supplies’ bills": the owner of the documents is the vendor.
+        # Coordinated owners ("Initech’s and Globex's invoices") are collected backwards into one group.
+        names: list[str] = []
+        apos_at, first_at = m.start("apos"), None
+        while True:
+            name, name_at = _possessor(request, apos_at)
+            if name is None:
+                break
+            names.insert(0, name)
+            first_at = name_at
+            prev = _PREV_POSSESSIVE_RE.search(request[:name_at])
+            if prev is None:
+                break
+            apos_at = prev.start("apos")
+        if not names or first_at is None or not free(first_at, m.end("apos")):
+            continue
+        owners: list[Condition | Group] = [Condition(field="vendor", op="contains", value=n) for n in names]
+        add(group("any", owners), first_at, m.end("apos"), "vendor")
+
     for regex, fld, op in (
         (_NEG_PARTY_RE, "vendor", "not_contains"),
         (_CUSTOMER_RE, "customer", "contains"),
@@ -538,7 +558,8 @@ def _leftovers(request: str, spans: list[tuple[int, int]], known_words: frozense
     hits.extend(_dangling(rest, spans))
     hits.extend(_unknown_names(request, rest, known_words))
     found: list[str] = []
-    for _, phrase in sorted(hits):
+    # Longest phrase first at each position, so "last month" wins over the bare word "last".
+    for _, _, phrase in sorted((at, -len(p), p) for at, p in hits):
         if phrase and not any(phrase.lower() in f.lower() or f.lower() in phrase.lower() for f in found):
             found.append(phrase)
     return found
@@ -563,34 +584,78 @@ def _dangling(rest: str, spans: list[tuple[int, int]]) -> list[tuple[int, str]]:
 _LEFTOVER_PARTY_RE = re.compile(r"\b(?:from|by)\s+", re.IGNORECASE)
 
 
+_APOS = "'’ʼ"  # straight, right single quote, modifier apostrophe
+_POSSESSIVE_RE = re.compile(
+    rf"(?P<apos>[{_APOS}]s|s[{_APOS}])\s+(?:(?:invoices?|receipts?|bills?|contracts?|documents?|statements?|orders?)\b)",
+    re.IGNORECASE,
+)
+# A possessive ending right before ", " / " and " / " or " (the text up to the next owner's name).
+_PREV_POSSESSIVE_RE = re.compile(
+    rf"(?P<apos>[{_APOS}]s|s[{_APOS}])\s*(?:,\s*(?:(?:and|or)\s+)?|\s+(?:and|or)\s+)$", re.IGNORECASE
+)
+_DOC_NOUNS = {"invoice", "invoices", "receipt", "receipts", "bill", "bills", "contract", "contracts", "document",
+              "documents", "statement", "statements", "order", "orders"}  # fmt: skip
+
+
+def _possessor(text: str, apos_at: int) -> tuple[str | None, int]:
+    """The name before a possessive ("show ACME Supplies's"), without leading request words."""
+    # In "Supplies’ invoices" the match starts at the final s, which belongs to the name.
+    head = text[: apos_at + 1] if text[apos_at : apos_at + 1] in ("s", "S") else text[:apos_at]
+    # Stop at the previous owner ("Acme's, Globex" -> "Globex"): an apostrophe-s, a comma, and/or.
+    bounds = list(re.finditer(rf"[{_APOS}]s\b|s[{_APOS}]|,|\band\b|\bor\b", head, re.IGNORECASE))
+    start = bounds[-1].end() if bounds else 0
+    tokens = [t for t in re.finditer(r"[A-Za-z0-9&.\-]+", head) if t.start() >= start][-3:]
+    words = [t.group(0) for t in tokens]
+    while words and (words[0].lower() in _FILLER or words[0].lower() in _VERBS or words[0].lower() in _NAME_REJECT):
+        words.pop(0)
+        tokens.pop(0)
+    if not words or words[-1].lower() in _FILLER or words[-1].lower() in _NAME_REJECT:
+        return None, apos_at
+    return " ".join(words), tokens[0].start()
+
+
 _CODES = {"usd", "eur", "gbp", "egp", "sar", "aed", "csv", "json", "pdf", "pdfs", "ocr", "md", "i", "q1", "q2", "q3",
-          "q4", "vat", "po", "id"}  # fmt: skip
+          "q4", "vat", "po", "id", "k", "m"}  # fmt: skip
+_CONTENT_OK = {
+    "kindly", "please", "thanks", "thank", "now", "here", "again", "too", "every", "single", "whole", "entire",
+    "us", "they", "he", "she", "him", "them", "theirs", "ours", "mine", "yours", "one", "ones", "some", "several",
+    "invoice", "invoiced", "billed", "paid", "pay", "payable", "due", "amounts", "money", "cost", "costs", "price",
+    "prices", "dollar", "dollars", "euro", "euros", "pound", "pounds", "currency", "vendor", "vendors", "supplier",
+    "suppliers", "customer", "customers", "client", "clients", "issued", "dated", "date", "dates", "year", "years",
+    "month", "months", "day", "days", "week", "weeks", "greater", "higher", "larger", "less", "lower", "smaller",
+    "more", "most", "least", "than", "equal", "exactly", "up", "down", "both", "either", "neither", "nor", "also",
+    "including", "included", "include", "inclusive", "rows", "row", "list", "lists", "listing", "display", "view",
+    "see", "tell", "need", "want", "like", "look", "looking", "search", "came", "come", "sent", "send", "received",
+    "receive", "got", "made", "by", "via", "per", "total", "grand", "sum", "add", "added", "calculate", "compute",
+    "spreadsheet", "excel", "export", "exported", "save", "saved", "download", "file", "named", "called",
+}  # fmt: skip
 
 
 def _unknown_names(request: str, rest: str, known_words: frozenset[str]) -> list[tuple[int, str]]:
-    """Capitalised words no condition used ("List Acme's invoices"): a name we could not attach.
+    """Words no condition used and that are not part of the request vocabulary.
 
-    Requests rarely capitalise ordinary words mid-sentence, so an unconsumed proper noun usually means
-    a constraint was dropped. Field names the user asked for, document types and months are allowed.
+    For a record-level request every word must either be understood or reported: "show acme invoices"
+    (lowercase, no "from") cannot silently become "show every invoice". The vocabulary is closed and
+    small on purpose; an unusual but harmless word costs a `partial`, which is measured, not hidden.
     """
-    first = len(request) - len(request.lstrip())
-    doc_words = set(SINGULAR) | set(SINGULAR.values())
+    doc_words = set(SINGULAR) | set(SINGULAR.values()) | _DOC_NOUNS
     out = []
-    for m in re.finditer(r"\b[A-Z][A-Za-z0-9&.'-]*", rest):
-        if m.start() == first:
-            continue  # the first word of a sentence is capitalised anyway
-        word = m.group(0).rstrip(".'")
-        low = re.sub(r"'s$", "", word.lower())
+    for m in re.finditer(rf"[A-Za-z][A-Za-z0-9&.{_APOS}\-]*", rest):
+        word = m.group(0).rstrip("." + _APOS)
+        if re.fullmatch(r"[\w\-]+\.(?:csv|json|md)", word, re.IGNORECASE):
+            continue  # an output file name ("out.json")
+        low = re.sub(rf"[{_APOS}]s$", "", word.lower())
         if (
             low in _FILLER
+            or low in _CONTENT_OK
             or low in _FIELD_VOCAB
             or low.rstrip("s") in _FIELD_VOCAB
             or low in doc_words
-            or low.rstrip("s") in doc_words
             or low in _MONTHS
             or low in _VERBS
             or low in _CODES
             or low in known_words
+            or low in _NAME_STOP
         ):
             continue
         out.append((m.start(), word))

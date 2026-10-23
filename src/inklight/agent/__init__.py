@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from ..config import Settings, load_settings
-from ..errors import InputRejected
+from ..errors import InklightError, InputRejected
 from ..library import IngestReport, Library, Progress
 from ..schemas import AgentResult, Record, TaskState
 from .context import Policy, Scratch, ToolContext
@@ -40,11 +40,54 @@ class DocumentAgent:
         elif overrides:
             settings = settings.with_overrides(**overrides)
         self.settings = settings
+        self._owns_library = library is None  # a library passed in belongs to the caller
         self.library = library or Library(settings)
         self.policy = Policy(allow_write=allow_write, output_dir=Path(output_dir).resolve() if output_dir else None)
         lim = settings.limits
         self.runner = Runner(lim.max_steps, lim.task_timeout_s, lim.step_timeout_s, lim.max_retries)
-        self._active: dict[str, threading.Event] = {}
+        self._active: set[threading.Event] = set()
+        self._idle = threading.Condition()
+        self._closed = False
+
+    # -- lifecycle ----------------------------------------------------------
+
+    @property
+    def closed(self) -> bool:
+        return self._closed
+
+    def close(self, timeout: float = 10.0) -> None:
+        """Cancel running tasks, wait up to ``timeout`` s for them, then release what the agent owns.
+
+        Idempotent. A library passed to the constructor is left open for its owner to close.
+        """
+        with self._idle:
+            if self._closed:
+                return
+            self._closed = True
+            for event in self._active:
+                event.set()
+            self._idle.wait_for(lambda: not self._active, timeout=timeout)
+        if self._owns_library:
+            self.library.close()
+
+    def __enter__(self) -> DocumentAgent:
+        return self
+
+    def __exit__(self, *_: object) -> None:
+        self.close()
+
+    def _start(self, cancel: threading.Event | None) -> threading.Event:
+        with self._idle:
+            if self._closed:
+                raise InklightError("This DocumentAgent is closed")
+            event = cancel or threading.Event()
+            self._active.add(event)
+            return event
+
+    def _finish(self, event: threading.Event) -> None:
+        with self._idle:
+            self._active.discard(event)
+            self._idle.notify_all()
 
     # -- library passthroughs ---------------------------------------------
 
@@ -108,19 +151,23 @@ class DocumentAgent:
             scratch.warnings.extend(report.warnings)
         if not doc_ids:
             scratch.warn("No documents in scope. Add some with `inklight process <folder>` or pass files=.")
-        ctx = ToolContext(
-            library=self.library,
-            plan=plan,
-            policy=policy or self.policy,
-            scratch=scratch,
-            cancel=cancel or threading.Event(),
-        )
-        if not plan.steps:
-            plan = plan.model_copy(update={"steps": steps_for(plan)})
-        result = self.runner.run(ctx, plan)
-        if save:
-            self.library.store.save_task(result)
-        return result
+        event = self._start(cancel)  # close() cancels tasks still running and waits for them
+        try:
+            ctx = ToolContext(
+                library=self.library,
+                plan=plan,
+                policy=policy or self.policy,
+                scratch=scratch,
+                cancel=event,
+            )
+            if not plan.steps:
+                plan = plan.model_copy(update={"steps": steps_for(plan)})
+            result = self.runner.run(ctx, plan)
+            if save:
+                self.library.store.save_task(result)
+            return result
+        finally:
+            self._finish(event)
 
     async def ask_async(self, request: str, files: Iterable[str | Path] | None = None, **kw: Any) -> AgentResult:
         return await asyncio.to_thread(self.ask, request, files, **kw)

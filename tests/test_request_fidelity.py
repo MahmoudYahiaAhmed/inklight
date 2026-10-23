@@ -35,9 +35,9 @@ def agent(tmp_path):
     lib = Library(settings, engine=FakeEngine({k: [v] for k, v in INVOICES.items()}))
     for name in INVOICES:
         (tmp_path / name).write_bytes(PNG + name.encode())
-    a = DocumentAgent(settings, library=lib)
-    a.add(tmp_path)
-    return a
+    with lib, DocumentAgent(settings, library=lib) as a:
+        a.add(tmp_path)
+        yield a
 
 
 def _scope(agent, *names):

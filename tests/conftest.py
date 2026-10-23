@@ -45,18 +45,33 @@ def bad_dir(tmp_path_factory) -> Path:
 
 
 @pytest.fixture(scope="session")
-def shared_agent(tmp_path_factory, docs_dir) -> DocumentAgent:
+def shared_agent(tmp_path_factory, docs_dir):
     """One OCR pass over the demo set, shared by read-only end-to-end tests."""
     home = tmp_path_factory.mktemp("home")
-    agent = DocumentAgent(make_settings(home))
-    report = agent.add([docs_dir])
-    assert not report.failed, report.failed
-    return agent
+    with DocumentAgent(make_settings(home)) as agent:
+        report = agent.add([docs_dir])
+        assert not report.failed, report.failed
+        yield agent
 
 
 @pytest.fixture
-def agent(tmp_path) -> DocumentAgent:
-    return DocumentAgent(make_settings(tmp_path / "home"))
+def agent(tmp_path):
+    with DocumentAgent(make_settings(tmp_path / "home")) as agent:
+        yield agent
+
+
+@pytest.fixture
+def closer():
+    """Register objects with ``close()``; they are closed when the test ends, even if it fails."""
+    opened: list = []
+
+    def register(obj):
+        opened.append(obj)
+        return obj
+
+    yield register
+    for obj in reversed(opened):
+        obj.close()
 
 
 class FakeEngine:

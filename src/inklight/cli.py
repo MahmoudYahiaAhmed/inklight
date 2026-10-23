@@ -39,7 +39,17 @@ def _agent(config: Path | None, brain: str | None = None, out: Path | None = Non
     from .agent import DocumentAgent
 
     settings = _settings(config, brain)
-    return DocumentAgent(settings, allow_write=bool(out) or yes, output_dir=out)
+    agent = DocumentAgent(settings, allow_write=bool(out) or yes, output_dir=out)
+    _OPENED.append(agent)  # closed by the root context's close callback
+    return agent
+
+
+_OPENED: list = []
+
+
+def _close_opened() -> None:
+    while _OPENED:
+        _OPENED.pop().close()
 
 
 def _fail(exc: Exception) -> None:
@@ -95,9 +105,12 @@ def _ingest_with_progress(agent, paths: list[str], password: str | None = None, 
 
 @app.callback(invoke_without_command=True)
 def _root(
+    ctx: typer.Context,
     version: Annotated[bool, typer.Option("--version", help="Show the version.")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Debug logging.")] = False,
 ) -> None:
+    # Every agent a command opens is closed when the command ends, on success, error or typer.Exit.
+    ctx.call_on_close(_close_opened)
     logging.basicConfig(
         level=logging.DEBUG if verbose else logging.WARNING, format="%(levelname)s %(name)s: %(message)s"
     )
