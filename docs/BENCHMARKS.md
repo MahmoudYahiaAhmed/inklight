@@ -19,7 +19,7 @@ indra-ocr 1.1.x, onnxruntime 1.2x. **Date:** 2026-10-24.
   with Gaussian noise σ = 12.
 - **8 demo documents** (`tests/factory.py`): 3 invoices (one a scanned PNG with a deliberate arithmetic
   error), 2 contracts, 2 quarterly reports, and 1 memo containing a prompt-injection line.
-- **9 constrained requests** with expected document sets, **40 requests** with labelled intents, and
+- **12 constrained requests** (9 with expected document sets, 3 unsupported), **40 requests** with labelled intents, and
   **12 questions** with expected answers.
 
 These are still generated documents written by the same author as the code. They are not unseen documents
@@ -30,19 +30,19 @@ the accuracy figures as regression checks, not as field performance.
 
 | | median | p90 | n |
 |---|---|---|---|
-| Digital PDF page (text-layer path) | **43 ms** | 49 ms | 20 |
-| Scanned image page (full OCR) | **98 ms** | 107 ms | 20 |
+| Digital PDF page (text-layer path) | **45 ms** | 51 ms | 20 |
+| Scanned image page (full OCR) | **101 ms** | 109 ms | 20 |
 | Indra model load (warm disk) | 0.75 s | | |
 
 ## End to end
 
 | Metric | rules brain | auto brain (reader 66M + embedder 33M) |
 |---|---|---|
-| Ingest 40 docs (validate, hash, OCR, chunk, classify, index, embed) | 3.3 s (**12.2 pages/s**) | 3.7 s (11.0 pages/s) |
+| Ingest 40 docs (validate, hash, OCR, chunk, classify, index, embed) | 3.4 s (**11.8 pages/s**) | 3.7 s (10.7 pages/s) |
 | Extract 6 fields × 40 docs | 0.11 s | 0.21 s |
-| Task latency (filter / compare / aggregate / summarize), already indexed | 5 / 5 / 5 / 1 ms | 6 / 6 / 7 / 1 ms |
+| Task latency (filter / compare / aggregate / summarize), already indexed | 5 / 6 / 5 / 1 ms | 6 / 6 / 7 / 2 ms |
 | Peak memory, 8 documents + 2 tasks, fresh process | **446 MB** | **580 MB** |
-| `import inklight` / cold `inklight --version` | 0.26 s / 0.44 s | |
+| `import inklight` / cold `inklight --version` | 0.42 s / 0.48 s | |
 
 ## Extraction accuracy (240 values: invoice_number, vendor, date, subtotal, tax, total)
 
@@ -66,14 +66,21 @@ Expected document sets come from ground truth, so an extraction error also costs
 | Request | rules | auto |
 |---|---|---|
 | Find invoices above $5,000 | exact | exact |
-| Find invoices from <vendor> above $2,000 | exact | exact |
+| Find invoices from <vendor> above $2,000 | exact, `partial` † | exact |
 | Find invoices below $1,000 or above $10,000 | exact | exact |
 | invoices between $1,000 and $3,000 | exact | exact |
-| invoices not from <vendor> | 1 document short (its vendor was not read and was reported as unreadable) | exact |
+| invoices not from <vendor> | 1 document short, `partial` † | exact |
 | how many invoices are above $8,000? | exact | exact |
-| **Exact-set accuracy** | **5/6** | **6/6** |
+| Extract totals from <vendor> (review case) | exact, `partial` † | exact |
+| Find invoices between $1,000 and $3,000 or above $10,000 (review case) | exact | exact |
+| Find invoices from <vendor> or <vendor> (review case) | exact, `partial` † | exact |
+| **Exact-set accuracy** | **8/9** | **9/9** |
 | Unsupported requests flagged as partial with the unapplied words ("paid late", "last month", "top 3") | 3/3 | 3/3 |
 | Sum of all totals equals the ground-truth sum | yes | yes |
+
+† In rules mode one scan's vendor name is not read. Every vendor-conditioned request therefore names that
+document as "could not be evaluated" and returns `partial` instead of `succeeded`. In auto mode the 66M
+reader recovers the name.
 
 ## Questions and citations (12 questions on the demo set)
 
@@ -106,6 +113,9 @@ cProfile of ingesting the 40 invoices:
 | Other Python (stdlib, pydantic) | 2.4% |
 
 ## Change log of this document
+
+- 2026-10-24 (second review): added the three review cases to request handling, re-ran everything. Requests
+  that could not evaluate a document are now `partial`. Extraction and QA numbers are unchanged.
 
 - 2026-10-24: Added layouts B and C and the request-handling section, in response to an external review.
   Overall field accuracy fell from 98.8% (one layout) to 96.7% (three layouts). Flagged errors rose from

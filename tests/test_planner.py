@@ -42,6 +42,7 @@ def test_money_condition():
     assert (cond.field, cond.op, cond.value) == ("total", "gt", 5000.0)
     assert "total" in plan.fields
     assert rule_plan("invoices where tax is under 2k", TODAY).conditions[0].model_dump() == {
+        "kind": "cond",
         "field": "tax",
         "op": "lt",
         "value": 2000.0,
@@ -100,5 +101,6 @@ def test_remote_plan_validation(monkeypatch):
     plan = remote_plan("x", brain('{"intent": "aggregate", "fields": []}'))
     assert plan.aggregate == "sum" and plan.aggregate_field == "total" and plan.steps[-1].tool == "calculate"
     plan = remote_plan("x", brain('{"intent": "filter", "conditions": [{"field": "tax", "op": "gt", "value": 5}]}'))
-    assert "tax" in plan.fields
+    extract = next(s for s in plan.steps if s.tool == "extract_fields")
+    assert "tax" in extract.args["fields"]  # read to evaluate the condition, not added to the output columns
     assert remote_plan("x", brain("not json")) is None

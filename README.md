@@ -33,18 +33,19 @@ something looks off, and a trace of every step the agent took.
 
 ## Why Inklight
 
-- **Real OCR, on CPU.** Built on [Indra OCR](https://github.com/datalab-to/indra): 43 ms per digital PDF page,
-  98 ms per scanned page on a laptop ([benchmarks](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md)). Digital PDFs use their text layer
+- **Real OCR, on CPU.** Built on [Indra OCR](https://github.com/datalab-to/indra): about 45 ms per digital PDF page,
+  about 100 ms per scanned page on a laptop ([benchmarks](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md)). Digital PDFs use their text layer
   first, and OCR runs only where needed.
 - **An agent, not a chatbot wrapper.** It works out the intent, then runs a minimal plan of typed tools
   (search, extract, filter, calculate, compare, find inconsistencies, summarise, write). Every run has
   step limits, time budgets, retries and cancellation.
-- **Shows its work, and its limits.** Every result says *how your request was understood* ("vendor contains
-  Acme; total > 5,000 USD") and lists anything it could **not** apply, instead of quietly answering a broader
-  question. Values come from labelled fields, extractive spans or quoted sentences with page and position.
-  A citation proves where a value came from, not that it answers your question, so confidence is reported
-  twice: *understood* (did it read your request right) and *evidence* (OCR, labels, `subtotal + tax = total`).
-  Amounts in different currencies are never added or compared to each other.
+- **Shows its work, and its limits.** Every result says *how your request was understood*, for example
+  `(vendor contains "Acme" or vendor contains "Globex") and total > 5,000 USD`. That text is rendered from the
+  same typed expression the filter executes, and a plan that would not enforce it is refused before it runs.
+  Anything it could **not** apply is listed under *Not applied*: the result is then `partial`, and it is never
+  exported. Ambiguous `and`/`or` mixes are reported instead of guessed. A citation proves where a value came
+  from, not that it answers your question. The two confidence scores, *understood* and *evidence*, are
+  heuristics, not probabilities. Amounts in different currencies are never added or compared.
 - **Small-model intelligence, measured.** Optional models are each under 200M parameters: a 66M reader that
   can only point at text in your document, a 33M embedder for search, and an optional 135M writer whose output
   must be grounded. Calculations and filters are exact Python, not model guesses.

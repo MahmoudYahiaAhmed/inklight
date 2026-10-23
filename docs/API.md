@@ -20,10 +20,21 @@ agent = DocumentAgent(load_settings(models={"brain": "rules"}), allow_write=True
 | `agent.search(query, k=8)` | `list[SearchHit]` | |
 | `DocumentAgent.tools()` | `list[dict]` | Name, description, permission, side effects, JSON schema of the arguments. |
 
-`AgentResult` fields: `answer`, `confidence`, `state` (`succeeded | partial | failed | cancelled`), `intent`,
-`sources` (`Source`: `doc_id, path, name, page, block, bbox, excerpt, score, ocr_conf`), `records`
-(`Record.fields[name]` → `ExtractedValue`), `files_written`, `warnings`, `trace` (`TraceStep`), `brain`,
-`duration_ms`, and `table()` → list of flat dicts.
+`AgentResult` fields:
+- `answer` and `intent`.
+- `state`: `succeeded | partial | failed | cancelled | unsupported`.
+- `interpretation`: how the request was read, rendered from the executed expression.
+- `not_understood`: parts of the request that were not applied.
+- `checks`: provenance, interpretation and evidence, stated separately.
+- `confidence`, `interpretation_confidence`, `evidence_confidence`: heuristic scores, not probabilities.
+- `sources`: each a `Source` with `doc_id, path, name, page, block, bbox, excerpt, score, ocr_conf`.
+- `records`: `Record.fields[name]` → `ExtractedValue`, with only the requested columns.
+- `files_written`, `warnings`, `trace` (`TraceStep`), `brain`, `duration_ms`.
+- `table()`: a list of flat dicts.
+
+Conditions are a typed expression on `Plan.where` (`Condition`, or `Group(kind="all"|"any", items=...)`), and
+`agent.expr.describe/evaluate/leaves` work on it. `agent.planner.validate_plan(plan)` raises `PlanError` when
+the steps would not enforce `where`.
 
 `Policy(allow_write=False, output_dir=None, confirm=None, overwrite=False)` controls the `write_output` tool.
 `confirm` is a callback `(message) -> bool`, called before every write.

@@ -17,6 +17,7 @@ from ..schemas import AgentResult, StepStatus, TaskState, TraceStep
 from .compose import compose
 from .context import Scratch, ToolContext
 from .plan import Plan
+from .planner import validate_plan
 from .tools import TOOLS
 
 log = logging.getLogger(__name__)
@@ -35,11 +36,17 @@ class Runner:
         task_id = uuid.uuid4().hex[:12]
         trace: list[TraceStep] = []
         state = TaskState.RUNNING
+        validate_plan(plan)  # a plan that would not enforce its stated conditions never runs
         steps = list(plan.steps)
+        filter_at = next((i for i, s in enumerate(steps) if s.tool == "filter_records"), None)
         if len(steps) > self.max_steps:
             ctx.scratch.warn(f"Plan has {len(steps)} steps; only the first {self.max_steps} ran (max_steps)")
             steps = steps[: self.max_steps]
             state = TaskState.PARTIAL
+            if filter_at is not None and filter_at >= self.max_steps:
+                steps = steps[:1]  # never show records that the conditions were not applied to
+                state = TaskState.FAILED
+                ctx.scratch.warn("The conditions could not be applied within max_steps, so no records are shown")
         pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix="inklight-tool")
         try:
             for index, step in enumerate(steps):
@@ -53,6 +60,12 @@ class Runner:
                     break
                 if outcome.status == StepStatus.FAILED:
                     critical = step.tool not in ("write_output", "inspect_documents")
+                    if filter_at is not None and index <= filter_at:
+                        # Extracted but unfiltered records must never pass for the requested selection.
+                        ctx.scratch.records = []
+                        ctx.scratch.doc_ids = []
+                        state = TaskState.FAILED
+                        break
                     state = TaskState.FAILED if critical and not ctx.scratch.records else TaskState.PARTIAL
                     if critical:
                         break
@@ -63,6 +76,9 @@ class Runner:
             pool.shutdown(wait=False, cancel_futures=True)
         if state == TaskState.RUNNING:
             state = TaskState.SUCCEEDED
+        if plan.blocked:
+            state = TaskState.UNSUPPORTED
+            ctx.scratch.warn("Not run: " + " ".join(plan.blocked))
         if plan.not_understood:
             ctx.scratch.warn(
                 "Not applied: "
@@ -87,8 +103,9 @@ class Runner:
             evidence_confidence=evidence,
             interpretation=plan.understood(),
             not_understood=plan.not_understood,
+            checks=_checks(plan, s, state),
             sources=tuple(s.sources[:12]),
-            records=tuple(s.records),
+            records=tuple(r.project(plan.fields) for r in s.records),
             files_written=tuple(s.files),
             warnings=tuple(s.warnings),
             trace=tuple(trace),
@@ -189,6 +206,26 @@ class Runner:
             attempts=attempts,
             error=error,
         )
+
+
+def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
+    """Plain statements of what was checked — provenance, interpretation and evidence are different things."""
+    out = [
+        f"provenance: {len(s.sources)} citation(s) were found in the stored document text "
+        "(this shows where values came from, not that they answer the question)"
+    ]
+    if plan.blocked:
+        out.append("interpretation: not run; the request was ambiguous")
+    elif plan.not_understood:
+        out.append(f"interpretation: partial; {len(plan.not_understood)} part(s) of the request were not applied")
+    elif plan.where is not None:
+        out.append("interpretation: every recognised condition was applied by the filter step")
+    else:
+        out.append("interpretation: no conditions in the request")
+    out.append(f"evidence: heuristic score {s.confidence:.2f} (labels, OCR confidence, arithmetic checks)")
+    if state == TaskState.PARTIAL and s.partial:
+        out.append("result: only part of the job could be done (see warnings)")
+    return tuple(out)
 
 
 def _snapshot(s: Scratch) -> Scratch:

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -40,6 +40,7 @@ _OP_WORDS = {
 class Condition(BaseModel):
     model_config = ConfigDict(frozen=True)
 
+    kind: Literal["cond"] = "cond"
     field: str
     op: Op
     value: Any
@@ -55,6 +56,19 @@ class Condition(BaseModel):
         return f"{name} {_OP_WORDS[self.op]} {value}" + (f" {self.unit}" if self.unit else "")
 
 
+class Group(BaseModel):
+    """``all`` = AND, ``any`` = OR over two or more operands (see ``agent.expr``)."""
+
+    model_config = ConfigDict(frozen=True)
+
+    kind: Literal["all", "any"]
+    items: tuple[Expr, ...] = Field(min_length=2)
+
+
+Expr = Annotated[Condition | Group, Field(discriminator="kind")]
+Group.model_rebuild()
+
+
 class Step(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -68,31 +82,38 @@ class Plan(BaseModel):
     intent: Intent
     query: str
     fields: tuple[str, ...] = ()
-    conditions: tuple[Condition, ...] = ()
+    where: Expr | None = Field(None, description="The validated Boolean expression the filter step executes.")
     doc_type: str | None = None
     output: Literal["csv", "json", "md"] | None = None
     output_name: str | None = None
     aggregate: Literal["sum", "avg", "min", "max", "count"] | None = None
     aggregate_field: str | None = None
-    match: Literal["all", "any"] = Field("all", description="Combine conditions with AND (all) or OR (any).")
     not_understood: tuple[str, ...] = Field((), description="Parts of the request no tool can apply.")
+    blocked: tuple[str, ...] = Field((), description="Reasons the request cannot run without guessing.")
     confidence: float = Field(0.5, ge=0, le=1)
     planner: str = "rules"
     steps: tuple[Step, ...] = ()
 
+    @property
+    def conditions(self) -> tuple[Condition, ...]:
+        """Every leaf condition of ``where`` (read-only view; ``where`` is what runs)."""
+        from .expr import leaves
+
+        return tuple(leaves(self.where))
+
     def understood(self) -> tuple[str, ...]:
-        """How the request was read, in plain words, for the user to check."""
+        """How the request was read, rendered from the same ``where`` the filter executes."""
+        from .expr import describe
+
         out = [f"task: {self.intent.value}"]
         if self.doc_type:
             out.append(f"documents: {self.doc_type}s")
-        if self.conditions:
-            joiner = " or " if self.match == "any" else " and "
-            out.append("where " + joiner.join(c.describe() for c in self.conditions))
+        if self.where is not None:
+            out.append("where " + describe(self.where))
         if self.aggregate:
             out.append(f"compute: {self.aggregate} of {self.aggregate_field}")
-        shown = [f for f in self.fields if f not in {c.field for c in self.conditions}]
-        if shown and self.intent.value in ("extract", "filter", "aggregate", "inconsistencies"):
-            out.append("fields: " + ", ".join(shown))
+        if self.fields and self.intent.value in ("extract", "filter", "aggregate", "inconsistencies"):
+            out.append("columns: " + ", ".join(self.fields))
         if self.output:
             out.append(f"output: {self.output} file")
         return tuple(out)

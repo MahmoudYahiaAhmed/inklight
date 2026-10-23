@@ -181,6 +181,8 @@ def request_fidelity(agent, truth: list[dict], by_name: dict) -> dict:  # type: 
     ids = [d.id for d in agent.library.documents() if d.name in files]
     vendor = truth[0]["vendor"]
     short = vendor.split()[0]
+    other = next(r["vendor"] for r in truth if r["vendor"] != vendor)
+    other_short = other.split()[0]
     cases = [
         ("Find invoices above $5,000", lambda r: r["total"] > 5000),
         (f"Find invoices from {short} above $2,000", lambda r: r["vendor"] == vendor and r["total"] > 2000),
@@ -188,6 +190,13 @@ def request_fidelity(agent, truth: list[dict], by_name: dict) -> dict:  # type: 
         ("invoices between $1,000 and $3,000", lambda r: 1000 <= r["total"] <= 3000),
         (f"invoices not from {short}", lambda r: r["vendor"] != vendor),
         ("how many invoices are above $8,000?", lambda r: r["total"] > 8000),
+        # Added after the second external review (conditions on extraction, grouping, vendor lists):
+        (f"Extract totals from {short}", lambda r: r["vendor"] == vendor),
+        (
+            "Find invoices between $1,000 and $3,000 or above $10,000",
+            lambda r: 1000 <= r["total"] <= 3000 or r["total"] > 10000,
+        ),
+        (f"Find invoices from {short} or {other_short}", lambda r: r["vendor"] in (vendor, other)),
     ]
     items = []
     for request, want in cases:

@@ -131,11 +131,18 @@ class Record(Frozen):
     path: str
     fields: dict[str, ExtractedValue]
 
-    def flat(self) -> dict[str, Any]:
+    def flat(self, columns: tuple[str, ...] | list[str] | None = None) -> dict[str, Any]:
         row: dict[str, Any] = {"document": self.name}
         for key, item in self.fields.items():
-            row[key] = item.value
+            if not columns or key in columns:
+                row[key] = item.value
         return row
+
+    def project(self, columns: tuple[str, ...] | list[str]) -> Record:
+        """Only the requested output columns (fields read just to evaluate conditions are dropped)."""
+        if not columns:
+            return self
+        return self.model_copy(update={"fields": {k: v for k, v in self.fields.items() if k in columns}})
 
 
 # ---------------------------------------------------------------- agent
@@ -166,6 +173,7 @@ class TaskState(StrEnum):
     PARTIAL = "partial"
     FAILED = "failed"
     CANCELLED = "cancelled"
+    UNSUPPORTED = "unsupported"  # could not run without guessing what was meant
 
 
 class AgentResult(Frozen):
@@ -174,15 +182,30 @@ class AgentResult(Frozen):
     intent: str
     state: TaskState
     answer: str
-    confidence: float = Field(0.0, ge=0.0, le=1.0, description="min(interpretation, evidence): trust the lower one.")
+    confidence: float = Field(
+        0.0, ge=0.0, le=1.0, description="Heuristic score: min(interpretation, evidence). Not a calibrated probability."
+    )
     interpretation_confidence: float = Field(
-        0.0, ge=0.0, le=1.0, description="How sure the agent is that it understood the request as written."
+        0.0,
+        ge=0.0,
+        le=1.0,
+        description="Heuristic score for how completely the request was parsed into applied conditions. "
+        "It does not prove the reading is what you meant: check `interpretation`.",
     )
     evidence_confidence: float = Field(
-        0.0, ge=0.0, le=1.0, description="How well the documents support the result (OCR, labels, cross-checks)."
+        0.0,
+        ge=0.0,
+        le=1.0,
+        description="Heuristic score from label matches, OCR line confidence and arithmetic checks. "
+        "Not a calibrated probability, and not a check that the answer is semantically correct.",
     )
     interpretation: tuple[str, ...] = Field((), description="How the request was read, for the user to check.")
     not_understood: tuple[str, ...] = Field((), description="Parts of the request that were NOT applied.")
+    checks: tuple[str, ...] = Field(
+        (),
+        description="What was actually checked, kept separate: provenance (cited text exists in the document), "
+        "interpretation (every part of the request applied), evidence (heuristic signals).",
+    )
     sources: tuple[Source, ...] = ()
     records: tuple[Record, ...] = ()
     files_written: tuple[str, ...] = ()

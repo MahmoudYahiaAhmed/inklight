@@ -19,17 +19,19 @@ from typing import Any
 from pydantic import ValidationError
 
 from ..brains import Brain
-from ..errors import ModelUnavailable
-from ..extract import SINGULAR, resolve_field
+from ..errors import ModelUnavailable, PlanError
+from ..extract import CATALOG, SINGULAR, resolve_field
 from . import conditions as _cond
-from .plan import Condition, Intent, Plan, Step
+from . import expr as _expr
+from .plan import Condition, Group, Intent, Plan, Step
 
 log = logging.getLogger(__name__)
 
 _MONEY_FIELDS = {"tax", "subtotal", "total", "contract_value", "amount"}
 _FIELD_LEAD = re.compile(
     r"(?:\bcsv\s+(?:file\s+)?(?:of|with)|\bjson\s+(?:file\s+)?(?:of|with)|\btable\s+(?:of|with)|\bextract(?:ing)?|"
-    r"\bpull(?:\s+out)?|\bget|\blist|\bcolumns?|\bfields?|\bcontaining|\bwith columns)\s+(?P<rest>.+)",
+    r"\bpull(?:\s+out)?|\bget|\blist|\bexport|\bshow(?:\s+me)?|\bgive\s+me|\bcolumns?|\bfields?|\bcontaining|"
+    r"\bwith columns)\s+(?P<rest>.+)",
     re.IGNORECASE,
 )
 _FIELD_STOP = re.compile(
@@ -84,6 +86,10 @@ def _fields(request: str) -> list[str]:
         word = re.sub(r"\s+(?:of|from|in)$", "", word)
         if word in _NOISE or word in SINGULAR or word.rstrip("s") in SINGULAR.values() or len(word) > 40:
             continue
+        doc_words = set(SINGULAR) | set(SINGULAR.values())
+        known_field = resolve_field(word).name in CATALOG
+        if "'" in word or (not known_field and any(w in doc_words for w in word.split())):
+            continue  # "acme's invoices" names documents, not a column ("invoice number" is a column)
         name = resolve_field(word).name
         if name not in out:
             out.append(name)
@@ -119,8 +125,9 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
     today = today or date.today()
     text = request.lower().strip()
     fields = _fields(request)
-    parsed = _cond.parse(request, today)
-    conds = parsed.conditions
+    known = frozenset(w for f in fields for w in f.split("_"))  # requested columns are not dropped names
+    parsed = _cond.parse(request, today, known)
+    conds = bool(parsed.atoms)  # recognised constraints, even when their grouping is ambiguous (blocked)
     doc_type = _doc_type(text)
     output, output_name = _output(text)
     confidence = 0.8
@@ -168,7 +175,12 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         intent = Intent.EXTRACT
     elif re.search(r"\b(convert|process|index|ingest|make (?:them |it )?searchable|ocr)\b", text):
         intent = Intent.PROCESS
-    elif doc_type and (parsed.not_understood or re.search(r"\b(list|show|find|which|get|give me)\b", text)):
+    elif doc_type and (
+        re.search(r"\b(list|show|find|which|get|give me)\b", text)
+        # A plural ("Acme or Globex invoices") asks for a set of records; a singular question
+        # ("the total of the Globex invoice?") stays a question answered from evidence.
+        or (parsed.not_understood and re.search(rf"\b({'|'.join(SINGULAR)})\b", text))
+    ):
         # "find overdue invoices": a record-level request even when no condition was recognised,
         # so anything not understood is reported rather than answered as free text.
         intent = Intent.EXTRACT
@@ -193,22 +205,27 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
             confidence = min(confidence, 0.7)
     if intent == Intent.INCONSISTENCIES and not fields:
         fields = ["customer", "vendor", "email", "phone", "total"]
-    for cond in conds:
-        if cond.field not in fields:
-            fields.append(cond.field)
+    # `fields` stays the requested output columns; condition fields are added only to what is
+    # extracted (see steps_for), never to what is shown or exported.
+
+    blocked = list(parsed.blocked)
+    if parsed.where is not None and intent == Intent.PROCESS:
+        blocked.append("conditions do not apply to indexing; ask for the matching documents instead")
+    if blocked:
+        confidence = min(confidence, 0.3)
 
     plan = Plan(
         intent=intent,
         query=request.strip(),
         fields=tuple(fields),
-        conditions=tuple(conds),
+        where=None if blocked else parsed.where,
         doc_type=doc_type,
         output=output,
         output_name=output_name,  # type: ignore[arg-type]
         aggregate=aggregate,
         aggregate_field=aggregate_field,
-        match=parsed.match,  # type: ignore[arg-type]
         not_understood=tuple(not_understood),
+        blocked=tuple(blocked),
         confidence=confidence,
     )  # type: ignore[arg-type]
     return plan.model_copy(update={"steps": steps_for(plan)})
@@ -226,47 +243,50 @@ def _default_fields(doc_type: str | None) -> list[str]:
 
 
 def steps_for(plan: Plan) -> tuple[Step, ...]:
-    """The minimum tool sequence for an intent. Tools are from a fixed allow-list."""
+    """The minimum tool sequence for an intent. Tools are from a fixed allow-list.
+
+    When the plan has a ``where`` expression it is enforced FIRST, for every intent: the fields the
+    output needs plus the fields the conditions need are extracted, the expression filters the
+    records, and the document scope narrows to the matches. Every later step (answer, compare,
+    summarize, count, calculate, export) therefore sees only matching documents.
+    """
     scope = Step(tool="inspect_documents", args={"doc_type": plan.doc_type})
+    if plan.blocked:
+        return (scope,)
     fields = list(plan.fields)
+    needed = list(
+        dict.fromkeys([*fields, *_expr.fields(plan.where), *([plan.aggregate_field] if plan.aggregate_field else [])])
+    )
+    needed = [f for f in needed if f]
     out: list[Step] = [scope]
+    extracted = False
+    if plan.where is not None:
+        out += [
+            Step(tool="extract_fields", args={"fields": needed}),
+            Step(tool="filter_records", args={"where": plan.where.model_dump(mode="json")}),
+        ]
+        extracted = True
     match plan.intent:
         case Intent.ASK:
             out += [Step(tool="search", args={"query": plan.query}), Step(tool="answer", args={"question": plan.query})]
         case Intent.FIND:
             out += [Step(tool="search", args={"query": plan.query}), Step(tool="cite", args={"question": plan.query})]
-        case Intent.EXTRACT:
-            out.append(Step(tool="extract_fields", args={"fields": fields}))
-        case Intent.FILTER:
-            out += [
-                Step(tool="extract_fields", args={"fields": fields}),
-                Step(
-                    tool="filter_records",
-                    args={"conditions": [c.model_dump() for c in plan.conditions], "match": plan.match},
-                ),
-            ]
+        case Intent.EXTRACT | Intent.FILTER:
+            if not extracted:
+                out.append(Step(tool="extract_fields", args={"fields": needed}))
         case Intent.AGGREGATE:
-            out.append(Step(tool="extract_fields", args={"fields": fields}))
-            if plan.conditions:
-                out.append(
-                    Step(
-                        tool="filter_records",
-                        args={"conditions": [c.model_dump() for c in plan.conditions], "match": plan.match},
-                    )
-                )
+            if not extracted:
+                out.append(Step(tool="extract_fields", args={"fields": needed}))
             out.append(Step(tool="calculate", args={"op": plan.aggregate, "field": plan.aggregate_field}))
         case Intent.COMPARE:
             out.append(Step(tool="compare_documents", args={"fields": fields}))
         case Intent.INCONSISTENCIES:
-            out += [
-                Step(tool="extract_fields", args={"fields": fields}),
-                Step(tool="find_inconsistencies", args={"fields": fields}),
-            ]
+            if not extracted:
+                out.append(Step(tool="extract_fields", args={"fields": needed}))
+            out.append(Step(tool="find_inconsistencies", args={"fields": fields}))
         case Intent.SUMMARIZE:
             out.append(Step(tool="summarize", args={"focus": plan.query}))
-        case Intent.COUNT:
-            pass
-        case Intent.PROCESS:
+        case Intent.COUNT | Intent.PROCESS:
             pass
     if plan.output and plan.intent in (
         Intent.EXTRACT,
@@ -280,6 +300,42 @@ def steps_for(plan: Plan) -> tuple[Step, ...]:
     ):
         out.append(Step(tool="write_output", args={"format": plan.output, "name": plan.output_name}))
     return tuple(out)
+
+
+_PREP_TOOLS = {"inspect_documents", "extract_fields", "filter_records"}
+
+
+def validate_plan(plan: Plan) -> None:
+    """Refuse a plan whose steps do not enforce what it claims.
+
+    A plan that shows conditions in "Understood as" must filter with exactly that expression, after
+    extracting every field the expression reads, and before any step that uses the records or the
+    document scope (answering, counting, calculating, comparing, summarizing, exporting).
+    """
+    tools = [s.tool for s in plan.steps]
+    if plan.blocked and tools != ["inspect_documents"]:
+        raise PlanError("a blocked plan must not run any tool beyond inspecting the documents")
+    if plan.where is None:
+        if "filter_records" in tools:
+            raise PlanError("the plan filters, but states no conditions")
+        return
+    filters = [i for i, s in enumerate(plan.steps) if s.tool == "filter_records"]
+    if len(filters) != 1:
+        raise PlanError("a plan with conditions must filter exactly once")
+    at = filters[0]
+    try:
+        executed = Plan.model_validate({"intent": plan.intent, "query": "", "where": plan.steps[at].args["where"]})
+    except (KeyError, ValidationError) as exc:
+        raise PlanError(f"the filter step has no valid expression: {exc}") from exc
+    if executed.where != plan.where:
+        raise PlanError("the filter step does not execute the conditions the plan states")
+    extracted = {f for s in plan.steps[:at] if s.tool == "extract_fields" for f in s.args.get("fields", [])}
+    missing = set(_expr.fields(plan.where)) - extracted
+    if missing:
+        raise PlanError(f"conditions read fields that are never extracted: {sorted(missing)}")
+    early = [s.tool for s in plan.steps[:at] if s.tool not in _PREP_TOOLS]
+    if early:
+        raise PlanError(f"these steps would run before the conditions are applied: {early}")
 
 
 # ---------------------------------------------------------------- remote assist
@@ -305,17 +361,18 @@ def remote_plan(request: str, brain: Brain) -> Plan | None:
         raw_fields, raw_conds = data.get("fields") or [], data.get("conditions") or []
         if not isinstance(raw_fields, list) or not isinstance(raw_conds, list):
             raise ValueError("fields and conditions must be lists")
-        conditions = tuple(Condition(**c) for c in raw_conds)
+        conditions: list[Condition | Group] = [Condition(**c) for c in raw_conds]
+        match = data.get("match", "all")
+        if match not in ("all", "any"):
+            raise ValueError("match must be 'all' or 'any'")
         fields = [resolve_field(str(f)).name for f in raw_fields]
-        fields += [c.field for c in conditions if c.field not in fields]  # filters need their fields extracted
         extras = {k: data[k] for k in ("intent", "doc_type", "output") if data.get(k) is not None}
         if extras.get("intent") == "aggregate":
             extras["aggregate"] = data.get("aggregate") or "sum"
             extras["aggregate_field"] = data.get("aggregate_field") or (fields[0] if fields else "total")
             fields = fields or [extras["aggregate_field"]]
-        plan = Plan(
-            query=request, planner="remote", confidence=0.75, fields=tuple(fields), conditions=conditions, **extras
-        )
+        where = _expr.group(match, conditions) if conditions else None
+        plan = Plan(query=request, planner="remote", confidence=0.75, fields=tuple(fields), where=where, **extras)
     except ModelUnavailable as exc:
         log.warning("remote planner unavailable, using rules: %s", exc)
         return None

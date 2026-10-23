@@ -73,7 +73,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .state { padding: 1px 8px; border-radius: 99px; font-size: 11px; }
 .state.succeeded { background: rgba(52,211,153,.12); color: var(--green); }
 .state.partial { background: var(--amber-soft); color: var(--amber); }
-.state.failed, .state.cancelled { background: rgba(248,113,113,.12); color: var(--red); }
+.state.failed, .state.cancelled, .state.unsupported { background: rgba(248,113,113,.12); color: var(--red); }
 .conf { display: inline-flex; align-items: center; gap: 6px; }
 .bar { width: 60px; height: 5px; border-radius: 9px; background: var(--line); overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--cyan); }

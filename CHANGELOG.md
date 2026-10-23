@@ -3,6 +3,49 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [SemVer](https://semver.org/).
 
+## [0.1.1] — Unreleased
+
+Fixes from a second external review of `914d321`. **0.1.0 (already on PyPI) is affected by the three
+defects below.** Upgrade once 0.1.1 is published.
+
+### Fixed
+- **Conditions on extraction were not applied.** "Extract totals from Acme" showed the Acme condition under
+  "Understood as" but returned every document: the extraction plan had no filter step. Conditions are now
+  enforced first for every workflow (extract, filter, count, aggregate, inconsistencies, summarize,
+  compare, find, ask, export). The document scope narrows to the matches before the operation runs.
+- **Boolean grouping was flattened.** "between $100 and $6,000 or above $10,000" became
+  `>=100 OR <=6000 OR >10000`. Conditions are now a typed expression (`Cond | All[...] | Any[...]`).
+  Ranges, years and months are grouped operands, and `or` between alternatives on the same field forms one
+  group. The same expression is executed and rendered in "Understood as", so the two cannot drift apart.
+- **Coordinated names were dropped.** "from Acme or Globex" silently lost Globex. Vendor lists
+  ("Acme or Globex", "Acme, Globex and Initech") are one group, and a shared amount condition applies to the
+  whole group. "not from Acme or Globex" excludes both.
+- **Dropped fragments are reported.** A connector left after a condition ("… above $5,000 or Globex"), an
+  unconsumed proper noun ("List Acme's invoices"), a month without a year, a time span such as
+  "under 30 days", and an amount with an unknown unit ("over 5 bucks") make the result `partial` and are
+  listed under Not applied.
+- **Partial selections are never exported.** `write_output` refuses while any part of the request is not
+  applied. Partial previews are labelled "PARTIAL RESULT, not the complete answer to your request".
+- **Ambiguous `and`/`or` mixes are not guessed.** For example "from Acme or above $10,000 in 2026". Nothing
+  runs, and the result state is the new `unsupported`.
+- **Filtering failures cannot leak unfiltered rows.** If the filter step fails, or `max_steps` would cut it
+  off, no records are returned and the state is `failed`.
+- A filter that could not evaluate some documents (missing value, incompatible currency) is now `partial`,
+  not `succeeded`.
+- Added "N grand" (×1000) and month-year ranges ("in March 2026").
+
+### Changed
+- `validate_plan()` refuses any plan whose steps do not filter with exactly the stated expression, after
+  extracting every field it reads, and before any step that uses records or the document scope.
+- Requested output columns are kept separate from fields read only to evaluate conditions. Records,
+  tables, CSV and JSON exports show only the requested columns.
+- The optional 135M writer can no longer replace an answer. Its wording is appended under an explicit
+  "not verified" label. `grounded()` is documented as a surface check (entity order and negation count),
+  not semantic verification.
+- Results carry `checks`, which keeps provenance, interpretation and evidence separate. The confidence fields
+  are documented as heuristics, not calibrated probabilities.
+- The `TaskState` enum gained `unsupported`.
+
 ## [0.1.0] — 2026-10-23
 
 First public release candidate.

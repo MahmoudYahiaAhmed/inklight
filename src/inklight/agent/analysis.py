@@ -18,7 +18,8 @@ from ..safety import safe_output_path
 from ..schemas import ExtractedValue, Record, Source
 from .answer import norm
 from .context import ToolContext
-from .plan import Condition
+from .expr import evaluate, leaves
+from .plan import Condition, Group
 
 # ---------------------------------------------------------------- extract
 
@@ -147,26 +148,38 @@ def _norm_name(text: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^\w\s&]", " ", text.lower())).strip()
 
 
-def filter_records(ctx: ToolContext, conditions: list[Condition], today: date | None = None, match: str = "all") -> str:
+def filter_records(ctx: ToolContext, where: Condition | Group, today: date | None = None) -> str:
+    """Keep the records for which ``where`` is True, then narrow the document scope to them.
+
+    Unknown (a missing value, or a currency that cannot be compared) is never a match: those
+    records are excluded and named in a warning, separately from the true non-matches.
+    """
     today = today or date.today()
+    conditions = leaves(where)
     kept, dropped, unknown, wrong_currency = [], [], [], []
     for record in ctx.scratch.records:
-        outcomes = [matches(record.fields.get(c.field, ExtractedValue(field=c.field)), c, today) for c in conditions]
-        results = [r for r, _ in outcomes]
-        if match == "any":
-            verdict = True if any(r is True for r in results) else (None if None in results else False)
-        else:
-            verdict = False if any(r is False for r in results) else (None if None in results else True)
+
+        def check(cond: Condition, record: Record = record) -> tuple[bool | None, frozenset[str]]:
+            verdict, reason = matches(record.fields.get(cond.field, ExtractedValue(field=cond.field)), cond, today)
+            return verdict, frozenset({reason}) if reason else frozenset()
+
+        verdict, reasons = evaluate(where, check)
         if verdict is True:
             kept.append(record)
         elif verdict is False:
             dropped.append(record)
-        elif any(reason == "currency" for _, reason in outcomes):
+        elif "currency" in reasons:
             wrong_currency.append(record)
         else:
             unknown.append(record)
     ctx.scratch.records = kept
     ctx.scratch.excluded = dropped + unknown + wrong_currency
+    if unknown or wrong_currency:
+        # Some documents could not be evaluated, so the selection may be incomplete.
+        ctx.scratch.partial = True
+    # Every later step (answering, comparing, summarizing, counting) works on the matches only.
+    kept_ids = {r.doc_id for r in kept}
+    ctx.scratch.doc_ids = [d for d in ctx.scratch.doc_ids if d in kept_ids]
     if unknown:
         names = ", ".join(r.name for r in unknown[:5]) + (" …" if len(unknown) > 5 else "")
         fields = ", ".join(sorted({c.field for c in conditions}))
@@ -384,17 +397,19 @@ def find_inconsistencies(ctx: ToolContext, fields: list[str]) -> str:
 
 def render(ctx: ToolContext, fmt: str) -> str:
     s = ctx.scratch
-    rows = [r.flat() for r in s.records]
+    # Export exactly the filtered records, with only the columns that were asked for.
+    records = [r.project(ctx.plan.fields) for r in s.records]
+    rows = [r.flat() for r in records]
     if fmt == "csv":
         fields: list[str] = []
-        for record in s.records:
+        for record in records:
             for name in record.fields:
                 if name not in fields:
                     fields.append(name)
         buf = io.StringIO()
         writer = csv.writer(buf)
         writer.writerow(["document", *fields, *[f"{f}_confidence" for f in fields], "pages", "warnings"])
-        for record in s.records:
+        for record in records:
             vals = [record.fields[f].value if f in record.fields else None for f in fields]
             confs = [record.fields[f].confidence if f in record.fields else None for f in fields]
             pages = sorted({v.source.page for v in record.fields.values() if v.source})
@@ -402,7 +417,7 @@ def render(ctx: ToolContext, fmt: str) -> str:
             writer.writerow(
                 [_csv_safe(record.name), *map(_csv_safe, vals), *confs, " ".join(map(str, pages)), _csv_safe(warns)]
             )
-        if not s.records and s.answer:
+        if not records and s.answer:
             writer.writerow(["answer"])
             writer.writerow([_csv_safe(s.answer)])
         return buf.getvalue()
@@ -410,9 +425,10 @@ def render(ctx: ToolContext, fmt: str) -> str:
         return json.dumps(
             {
                 "request": ctx.plan.query,
+                "understood_as": list(ctx.plan.understood()),
                 "answer": s.answer,
                 "rows": rows,
-                "records": [r.model_dump(mode="json") for r in s.records],
+                "records": [r.model_dump(mode="json") for r in records],
                 "calculation": s.calc,
                 "sources": [x.model_dump(mode="json") for x in s.sources],
                 "warnings": s.warnings,
@@ -445,6 +461,13 @@ def _csv_safe(value: Any) -> Any:
 
 
 def write_output(ctx: ToolContext, fmt: str, name: str | None) -> str:
+    if ctx.plan.not_understood:
+        # A file looks final; never let a partial selection pass for the full request.
+        raise ToolError(
+            "Not saved: part of the request was not applied ("
+            + "; ".join(f"“{x}”" for x in ctx.plan.not_understood)
+            + "), so the selection may be incomplete. Rephrase the request, or remove that part, to export."
+        )
     policy = ctx.policy
     content = render(ctx, fmt)
     root = policy.output_dir or ctx.settings.outputs

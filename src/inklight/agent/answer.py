@@ -390,12 +390,17 @@ def _rule_answer(ctx: ToolContext, question: str) -> str:
     return f"best sentence ({s.confidence:.2f})"
 
 
-def grounded(text: str, evidence: str) -> bool:
-    """A conservative NECESSARY check for generated wording — never proof that it is correct.
+_NEGATION = re.compile(r"\b(?:not|no|never|none|neither|nor|without|cannot)\b|n't\b", re.IGNORECASE)
 
-    Every number and capitalised name in ``text`` must occur in the evidence, and in the same order,
-    so "Acme owes Bob" is rejected against "Bob owes Acme". A faithful rewording that reorders them
-    is rejected too; the caller then keeps the extractive answer, which is the safe direction.
+
+def grounded(text: str, evidence: str) -> bool:
+    """A SURFACE check used to discard obviously unfaithful generated wording. Not verification.
+
+    It requires every number and capitalised name in ``text`` to occur in the evidence, in the same
+    order ("Acme owes Bob" fails against "Bob owes Acme"), and the same count of negation words
+    ("Bob owes Acme" fails against "Bob does not owe Acme"). Passing it does NOT establish that the
+    wording states the same fact: paraphrase, scope and quantifiers are not checked. That is why
+    generated wording is never shown as the answer, only beside it and labelled unverified.
     """
     ev = norm(evidence)
     flat = ev.replace(",", "")
@@ -420,10 +425,20 @@ def grounded(text: str, evidence: str) -> bool:
         if pos < 0:
             return False
         positions.append(pos)
-    return positions == sorted(positions)
+    if positions != sorted(positions):
+        return False
+    return len(_NEGATION.findall(text)) == len(_NEGATION.findall(evidence))
+
+
+WRITER_LABEL = "Generated wording (135M writer; not verified, the extractive answer above is what the documents say)"
 
 
 def _maybe_rephrase(ctx: ToolContext, question: str) -> None:
+    """Optional, off by default. The writer can only ADD a labelled line; it never replaces the answer.
+
+    Token presence, entity order and negation counts cannot establish that a rewording states the
+    same fact, so generated text never inherits the evidence status of the extractive answer.
+    """
     writer = ctx.brain.writer
     s = ctx.scratch
     if writer is None or not s.sources or s.confidence < 0.3:
@@ -438,10 +453,8 @@ def _maybe_rephrase(ctx: ToolContext, question: str) -> None:
         text = writer.generate(prompt, max_new_tokens=60, check=ctx.check).split("\n")[0].strip()
     except Exception:  # phrasing is optional
         return
-    if text and norm(short) in norm(text) and grounded(text, evidence + " " + question) and len(text) < 300:
-        s.answer = text + (
-            ("\n\nEvidence:" + s.answer.split("\n\nEvidence:")[1]) if "\n\nEvidence:" in s.answer else ""
-        )
+    if text and norm(short) in norm(text) and grounded(text, evidence) and len(text) < 300:
+        s.answer = f"{s.answer}\n\n{WRITER_LABEL}: {text}"
         s.brain_used.add("writer")
 
 

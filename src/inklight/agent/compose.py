@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..schemas import Record, Source, TaskState
 from .answer import norm
 from .context import ToolContext
+from .expr import describe
 from .plan import Intent, Plan
 
 
@@ -14,13 +15,13 @@ def _fmt(value: object) -> str:
     return "—" if value is None else str(value)
 
 
-def table_text(records: list[Record], limit: int = 25) -> str:
+def table_text(records: list[Record], limit: int = 25, columns: tuple[str, ...] = ()) -> str:
     if not records:
         return ""
-    cols = list(records[0].flat())
+    cols = list(records[0].flat(columns))
     lines = [" | ".join(cols)]
     for record in records[:limit]:
-        row = record.flat()
+        row = record.flat(columns)
         lines.append(" | ".join(_fmt(row.get(c)) for c in cols))
     if len(records) > limit:
         lines.append(f"… and {len(records) - limit} more")
@@ -55,26 +56,39 @@ def _record_sources(records: list[Record]) -> list[Source]:
 def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
     s = ctx.scratch
     docs = ctx.docs()
+    cols = plan.fields
+    if plan.blocked:
+        s.confidence = 0.0
+        return _with_interpretation(
+            plan, "Nothing was run, to avoid guessing what you meant:\n" + "\n".join(f"- {b}" for b in plan.blocked)
+        )
     if state == TaskState.FAILED and not s.answer and not s.records:
         return "The task could not be completed. " + (s.warnings[-1] if s.warnings else "")
     if state == TaskState.CANCELLED and not s.answer:
         return "The task was stopped before it finished (cancelled or out of time)."
+    where = describe(plan.where) if plan.where is not None else ""
+    matched = f" (matching {where})" if where else ""
     match plan.intent:
         case Intent.EXTRACT | Intent.INCONSISTENCIES if s.records and not s.answer:
             s.sources = s.sources or _record_sources(s.records)
             s.confidence = _mean_conf(s.records)
-            text = f"Extracted {', '.join(plan.fields)} from {len(s.records)} document(s):\n\n{table_text(s.records)}"
+            text = (
+                f"Extracted {', '.join(cols)} from {len(s.records)} document(s){matched}:\n\n"
+                f"{table_text(s.records, columns=cols)}"
+            )
+        case Intent.EXTRACT if plan.where is not None and not s.records:
+            s.confidence = 0.6
+            text = f"No documents match {where}."
         case Intent.EXTRACT:
             text = s.answer or "No fields could be extracted."
         case Intent.FILTER:
             s.sources = _record_sources(s.records)
             s.confidence = _mean_conf(s.records) if s.records else 0.6
-            conds = (" or " if plan.match == "any" else " and ").join(c.describe() for c in plan.conditions)
             text = (
-                f"{len(s.records)} of {len(s.records) + len(s.excluded)} document(s) match {conds}:\n\n"
-                f"{table_text(s.records)}"
+                f"{len(s.records)} of {len(s.records) + len(s.excluded)} document(s) match {where}:\n\n"
+                f"{table_text(s.records, columns=cols)}"
                 if s.records
-                else f"No documents match {conds}."
+                else f"No documents match {where}."
             )
         case Intent.AGGREGATE:
             calc = s.calc or {}
@@ -85,14 +99,15 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
                 per_unit = " · ".join(f"{u} {_fmt(v)}" for u, v in calc["by_unit"].items())
                 text = (
                     f"No single {calc.get('op', '')}: the {calc.get('field', '')} values are in different "
-                    f"currencies and are not converted. By currency: {per_unit}\n\n{table_text(s.records)}"
+                    f"currencies and are not converted. By currency: {per_unit}\n\n"
+                    f"{table_text(s.records, columns=cols)}"
                 )
             else:
                 unit = f" {calc['unit']}" if calc.get("unit") else ""
                 text = (
                     f"{calc.get('op', '')} of {calc.get('field', '')}: {_fmt(calc.get('result'))}{unit} "
-                    f"(over {calc.get('count', 0)} document(s); computed exactly, not by a model)\n\n"
-                    f"{table_text(s.records)}"
+                    f"(over {calc.get('count', 0)} document(s){matched}; computed exactly, not by a model)\n\n"
+                    f"{table_text(s.records, columns=cols)}"
                 )
         case Intent.COUNT:
             kinds: dict[str, int] = {}
@@ -109,6 +124,8 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
             )
         case _:
             text = s.answer
+            if plan.where is not None and not docs:
+                text = f"No documents match {where}, so there was nothing to {plan.intent.value}."
     s.sources = verify_sources(ctx, s.sources)
     _flag_injections(ctx)
     text = _with_interpretation(plan, text)
@@ -118,14 +135,18 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
 
 
 def _with_interpretation(plan: Plan, text: str) -> str:
-    """Say how a record-level request was read, and what was NOT applied, before the result."""
-    if plan.intent not in (Intent.FILTER, Intent.AGGREGATE, Intent.EXTRACT, Intent.COUNT):
-        return text
-    if not plan.conditions and not plan.not_understood:
+    """Say how the request was read, and what was NOT applied, before the result."""
+    if plan.where is None and not plan.not_understood and not plan.blocked:
         return text
     head = "Understood as: " + "; ".join(plan.understood()[1:] or plan.understood())
     if plan.not_understood:
-        head += "\nNot applied: " + "; ".join(f"“{x}”" for x in plan.not_understood)
+        head = (
+            "PARTIAL RESULT, not the complete answer to your request.\n"
+            + head
+            + "\nNot applied: "
+            + "; ".join(f"“{x}”" for x in plan.not_understood)
+            + "\nThe documents below match only the parts that were applied."
+        )
     return f"{head}\n\n{text}"
 
 

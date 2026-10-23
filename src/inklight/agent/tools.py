@@ -9,12 +9,13 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 from ..extract import SINGULAR
 from . import analysis, answer
 from .context import ToolContext
-from .plan import Condition
+from .expr import leaves
+from .plan import Expr
 
 _FIELD = r"^[a-z0-9_]{1,40}$"
 
@@ -41,8 +42,13 @@ class FieldsArgs(_Args):
 
 
 class FilterArgs(_Args):
-    conditions: list[Condition] = Field(min_length=1, max_length=10)
-    match: Literal["all", "any"] = "all"
+    where: Expr
+
+    @model_validator(mode="after")
+    def _bounded(self) -> FilterArgs:
+        if len(leaves(self.where)) > 20:
+            raise ValueError("at most 20 conditions")
+        return self
 
 
 class CalcArgs(_Args):
@@ -127,7 +133,7 @@ TOOLS: dict[str, Tool] = {
             "filter_records",
             "Keep records that satisfy all conditions.",
             FilterArgs,
-            lambda c, a: analysis.filter_records(c, a.conditions, match=a.match),
+            lambda c, a: analysis.filter_records(c, a.where),
         ),
         Tool(
             "calculate",

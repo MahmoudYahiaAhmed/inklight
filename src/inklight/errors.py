@@ -45,3 +45,7 @@ class TaskCancelled(InklightError):
 
 class LimitExceeded(InklightError):
     """A configured execution limit (steps, time, pages, size) was hit."""
+
+
+class PlanError(InklightError):
+    """A plan whose steps would not enforce what it claims; refused before anything runs."""
