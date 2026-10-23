@@ -314,7 +314,7 @@ def run(args: argparse.Namespace) -> dict:
         },
         "rows": rows,
     }
-    if hasattr(agent, "close"):
+    if hasattr(agent, "close"):  # 0.1.0 has no close(); its connections end with the process
         agent.close()
     return result
 

@@ -435,11 +435,11 @@ def _value_elsewhere(
             note = f"{len(hits)} values on the {line.text.strip()!r} row and no column title; took the last"
             out.append((spec.name, _Candidate(value, raw, lines[j], 0.5, "label-row", {"warning": note})))
         return out
-    j = layout.below(lines, i)
-    if j is None or is_label(lines[j].text):
+    under = layout.below(lines, i)
+    if under is None or is_label(lines[under].text):
         return []
-    parsed = _cell_value(spec.type, lines[j].text, day_first)
-    return [(spec.name, _Candidate(parsed[0], parsed[1], lines[j], 0.8, "label-below"))] if parsed else []
+    parsed = _cell_value(spec.type, lines[under].text, day_first)
+    return [(spec.name, _Candidate(parsed[0], parsed[1], lines[under], 0.8, "label-below"))] if parsed else []
 
 
 _SPACE_GROUPED = re.compile(r"\d{1,3}(?: \d{3})+(?:[.,]\d{2})?")

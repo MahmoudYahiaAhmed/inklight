@@ -4,7 +4,7 @@
                  ┌──────────── user request (the only source of plans) ────────────┐
                  ▼                                                                  │
  CLI / Python API / Web UI ──► Planner ──► typed Plan (intent, fields, conditions, steps)
-                                  │ rules (measured 100% on the 40-request set)
+                                  │ rules (in-distribution 40/40; 17 external request forms: 13/13 exact, 4/4 abstained)
                                   │ + optional remote model (validated against the same schema)
                                   ▼
                                Runner ── max steps · time budgets · retries · cancel · trace
@@ -38,7 +38,7 @@
 | `store.py` | SQLite repository (WAL, FTS5 with Porter stemming, cascade deletes, task history). |
 | `library.py` | Incremental ingest: an unchanged file is skipped, identical content at a new path reuses its OCR, and a changed file is re-read. |
 | `retrieval.py` | BM25 always; with the embedder installed, semantic search fused with BM25 by reciprocal-rank fusion. |
-| `extract/` | Money/date/number parsing, document classification, label-based typed fields with provenance and arithmetic checks. |
+| `extract/` | Money/date/number parsing, document classification, label-based typed fields with provenance and arithmetic checks. `layout.py` finds a lone label's value by page geometry: same row to the right, else same column below; a multi-value summary row is resolved by its column titles. |
 | `brains/` | Lazy model loading (`rules` / `auto` / `local`), three ONNX Runtime models, an optional OpenAI-compatible remote model. |
 | `agent/` | Plan schema, rule planner, tool registry, bounded runner, answer and analysis tools, composition and citation verification. |
 | `server/` | FastAPI app with the security middleware, page rendering for overlays, and the static UI. |
@@ -73,7 +73,9 @@ checked against a reference, and unseen paraphrases. The paraphrase rule is "exa
 We measured it. Used as a zero-shot intent classifier (log-likelihood ranking over 10 labels, the most
 reliable way to use a small model), SmolLM2-135M-Instruct scored **27.5%** on the 40-request planner set.
 The deterministic planner scored **100%** on that set (see `docs/BENCHMARKS.md` — the set was written
-alongside the planner, so treat 100% as an upper bound, not a generalisation claim). So the small models
+alongside the planner, so treat 100% as an upper bound, not a generalisation claim). On 17 request forms
+run end to end over held-out external documents, 13 of 13 supported forms returned exactly the right
+documents and 4 of 4 unsupported ones were reported rather than guessed. So the small models
 do what they are good at:
 
 * **Reader (66M, extractive QA).** It points at a span of the evidence. It cannot produce text that is

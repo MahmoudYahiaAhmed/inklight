@@ -46,6 +46,43 @@ defects below.** Upgrade once 0.1.1 is published.
   are documented as heuristics, not calibrated probabilities.
 - The `TaskState` enum gained `unsupported`.
 
+### Fixed after evaluating on external documents (third review)
+Found by running real OCR on Voxel51 invoices and CORD receipts (dev splits; see
+[docs/BENCHMARKS.md](docs/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:
+synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine receipts 3.2% → 68.5%.
+- **Two-column layouts took the wrong value.** In a "Seller: / Client:" block, the line after a label in
+  reading order belongs to the other column, so an IBAN or the seller's name was returned as the customer.
+  When lines have boxes, a lone label now takes the value to its right on the same row, or else the value
+  below it in the same column.
+- **Summary rows** ("Total  $ 2 205,34  $ 220,53  $ 2 425,87") are resolved by their column titles (Net worth →
+  subtotal, VAT → tax, Gross worth → total). A row without titles is flagged, not guessed.
+- **Amounts**: `$ 2 425,87` (spaces after a currency symbol), `16,363` / `7.000` / `Rp. 28.636`
+  (thousands-grouped amounts without cents, IDR), an amount OCR split into `177` `870`, and a label followed
+  by a rate ("Tax 10%"). A money cell must account for every digit in it.
+- Cash tendered and change are never the inferred total.
+- Indonesian tax labels (`pajak`, `ppn`, `pb1`, `p.rest`), plus `net worth` and `gross worth`.
+- **Possessive requests**: "Show acme's invoices", curly apostrophes, the name first ("Acme's invoices above
+  $5,000"), and coordinated owners. A possessive owner stops at a preposition ("terms on Acme's" → Acme) unless
+  the preposition joins capitalised words ("Bank of America's").
+- **Questions that name their document** ("What are the payment terms on the Acme invoice?") are answered
+  only from documents matching that name. Before, the answer could come from another vendor's invoice.
+  Such a question is no longer turned into a list of records.
+- "from March" (a month without a year, after from/for/since/before/after/until) is reported as not
+  applied. Before, it returned every document as a success.
+- Words a request contains but no condition used are reported (a closed vocabulary), not ignored.
+
+### Changed (third review)
+- **Explicit, idempotent cleanup.** `DocumentAgent`, `Library` and `Store` have `close()` and are context
+  managers. Each closes only what it created. `close()` cancels running tasks and waits for them, and using
+  a closed store raises `StoreClosed`. The CLI closes its agents when a command ends. The server closes the
+  agents it owns at shutdown, but not one passed in. Tests open and close resources with no
+  `ResourceWarning`, and no warnings are filtered globally.
+- `Brain.usage()` reports, per component, whether its model loaded, its inference calls and any fallback reason.
+- New `bench/prepare_external.py`, `bench/external.py` and `bench/summarize_external.py`: external
+  evaluation with provenance (commit, wheel hash, `inklight.__file__`), ONNX call counts per model, and
+  four-way scoring (correct / abstained / wrong flagged / wrong silent).
+- Documentation states measured results instead of general reliability claims.
+
 ## [0.1.0] — 2026-10-23
 
 First public release candidate.

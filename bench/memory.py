@@ -10,11 +10,11 @@ sys.path.insert(0, {root!r})
 from bench.run import peak_rss_mb
 from inklight import DocumentAgent
 from inklight.config import load_settings
-agent = DocumentAgent(load_settings(home={home!r}, models={{"brain": {brain!r}}}))
-agent.add([{docs!r}])
-agent.ask("What was revenue growth in Q2?")
-agent.ask("Find all invoices above $5,000")
-print(peak_rss_mb())
+with DocumentAgent(load_settings(home={home!r}, models={{"brain": {brain!r}}})) as agent:
+    agent.add([{docs!r}])
+    agent.ask("What was revenue growth in Q2?")
+    agent.ask("Find all invoices above $5,000")
+    print(peak_rss_mb())
 """
 
 if __name__ == "__main__":

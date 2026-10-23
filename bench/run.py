@@ -468,6 +468,7 @@ def main() -> None:  # noqa: C901 - a linear script
             res = agent.run_plan(agent.plan(request), demo_ids, save=False)
             lat[res.intent] = round((time.perf_counter() - t) * 1000, 1)
         results[f"task_latency_ms_{brain}"] = lat
+        agent.close()
 
     # --- planner accuracy: rules vs the 135M writer as a zero-shot classifier -----------------
     from inklight.agent.planner import rule_plan
@@ -518,6 +519,7 @@ def main() -> None:  # noqa: C901 - a linear script
     pr.enable()
     agent.add([synth])
     pr.disable()
+    agent.close()
     stats = pstats.Stats(pr)
     total = stats.total_tt  # type: ignore[attr-defined]
     buckets = {"indra_ocr_python": 0.0, "inklight_python": 0.0, "native_c_calls": 0.0, "other_python": 0.0}
