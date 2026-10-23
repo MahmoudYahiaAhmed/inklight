@@ -72,7 +72,20 @@ CATALOG: dict[str, FieldSpec] = {
         FieldSpec(
             "tax",
             "money",
-            ("total tax", "sales tax", "tax amount", "vat", "gst", "hst", "tax", "pajak", "ppn"),
+            (
+                "total tax",
+                "sales tax",
+                "tax amount",
+                "vat",
+                "gst",
+                "hst",
+                "tax",
+                "pajak",
+                "ppn",
+                "pb1",
+                "p.rest",
+                "p. rest",
+            ),
             "Tax amount",
         ),
         FieldSpec(
@@ -364,8 +377,9 @@ def _find_candidates(
             tail = line.text[end:stop]
             parsed = parse_typed(spec.type, tail, day_first)
             quality = 1.0 if line.text[:end].rstrip().endswith((":", "#")) else 0.9
-            # A label alone on its line, or followed only by words ("Pajak Resto"), has its value elsewhere.
-            if parsed is None and (not tail.strip() or (spec.type != "text" and not re.search(r"\d", tail))):
+            # A label alone on its line, or followed by no value of its type ("Pajak Resto", "Tax 10%"),
+            # has its value elsewhere.
+            if parsed is None and (not tail.strip() or spec.type != "text"):
                 for name, cand in _value_elsewhere(lines, i, spec, day_first, is_label_line, header_field):
                     if name in found:
                         found[name].append(cand)
@@ -399,7 +413,7 @@ def _value_elsewhere(
     row = [j for j in layout.row_right(lines, i) if not is_label(lines[j].text)]
     if spec.type == "text":  # a name belongs to its label only when it sits close by
         row = [j for j in row if layout.gap(line.bbox, lines[j].bbox) <= _TEXT_GAP][:1]  # type: ignore[arg-type]
-    hits = [(j, p) for j in row if (p := _cell_value(spec.type, lines[j].text, day_first)) is not None]
+    hits = [(j, p) for j, text in _row_cells(lines, row) if (p := _cell_value(spec.type, text, day_first)) is not None]
     if len(hits) == 1:
         j, (value, raw) = hits[0]
         return [(spec.name, _Candidate(value, raw, lines[j], 0.9, "label-row"))]
@@ -428,9 +442,30 @@ def _value_elsewhere(
     return [(spec.name, _Candidate(parsed[0], parsed[1], lines[j], 0.8, "label-below"))] if parsed else []
 
 
+_SPACE_GROUPED = re.compile(r"\d{1,3}(?: \d{3})+(?:[.,]\d{2})?")
+
+
+def _row_cells(lines: list[_Line], row: list[int]) -> list[tuple[int, str]]:
+    """Row cells left to right, rejoining an amount OCR split into groups ("177" "870" -> "177 870")."""
+    cells: list[tuple[int, str]] = []
+    for j in row:
+        text = lines[j].text.strip()
+        if cells and re.fullmatch(r"\d{3}(?:[.,]\d{2})?", text) and re.fullmatch(r"[\d ]+", cells[-1][1]):
+            prev = lines[cells[-1][0]].bbox
+            if prev and layout.gap(prev, lines[j].bbox) < 1.5:  # type: ignore[arg-type]
+                cells[-1] = (j, f"{cells[-1][1]} {text}")
+                continue
+        cells.append((j, text))
+    return cells
+
+
 def _cell_value(ftype: FieldType, text: str, day_first: bool) -> tuple[Any, str] | None:
     """A value read from a cell of its own; an amount must account for every digit in the cell,
     so "14 709,00" is never read as 709,00 and "1 x 28,636" never as one of its numbers."""
+    if ftype == "money" and _SPACE_GROUPED.fullmatch(text.strip()):
+        # The whole cell is one amount, so its spaces group thousands: "154 000" -> "154,000".
+        sep = "" if re.search(r"[.,]\d{2}$", text.strip()) else ","
+        text = text.strip().replace(" ", sep)
     parsed = parse_typed(ftype, text, day_first)
     if parsed is None or ftype != "money":
         return parsed
@@ -448,7 +483,9 @@ def _fallback(spec: FieldSpec, lines: list[_Line], day_first: bool = False) -> _
                 return _Candidate(d, line.text, line, 0.5, "first-date")
     if spec.type == "money" and spec.name in ("total", "amount"):
         best: tuple[Decimal, _Line] | None = None
-        for line in lines:
+        for k, line in enumerate(lines):
+            if _is_payment(lines, k):
+                continue
             for value in all_money(line.text):
                 if best is None or value > best[0]:
                     best = (value, line)
@@ -469,6 +506,26 @@ def _fallback(spec: FieldSpec, lines: list[_Line], day_first: bool = False) -> _
             if parsed:
                 return _Candidate(parsed[0], parsed[1], line, 0.6, f"first-{spec.type}")
     return None
+
+
+_PAYMENT = re.compile(
+    r"\b(cash|change|kembali(?:an)?|tunai|card|debit|credit|paid|tendered|bayar|payment)\b", re.IGNORECASE
+)
+
+
+def _is_payment(lines: list[_Line], k: int) -> bool:
+    """Money handed over or given back ("Cash 100,000", "Change 33,500") is not what the document costs."""
+    if _PAYMENT.search(lines[k].text):
+        return True
+    me = lines[k].bbox
+    return me is not None and any(
+        ln.page == lines[k].page
+        and ln.bbox is not None
+        and ln.bbox[2] <= me[0] + 4
+        and layout.same_row(me, ln.bbox)
+        and _PAYMENT.search(ln.text)
+        for ln in lines
+    )
 
 
 def _source(doc: DocumentInfo, line: _Line) -> Source:

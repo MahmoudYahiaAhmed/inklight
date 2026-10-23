@@ -111,3 +111,36 @@ def test_currency_led_space_groups_and_grouped_integers():
     assert parse_money("16,363") == (Decimal("16363"), None)
     assert parse_money("2 150.00") == (Decimal("150.00"), None)  # unchanged: no currency, could be qty + price
     assert parse_money("Invoice 2041") is None
+
+
+def test_receipt_amount_split_into_groups_and_space_grouped_cells():
+    pages = _placed(
+        ("Subtotal", 207, 855, 339, 882),
+        ("154 000", 642, 861, 769, 887),
+        ("Pajak Rest 102", 209, 904, 441, 935),
+        ("16", 658, 916, 698, 941),
+        ("170", 711, 916, 770, 943),
+        ("8. Total", 163, 941, 292, 991),
+        ("177", 640, 946, 701, 988),
+        ("870", 711, 947, 773, 992),
+    )
+    got = _get(pages, "subtotal", "tax", "total")
+    assert (got["subtotal"].value, got["tax"].value, got["total"].value) == (154000.0, 16170.0, 177870.0)
+
+
+def test_tax_label_with_a_rate_takes_the_amount_beside_it():
+    pages = _placed(("Tax 10%", 100, 100, 220, 120), ("$4.50", 600, 100, 680, 120))
+    assert _get(pages, "tax")["tax"].value == 4.5
+
+
+def test_cash_tendered_is_never_the_inferred_total():
+    pages = _placed(
+        ("Mango Float", 100, 100, 300, 120),
+        ("5,909", 600, 100, 680, 120),
+        ("Cash", 100, 200, 180, 220),
+        ("100,000", 600, 200, 700, 220),
+        ("Kembali", 100, 240, 220, 260),
+        ("94,091", 600, 240, 700, 260),
+    )
+    total = _get(pages, "total")["total"]
+    assert total.value == 5909.0 and total.method == "largest-amount" and total.warning
