@@ -42,6 +42,7 @@ class FieldsArgs(_Args):
 
 class FilterArgs(_Args):
     conditions: list[Condition] = Field(min_length=1, max_length=10)
+    match: Literal["all", "any"] = "all"
 
 
 class CalcArgs(_Args):
@@ -126,7 +127,7 @@ TOOLS: dict[str, Tool] = {
             "filter_records",
             "Keep records that satisfy all conditions.",
             FilterArgs,
-            lambda c, a: analysis.filter_records(c, a.conditions),
+            lambda c, a: analysis.filter_records(c, a.conditions, match=a.match),
         ),
         Tool(
             "calculate",

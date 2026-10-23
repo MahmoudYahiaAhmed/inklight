@@ -184,16 +184,29 @@ function csvDownload(records) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
+function confBar(label, value, title) {
+  const pct = Math.round((value || 0) * 100);
+  return h("span", { class: `conf ${pct < 50 ? "low" : ""}`, title }, label, " ", h("span", { class: "bar" }, h("i", { style: `width:${pct}%` })), `${pct}%`);
+}
+
 function resultCard(r) {
-  const pct = Math.round(r.confidence * 100);
   const table = r.records.length && ["extract", "filter", "aggregate", "inconsistencies", "compare"].includes(r.intent) ? recordsTable(r.records) : null;
-  const answer = table && ["extract", "filter", "aggregate"].includes(r.intent) ? r.answer.split("\n\n")[0] : r.answer;
+  const parts = r.answer.split("\n\n");
+  if (parts[0].startsWith("Understood as")) parts.shift();  // shown as its own block below
+  const answer = table && ["extract", "filter", "aggregate"].includes(r.intent) ? parts[0] || "" : parts.join("\n\n");
+  const understood = (r.interpretation || []).length || (r.not_understood || []).length
+    ? h("div", { class: "understood" },
+        h("div", {}, h("b", {}, "Understood as: "), (r.interpretation || []).join(" · ")),
+        (r.not_understood || []).length ? h("div", { class: "not-applied" }, h("b", {}, "Not applied: "), r.not_understood.map((x) => `“${x}”`).join(", ")) : null)
+    : null;
   return h("article", { class: "card" },
     h("div", { class: "card-head" },
       h("div", { class: "req" }, r.request),
       h("span", { class: `state ${r.state}` }, r.state), h("span", {}, r.intent),
-      h("span", { class: "conf", title: "Evidence-weighted confidence" }, h("span", { class: "bar" }, h("i", { style: `width:${pct}%` })), `${pct}%`),
+      confBar("understood", r.interpretation_confidence, "How sure the agent is that it read your request correctly"),
+      confBar("evidence", r.evidence_confidence, "How well the documents support the result (OCR, labels, cross-checks)"),
       h("span", {}, `${Math.round(r.duration_ms)} ms`), h("span", { title: "Which models were used" }, r.brain)),
+    understood,
     h("div", { class: "answer" }, answer),
     table,
     r.records.length ? h("div", { class: "actions" }, h("button", { class: "ghost small", type: "button", onclick: () => csvDownload(r.records) }, "Download CSV")) : null,

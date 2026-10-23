@@ -40,6 +40,7 @@ class Scratch:
     files: list[str] = field(default_factory=list)
     calc: dict[str, Any] | None = None
     brain_used: set[str] = field(default_factory=set)
+    partial: bool = False  # a tool could only do part of the job (e.g. mixed currencies)
 
     def warn(self, message: str) -> None:
         if message not in self.warnings:

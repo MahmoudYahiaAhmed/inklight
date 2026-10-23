@@ -274,7 +274,8 @@ def _field_shortcut(ctx: ToolContext, question: str) -> bool:
         doc = ctx.library.get(doc_id)
         if doc is None:
             continue
-        value = extract_record(doc, ctx.pages(doc_id), [spec]).fields[spec.name]
+        day_first = ctx.settings.extraction.day_first
+        value = extract_record(doc, ctx.pages(doc_id), [spec], day_first=day_first).fields[spec.name]
         if value.value is None or not value.method.startswith("label") or value.source is None:
             continue
         shown = _fmt(value.value, spec.type)
@@ -328,7 +329,8 @@ def _reader_answer(ctx: ToolContext, question: str) -> str | None:
         fit = 1.3 if kind and _fits(kind, span.text) else (0.6 if kind else 1.0)
         context = evidence[span.passage].excerpt[max(0, span.start - 120) : span.end + 40]
         overlap = len(q_terms & {_stem(w) for w in words(context)}) / max(len(q_terms), 1)
-        return span.score * rank_weight * fit * (0.5 + overlap)
+        # A span whose surroundings share no word with the question answers some other question.
+        return span.score * rank_weight * fit * (0.15 + overlap)
 
     best = max(spans, key=combined)
     src = evidence[best.passage]
@@ -389,16 +391,36 @@ def _rule_answer(ctx: ToolContext, question: str) -> str:
 
 
 def grounded(text: str, evidence: str) -> bool:
-    """Every number and every capitalised name in ``text`` must occur in the evidence."""
+    """A conservative NECESSARY check for generated wording — never proof that it is correct.
+
+    Every number and capitalised name in ``text`` must occur in the evidence, and in the same order,
+    so "Acme owes Bob" is rejected against "Bob owes Acme". A faithful rewording that reorders them
+    is rejected too; the caller then keeps the extractive answer, which is the safe direction.
+    """
     ev = norm(evidence)
-    for num in re.findall(r"\d[\d,.]*\d|\d", text):
-        if num.replace(",", "") not in ev.replace(",", ""):
+    flat = ev.replace(",", "")
+    positions: list[int] = []
+    # Numbers glued to letters ("Q2", "INV-2041") are labels, not quantities.
+    entities = re.findall(
+        r"\b[A-Z][a-zA-Z]{2,}(?:\s+[A-Z][a-zA-Z]{2,})*|(?<![A-Za-z\d-])\d(?:[\d,.]*\d)?(?![A-Za-z\d])", text
+    )
+    for entity in entities:
+        if entity[0].isdigit():
+            pos = flat.find(entity.replace(",", ""))
+            if pos < 0:
+                return False
+            positions.append(pos)
+            continue
+        first = entity.split()[0].lower()
+        if first in _STOP:
+            continue
+        pos = flat.find(entity.lower())  # one coordinate system for names and numbers
+        if pos < 0:
+            pos = flat.find(first)
+        if pos < 0:
             return False
-    for name in re.findall(r"\b[A-Z][a-zA-Z]{2,}(?:\s+[A-Z][a-zA-Z]{2,})*", text):
-        first = name.split()[0].lower()
-        if first not in _STOP and first not in ev and name.lower() not in ev:
-            return False
-    return True
+        positions.append(pos)
+    return positions == sorted(positions)
 
 
 def _maybe_rephrase(ctx: ToolContext, question: str) -> None:

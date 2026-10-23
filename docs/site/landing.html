@@ -147,7 +147,7 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var
       <div class="cta">
         <div class="install"><span>$</span><code id="pip">pip install inklight</code><button class="copy" type="button" id="copy-btn">Copy</button></div>
       </div>
-      <div class="facts"><span><b>44 ms</b> per PDF page</span><span><b>98.8%</b> field accuracy</span><span><b>0</b> API keys needed</span></div>
+      <div class="facts"><span><b>43 ms</b> per PDF page</span><span><b>Every</b> wrong value flagged</span><span><b>0</b> API keys needed</span></div>
     </div>
 
     <div class="demo" aria-label="Example: an invoice with the total highlighted, and the agent's answer">
@@ -186,7 +186,7 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var
       <div><b>READ</b><h3>Indra OCR</h3><p>Uses a PDF's own text layer first and OCRs only where needed. Keeps layout blocks, reading order, boxes and per-line confidence.</p></div>
       <div><b>PLAN</b><h3>Typed steps</h3><p>Intent, fields and conditions are parsed into a plan of allow-listed tools. There is no shell and no code execution.</p></div>
       <div><b>ACT</b><h3>Bounded run</h3><p>Step limits, time budgets, retries and cancellation. Arithmetic is done in exact decimals, not by a model.</p></div>
-      <div><b>VERIFY</b><h3>Evidence check</h3><p>Citations are matched against the stored text. Totals are cross-checked, and low-confidence values carry warnings.</p></div>
+      <div><b>VERIFY</b><h3>Evidence check</h3><p>Tells you how it read your request and anything it could not apply. Citations are matched against the stored text, totals are cross-checked, and currencies are never mixed.</p></div>
     </div>
   </div>
 </section>
@@ -220,12 +220,12 @@ footer { padding-block: 40px 56px; border-top: 1px solid var(--line); color: var
       <h2>Fast on a laptop CPU.</h2>
     </div>
     <div class="numbers">
-      <div class="num"><div class="v">44<small> ms</small></div><div class="k">per digital PDF page (median)</div></div>
-      <div class="num"><div class="v">97<small> ms</small></div><div class="k">per noisy scanned page (median)</div></div>
-      <div class="num"><div class="v">98.8<small>%</small></div><div class="k">of 240 invoice fields correct; all 3 misses were flagged</div></div>
+      <div class="num"><div class="v">43<small> ms</small></div><div class="k">per digital PDF page (median)</div></div>
+      <div class="num"><div class="v">98<small> ms</small></div><div class="k">per noisy scanned page (median)</div></div>
+      <div class="num"><div class="v">96.7<small>%</small></div><div class="k">of 240 fields across 3 invoice layouts; all 8 misses flagged</div></div>
       <div class="num"><div class="v">446<small> MB</small></div><div class="k">peak memory, offline rules mode</div></div>
     </div>
-    <p class="foot-note">Measured with the bundled <code>bench/run.py</code> on a 16-thread AMD laptop CPU (Windows, Python 3.13) over 40 generated invoices (20 digital, 20 rotated and noisy scans) and 8 mixed documents. Synthetic business documents are easier than handwriting or complex tables. Run the suite on your own hardware.</p>
+    <p class="foot-note">Measured with the bundled <code>bench/run.py</code> on a 16-thread AMD laptop CPU (Windows, Python 3.13) over 40 generated invoices in three layouts (20 digital, 20 rotated and noisy scans) and 8 mixed documents. These are generated test documents, not unseen real-world ones, and they are easier than handwriting or complex tables. Run the suite on your own hardware.</p>
   </div>
 </section>
 

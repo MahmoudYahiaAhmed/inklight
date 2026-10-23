@@ -159,11 +159,9 @@ class DocumentAgent:
             # Custom specs carry labels/types the planner cannot know; extract them directly.
             from ..extract import extract_record
 
-            return [
-                extract_record(self.library.get(i), self.library.pages(i), specs)  # type: ignore[arg-type]
-                for i in scope
-                if self.library.get(i)
-            ]
+            docs = [d for d in (self.library.get(i) for i in scope) if d is not None]
+            day_first = self.settings.extraction.day_first
+            return [extract_record(d, self.library.pages(d.id), specs, day_first=day_first) for d in docs]
         result = self.run_plan(plan.model_copy(update={"steps": steps_for(plan)}), scope, save=False)
         if result.state == TaskState.FAILED:
             raise InputRejected(result.answer)

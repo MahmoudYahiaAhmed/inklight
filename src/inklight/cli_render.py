@@ -77,12 +77,23 @@ def result_panel(result: AgentResult, show_trace: bool = False) -> None:
         (result.intent, "bold"),
         ("  ·  ", "muted"),
         (result.state.value, "ok" if result.ok else "bad"),
-        ("  ·  confidence ", "muted"),
-        (f"{result.confidence:.2f}", conf_style(result.confidence)),
+        ("  ·  understood ", "muted"),
+        (f"{result.interpretation_confidence:.2f}", conf_style(result.interpretation_confidence)),
+        ("  ·  evidence ", "muted"),
+        (f"{result.evidence_confidence:.2f}", conf_style(result.evidence_confidence)),
     )
-    body: list = [Text(result.answer)]
+    parts = result.answer.split("\n\n")
+    head = parts.pop(0) if parts and parts[0].startswith("Understood as") else None
+    body: list = []
+    if head:
+        for line in head.splitlines():
+            style = "warn" if line.startswith("Not applied") else "muted"
+            body.append(Text(line, style))
+        body.append(Text(""))
     if result.records and result.intent in ("extract", "filter", "aggregate", "inconsistencies"):
-        body = [Text(result.answer.split("\n\n")[0]), Text(""), records_table(list(result.records))]
+        body += [Text(parts[0] if parts else ""), Text(""), records_table(list(result.records))]
+    else:
+        body.append(Text("\n\n".join(parts)))
     console.print(Panel(Group(*body), title=title, title_align="left", border_style=CYAN, padding=(1, 2)))
     if result.sources:
         console.print(Text("Evidence", "accent"))

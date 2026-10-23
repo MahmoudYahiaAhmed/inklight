@@ -21,52 +21,12 @@ from pydantic import ValidationError
 from ..brains import Brain
 from ..errors import ModelUnavailable
 from ..extract import SINGULAR, resolve_field
-from ..extract.values import parse_dates, parse_number
+from . import conditions as _cond
 from .plan import Condition, Intent, Plan, Step
 
 log = logging.getLogger(__name__)
 
 _MONEY_FIELDS = {"tax", "subtotal", "total", "contract_value", "amount"}
-_CMP = {
-    "above": "gt",
-    "over": "gt",
-    "greater than": "gt",
-    "more than": "gt",
-    "exceeding": "gt",
-    "exceeds": "gt",
-    "higher than": "gt",
-    "larger than": "gt",
-    ">": "gt",
-    "at least": "ge",
-    ">=": "ge",
-    "minimum of": "ge",
-    "below": "lt",
-    "under": "lt",
-    "less than": "lt",
-    "lower than": "lt",
-    "smaller than": "lt",
-    "<": "lt",
-    "at most": "le",
-    "<=": "le",
-    "maximum of": "le",
-    "equal to": "eq",
-    "exactly": "eq",
-}
-_CMP_RE = re.compile(
-    r"(?:(?P<field>tax|subtotal|total|amount|value|vat|price)\s+(?:is\s+|of\s+)?)?"
-    r"(?P<op>" + "|".join(sorted((re.escape(k) for k in _CMP), key=len, reverse=True)) + r")\s*"
-    r"(?P<cur>[$€£])?\s*(?P<num>\d[\d,]*(?:\.\d+)?)\s*(?P<mult>k|m|thousand|million)?\b"
-    # "under 30 days" or "at least 2 pages" are not amounts.
-    r"(?!\s*(?:days?|weeks?|months?|years?|pages?|items?|docs?|documents?|files?|lines?|%))",
-    re.IGNORECASE,
-)
-_WITHIN_RE = re.compile(
-    r"\b(?P<what>expir\w*|due|end(?:s|ing)?|renew\w*|terminat\w*)\b[^.]{0,30}?\b(?:within|in the next|in)\s+"
-    r"(?P<n>\d+)\s*(?P<unit>day|week|month|year)s?",
-    re.IGNORECASE,
-)
-_DATE_CMP_RE = re.compile(r"\b(?P<op>before|after|since|until|prior to)\s+(?P<rest>.{4,30})", re.IGNORECASE)
-
 _FIELD_LEAD = re.compile(
     r"(?:\bcsv\s+(?:file\s+)?(?:of|with)|\bjson\s+(?:file\s+)?(?:of|with)|\btable\s+(?:of|with)|\bextract(?:ing)?|"
     r"\bpull(?:\s+out)?|\bget|\blist|\bcolumns?|\bfields?|\bcontaining|\bwith columns)\s+(?P<rest>.+)",
@@ -137,33 +97,6 @@ def _doc_type(text: str) -> str | None:
     return None
 
 
-def _conditions(request: str, today: date) -> list[Condition]:
-    conds: list[Condition] = []
-    for m in _CMP_RE.finditer(request):
-        num = parse_number(m.group("num"))
-        if num is None:
-            continue
-        mult = (m.group("mult") or "").lower()
-        if mult in ("k", "thousand"):
-            num *= 1000
-        elif mult in ("m", "million"):
-            num *= 1_000_000
-        field = (m.group("field") or "total").lower()
-        field = {"amount": "total", "price": "total", "value": "contract_value", "vat": "tax"}.get(field, field)
-        conds.append(Condition(field=field, op=_CMP[m.group("op").lower()], value=float(num)))  # type: ignore[arg-type]
-    for m in _WITHIN_RE.finditer(request):
-        days = int(m.group("n")) * {"day": 1, "week": 7, "month": 30, "year": 365}[m.group("unit").lower()]
-        field = "due_date" if m.group("what").lower().startswith("due") else "expiry_date"
-        conds.append(Condition(field=field, op="within_days", value=days))
-    for m in _DATE_CMP_RE.finditer(request):
-        hits = parse_dates(m.group("rest"))
-        if hits:
-            op = "before" if m.group("op").lower() in ("before", "until", "prior to") else "after"
-            field = "expiry_date" if re.search(r"\b(expir\w*|end(?:s|ing)?)\b", request, re.I) else "date"
-            conds.append(Condition(field=field, op=op, value=hits[0][0].isoformat()))  # type: ignore[arg-type]
-    return conds
-
-
 def _output(text: str) -> tuple[str | None, str | None]:
     fmt = None
     if re.search(r"\b(csv|spreadsheet|excel)\b", text):
@@ -186,7 +119,8 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
     today = today or date.today()
     text = request.lower().strip()
     fields = _fields(request)
-    conds = _conditions(request, today)
+    parsed = _cond.parse(request, today)
+    conds = parsed.conditions
     doc_type = _doc_type(text)
     output, output_name = _output(text)
     confidence = 0.8
@@ -207,7 +141,7 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         text,
     ):
         intent = Intent.FIND
-    elif re.search(
+    elif not conds and re.search(
         r"\b(how many|count|number of)\s+(?:of\s+)?(?:the\s+|my\s+|these\s+)?(documents?|files?|pdfs?|"
         r"pages?|invoices?|contracts?|receipts?|reports?|forms?|letters?|agreements?|bills?)\b",
         text,
@@ -234,13 +168,29 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         intent = Intent.EXTRACT
     elif re.search(r"\b(convert|process|index|ingest|make (?:them |it )?searchable|ocr)\b", text):
         intent = Intent.PROCESS
+    elif doc_type and (parsed.not_understood or re.search(r"\b(list|show|find|which|get|give me)\b", text)):
+        # "find overdue invoices": a record-level request even when no condition was recognised,
+        # so anything not understood is reported rather than answered as free text.
+        intent = Intent.EXTRACT
+        confidence = 0.6
+    elif conds:
+        # A question that carries conditions ("how many invoices above $5,000", "totals from Acme")
+        # is answered over the matching records, never by ignoring the conditions.
+        intent = Intent.FILTER
     else:
         intent = Intent.ASK
         confidence = 0.6 if re.search(r"^(what|who|when|where|which|how|is|are|does|did|why)\b|\?$", text) else 0.4
 
+    # Record-level tasks must apply every constraint; anything the parser could not turn into a
+    # condition is reported, and the task cannot claim full success.
+    not_understood = list(parsed.not_understood) if intent in _RECORD_INTENTS else []
+    if not_understood:
+        confidence = min(confidence, 0.4)
+
     if intent in (Intent.EXTRACT, Intent.FILTER) and not fields:
         fields = _default_fields(doc_type)
-        confidence = min(confidence, 0.7)
+        if intent == Intent.EXTRACT:  # which fields to pull was a guess; a filter's own conditions were not
+            confidence = min(confidence, 0.7)
     if intent == Intent.INCONSISTENCIES and not fields:
         fields = ["customer", "vendor", "email", "phone", "total"]
     for cond in conds:
@@ -257,9 +207,14 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         output_name=output_name,  # type: ignore[arg-type]
         aggregate=aggregate,
         aggregate_field=aggregate_field,
+        match=parsed.match,  # type: ignore[arg-type]
+        not_understood=tuple(not_understood),
         confidence=confidence,
     )  # type: ignore[arg-type]
     return plan.model_copy(update={"steps": steps_for(plan)})
+
+
+_RECORD_INTENTS = {Intent.FILTER, Intent.AGGREGATE, Intent.EXTRACT, Intent.COUNT, Intent.INCONSISTENCIES}
 
 
 def _default_fields(doc_type: str | None) -> list[str]:
@@ -285,12 +240,20 @@ def steps_for(plan: Plan) -> tuple[Step, ...]:
         case Intent.FILTER:
             out += [
                 Step(tool="extract_fields", args={"fields": fields}),
-                Step(tool="filter_records", args={"conditions": [c.model_dump() for c in plan.conditions]}),
+                Step(
+                    tool="filter_records",
+                    args={"conditions": [c.model_dump() for c in plan.conditions], "match": plan.match},
+                ),
             ]
         case Intent.AGGREGATE:
             out.append(Step(tool="extract_fields", args={"fields": fields}))
             if plan.conditions:
-                out.append(Step(tool="filter_records", args={"conditions": [c.model_dump() for c in plan.conditions]}))
+                out.append(
+                    Step(
+                        tool="filter_records",
+                        args={"conditions": [c.model_dump() for c in plan.conditions], "match": plan.match},
+                    )
+                )
             out.append(Step(tool="calculate", args={"op": plan.aggregate, "field": plan.aggregate_field}))
         case Intent.COMPARE:
             out.append(Step(tool="compare_documents", args={"fields": fields}))

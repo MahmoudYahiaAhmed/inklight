@@ -4,244 +4,398 @@
     "platform": "Windows AMD64",
     "cpu_count": 16,
     "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
-    "date": "2026-10-23"
+    "date": "2026-10-24"
   },
-  "import_s": 0.302,
-  "cli_version_s": 0.459,
-  "indra_load_s": 0.68,
+  "import_s": 0.259,
+  "cli_version_s": 0.441,
+  "indra_load_s": 0.75,
   "ocr_ms_per_page": {
     "digital_pdf_page": {
-      "median": 44.1,
-      "p90": 49.1,
+      "median": 42.6,
+      "p90": 49.2,
       "n": 20
     },
     "scanned_image_page": {
-      "median": 97.3,
-      "p90": 105.7,
+      "median": 97.8,
+      "p90": 106.5,
       "n": 20
     }
   },
+  "fidelity_rules": {
+    "exact_set_accuracy": 0.833,
+    "unsupported_flagged": "3/3",
+    "sum_matches_truth": true,
+    "items": [
+      {
+        "request": "Find invoices above $5,000",
+        "exact": true,
+        "returned": 28,
+        "expected": 28,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne above $2,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices below $1,000 or above $10,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices between $1,000 and $3,000",
+        "exact": true,
+        "returned": 8,
+        "expected": 8,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices not from Wayne",
+        "exact": false,
+        "returned": 30,
+        "expected": 31,
+        "state": "succeeded"
+      },
+      {
+        "request": "how many invoices are above $8,000?",
+        "exact": true,
+        "returned": 13,
+        "expected": 13,
+        "state": "succeeded"
+      }
+    ],
+    "unsupported": [
+      {
+        "request": "Find invoices that were paid late",
+        "flagged": true,
+        "not_understood": [
+          "paid late"
+        ]
+      },
+      {
+        "request": "invoices from last month",
+        "flagged": true,
+        "not_understood": [
+          "last month"
+        ]
+      },
+      {
+        "request": "top 3 invoices by total",
+        "flagged": true,
+        "not_understood": [
+          "top 3"
+        ]
+      }
+    ]
+  },
   "extraction_rules": {
+    "by_layout": {
+      "A": 1.0,
+      "B": 1.0,
+      "C": 0.897
+    },
     "documents": 40,
     "failed": 0,
-    "ingest_s": 3.26,
-    "pages_per_s": 12.27,
-    "extract_s": 0.1,
+    "ingest_s": 3.27,
+    "pages_per_s": 12.23,
+    "extract_s": 0.11,
     "field_accuracy": {
       "invoice_number": 1.0,
-      "vendor": 0.925,
-      "date": 1.0,
+      "vendor": 0.975,
+      "date": 0.825,
       "subtotal": 1.0,
       "tax": 1.0,
       "total": 1.0
     },
-    "overall_accuracy": 0.988,
-    "digital_accuracy": 1.0,
-    "scanned_accuracy": 0.975,
-    "wrong_values": 3,
-    "wrong_values_flagged": 3,
+    "overall_accuracy": 0.967,
+    "digital_accuracy": 0.975,
+    "scanned_accuracy": 0.958,
+    "wrong_values": 8,
+    "wrong_values_flagged": 8,
     "brain": "rules"
   },
   "qa_rules": {
     "accuracy": 0.917,
     "citation_accuracy": 0.917,
-    "median_ms": 3.8,
-    "max_ms": 7.6,
+    "median_ms": 5.2,
+    "max_ms": 11.2,
     "items": [
       {
         "q": "What is the total of the Globex invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 11.2,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What is the invoice number of the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 4.9,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q2?",
         "correct": true,
         "citation_ok": true,
         "ms": 7.6,
         "brain": "rules (planner: rules)"
       },
       {
-        "q": "What is the invoice number of the Acme invoice?",
-        "correct": true,
-        "citation_ok": true,
-        "ms": 3.3,
-        "brain": "rules (planner: rules)"
-      },
-      {
-        "q": "How many employees were there in Q2?",
-        "correct": true,
-        "citation_ok": true,
-        "ms": 4.0,
-        "brain": "rules (planner: rules)"
-      },
-      {
         "q": "How many employees were there in Q1?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.7,
+        "ms": 5.4,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "What was revenue growth in Q2?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.9,
+        "ms": 4.8,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "What was the revenue in Q1?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.7,
+        "ms": 5.5,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "How much notice is needed to terminate?",
         "correct": true,
         "citation_ok": true,
-        "ms": 6.6,
+        "ms": 8.2,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "Which state's law governs the agreement?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.4,
+        "ms": 4.9,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "What does the memo say about onboarding?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.7,
+        "ms": 5.0,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "What is the contract value of the office lease?",
         "correct": true,
         "citation_ok": true,
-        "ms": 4.2,
+        "ms": 5.1,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "Who is the provider in the cloud services agreement?",
         "correct": false,
         "citation_ok": false,
-        "ms": 4.1,
+        "ms": 5.8,
         "brain": "rules (planner: rules)"
       },
       {
         "q": "What are the payment terms on the Acme invoice?",
         "correct": true,
         "citation_ok": true,
-        "ms": 3.1,
+        "ms": 4.4,
         "brain": "rules (planner: rules)"
       }
     ]
   },
   "task_latency_ms_rules": {
-    "filter": 4.1,
-    "compare": 4.6,
+    "filter": 4.8,
+    "compare": 4.7,
     "aggregate": 4.9,
     "summarize": 1.2
   },
+  "fidelity_auto": {
+    "exact_set_accuracy": 1.0,
+    "unsupported_flagged": "3/3",
+    "sum_matches_truth": true,
+    "items": [
+      {
+        "request": "Find invoices above $5,000",
+        "exact": true,
+        "returned": 28,
+        "expected": 28,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne above $2,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices below $1,000 or above $10,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices between $1,000 and $3,000",
+        "exact": true,
+        "returned": 8,
+        "expected": 8,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices not from Wayne",
+        "exact": true,
+        "returned": 31,
+        "expected": 31,
+        "state": "succeeded"
+      },
+      {
+        "request": "how many invoices are above $8,000?",
+        "exact": true,
+        "returned": 13,
+        "expected": 13,
+        "state": "succeeded"
+      }
+    ],
+    "unsupported": [
+      {
+        "request": "Find invoices that were paid late",
+        "flagged": true,
+        "not_understood": [
+          "paid late"
+        ]
+      },
+      {
+        "request": "invoices from last month",
+        "flagged": true,
+        "not_understood": [
+          "last month"
+        ]
+      },
+      {
+        "request": "top 3 invoices by total",
+        "flagged": true,
+        "not_understood": [
+          "top 3"
+        ]
+      }
+    ]
+  },
   "extraction_auto": {
+    "by_layout": {
+      "A": 1.0,
+      "B": 1.0,
+      "C": 0.897
+    },
     "documents": 40,
     "failed": 0,
-    "ingest_s": 3.61,
-    "pages_per_s": 11.09,
-    "extract_s": 0.24,
+    "ingest_s": 3.65,
+    "pages_per_s": 10.96,
+    "extract_s": 0.21,
     "field_accuracy": {
       "invoice_number": 1.0,
-      "vendor": 0.925,
-      "date": 1.0,
+      "vendor": 0.975,
+      "date": 0.825,
       "subtotal": 1.0,
       "tax": 1.0,
       "total": 1.0
     },
-    "overall_accuracy": 0.988,
-    "digital_accuracy": 1.0,
-    "scanned_accuracy": 0.975,
-    "wrong_values": 3,
-    "wrong_values_flagged": 3,
+    "overall_accuracy": 0.967,
+    "digital_accuracy": 0.975,
+    "scanned_accuracy": 0.958,
+    "wrong_values": 8,
+    "wrong_values_flagged": 8,
     "brain": "reader:66M+embedder:33M"
   },
   "qa_auto": {
-    "accuracy": 0.917,
+    "accuracy": 1.0,
     "citation_accuracy": 0.917,
-    "median_ms": 58.5,
-    "max_ms": 101.6,
+    "median_ms": 59.8,
+    "max_ms": 81.7,
     "items": [
       {
         "q": "What is the total of the Globex invoice?",
         "correct": true,
         "citation_ok": true,
-        "ms": 8.2,
+        "ms": 9.2,
         "brain": "embedder (planner: rules)"
       },
       {
         "q": "What is the invoice number of the Acme invoice?",
         "correct": true,
         "citation_ok": true,
-        "ms": 7.0,
+        "ms": 9.9,
         "brain": "embedder (planner: rules)"
       },
       {
         "q": "How many employees were there in Q2?",
         "correct": true,
         "citation_ok": true,
-        "ms": 58.4,
+        "ms": 59.7,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "How many employees were there in Q1?",
         "correct": true,
         "citation_ok": true,
-        "ms": 67.7,
+        "ms": 64.3,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "What was revenue growth in Q2?",
         "correct": true,
         "citation_ok": true,
-        "ms": 58.8,
+        "ms": 59.8,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "What was the revenue in Q1?",
         "correct": true,
         "citation_ok": true,
-        "ms": 58.5,
+        "ms": 80.7,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "How much notice is needed to terminate?",
-        "correct": false,
+        "correct": true,
         "citation_ok": true,
-        "ms": 57.3,
+        "ms": 80.7,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "Which state's law governs the agreement?",
         "correct": true,
         "citation_ok": true,
-        "ms": 61.8,
+        "ms": 78.8,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "What does the memo say about onboarding?",
         "correct": true,
         "citation_ok": true,
-        "ms": 92.1,
+        "ms": 59.0,
         "brain": "embedder+reader (planner: rules)"
       },
       {
         "q": "What is the contract value of the office lease?",
         "correct": true,
         "citation_ok": true,
-        "ms": 14.4,
+        "ms": 9.5,
         "brain": "embedder (planner: rules)"
       },
       {
         "q": "Who is the provider in the cloud services agreement?",
         "correct": true,
         "citation_ok": true,
-        "ms": 101.6,
+        "ms": 81.7,
         "brain": "embedder+reader (planner: rules)"
       },
       {
@@ -255,9 +409,9 @@
   },
   "task_latency_ms_auto": {
     "filter": 6.4,
-    "compare": 6.0,
-    "aggregate": 5.5,
-    "summarize": 1.5
+    "compare": 6.1,
+    "aggregate": 7.3,
+    "summarize": 1.3
   },
   "planner_rules": {
     "accuracy": 1.0,
@@ -266,13 +420,13 @@
   "planner_writer_135m": {
     "accuracy": 0.275,
     "n": 40,
-    "ms_per_request": 437.7
+    "ms_per_request": 563.8
   },
   "ingest_profile_share": {
-    "indra_ocr_python": 0.653,
-    "inklight_python": 0.023,
-    "native_c_calls": 0.299,
-    "other_python": 0.025
+    "indra_ocr_python": 0.666,
+    "inklight_python": 0.021,
+    "native_c_calls": 0.289,
+    "other_python": 0.024
   },
-  "peak_rss_mb": 1428.4
+  "peak_rss_mb": 1433.8
 }

@@ -69,7 +69,7 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
         case Intent.FILTER:
             s.sources = _record_sources(s.records)
             s.confidence = _mean_conf(s.records) if s.records else 0.6
-            conds = " and ".join(c.describe() for c in plan.conditions)
+            conds = (" or " if plan.match == "any" else " and ").join(c.describe() for c in plan.conditions)
             text = (
                 f"{len(s.records)} of {len(s.records) + len(s.excluded)} document(s) match {conds}:\n\n"
                 f"{table_text(s.records)}"
@@ -80,11 +80,20 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
             calc = s.calc or {}
             s.sources = _record_sources(s.records)
             s.confidence = _mean_conf(s.records) if s.records else 0.0
-            text = (
-                f"{calc.get('op', '')} of {calc.get('field', '')}: {_fmt(calc.get('result'))} "
-                f"(over {calc.get('count', 0)} document(s); computed exactly, not by a model)\n\n"
-                f"{table_text(s.records)}"
-            )
+            if calc.get("by_unit"):
+                s.confidence = min(s.confidence, 0.5)
+                per_unit = " · ".join(f"{u} {_fmt(v)}" for u, v in calc["by_unit"].items())
+                text = (
+                    f"No single {calc.get('op', '')}: the {calc.get('field', '')} values are in different "
+                    f"currencies and are not converted. By currency: {per_unit}\n\n{table_text(s.records)}"
+                )
+            else:
+                unit = f" {calc['unit']}" if calc.get("unit") else ""
+                text = (
+                    f"{calc.get('op', '')} of {calc.get('field', '')}: {_fmt(calc.get('result'))}{unit} "
+                    f"(over {calc.get('count', 0)} document(s); computed exactly, not by a model)\n\n"
+                    f"{table_text(s.records)}"
+                )
         case Intent.COUNT:
             kinds: dict[str, int] = {}
             for d in docs:
@@ -102,9 +111,22 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
             text = s.answer
     s.sources = verify_sources(ctx, s.sources)
     _flag_injections(ctx)
+    text = _with_interpretation(plan, text)
     if s.files:
         text += "\n\nSaved: " + ", ".join(s.files)
     return text.strip()
+
+
+def _with_interpretation(plan: Plan, text: str) -> str:
+    """Say how a record-level request was read, and what was NOT applied, before the result."""
+    if plan.intent not in (Intent.FILTER, Intent.AGGREGATE, Intent.EXTRACT, Intent.COUNT):
+        return text
+    if not plan.conditions and not plan.not_understood:
+        return text
+    head = "Understood as: " + "; ".join(plan.understood()[1:] or plan.understood())
+    if plan.not_understood:
+        head += "\nNot applied: " + "; ".join(f"“{x}”" for x in plan.not_understood)
+    return f"{head}\n\n{text}"
 
 
 def _flag_injections(ctx: ToolContext) -> None:

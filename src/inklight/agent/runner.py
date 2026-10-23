@@ -63,15 +63,30 @@ class Runner:
             pool.shutdown(wait=False, cancel_futures=True)
         if state == TaskState.RUNNING:
             state = TaskState.SUCCEEDED
+        if plan.not_understood:
+            ctx.scratch.warn(
+                "Not applied: "
+                + "; ".join(f"“{x}”" for x in plan.not_understood)
+                + ". The result ignores these parts of your request: check it, or rephrase."
+            )
+        # A task that ignored part of the request, or could only do part of the job, did not succeed.
+        if state == TaskState.SUCCEEDED and (plan.not_understood or ctx.scratch.partial):
+            state = TaskState.PARTIAL
         answer_text = compose(ctx, plan, state)
         s = ctx.scratch
+        evidence = max(0.0, min(1.0, s.confidence))
+        understood = max(0.0, min(1.0, plan.confidence))
         return AgentResult(
             task_id=task_id,
             request=plan.query,
             intent=plan.intent.value,
             state=state,
             answer=answer_text,
-            confidence=max(0.0, min(1.0, s.confidence)),
+            confidence=min(evidence, understood),
+            interpretation_confidence=understood,
+            evidence_confidence=evidence,
+            interpretation=plan.understood(),
+            not_understood=plan.not_understood,
             sources=tuple(s.sources[:12]),
             records=tuple(s.records),
             files_written=tuple(s.files),

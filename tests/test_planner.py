@@ -45,7 +45,9 @@ def test_money_condition():
         "field": "tax",
         "op": "lt",
         "value": 2000.0,
+        "unit": None,
     }
+    assert plan.conditions[0].unit == "USD"
 
 
 def test_expiry_condition():
@@ -71,8 +73,8 @@ def test_document_text_cannot_add_tools():
 
 
 def test_vendor_word_is_not_end_date():
-    (cond,) = rule_plan("list invoices from vendor Acme after 2026-01-01", TODAY).conditions
-    assert cond.field == "date"
+    conds = rule_plan("list invoices from vendor Acme after 2026-01-01", TODAY).conditions
+    assert {(c.field, c.op) for c in conds} == {("date", "after"), ("vendor", "contains")}
 
 
 def test_units_are_not_amounts():

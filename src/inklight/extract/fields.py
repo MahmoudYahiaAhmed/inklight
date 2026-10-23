@@ -18,7 +18,7 @@ from typing import Any, Literal
 
 from ..errors import InputRejected
 from ..schemas import BBox, DocumentInfo, ExtractedValue, PageContent, Record, Source
-from .values import EMAIL_RE, PHONE_RE, all_money, parse_date, parse_dates, parse_money, parse_number
+from .values import EMAIL_RE, PHONE_RE, all_money, parse_dates, parse_money, parse_number
 
 FieldType = Literal["text", "money", "number", "date", "email", "phone", "id"]
 
@@ -263,7 +263,7 @@ def _lines(pages: list[PageContent]) -> list[_Line]:
     return out
 
 
-def parse_typed(ftype: FieldType, raw: str) -> tuple[Any, str] | None:
+def parse_typed(ftype: FieldType, raw: str, day_first: bool = False) -> tuple[Any, str] | None:
     """Parse ``raw`` as ``ftype``; return (value, matched text) or None."""
     raw = raw.strip()
     if not raw:
@@ -276,7 +276,7 @@ def parse_typed(ftype: FieldType, raw: str) -> tuple[Any, str] | None:
         num = parse_number(m.group(0)) if m else None
         return (num, m.group(0)) if num is not None and m else None
     if ftype == "date":
-        hits = parse_dates(raw)
+        hits = parse_dates(raw, day_first)
         return (hits[0][0], hits[0][1]) if hits else None
     if ftype == "email":
         m = EMAIL_RE.search(raw)
@@ -302,7 +302,9 @@ def _label_regex(specs: list[FieldSpec]) -> list[tuple[re.Pattern[str], FieldSpe
     ]
 
 
-def _find_candidates(lines: list[_Line], specs: list[FieldSpec]) -> dict[str, list[_Candidate]]:
+def _find_candidates(
+    lines: list[_Line], specs: list[FieldSpec], day_first: bool = False
+) -> dict[str, list[_Candidate]]:
     # Claim labels of the whole catalog too, so "Due Date" is never read as "Date"
     # even when only "date" was requested; only requested fields are recorded.
     wanted = {s.name for s in specs}
@@ -333,13 +335,13 @@ def _find_candidates(lines: list[_Line], specs: list[FieldSpec]) -> dict[str, li
                 continue
             stop = claimed[k + 1][0] if k + 1 < len(claimed) else len(line.text)
             tail = line.text[end:stop]
-            parsed = parse_typed(spec.type, tail)
+            parsed = parse_typed(spec.type, tail, day_first)
             quality = 1.0 if line.text[:end].rstrip().endswith((":", "#")) else 0.9
             if parsed is None and not tail.strip() and i + 1 < len(lines):
                 nxt = lines[i + 1]
                 # The value sits on the next line only if that line is not itself another label.
                 if nxt.page == line.page and not is_label_line(nxt.text):
-                    parsed = parse_typed(spec.type, nxt.text)
+                    parsed = parse_typed(spec.type, nxt.text, day_first)
                     if parsed:
                         found[spec.name].append(_Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))
                 continue
@@ -348,11 +350,12 @@ def _find_candidates(lines: list[_Line], specs: list[FieldSpec]) -> dict[str, li
     return found
 
 
-def _fallback(spec: FieldSpec, lines: list[_Line]) -> _Candidate | None:
+def _fallback(spec: FieldSpec, lines: list[_Line], day_first: bool = False) -> _Candidate | None:
     """Unlabelled guesses. Always low confidence and flagged as inferred."""
     if spec.type == "date" and spec.name in ("date", "invoice_date", "document_date"):
         for line in lines[:40]:
-            d = parse_date(line.text)
+            hits = parse_dates(line.text, day_first)
+            d = hits[0][0] if hits else None
             if d:
                 return _Candidate(d, line.text, line, 0.5, "first-date")
     if spec.type == "money" and spec.name in ("total", "amount"):
@@ -400,14 +403,19 @@ def _jsonable(value: Any) -> Any:
     return value
 
 
-def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[FieldSpec]) -> Record:
+def extract_record(
+    doc: DocumentInfo, pages: list[PageContent], specs: list[FieldSpec], *, day_first: bool = False
+) -> Record:
+    """Typed values with provenance. ``day_first`` reads 03/04/2026 as 3 April (most of the world)."""
     names = {s.name for s in specs}
     if "total" in names and not {"subtotal", "tax"} <= names:
         # Read subtotal and tax as hidden helpers so a total is always arithmetic-checked.
-        full = extract_record(doc, pages, [*specs, *(CATALOG[n] for n in ("subtotal", "tax") if n not in names)])
+        helpers = [CATALOG[n] for n in ("subtotal", "tax") if n not in names]
+        full = extract_record(doc, pages, [*specs, *helpers], day_first=day_first)
         return full.model_copy(update={"fields": {k: v for k, v in full.fields.items() if k in names}})
     lines = _lines(pages)
-    candidates = _find_candidates(lines, specs)
+    doc_currency = _document_currency(lines)
+    candidates = _find_candidates(lines, specs, day_first)
     values: dict[str, ExtractedValue] = {}
     raw_values: dict[str, Any] = {}
     for spec in specs:
@@ -418,7 +426,7 @@ def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[Fiel
         else:
             best = max(cands, key=lambda c: c.quality) if cands else None
         if best is None:
-            best = _fallback(spec, lines)
+            best = _fallback(spec, lines, day_first)
         if best is None:
             values[spec.name] = ExtractedValue(field=spec.name, warning="not found" if spec.required else None)
             continue
@@ -430,6 +438,12 @@ def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[Fiel
         elif len(distinct) > 1:
             warning = f"{len(distinct)} different values found; chose the strongest label match"
             conf *= 0.8
+        if spec.type == "date" and _ambiguous_date(best.raw):
+            order = "day-first (DD/MM)" if day_first else "month-first (MM/DD)"
+            warning = (warning + "; " if warning else "") + (
+                f"ambiguous date, read {order}; set [extraction] day_first if your documents use the other order"
+            )
+            conf *= 0.6
         if best.line.conf is not None and best.line.conf < 0.85:
             warning = (warning + "; " if warning else "") + f"low OCR confidence ({best.line.conf:.2f})"
         raw_values[spec.name] = best.value
@@ -437,6 +451,7 @@ def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[Fiel
             field=spec.name,
             value=_jsonable(best.value),
             raw=best.raw,
+            unit=_currency_of(best.raw, best.line.text, doc_currency) if spec.type == "money" else None,
             confidence=round(min(conf, 1.0), 3),
             method=best.method,
             source=_source(doc, best.line),
@@ -445,6 +460,40 @@ def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[Fiel
         )
     _cross_check(values, raw_values)
     return Record(doc_id=doc.id, name=doc.name, path=doc.path, fields=values)
+
+
+_CURRENCY_WORD = re.compile(r"\b(USD|EUR|GBP|EGP|SAR|AED|CAD|AUD|INR|JPY|CHF)\b|E£|[$€£]")
+_SYMBOL = {"$": "USD", "€": "EUR", "£": "GBP", "E£": "EGP"}
+
+
+def _currency_of(raw: str, line: str, doc_currency: str | None) -> str | None:
+    """The amount's own currency, else one named on its line ("TOTAL DUE (USD)"), else the document's."""
+    money = parse_money(raw)
+    if money and money[1]:
+        return money[1]
+    found = {_SYMBOL.get(m.group(0), m.group(0).upper()) for m in _CURRENCY_WORD.finditer(line)}
+    return found.pop() if len(found) == 1 else doc_currency
+
+
+_AMBIGUOUS_DATE = re.compile(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})\b")
+
+
+def _ambiguous_date(raw: str) -> bool:
+    """03/04/2026 can be March 4 or 3 April; 13/04/2026 cannot."""
+    m = _AMBIGUOUS_DATE.search(raw)
+    if m is None:
+        return False
+    return int(m.group(1)) <= 12 and int(m.group(2)) <= 12 and m.group(1) != m.group(2)
+
+
+def _document_currency(lines: list[_Line]) -> str | None:
+    """The document's currency when every amount that names one names the same one."""
+    seen = set()
+    for line in lines:
+        money = parse_money(line.text)
+        if money and money[1]:
+            seen.add(money[1])
+    return seen.pop() if len(seen) == 1 else None
 
 
 def _cross_check(values: dict[str, ExtractedValue], raw: dict[str, Any]) -> None:

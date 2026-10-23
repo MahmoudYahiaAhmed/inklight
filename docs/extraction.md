@@ -9,7 +9,8 @@ Every extracted value carries:
 | `confidence` | 0–1: label-match quality × OCR line confidence, adjusted by cross-checks. |
 | `method` | `label`, `label-next-line`, `reader`, or an inferred method (`first-date`, `largest-amount`, `organisation-line`, …). |
 | `source` | Document, page, bounding box (pixels of the rendered page), excerpt, OCR confidence. |
-| `verified` | True when the raw text is literally on the source line, or when `subtotal + tax = total`. |
+| `unit` | Currency code for money (`USD`, `EUR`, `EGP`, ...) when the document states one. Filters and sums never mix currencies. |
+| `verified` | **Provenance only**: the raw text is literally on the cited line, or `subtotal + tax = total`. It does not mean the value answers your question. |
 | `warning` | Why to double-check: inferred, low OCR confidence, conflicting values, arithmetic mismatch, … |
 
 ## Built-in fields
@@ -49,7 +50,8 @@ Types: `text`, `money`, `number`, `date`, `email`, `phone`, `id`.
 
 ## Known limits
 
-- Ambiguous numeric dates (`03/04/2026`) are read month-first.
+- Ambiguous numeric dates (`03/04/2026`) are read month-first unless `[extraction] day_first = true`.
+- Currency symbols: `$` is read as USD (it is also used by CAD, AUD and others); `E£`/`EGP` is Egyptian pound.
 - Labels must be in English. Values in other languages are read when Indra recognises the script.
 - Values that appear only inside complex tables (merged cells, no ruling) may be missed. Indra itself
   documents complex tables as a limitation.

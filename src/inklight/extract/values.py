@@ -6,7 +6,7 @@ import re
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
-_CURRENCY = r"(?:[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF)"
+_CURRENCY = r"(?:E£|[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF|EGP|SAR|AED)"
 # Thousands groups use ',' '.' or a non-breaking/thin space — never a plain space, which would
 # glue a quantity column onto an amount ("2 150.00"). A number followed by '%' is a rate, not money.
 MONEY_RE = re.compile(
@@ -82,7 +82,7 @@ def all_money(text: str) -> list[Decimal]:
 def _norm_currency(cur: str | None) -> str | None:
     if not cur:
         return None
-    return {"$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR"}.get(cur, cur.upper())
+    return {"$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP"}.get(cur, cur.upper())
 
 
 def _year(y: str) -> int:

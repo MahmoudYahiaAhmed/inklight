@@ -41,7 +41,7 @@ def extract_fields(ctx: ToolContext, fields: list[str]) -> str:
     records = []
     for doc in ctx.docs():
         ctx.check()
-        record = extract_record(doc, ctx.pages(doc.id), specs)
+        record = extract_record(doc, ctx.pages(doc.id), specs, day_first=ctx.settings.extraction.day_first)
         record = _reader_fill(ctx, record, specs)
         records.append(record)
         for name, value in record.fields.items():
@@ -77,7 +77,7 @@ def _reader_fill(ctx: ToolContext, record: Record, specs: list[Any]) -> Record:
         span = spans[0]
         if ":" in span.text or span.text.lower() in _LABEL_WORDS:
             continue  # the reader picked a label, not a value
-        parsed = parse_typed(spec.type, span.text)
+        parsed = parse_typed(spec.type, span.text, ctx.settings.extraction.day_first)
         if parsed is None:
             continue
         src: Source = chunks[span.passage][1]
@@ -117,84 +117,124 @@ def _as_date(value: Any) -> date | None:
         return None
 
 
-def matches(value: Any, cond: Condition, today: date) -> bool | None:
-    """True/False, or None when the value is missing or not comparable."""
+def matches(item: ExtractedValue, cond: Condition, today: date) -> tuple[bool | None, str | None]:
+    """(True/False, None), or (None, reason) when the value is missing or not comparable."""
+    value = item.value
     if value is None:
-        return None
-    if cond.op == "contains":
-        return str(cond.value).lower() in str(value).lower()
+        return None, "missing"
+    if cond.op in ("contains", "not_contains"):
+        found = _norm_name(str(cond.value)) in _norm_name(str(value))
+        return (found if cond.op == "contains" else not found), None
     if cond.op in ("within_days", "before", "after"):
         d = _as_date(value)
-        if d is None:
-            return None
-        if cond.op == "within_days":
-            return today <= d <= today + timedelta(days=int(cond.value))
         limit = _as_date(cond.value)
-        if limit is None:
-            return None
-        return d < limit if cond.op == "before" else d > limit
+        if d is None or (cond.op != "within_days" and limit is None):
+            return None, "missing"
+        if cond.op == "within_days":
+            return today <= d <= today + timedelta(days=int(cond.value)), None
+        return (d < limit if cond.op == "before" else d > limit), None  # type: ignore[operator]
+    if cond.unit and item.unit and cond.unit != item.unit:
+        return None, "currency"  # never compare EUR 6,000 with a USD threshold
     a, b = _as_decimal(value), _as_decimal(cond.value)
     if a is None or b is None:
-        return str(value).strip().lower() == str(cond.value).strip().lower() if cond.op == "eq" else None
-    return {"gt": a > b, "ge": a >= b, "lt": a < b, "le": a <= b, "eq": a == b}[cond.op]
+        if cond.op == "eq":
+            return str(value).strip().lower() == str(cond.value).strip().lower(), None
+        return None, "missing"
+    return {"gt": a > b, "ge": a >= b, "lt": a < b, "le": a <= b, "eq": a == b}[cond.op], None
 
 
-def filter_records(ctx: ToolContext, conditions: list[Condition], today: date | None = None) -> str:
+def _norm_name(text: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"[^\w\s&]", " ", text.lower())).strip()
+
+
+def filter_records(ctx: ToolContext, conditions: list[Condition], today: date | None = None, match: str = "all") -> str:
     today = today or date.today()
-    kept, dropped, unknown = [], [], []
+    kept, dropped, unknown, wrong_currency = [], [], [], []
     for record in ctx.scratch.records:
-        results = [
-            matches(record.fields.get(c.field, ExtractedValue(field=c.field)).value, c, today) for c in conditions
-        ]
-        if any(r is None for r in results):
-            unknown.append(record)
-        elif all(results):
-            kept.append(record)
+        outcomes = [matches(record.fields.get(c.field, ExtractedValue(field=c.field)), c, today) for c in conditions]
+        results = [r for r, _ in outcomes]
+        if match == "any":
+            verdict = True if any(r is True for r in results) else (None if None in results else False)
         else:
+            verdict = False if any(r is False for r in results) else (None if None in results else True)
+        if verdict is True:
+            kept.append(record)
+        elif verdict is False:
             dropped.append(record)
+        elif any(reason == "currency" for _, reason in outcomes):
+            wrong_currency.append(record)
+        else:
+            unknown.append(record)
     ctx.scratch.records = kept
-    ctx.scratch.excluded = dropped + unknown
+    ctx.scratch.excluded = dropped + unknown + wrong_currency
     if unknown:
         names = ", ".join(r.name for r in unknown[:5]) + (" …" if len(unknown) > 5 else "")
         fields = ", ".join(sorted({c.field for c in conditions}))
         ctx.scratch.warn(f"{len(unknown)} document(s) had no readable {fields} and were excluded: {names}")
-    return f"{len(kept)} match, {len(dropped)} do not, {len(unknown)} unknown"
+    if wrong_currency:
+        units = sorted({c.unit for c in conditions if c.unit})
+        names = ", ".join(r.name for r in wrong_currency[:5])
+        ctx.scratch.warn(
+            f"{len(wrong_currency)} document(s) are in a different currency than {'/'.join(units)} and were "
+            f"excluded; Inklight does not convert currencies: {names}"
+        )
+    return f"{len(kept)} match, {len(dropped)} do not, {len(unknown) + len(wrong_currency)} not comparable"
 
 
 # ---------------------------------------------------------------- calculate
 
 
 def calculate(ctx: ToolContext, op: str, field: str) -> str:
-    values: list[tuple[Decimal, Record]] = []
+    values: list[tuple[Decimal, Record, str | None]] = []
     for record in ctx.scratch.records:
-        d = _as_decimal(record.fields.get(field, ExtractedValue(field=field)).value)
+        item = record.fields.get(field, ExtractedValue(field=field))
+        d = _as_decimal(item.value)
         if d is not None:
-            values.append((d, record))
+            values.append((d, record, item.unit))
     missing = len(ctx.scratch.records) - len(values)
-    if op == "count":
-        result: Decimal | None = Decimal(len(values))
-    elif not values:
-        result = None
-    elif op == "sum":
-        result = sum((v for v, _ in values), Decimal(0))
-    elif op == "avg":
-        result = sum((v for v, _ in values), Decimal(0)) / len(values)
-    elif op == "max":
-        result = max(v for v, _ in values)
-    elif op == "min":
-        result = min(v for v, _ in values)
+    groups: dict[str | None, list[Decimal]] = {}
+    for d, _, unit in values:
+        groups.setdefault(unit, []).append(d)
+    calc: dict[str, Any] = {"op": op, "field": field, "count": len(values), "missing": missing, "unit": None}
+    stated = [u for u in groups if u]
+    if op != "count" and len(stated) == 1 and None in groups:
+        # Amounts with no currency beside one stated currency: combine them, but say so.
+        unstated = len(groups.pop(None))
+        groups[stated[0]] = [v for v, _, _ in values]
+        ctx.scratch.warn(
+            f"{unstated} {field} value(s) state no currency; they were assumed to be {stated[0]} like the others."
+        )
+    if op != "count" and len(groups) > 1:
+        # Adding $100 and EUR 100 gives a number that means nothing: report per currency instead.
+        calc["result"] = None
+        calc["by_unit"] = {(u or "unstated"): float(round(_aggregate(op, vs), 2)) for u, vs in groups.items()}
+        ctx.scratch.partial = True
+        ctx.scratch.warn(
+            f"The {field} values are in different currencies ({', '.join(u or 'unstated' for u in groups)}). "
+            "Inklight does not convert currencies, so no combined result was computed."
+        )
     else:
-        raise ToolError(f"Unknown operation {op!r}")
-    ctx.scratch.calc = {
-        "op": op,
-        "field": field,
-        "result": None if result is None else float(round(result, 2)),
-        "count": len(values),
-        "missing": missing,
-    }
+        result = (
+            Decimal(len(values)) if op == "count" else (_aggregate(op, [v for v, _, _ in values]) if values else None)
+        )
+        calc["result"] = None if result is None else float(round(result, 2))
+        calc["unit"] = next(iter(groups)) if len(groups) == 1 and op != "count" else None
+    ctx.scratch.calc = calc
     if missing:
         ctx.scratch.warn(f"{missing} document(s) had no {field} and were left out of the {op}")
-    return f"{op}({field}) = {ctx.scratch.calc['result']} over {len(values)} values"
+    return f"{op}({field}) = {calc.get('result', calc.get('by_unit'))} over {len(values)} values"
+
+
+def _aggregate(op: str, values: list[Decimal]) -> Decimal:
+    if op == "sum":
+        return sum(values, Decimal(0))
+    if op == "avg":
+        return sum(values, Decimal(0)) / len(values)
+    if op == "max":
+        return max(values)
+    if op == "min":
+        return min(values)
+    raise ToolError(f"Unknown operation {op!r}")
 
 
 # ---------------------------------------------------------------- compare
@@ -218,7 +258,8 @@ def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
             else []
         )
     specs = [resolve_field(f) for f in fields]
-    records = [extract_record(d, ctx.pages(d.id), specs) for d in docs]
+    day_first = ctx.settings.extraction.day_first
+    records = [extract_record(d, ctx.pages(d.id), specs, day_first=day_first) for d in docs]
     ctx.scratch.records = records
     base, base_doc = records[0], docs[0]
     lines: list[str] = []

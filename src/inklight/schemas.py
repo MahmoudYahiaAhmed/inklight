@@ -111,10 +111,15 @@ class ExtractedValue(Frozen):
     field: str
     value: Any = None
     raw: str | None = None
-    confidence: float = 0.0
+    unit: str | None = Field(None, description="Currency code for money values, when the document states one.")
+    confidence: float = Field(0.0, description="How sure the reading is: label match x OCR confidence.")
     method: str = "none"
     source: Source | None = None
-    verified: bool = False
+    verified: bool = Field(
+        False,
+        description="Provenance only: the raw text was found on the cited line, or subtotal + tax = total. "
+        "It does not mean the value answers the user's question.",
+    )
     warning: str | None = None
 
 
@@ -169,7 +174,15 @@ class AgentResult(Frozen):
     intent: str
     state: TaskState
     answer: str
-    confidence: float = Field(0.0, ge=0.0, le=1.0)
+    confidence: float = Field(0.0, ge=0.0, le=1.0, description="min(interpretation, evidence): trust the lower one.")
+    interpretation_confidence: float = Field(
+        0.0, ge=0.0, le=1.0, description="How sure the agent is that it understood the request as written."
+    )
+    evidence_confidence: float = Field(
+        0.0, ge=0.0, le=1.0, description="How well the documents support the result (OCR, labels, cross-checks)."
+    )
+    interpretation: tuple[str, ...] = Field((), description="How the request was read, for the user to check.")
+    not_understood: tuple[str, ...] = Field((), description="Parts of the request that were NOT applied.")
     sources: tuple[Source, ...] = ()
     records: tuple[Record, ...] = ()
     files_written: tuple[str, ...] = ()

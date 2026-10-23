@@ -98,18 +98,44 @@ def synth_invoices(folder: Path, n: int, seed: int = 7) -> list[dict]:
         doc = pymupdf.open()
         page = doc.new_page()
         y = 72.0
-        for text, size in [
-            (vendor, 15),
-            ("42 Industrial Way", 9),
-            (f"Invoice Number: {number}", 11),
-            (f"Invoice Date: {issued.strftime(dfmt)}", 11),
-            ("Bill To: Northwind Traders", 11),
-            ("Item                         Amount", 10),
-            (f"Services rendered        ${subtotal:,.2f}", 10),
-            (f"Subtotal: ${subtotal:,.2f}", 11),
-            (f"Tax: ${tax:,.2f}", 11),
-            (f"{label}: ${total:,.2f}", 12),
-        ]:
+        layout = "ABC"[i % 3]  # three different templates, so the set is not one layout
+        rate = round(tax / subtotal * 100)
+        if layout == "A":
+            lines = [
+                (vendor, 15),
+                ("42 Industrial Way", 9),
+                (f"Invoice Number: {number}", 11),
+                (f"Invoice Date: {issued.strftime(dfmt)}", 11),
+                ("Bill To: Northwind Traders", 11),
+                ("Item                         Amount", 10),
+                (f"Services rendered        ${subtotal:,.2f}", 10),
+                (f"Subtotal: ${subtotal:,.2f}", 11),
+                (f"Tax: ${tax:,.2f}", 11),
+                (f"{label}: ${total:,.2f}", 12),
+            ]
+        elif layout == "B":  # no currency symbols, "Dated" instead of a date label, vendor after "From:"
+            lines = [
+                ("INVOICE", 18),
+                (f"From: {vendor}", 11),
+                (f"Invoice No. {number}", 11),
+                (f"Dated {issued.strftime('%B %d, %Y')}", 11),
+                ("Billed To: Northwind Traders", 11),
+                (f"Net amount     {subtotal:,.2f}", 11),
+                (f"Sales tax      {tax:,.2f}", 11),
+                (f"TOTAL DUE (USD)     {total:,.2f}", 12),
+            ]
+        else:  # day-first dates, a VAT line with a percentage, a trailing currency code
+            lines = [
+                (vendor.upper(), 14),
+                ("Tax Invoice", 13),
+                (f"Inv #: {number}", 11),
+                (f"Date: {issued.strftime('%d/%m/%Y')}", 11),
+                ("Customer: Northwind Traders", 11),
+                (f"Sub-total: {subtotal:,.2f} USD", 11),
+                (f"VAT ({rate}%): {tax:,.2f} USD", 11),
+                (f"Amount payable: {total:,.2f} USD", 12),
+            ]
+        for text, size in lines:
             page.insert_text((72, y), text, fontsize=size)
             y += size * 1.8
         scanned = i % 2 == 1
@@ -130,6 +156,7 @@ def synth_invoices(folder: Path, n: int, seed: int = 7) -> list[dict]:
             {
                 "file": path.name,
                 "scanned": scanned,
+                "layout": layout,
                 "invoice_number": number,
                 "vendor": vendor,
                 "date": issued.isoformat(),
@@ -139,6 +166,63 @@ def synth_invoices(folder: Path, n: int, seed: int = 7) -> list[dict]:
             }
         )
     return truth
+
+
+# ---------------------------------------------------------------- request fidelity
+
+
+def request_fidelity(agent, truth: list[dict], by_name: dict) -> dict:  # type: ignore[no-untyped-def]
+    """Does the agent return exactly the documents the request asks for, end to end from OCR?
+
+    Expected sets come from ground truth, so an extraction error also costs a point here. Requests the
+    agent cannot apply must come back `partial` with the unapplied words listed.
+    """
+    files = {r["file"]: r for r in truth}
+    ids = [d.id for d in agent.library.documents() if d.name in files]
+    vendor = truth[0]["vendor"]
+    short = vendor.split()[0]
+    cases = [
+        ("Find invoices above $5,000", lambda r: r["total"] > 5000),
+        (f"Find invoices from {short} above $2,000", lambda r: r["vendor"] == vendor and r["total"] > 2000),
+        ("Find invoices below $1,000 or above $10,000", lambda r: r["total"] < 1000 or r["total"] > 10000),
+        ("invoices between $1,000 and $3,000", lambda r: 1000 <= r["total"] <= 3000),
+        (f"invoices not from {short}", lambda r: r["vendor"] != vendor),
+        ("how many invoices are above $8,000?", lambda r: r["total"] > 8000),
+    ]
+    items = []
+    for request, want in cases:
+        res = agent.run_plan(agent.plan(request), ids, save=False)
+        got = {r.name for r in res.records}
+        expected = {f for f, r in files.items() if want(r)}
+        items.append(
+            {
+                "request": request,
+                "exact": got == expected,
+                "returned": len(got),
+                "expected": len(expected),
+                "state": res.state.value,
+            }
+        )
+    unsupported = ["Find invoices that were paid late", "invoices from last month", "top 3 invoices by total"]
+    flagged = []
+    for request in unsupported:
+        res = agent.run_plan(agent.plan(request), ids, save=False)
+        flagged.append(
+            {
+                "request": request,
+                "flagged": res.state.value != "succeeded" and bool(res.not_understood),
+                "not_understood": list(res.not_understood),
+            }
+        )
+    sum_res = agent.run_plan(agent.plan("What is the sum of all invoice totals?"), ids, save=False)
+    true_sum = round(sum(r["total"] for r in truth), 2)
+    return {
+        "exact_set_accuracy": round(sum(i["exact"] for i in items) / len(items), 3),
+        "unsupported_flagged": f"{sum(f['flagged'] for f in flagged)}/{len(flagged)}",
+        "sum_matches_truth": f"{true_sum:,.2f}" in sum_res.answer,
+        "items": items,
+        "unsupported": flagged,
+    }
 
 
 # ---------------------------------------------------------------- labelled planner / QA sets
@@ -278,7 +362,11 @@ def main() -> None:  # noqa: C901 - a linear script
             rec = by_name.get(row["file"])
             for f in ("invoice_number", "vendor", "date", "subtotal", "tax", "total"):
                 got = rec.fields[f].value if rec else None
-                ok = abs(float(got) - row[f]) < 0.01 if isinstance(got, (int, float)) else str(got) == str(row[f])
+                ok = (
+                    abs(float(got) - row[f]) < 0.01
+                    if isinstance(got, (int, float))
+                    else str(got).strip(" .").lower() == str(row[f]).strip(" .").lower()
+                )
                 correct.setdefault(f, []).append(ok)
                 if not ok:
                     wrong += 1
@@ -286,16 +374,41 @@ def main() -> None:  # noqa: C901 - a linear script
                         flagged_wrong += 1
         acc = {f: round(sum(v) / len(v), 3) for f, v in correct.items()}
         scanned_acc = round(
-            sum(ok for row, oks in zip(truth, zip(*correct.values()), strict=True) if row["scanned"] for ok in oks)
+            sum(
+                ok
+                for row, oks in zip(truth, zip(*correct.values(), strict=True), strict=True)
+                if row["scanned"]
+                for ok in oks
+            )
             / max(sum(r["scanned"] for r in truth) * 6, 1),
             3,
         )
         digital_acc = round(
-            sum(ok for row, oks in zip(truth, zip(*correct.values()), strict=True) if not row["scanned"] for ok in oks)
+            sum(
+                ok
+                for row, oks in zip(truth, zip(*correct.values(), strict=True), strict=True)
+                if not row["scanned"]
+                for ok in oks
+            )
             / max(sum(not r["scanned"] for r in truth) * 6, 1),
             3,
         )
+        by_layout = {
+            lay: round(
+                sum(
+                    ok
+                    for row, oks in zip(truth, zip(*correct.values(), strict=True), strict=True)
+                    if row["layout"] == lay
+                    for ok in oks
+                )
+                / max(sum(r["layout"] == lay for r in truth) * 6, 1),
+                3,
+            )
+            for lay in "ABC"
+        }
+        results[f"fidelity_{brain}"] = request_fidelity(agent, truth, by_name)
         results[f"extraction_{brain}"] = {
+            "by_layout": by_layout,
             "documents": len(truth),
             "failed": len(report.failed),
             "ingest_s": round(ingest_s, 2),

@@ -65,6 +65,12 @@ class ModelSettings(BaseModel):
     remote_for: Literal["never", "fallback", "always"] = "never"
 
 
+class ExtractionSettings(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    day_first: bool = Field(False, description="Read 03/04/2026 as 3 April (day first), as in most of the world.")
+
+
 class Privacy(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -81,6 +87,7 @@ class Settings(BaseModel):
     limits: Limits = Limits()
     ocr: OCRSettings = OCRSettings()
     models: ModelSettings = ModelSettings()
+    extraction: ExtractionSettings = ExtractionSettings()
     privacy: Privacy = Privacy()
 
     @property

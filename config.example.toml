@@ -32,6 +32,9 @@ allow_download = false         # fetch models on first use instead of `inklight 
 # remote_api_key_env = "INKLIGHT_REMOTE_API_KEY"
 # remote_for = "fallback"      # never | fallback (low confidence only) | always
 
+[extraction]
+day_first = false             # true reads 03/04/2026 as 3 April (UK, Egypt, most of the world)
+
 [privacy]
 store_text = true              # keep extracted text in the local index (needed for search)
 log_document_text = false
