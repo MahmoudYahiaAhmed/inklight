@@ -177,6 +177,11 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         money = [f for f in fields if f in _MONEY_FIELDS]
         aggregate_field = money[0] if money else ("tax" if re.search(r"\btax|vat\b", text) else "total")
         fields = fields or [aggregate_field]
+    elif conds and not fields and _open_question(text):
+        # "What are the payment terms on Acme's invoice?" asks about one document's content: the
+        # question is answered, from the documents the conditions select, never turned into a list.
+        intent = Intent.ASK
+        confidence = 0.6
     elif conds and (doc_type or re.search(r"\b(find|which|list|show|every|all)\b", text)):
         intent = Intent.FILTER
     elif output or re.search(r"\b(extract|pull out|pull|tabulate|table of|list (?:all|the|every))\b", text):
@@ -203,7 +208,8 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
 
     # Record-level tasks must apply every constraint; anything the parser could not turn into a
     # condition is reported, and the task cannot claim full success.
-    not_understood = list(parsed.not_understood) if intent in _RECORD_INTENTS else []
+    scoped_question = intent == Intent.ASK and parsed.where is not None
+    not_understood = list(parsed.not_understood) if intent in _RECORD_INTENTS or scoped_question else []
     if not_understood:
         confidence = min(confidence, 0.4)
 
@@ -240,6 +246,16 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
 
 
 _RECORD_INTENTS = {Intent.FILTER, Intent.AGGREGATE, Intent.EXTRACT, Intent.COUNT, Intent.INCONSISTENCIES}
+
+
+_OPEN_QUESTION = re.compile(r"^(?:what|who|when|where|why|how|is|are|does|did|do|was|were)\b")
+_SET_WORDS = re.compile(r"\b(?:which|list|show|find|how many|count|every|all|each)\b")
+
+
+def _open_question(text: str) -> bool:
+    """A question about one document ("what are the terms on the Acme invoice?"), not about a set."""
+    plural = re.search(rf"\b(?:{'|'.join(SINGULAR)})\b", text)
+    return bool(_OPEN_QUESTION.match(text.strip())) and not plural and not _SET_WORDS.search(text)
 
 
 def _default_fields(doc_type: str | None) -> list[str]:

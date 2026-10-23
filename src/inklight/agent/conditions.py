@@ -461,6 +461,14 @@ def parse(request: str, today: date, known_words: frozenset[str] = frozenset()) 
         owners: list[Condition | Group] = [Condition(field="vendor", op="contains", value=n) for n in names]
         add(group("any", owners), first_at, m.end("apos"), "vendor")
 
+    for m in _NAMED_DOC_RE.finditer(request):
+        # "the Acme invoice", "the Globex Corp receipt": a capitalised name in front of the document
+        # noun names whose document it is. Lower-case words ("the final invoice") are not names.
+        name = m.group("name")
+        if not free(m.start("name"), m.end("name")) or not _is_name(name):
+            continue
+        add(Condition(field="vendor", op="contains", value=name), m.start("name"), m.end("name"), "vendor")
+
     for regex, fld, op in (
         (_NEG_PARTY_RE, "vendor", "not_contains"),
         (_CUSTOMER_RE, "customer", "contains"),
@@ -605,6 +613,13 @@ def _possessor(text: str, apos_at: int) -> tuple[str | None, int]:
     bounds = list(re.finditer(rf"[{_APOS}]s\b|s[{_APOS}]|,|\band\b|\bor\b", head, re.IGNORECASE))
     start = bounds[-1].end() if bounds else 0
     tokens = [t for t in re.finditer(r"[A-Za-z0-9&.\-]+", head) if t.start() >= start][-3:]
+    # A preposition ends the name ("terms on Acme's" -> "Acme") unless it joins capitalised words
+    # ("Bank of America's").
+    for k in range(len(tokens) - 2, -1, -1):
+        word = tokens[k].group(0)
+        if word.lower() in _PREPOSITIONS and not (k > 0 and tokens[k - 1].group(0)[:1].isupper() and word.islower()):
+            tokens = tokens[k + 1 :]
+            break
     words = [t.group(0) for t in tokens]
     while words and (words[0].lower() in _FILLER or words[0].lower() in _VERBS or words[0].lower() in _NAME_REJECT):
         words.pop(0)
@@ -614,6 +629,18 @@ def _possessor(text: str, apos_at: int) -> tuple[str | None, int]:
     return " ".join(words), tokens[0].start()
 
 
+_NAMED_DOC_RE = re.compile(
+    r"\b(?i:the)\s+(?P<name>[A-Z][\w&.\-]*(?:\s+[A-Z][\w&.\-]*){0,2})\s+(?i:invoices?|receipts?|bills?|orders?)\b"
+)
+
+
+def _is_name(name: str) -> bool:
+    words = [w.lower().strip(".") for w in name.split()]
+    vocab = _FILLER | _VERBS | _NAME_REJECT | _CODES | _FIELD_VOCAB | set(_MONTHS)
+    return all(w not in vocab and not w.isdigit() for w in words)
+
+
+_PREPOSITIONS = {"on", "in", "of", "for", "at", "about", "from", "with", "to", "by", "into", "regarding"}
 _CODES = {"usd", "eur", "gbp", "egp", "sar", "aed", "csv", "json", "pdf", "pdfs", "ocr", "md", "i", "q1", "q2", "q3",
           "q4", "vat", "po", "id", "k", "m"}  # fmt: skip
 _CONTENT_OK = {

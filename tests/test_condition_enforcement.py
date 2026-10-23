@@ -459,3 +459,44 @@ def test_paraphrases_are_correct_or_honest(agent, request_, expected):
         assert names(result) == expected, (request_, result.interpretation)
     else:
         assert result.not_understood or result.state == TaskState.UNSUPPORTED, (request_, result.answer)
+
+
+# ---------------------------------------------------------------- questions that name their document
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What is the date on the Globex invoice?",
+        "What is the date on Globex's invoice?",
+        "What is the date on globex’s invoice?",
+    ],
+)
+def test_question_naming_its_document_is_answered_from_that_document(agent, question):
+    plan = agent.plan(question)
+    assert plan.intent == Intent.ASK and plan.where is not None
+    result = ask(agent, question)
+    assert result.sources and all(Path(s.name).stem == "other" for s in result.sources)
+
+
+@pytest.mark.parametrize(
+    ("request_", "owner"),
+    [
+        ("What are the payment terms on Acme's invoice?", "Acme"),
+        ("Show Bank of America's invoices", "Bank of America"),
+        ("List the totals on Initech's invoices", "Initech"),
+    ],
+)
+def test_possessive_owner_stops_at_a_preposition(agent, request_, owner):
+    where = agent.plan(request_).where
+    assert where is not None and where.value == owner
+
+
+@pytest.mark.parametrize("question", ["What is on the final invoice?", "Who issued the Q2 invoice?"])
+def test_lowercase_or_code_words_before_invoice_are_not_names(agent, question):
+    assert agent.plan(question).where is None
+
+
+def test_set_questions_stay_record_level(agent):
+    assert agent.plan("What invoices are above $5,000?").intent == Intent.FILTER
+    assert names(ask(agent, "Which invoices are from Acme?")) == ["large", "small"]
