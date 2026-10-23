@@ -154,40 +154,65 @@ def summarize(rows: list[dict]) -> dict:
 # ---------------------------------------------------------------- requests over the dataset (end to end)
 
 
-def request_cases(truth: dict) -> list[tuple[str, set[str]]]:
-    """Templated requests whose expected document sets come from the annotations."""
-    totals = sorted(t["total"] for t in truth.values() if t.get("total") is not None)
+def _key(text: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", text.lower())
+
+
+def request_cases(truth: dict) -> list[dict]:
+    """Request forms whose expected document sets come from the annotations.
+
+    ``expected`` is None for requests Inklight does not support: the useful outcome is then an
+    abstention (unsupported / partial / a reported not-understood part), never a confident answer.
+    """
+    rows = {n: t for n, t in truth.items() if t.get("total") is not None}
+    totals = sorted(t["total"] for t in rows.values())
     if not totals:
         return []
-    median = totals[len(totals) // 2]
-    lo, hi = totals[len(totals) // 4], totals[3 * len(totals) // 4]
-    thr = round(median, -1) or median
-    cases = [
-        (f"Find invoices above ${thr:,.0f}", {n for n, t in truth.items() if t.get("total") and t["total"] > thr}),
-        (f"Find invoices below ${thr:,.0f}", {n for n, t in truth.items() if t.get("total") and t["total"] < thr}),
-        (
-            f"Find invoices between ${round(lo):,} and ${round(hi):,}",
-            {n for n, t in truth.items() if t.get("total") and round(lo) <= t["total"] <= round(hi)},
-        ),
-        (
-            f"how many invoices are above ${thr:,.0f}?",
-            {n for n, t in truth.items() if t.get("total") and t["total"] > thr},
-        ),
-    ]
-    vendors = [t.get("vendor") for t in truth.values() if t.get("vendor")]
-    if vendors:
-        first = re.split(r"[\s,]+", vendors[0])[0]
-        cases.append(
-            (
-                f"Find invoices from {first}",
-                {n for n, t in truth.items() if t.get("vendor") and first.lower() in t["vendor"].lower()},
-            )
-        )
+    thr = round(totals[len(totals) // 2], -1) or totals[len(totals) // 2]
+    lo, hi = round(totals[len(totals) // 4]), round(totals[3 * len(totals) // 4])
+    above = {n for n, t in rows.items() if t["total"] > thr}
+
+    def by_vendor(word: str) -> set[str]:
+        return {n for n, t in truth.items() if t.get("vendor") and _key(word) in _key(t["vendor"])}
+
+    # Single-word vendor names ("Jacobson-Wilson"), each matching only its own invoices.
+    words = sorted(
+        {t["vendor"] for t in truth.values() if t.get("vendor") and re.fullmatch(r"[A-Za-z-]+", t["vendor"])}
+    )
+    # v1 has an invoice above the threshold, so the combined forms expect a non-empty answer.
+    v1 = next((w for w in words if by_vendor(w) & above), words[0] if words else "Nobody")
+    v2 = next((w for w in words if w != v1), v1)
     years = sorted({t["date"][:4] for t in truth.values() if t.get("date")})
-    if years:
-        y = years[len(years) // 2]
-        cases.append((f"Find invoices in {y}", {n for n, t in truth.items() if (t.get("date") or "").startswith(y)}))
-    return cases
+    y = years[len(years) // 2] if years else "2020"
+    cases = [
+        ("threshold", f"Find invoices above ${thr:,.0f}", above),
+        ("threshold", f"Find invoices below ${thr:,.0f}", {n for n, t in rows.items() if t["total"] < thr}),
+        ("range", f"Find invoices between ${lo:,} and ${hi:,}", {n for n, t in rows.items() if lo <= t["total"] <= hi}),
+        ("count", f"how many invoices are above ${thr:,.0f}?", above),
+        ("sum", f"What is the total of invoices above ${thr:,.0f}?", above),
+        ("vendor", f"Find invoices from {v1}", by_vendor(v1)),
+        ("vendor-or", f"Find invoices from {v1} or {v2}", by_vendor(v1) | by_vendor(v2)),
+        ("vendor+threshold", f"Find invoices from {v1} above ${thr:,.0f}", by_vendor(v1) & above),
+        ("possessive", f"Show {v1}'s invoices", by_vendor(v1)),
+        ("possessive-lower", f"show {v1.lower()}'s invoices", by_vendor(v1)),
+        ("possessive-curly", f"Show {v1}\u2019s invoices", by_vendor(v1)),
+        ("possessive-start", f"{v1}'s invoices above ${thr:,.0f}", by_vendor(v1) & above),
+        ("year", f"Find invoices in {y}", {n for n, t in truth.items() if (t.get("date") or "").startswith(y)}),
+        ("unsupported", "Find invoices paid late", None),
+        ("unsupported", "Find invoices from last month", None),
+        ("unsupported", "Show the top 5 invoices by total", None),
+        ("unsupported", "Find invoices from March", None),
+    ]
+    return [{"form": f, "request": r, "expected": e} for f, r, e in cases]
+
+
+def request_outcome(expected: set[str] | None, got: set[str], state: str, not_understood: list) -> str:
+    confident = state == "succeeded" and not not_understood
+    if expected is None:
+        return "silent_wrong" if confident else "useful_abstention"
+    if got == expected:
+        return "correct" if confident else "unnecessary_abstention"
+    return "silent_wrong" if confident else "flagged_wrong"
 
 
 def run(args: argparse.Namespace) -> dict:
@@ -236,29 +261,23 @@ def run(args: argparse.Namespace) -> dict:
     request_rows = []
     if args.dataset == "voxel51" and not args.reference_text:
         ids = [d.id for d in agent.library.documents() if d.name in truth]
-        for request, expected in request_cases(truth):
-            res = agent.run_plan(agent.plan(request), ids, save=False)
+        for case in request_cases(truth):
+            expected = case["expected"]
+            res = agent.run_plan(agent.plan(case["request"]), ids, save=False)
             got = {r.name for r in res.records}
             state = res.state.value
+            not_understood = list(getattr(res, "not_understood", ()) or ())
             request_rows.append(
                 {
-                    "request": request,
+                    **{k: v for k, v in case.items() if k != "expected"},
+                    "supported": expected is not None,
                     "state": state,
-                    "exact": got == expected,
                     "returned": len(got),
-                    "expected": len(expected),
-                    "missing": sorted(expected - got)[:10],
-                    "extra": sorted(got - expected)[:10],
-                    "not_understood": list(getattr(res, "not_understood", ()) or ()),
-                    "outcome": (
-                        "correct"
-                        if got == expected and state == "succeeded"
-                        else "silent_wrong"
-                        if state == "succeeded"
-                        else "flagged_exact"
-                        if got == expected
-                        else "flagged_wrong"
-                    ),
+                    "expected": None if expected is None else len(expected),
+                    "missing": [] if expected is None else sorted(expected - got)[:10],
+                    "extra": [] if expected is None else sorted(got - expected)[:10],
+                    "not_understood": not_understood,
+                    "outcome": request_outcome(expected, got, state, not_understood),
                 }
             )
     brain = agent.library.brain

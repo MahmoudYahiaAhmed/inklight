@@ -242,7 +242,14 @@ def test_dangling_alternative_is_reported(agent):
 
 @pytest.mark.parametrize(
     "request_",
-    ["Find invoices that were paid late", "invoices from last month", "top 3 invoices by total", "invoices in March"],
+    [
+        "Find invoices that were paid late",
+        "invoices from last month",
+        "top 3 invoices by total",
+        "invoices in March",
+        "Find invoices from March",
+        "invoices before May",
+    ],
 )
 def test_known_unsupported_phrases_stay_reported(agent, request_):
     result = ask(agent, request_)

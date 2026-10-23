@@ -208,7 +208,7 @@ _UNSUPPORTED_RE = re.compile(
     r"|\b(?:yesterday|today|tomorrow|recent(?:ly)?|q[1-4])\b"
     r"|\b(?:under|over|less\s+than|more\s+than|after|before|at\s+least|at\s+most)\s+\d+\s*"
     r"(?:days?|weeks?|months?|years?)\b"
-    r"|\b(?:in|during)\s+(?:january|february|march|april|may|june|july|august|september|october|november"
+    r"|\b(?:in|during|from|for|since|before|after|until)\s+(?:january|february|march|april|may|june|july|august|september|october|november"
     r"|december)\b(?!\s*\d)"
     r"|\btop\s+\d+\b"
     r"|\b(?:not|except|excluding|without|unless)\b(?:\s+\w+){0,2}"
