@@ -12,7 +12,7 @@ from .errors import InklightError, InputRejected, ModelUnavailable, OCRError, Pe
 from .library import Library
 from .schemas import AgentResult, DocumentInfo, ExtractedValue, Record, Source
 
-__version__ = "0.1.0"
+__version__ = "0.1.1.dev0"
 
 __all__ = [
     "NAME",

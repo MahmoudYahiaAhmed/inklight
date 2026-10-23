@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "inklight"
-version = "0.1.0"
+version = "0.1.1.dev0"
 description = "Inklight — a local-first, OCR-powered document agent. See documents. Understand meaning. Take action."
 readme = "README.md"
 license = "Apache-2.0"
