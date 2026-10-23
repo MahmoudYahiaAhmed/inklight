@@ -1,0 +1,31 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  id-token: write   # PyPI trusted publishing — no API token stored in the repo
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]" build twine
+      - run: pytest -q
+      - name: Check the tag matches the package version
+        run: |
+          v=$(python -c "import inklight; print(inklight.__version__)")
+          test "v$v" = "${GITHUB_REF_NAME}"
+      - run: python -m build && twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

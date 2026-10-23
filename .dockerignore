@@ -1,0 +1,11 @@
+.venv
+.git
+.scratch-home
+.scratch-out
+bench
+tests
+examples
+docs
+**/__pycache__
+dist
+build

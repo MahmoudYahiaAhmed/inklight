@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use Inklight in research, please cite it as below."
+title: "Inklight: a local-first, OCR-powered document agent"
+type: software
+authors:
+  - name: "Mahmoud AboEl-Wfa"
+version: 0.1.0
+date-released: 2026-10-24
+license: Apache-2.0
+repository-code: "https://github.com/MahmoudYahiaAhmed/inklight"
+keywords: [ocr, document-ai, agent, extraction, retrieval]

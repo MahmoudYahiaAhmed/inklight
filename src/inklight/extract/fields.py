@@ -1,0 +1,476 @@
+"""Typed field extraction with provenance.
+
+Fields are found by label ("Total: $5,616.00", "Invoice Date 2026-03-14",
+or a label line followed by its value) and parsed by type. Every value keeps
+the page, line box and OCR confidence it came from. Inferred values (no label
+found) are marked with lower confidence and a warning, never as verified.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass, field
+from datetime import date
+from decimal import Decimal
+from pathlib import Path
+from typing import Any, Literal
+
+from ..errors import InputRejected
+from ..schemas import BBox, DocumentInfo, ExtractedValue, PageContent, Record, Source
+from .values import EMAIL_RE, PHONE_RE, all_money, parse_date, parse_dates, parse_money, parse_number
+
+FieldType = Literal["text", "money", "number", "date", "email", "phone", "id"]
+
+
+@dataclass(frozen=True)
+class FieldSpec:
+    name: str
+    type: FieldType = "text"
+    labels: tuple[str, ...] = ()
+    description: str = ""
+    required: bool = False
+
+    def all_labels(self) -> tuple[str, ...]:
+        base = self.labels or (self.name.replace("_", " "),)
+        return tuple(sorted(set(base), key=len, reverse=True))
+
+
+CATALOG: dict[str, FieldSpec] = {
+    s.name: s
+    for s in [
+        FieldSpec(
+            "invoice_number",
+            "id",
+            ("invoice number", "invoice no", "invoice #", "invoice id", "inv no", "inv #", "bill number", "invoice"),
+            "Invoice identifier",
+        ),
+        FieldSpec(
+            "date",
+            "date",
+            ("invoice date", "date of issue", "issue date", "issued on", "issued", "date"),
+            "Document or invoice date",
+        ),
+        FieldSpec("due_date", "date", ("payment due", "due date", "due by", "due on"), "Payment due date"),
+        FieldSpec(
+            "vendor", "text", ("vendor", "supplier", "seller", "billed by", "from", "company"), "Issuer of the document"
+        ),
+        FieldSpec(
+            "customer",
+            "text",
+            ("customer name", "bill to", "billed to", "customer", "client", "sold to", "ship to", "name"),
+            "Customer or recipient",
+        ),
+        FieldSpec("subtotal", "money", ("subtotal", "sub-total", "sub total", "net amount"), "Amount before tax"),
+        FieldSpec("tax", "money", ("total tax", "sales tax", "tax amount", "vat", "gst", "hst", "tax"), "Tax amount"),
+        FieldSpec(
+            "total",
+            "money",
+            ("grand total", "total due", "amount due", "balance due", "total amount", "amount payable", "total"),
+            "Total amount",
+        ),
+        FieldSpec(
+            "effective_date",
+            "date",
+            ("effective date", "commencement date", "start date", "effective as of"),
+            "Contract start",
+        ),
+        FieldSpec(
+            "expiry_date",
+            "date",
+            (
+                "expiration date",
+                "expiry date",
+                "termination date",
+                "expires on",
+                "expires",
+                "valid until",
+                "end date",
+                "term ends",
+                "renewal date",
+            ),
+            "Contract or document expiry",
+        ),
+        FieldSpec(
+            "contract_value",
+            "money",
+            ("contract value", "total value", "fees", "fee", "consideration"),
+            "Contract value",
+        ),
+        FieldSpec("email", "email", ("email", "e-mail"), "Email address"),
+        FieldSpec("phone", "phone", ("phone", "tel", "telephone", "mobile"), "Phone number"),
+        FieldSpec("po_number", "id", ("purchase order", "po number", "po #", "po no"), "Purchase order"),
+        FieldSpec("account_number", "id", ("account number", "account no", "acct no", "account #"), "Account id"),
+    ]
+}
+
+# Words people use for catalog fields.
+ALIASES: dict[str, str] = {
+    "invoice number": "invoice_number",
+    "invoice no": "invoice_number",
+    "invoice id": "invoice_number",
+    "number": "invoice_number",
+    "invoice date": "date",
+    "issue date": "date",
+    "dates": "date",
+    "due": "due_date",
+    "due date": "due_date",
+    "supplier": "vendor",
+    "seller": "vendor",
+    "vendors": "vendor",
+    "company": "vendor",
+    "issuer": "vendor",
+    "customer name": "customer",
+    "customer names": "customer",
+    "customers": "customer",
+    "client": "customer",
+    "clients": "customer",
+    "client name": "customer",
+    "name": "customer",
+    "names": "customer",
+    "amount": "total",
+    "total amount": "total",
+    "totals": "total",
+    "grand total": "total",
+    "amount due": "total",
+    "price": "total",
+    "vat": "tax",
+    "gst": "tax",
+    "taxes": "tax",
+    "sales tax": "tax",
+    "net": "subtotal",
+    "expiry": "expiry_date",
+    "expiration": "expiry_date",
+    "expiration date": "expiry_date",
+    "expiry date": "expiry_date",
+    "end date": "expiry_date",
+    "expires": "expiry_date",
+    "start date": "effective_date",
+    "effective date": "effective_date",
+    "emails": "email",
+    "phone number": "phone",
+    "phones": "phone",
+    "po": "po_number",
+    "purchase order": "po_number",
+    "value": "contract_value",
+    "contract value": "contract_value",
+}
+
+_SEP = r"\s*(?:[:#=]|no\.?|number)?\s*[:#]?\s*"
+
+
+def resolve_field(word: str) -> FieldSpec:
+    """Map a user's word ("vendor", "VAT", "customer names") to a field spec."""
+    key = re.sub(r"\s+", " ", word.strip().lower().replace("_", " "))
+    key = re.sub(r"^(the|all|every|each)\s+", "", key)
+    name = ALIASES.get(key) or key.replace(" ", "_")
+    if name in CATALOG:
+        return CATALOG[name]
+    if name.endswith("s") and name[:-1] in CATALOG:
+        return CATALOG[name[:-1]]
+    return FieldSpec(name=re.sub(r"\W+", "_", name).strip("_") or "field", labels=(key,))
+
+
+# ---------------------------------------------------------------- schema files
+
+
+def load_schema(path: str | Path) -> list[FieldSpec]:
+    """Read a schema: JSON Schema ``properties``, ``{"fields": [...]}`` or ``{"name": "type"}``."""
+    p = Path(path)
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise InputRejected(f"Cannot read schema {p.name}: {exc}") from exc
+    return schema_from_dict(data)
+
+
+_JSON_TYPES: dict[str, FieldType] = {"string": "text", "number": "number", "integer": "number"}
+
+
+def schema_from_dict(data: Any) -> list[FieldSpec]:
+    specs: list[FieldSpec] = []
+    if isinstance(data, dict) and isinstance(data.get("properties"), dict):
+        required = set(data.get("required", []))
+        for name, prop in data["properties"].items():
+            ftype = prop.get("x-type") or _JSON_TYPES.get(prop.get("type", "string"), "text")
+            if prop.get("format") == "date":
+                ftype = "date"
+            specs.append(_spec(name, ftype, prop.get("x-labels"), prop.get("description", ""), name in required))
+    elif isinstance(data, dict) and isinstance(data.get("fields"), list):
+        for item in data["fields"]:
+            if not isinstance(item, dict) or "name" not in item:
+                raise InputRejected("Each schema field needs a 'name'")
+            specs.append(
+                _spec(
+                    item["name"],
+                    item.get("type", "text"),
+                    item.get("labels"),
+                    item.get("description", ""),
+                    bool(item.get("required")),
+                )
+            )
+    elif isinstance(data, dict) and all(isinstance(v, str) for v in data.values()):
+        specs = [_spec(name, ftype, None, "", False) for name, ftype in data.items()]
+    else:
+        raise InputRejected("Unrecognised schema format; see docs/extraction.md")
+    if not specs:
+        raise InputRejected("Schema defines no fields")
+    return specs
+
+
+def _spec(name: str, ftype: str, labels: Any, description: str, required: bool) -> FieldSpec:
+    if ftype not in ("text", "money", "number", "date", "email", "phone", "id"):
+        raise InputRejected(f"Field {name!r}: unknown type {ftype!r}")
+    known = CATALOG.get(ALIASES.get(name.lower().replace("_", " "), name))
+    label_tuple = tuple(labels) if labels else (known.labels if known else ())
+    return FieldSpec(
+        name=name,
+        type=ftype,  # type: ignore[arg-type]  # validated just above
+        labels=label_tuple,
+        description=description,
+        required=required,
+    )
+
+
+# ---------------------------------------------------------------- extraction
+
+
+@dataclass
+class _Line:
+    page: int
+    text: str
+    bbox: BBox | None
+    conf: float | None
+
+
+@dataclass
+class _Candidate:
+    value: Any
+    raw: str
+    line: _Line
+    quality: float
+    method: str
+    extra: dict[str, Any] = field(default_factory=dict)
+
+
+def _lines(pages: list[PageContent]) -> list[_Line]:
+    out: list[_Line] = []
+    for p in pages:
+        if p.lines:
+            out.extend(_Line(p.number, ln.text, ln.bbox, ln.conf) for ln in p.lines if ln.text.strip())
+        else:
+            out.extend(_Line(p.number, b.text, b.bbox, b.conf) for b in p.blocks if b.text.strip())
+    return out
+
+
+def parse_typed(ftype: FieldType, raw: str) -> tuple[Any, str] | None:
+    """Parse ``raw`` as ``ftype``; return (value, matched text) or None."""
+    raw = raw.strip()
+    if not raw:
+        return None
+    if ftype == "money":
+        money = parse_money(raw)
+        return (money[0], raw) if money else None
+    if ftype == "number":
+        m = re.search(r"-?\d[\d,. ]*", raw)
+        num = parse_number(m.group(0)) if m else None
+        return (num, m.group(0)) if num is not None and m else None
+    if ftype == "date":
+        hits = parse_dates(raw)
+        return (hits[0][0], hits[0][1]) if hits else None
+    if ftype == "email":
+        m = EMAIL_RE.search(raw)
+        return (m.group(0), m.group(0)) if m else None
+    if ftype == "phone":
+        m = PHONE_RE.search(raw)
+        return (m.group(0).strip(), m.group(0)) if m else None
+    if ftype == "id":
+        m = re.search(r"[A-Z0-9][A-Z0-9\-/_.]{0,40}", raw, re.IGNORECASE)
+        if not m or not re.search(r"\d", m.group(0)):
+            return None
+        return (m.group(0).rstrip("."), m.group(0))
+    text = re.split(r"\s{3,}", raw)[0].strip(" :-")
+    return (text, text) if 1 < len(text) <= 160 else None
+
+
+def _label_regex(specs: list[FieldSpec]) -> list[tuple[re.Pattern[str], FieldSpec, str]]:
+    pairs = [(label, spec) for spec in specs for label in spec.all_labels()]
+    pairs.sort(key=lambda p: len(p[0]), reverse=True)
+    return [
+        (re.compile(rf"(?<![\w-]){re.escape(label)}(?![\w-]){_SEP}", re.IGNORECASE), spec, label)
+        for label, spec in pairs
+    ]
+
+
+def _find_candidates(lines: list[_Line], specs: list[FieldSpec]) -> dict[str, list[_Candidate]]:
+    # Claim labels of the whole catalog too, so "Due Date" is never read as "Date"
+    # even when only "date" was requested; only requested fields are recorded.
+    wanted = {s.name for s in specs}
+    others = [s for name, s in CATALOG.items() if name not in wanted]
+    patterns = _label_regex(specs + others)
+    found: dict[str, list[_Candidate]] = {s.name: [] for s in specs}
+
+    def is_label_line(text: str) -> bool:
+        return any(p.match(text.strip()) for p, _, _ in patterns)
+
+    for i, line in enumerate(lines):
+        # Claim label spans longest-first so "Subtotal" never also counts as "Total".
+        claimed: list[tuple[int, int, FieldSpec]] = []
+        for pattern, spec, _label in patterns:
+            for m in pattern.finditer(line.text):
+                if any(m.start() < e and s < m.end() for s, e, _ in claimed):
+                    continue
+                # Free-text labels mid-sentence ("... from the ...") are not field labels.
+                if spec.type == "text" and m.start() > 0 and ":" not in m.group(0):
+                    continue
+                # A bare one-word label like "Invoice" only counts with an explicit ':' or '#'.
+                if _label == "invoice" and not re.search(r"[:#]", m.group(0)):
+                    continue
+                claimed.append((m.start(), m.end(), spec))
+        claimed.sort(key=lambda c: c[0])
+        for k, (_start, end, spec) in enumerate(claimed):
+            if spec.name not in wanted:
+                continue
+            stop = claimed[k + 1][0] if k + 1 < len(claimed) else len(line.text)
+            tail = line.text[end:stop]
+            parsed = parse_typed(spec.type, tail)
+            quality = 1.0 if line.text[:end].rstrip().endswith((":", "#")) else 0.9
+            if parsed is None and not tail.strip() and i + 1 < len(lines):
+                nxt = lines[i + 1]
+                # The value sits on the next line only if that line is not itself another label.
+                if nxt.page == line.page and not is_label_line(nxt.text):
+                    parsed = parse_typed(spec.type, nxt.text)
+                    if parsed:
+                        found[spec.name].append(_Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))
+                continue
+            if parsed is not None:
+                found[spec.name].append(_Candidate(parsed[0], parsed[1], line, quality, "label"))
+    return found
+
+
+def _fallback(spec: FieldSpec, lines: list[_Line]) -> _Candidate | None:
+    """Unlabelled guesses. Always low confidence and flagged as inferred."""
+    if spec.type == "date" and spec.name in ("date", "invoice_date", "document_date"):
+        for line in lines[:40]:
+            d = parse_date(line.text)
+            if d:
+                return _Candidate(d, line.text, line, 0.5, "first-date")
+    if spec.type == "money" and spec.name in ("total", "amount"):
+        best: tuple[Decimal, _Line] | None = None
+        for line in lines:
+            for value in all_money(line.text):
+                if best is None or value > best[0]:
+                    best = (value, line)
+        if best:
+            return _Candidate(best[0], best[1].text, best[1], 0.4, "largest-amount")
+    if spec.name in ("vendor", "company"):
+        # The issuer's name usually heads the document; labelled lines ("Bill To: X Inc.") are someone else.
+        org = re.compile(
+            r"\b(inc|ltd|llc|gmbh|corp|corporation|co\.|company|limited|plc|s\.a\.|pty|llp)\b", re.IGNORECASE
+        )
+        head = [ln for ln in lines[:8] if ":" not in ln.text and len(ln.text) < 80]
+        for line in head:
+            if org.search(line.text):
+                return _Candidate(line.text.strip(), line.text, line, 0.6, "organisation-line")
+    if spec.type in ("email", "phone"):
+        for line in lines:
+            parsed = parse_typed(spec.type, line.text)
+            if parsed:
+                return _Candidate(parsed[0], parsed[1], line, 0.6, f"first-{spec.type}")
+    return None
+
+
+def _source(doc: DocumentInfo, line: _Line) -> Source:
+    return Source(
+        doc_id=doc.id,
+        path=doc.path,
+        name=doc.name,
+        page=line.page,
+        bbox=line.bbox,
+        excerpt=line.text,
+        ocr_conf=line.conf,
+    )
+
+
+def _jsonable(value: Any) -> Any:
+    if isinstance(value, Decimal):
+        return float(value)
+    if isinstance(value, date):
+        return value.isoformat()
+    return value
+
+
+def extract_record(doc: DocumentInfo, pages: list[PageContent], specs: list[FieldSpec]) -> Record:
+    names = {s.name for s in specs}
+    if "total" in names and not {"subtotal", "tax"} <= names:
+        # Read subtotal and tax as hidden helpers so a total is always arithmetic-checked.
+        full = extract_record(doc, pages, [*specs, *(CATALOG[n] for n in ("subtotal", "tax") if n not in names)])
+        return full.model_copy(update={"fields": {k: v for k, v in full.fields.items() if k in names}})
+    lines = _lines(pages)
+    candidates = _find_candidates(lines, specs)
+    values: dict[str, ExtractedValue] = {}
+    raw_values: dict[str, Any] = {}
+    for spec in specs:
+        cands = candidates.get(spec.name) or []
+        # Prefer the strongest label match; for totals prefer the last one (summary rows come last).
+        if spec.name == "total" and cands:
+            best: _Candidate | None = max(cands, key=lambda c: (c.quality, lines.index(c.line)))
+        else:
+            best = max(cands, key=lambda c: c.quality) if cands else None
+        if best is None:
+            best = _fallback(spec, lines)
+        if best is None:
+            values[spec.name] = ExtractedValue(field=spec.name, warning="not found" if spec.required else None)
+            continue
+        conf = best.quality * (best.line.conf if best.line.conf is not None else 0.9)
+        distinct = {str(c.value) for c in cands}
+        warning = None
+        if best.method not in ("label", "label-next-line"):
+            warning = f"inferred ({best.method}); no label found"
+        elif len(distinct) > 1:
+            warning = f"{len(distinct)} different values found; chose the strongest label match"
+            conf *= 0.8
+        if best.line.conf is not None and best.line.conf < 0.85:
+            warning = (warning + "; " if warning else "") + f"low OCR confidence ({best.line.conf:.2f})"
+        raw_values[spec.name] = best.value
+        values[spec.name] = ExtractedValue(
+            field=spec.name,
+            value=_jsonable(best.value),
+            raw=best.raw,
+            confidence=round(min(conf, 1.0), 3),
+            method=best.method,
+            source=_source(doc, best.line),
+            verified=best.method.startswith("label") and best.raw.strip() in best.line.text,
+            warning=warning,
+        )
+    _cross_check(values, raw_values)
+    return Record(doc_id=doc.id, name=doc.name, path=doc.path, fields=values)
+
+
+def _cross_check(values: dict[str, ExtractedValue], raw: dict[str, Any]) -> None:
+    """subtotal + tax should equal total when all three carry labels.
+
+    Shipping or discounts legitimately break the identity, so a mismatch is a
+    "please check" warning, and inferred (unlabelled) values are never checked.
+    """
+    if not all(k in raw for k in ("subtotal", "tax", "total")):
+        return
+    if any(not values[k].method.startswith("label") for k in ("subtotal", "tax", "total")):
+        return
+    try:
+        ok = abs((Decimal(raw["subtotal"]) + Decimal(raw["tax"])) - Decimal(raw["total"])) <= Decimal("0.02")
+    except (TypeError, ArithmeticError):
+        return
+    for key in ("subtotal", "tax", "total"):
+        item = values[key]
+        if ok:
+            values[key] = item.model_copy(update={"verified": True, "confidence": max(item.confidence, 0.95)})
+        else:
+            values[key] = item.model_copy(
+                update={
+                    "verified": False,
+                    "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); "
+                    "please check",
+                    "confidence": item.confidence * 0.75,
+                }
+            )

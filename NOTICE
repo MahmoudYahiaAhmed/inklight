@@ -1,0 +1,15 @@
+Inklight
+Copyright 2026 Mahmoud AboEl-Wfa
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Inklight uses, but does not include, the following third-party software and models,
+which are installed or downloaded separately under their own licenses:
+
+- Indra OCR (https://github.com/datalab-to/indra), code under Apache-2.0,
+  Copyright Datalab. Its model weights (https://huggingface.co/datalab-to/indra-ocr)
+  are licensed under a modified OpenRAIL-M license with commercial-use restrictions.
+- DistilBERT SQuAD (Apache-2.0), BGE-small-en-v1.5 (MIT) and SmolLM2-135M-Instruct
+  (Apache-2.0), downloaded on request by `inklight models pull`.
+
+See THIRD_PARTY_LICENSES.md for the full audit.

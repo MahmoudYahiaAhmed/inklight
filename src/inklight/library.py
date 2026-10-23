@@ -1,0 +1,219 @@
+"""The document library: validate, OCR once, chunk, classify and index.
+
+Re-adding an unchanged file is free (same path + same SHA-256). An identical
+file at a new path reuses the stored extraction instead of running OCR again.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import logging
+import time
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from .brains import Brain
+from .chunking import chunk_page
+from .config import Settings, load_settings
+from .errors import InklightError, InputRejected, OCRError
+from .extract import classify
+from .ocr import OCREngine, PlainTextEngine, create_engine
+from .retrieval import Retriever
+from .safety import check_file, discover, injection_signals
+from .schemas import DocStatus, DocumentInfo, PageContent, SearchHit
+from .store import Store
+
+log = logging.getLogger(__name__)
+
+Progress = Callable[[str, str, dict], None]
+
+
+@dataclass
+class IngestReport:
+    added: list[DocumentInfo] = field(default_factory=list)
+    unchanged: list[DocumentInfo] = field(default_factory=list)
+    failed: list[tuple[str, str]] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+    seconds: float = 0.0
+
+    @property
+    def documents(self) -> list[DocumentInfo]:
+        return self.added + self.unchanged
+
+    @property
+    def pages(self) -> int:
+        return sum(d.pages for d in self.added)
+
+
+def doc_id_for(path: Path) -> str:
+    return hashlib.sha256(str(path.resolve()).lower().encode("utf-8")).hexdigest()[:16]
+
+
+class Library:
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        *,
+        store: Store | None = None,
+        engine: OCREngine | None = None,
+        brain: Brain | None = None,
+    ) -> None:
+        self.settings = settings or load_settings()
+        self.settings.home.mkdir(parents=True, exist_ok=True)
+        self.store = store or Store(self.settings.db_path)
+        self._engine = engine
+        self._text_engine = PlainTextEngine()
+        self.brain = brain or Brain(self.settings)
+        self.retriever = Retriever(self.store, self.brain)
+
+    @property
+    def engine(self) -> OCREngine:
+        if self._engine is None:
+            self._engine = create_engine(self.settings.ocr)
+        return self._engine
+
+    # -- ingest ------------------------------------------------------------
+
+    def add(
+        self,
+        paths: list[str | Path] | str | Path,
+        *,
+        password: str | None = None,
+        force: bool = False,
+        progress: Progress | None = None,
+    ) -> IngestReport:
+        """Add files and/or folders. Never raises for a single bad file; see report.failed."""
+        started = time.perf_counter()
+        if isinstance(paths, str | Path):
+            paths = [paths]
+        files, skipped = discover(list(paths), self.settings.limits.max_files_per_task)
+        report = IngestReport(warnings=skipped)
+        for i, path in enumerate(files):
+            if progress:
+                progress("start", str(path), {"index": i, "total": len(files)})
+            try:
+                info, fresh = self._ingest_one(path, password=password, force=force)
+            except InklightError as exc:
+                report.failed.append((str(path), str(exc)))
+                if progress:
+                    progress("failed", str(path), {"error": str(exc)})
+                continue
+            (report.added if fresh else report.unchanged).append(info)
+            if progress:
+                progress("done", str(path), {"pages": info.pages, "fresh": fresh, "status": info.status.value})
+        if report.added:
+            try:
+                self.retriever.index_embeddings()
+            except Exception as exc:  # embeddings are optional; keyword search still works
+                report.warnings.append(f"Semantic index skipped: {exc}")
+        report.seconds = time.perf_counter() - started
+        return report
+
+    def _ingest_one(self, path: Path, *, password: str | None, force: bool) -> tuple[DocumentInfo, bool]:
+        checked = check_file(path, self.settings.limits.max_file_mb)
+        doc_id = doc_id_for(checked.path)
+        existing = self.store.get_document(doc_id)
+        if existing and existing.sha256 == checked.sha256 and existing.status == DocStatus.READY and not force:
+            return existing, False
+        base = DocumentInfo(
+            id=doc_id,
+            path=str(checked.path),
+            name=checked.path.name,
+            sha256=checked.sha256,
+            size=checked.size,
+            mtime=checked.mtime,
+            status=DocStatus.PENDING,
+        )
+        self.store.upsert_document(base)
+        twin = None if force else self.store.find_ready_by_hash(checked.sha256)
+        if twin and twin.id != doc_id:
+            self.store.copy_content(twin.id, doc_id)
+            info = base.model_copy(
+                update={
+                    "pages": twin.pages,
+                    "total_pages": twin.total_pages,
+                    "status": DocStatus.READY,
+                    "doc_type": twin.doc_type,
+                    "engine": twin.engine,
+                    "mean_conf": twin.mean_conf,
+                }
+            )
+            self.store.upsert_document(info)
+            return info, True
+        engine = self._text_engine if checked.kind == "text" else self.engine
+        if not engine.supports(checked.kind):
+            raise InputRejected(f"{checked.path.name}: engine {engine.name} cannot read {checked.kind}")
+        try:
+            content = engine.read(checked.path, max_pages=self.settings.limits.max_pages, password=password)
+        except OCRError as exc:
+            self.store.clear_content(doc_id)  # an old extraction of a changed file must not stay searchable
+            self.store.upsert_document(base.model_copy(update={"status": DocStatus.FAILED, "error": str(exc)}))
+            raise
+        chunks = [c for page in content.pages for c in chunk_page(page)]
+        flagged = {i for i, c in enumerate(chunks) if injection_signals(c.text)}
+        text = "\n".join(c.text for c in chunks)
+        doc_type, _ = classify(text)
+        confs = [p.mean_conf for p in content.pages if p.mean_conf is not None]
+        good_pages = [p for p in content.pages if p.source != "error"]
+        status = DocStatus.READY if good_pages else DocStatus.FAILED
+        error = None if good_pages else "; ".join(content.warnings) or "no readable pages"
+        self.store.save_content(doc_id, content, chunks, flagged, store_text=self.settings.privacy.store_text)
+        info = base.model_copy(
+            update={
+                "pages": len(content.pages),
+                "total_pages": content.total_pages,
+                "status": status,
+                "doc_type": doc_type,
+                "engine": content.engine,
+                "error": error,
+                "mean_conf": round(sum(confs) / len(confs), 4) if confs else None,
+            }
+        )
+        self.store.upsert_document(info)
+        if status == DocStatus.FAILED:
+            raise OCRError(f"{checked.path.name}: {error}")
+        if not self.settings.privacy.log_document_text:
+            log.info("indexed %s (%d pages, %d chunks)", info.name, info.pages, len(chunks))
+        return info, True
+
+    # -- queries -----------------------------------------------------------
+
+    def documents(self) -> list[DocumentInfo]:
+        return self.store.list_documents()
+
+    def get(self, doc_id: str) -> DocumentInfo | None:
+        return self.store.get_document(doc_id)
+
+    def pages(self, doc_id: str) -> list[PageContent]:
+        return self.store.get_pages(doc_id)
+
+    def text(self, doc_id: str) -> str:
+        return self.store.document_text(doc_id)
+
+    def search(self, query: str, doc_ids: list[str] | None = None, k: int = 8) -> list[SearchHit]:
+        return self.retriever.search(query, doc_ids, k)
+
+    def find(self, ref: str) -> DocumentInfo | None:
+        """Look a document up by id, id prefix, path or file name."""
+        doc = self.store.get_document(ref)
+        if doc:
+            return doc
+        p = Path(ref).expanduser()
+        if p.exists():
+            return self.store.get_document(doc_id_for(p))
+        matches = [d for d in self.documents() if d.id.startswith(ref) or d.name == ref]
+        return matches[0] if len(matches) == 1 else None
+
+    def remove(self, doc_id: str) -> bool:
+        return self.store.delete_document(doc_id)
+
+    def reindex(self, doc_ids: list[str] | None = None, progress: Progress | None = None) -> IngestReport:
+        docs = [d for d in self.documents() if doc_ids is None or d.id in doc_ids]
+        missing = [d for d in docs if not Path(d.path).exists()]
+        report = self.add([d.path for d in docs if Path(d.path).exists()], force=True, progress=progress)
+        report.warnings.extend(f"Source file missing, kept old index: {d.path}" for d in missing)
+        return report
+
+    def close(self) -> None:
+        self.store.close()

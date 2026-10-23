@@ -1,0 +1,37 @@
+# Inklight configuration — copy to ~/.inklight/config.toml (or point INKLIGHT_CONFIG at it).
+# Every key is optional. Environment overrides use INKLIGHT_<SECTION>__<KEY>, e.g. INKLIGHT_LIMITS__MAX_STEPS=8
+version = 1
+# home = "~/.inklight"            # library database, uploads and outputs live here
+# output_dir = "~/inklight-out"   # the only folder the agent may write into
+
+[limits]
+max_file_mb = 100
+max_pages = 500                # pages read per document; the rest is skipped with a warning
+max_files_per_task = 500
+max_steps = 12
+task_timeout_s = 600
+step_timeout_s = 300
+max_retries = 1
+context_chars = 6000           # evidence budget handed to any model
+
+[ocr]
+engine = "indra"
+dpi = 200
+mode = "auto"                  # auto: PDF text layer where sound, OCR elsewhere | ocr | text
+threads = 4
+# model_dir = "/models/indra"  # use a local copy of the Indra models (no download)
+
+[models]
+brain = "auto"                 # auto: use small local models if installed | local: require them | rules: none
+use_writer = false             # let the 135M writer phrase answers (always verified against evidence)
+allow_download = false         # fetch models on first use instead of `inklight models pull`
+# model_dir = "/models/inklight"
+# Optional stronger model behind an OpenAI-compatible API (off unless both are set). https only.
+# remote_base_url = "https://api.example.com/v1"
+# remote_model = "your-model"
+# remote_api_key_env = "INKLIGHT_REMOTE_API_KEY"
+# remote_for = "fallback"      # never | fallback (low confidence only) | always
+
+[privacy]
+store_text = true              # keep extracted text in the local index (needed for search)
+log_document_text = false

@@ -1,0 +1,428 @@
+"""Structured tools: extraction, filtering, calculation, comparison, consistency, output."""
+
+from __future__ import annotations
+
+import csv
+import difflib
+import io
+import json
+import re
+from datetime import date, timedelta
+from decimal import Decimal, InvalidOperation
+from typing import Any
+
+from ..errors import PermissionDenied, ToolError
+from ..extract import CATALOG, extract_record, resolve_field
+from ..extract.fields import parse_typed
+from ..safety import safe_output_path
+from ..schemas import ExtractedValue, Record, Source
+from .answer import norm
+from .context import ToolContext
+from .plan import Condition
+
+# ---------------------------------------------------------------- extract
+
+QUESTIONS = {
+    "vendor": "Which company issued this document?",
+    "customer": "Who is the document billed or addressed to?",
+    "invoice_number": "What is the invoice number?",
+    "date": "What is the date of the document?",
+    "due_date": "When is payment due?",
+    "expiry_date": "When does the agreement expire?",
+    "effective_date": "When does the agreement take effect?",
+    "total": "What is the total amount due?",
+    "tax": "How much is the tax?",
+}
+_LABEL_WORDS = {label for spec in CATALOG.values() for label in spec.all_labels()}
+
+
+def extract_fields(ctx: ToolContext, fields: list[str]) -> str:
+    specs = [resolve_field(f) for f in fields]
+    records = []
+    for doc in ctx.docs():
+        ctx.check()
+        record = extract_record(doc, ctx.pages(doc.id), specs)
+        record = _reader_fill(ctx, record, specs)
+        records.append(record)
+        for name, value in record.fields.items():
+            if value.warning and value.value is not None:
+                ctx.scratch.warn(f"{doc.name} · {name}: {value.warning}")
+    ctx.scratch.records = records
+    found = sum(1 for r in records for v in r.fields.values() if v.value is not None)
+    total = len(records) * len(specs)
+    return f"{found}/{total} values from {len(records)} documents"
+
+
+def _reader_fill(ctx: ToolContext, record: Record, specs: list[Any]) -> Record:
+    """Ask the extractive reader for fields that have no labelled value."""
+    reader = ctx.brain.reader
+    if reader is None:
+        return record
+    missing = [s for s in specs if record.fields[s.name].value is None or record.fields[s.name].method != "label"]
+    if not missing:
+        return record
+    chunks = ctx.library.store.chunks_for([record.doc_id])[:12]
+    if not chunks:
+        return record
+    updated = dict(record.fields)
+    for spec in missing:
+        ctx.check()
+        current = updated[spec.name]
+        if current.value is not None and current.method != "none":
+            continue  # a heuristic value exists; the reader only fills real gaps
+        question = QUESTIONS.get(spec.name) or f"What is the {spec.description.lower() or spec.name.replace('_', ' ')}?"
+        spans = reader.answer(question, [src.excerpt for _, src in chunks], top=1, check=ctx.check)
+        if not spans or spans[0].score < 0.35:
+            continue
+        span = spans[0]
+        if ":" in span.text or span.text.lower() in _LABEL_WORDS:
+            continue  # the reader picked a label, not a value
+        parsed = parse_typed(spec.type, span.text)
+        if parsed is None:
+            continue
+        src: Source = chunks[span.passage][1]
+        value = parsed[0]
+        value = float(value) if isinstance(value, Decimal) else value
+        value = value.isoformat() if isinstance(value, date) else value
+        updated[spec.name] = ExtractedValue(
+            field=spec.name,
+            value=value,
+            raw=span.text,
+            confidence=round(span.score * 0.8, 3),
+            method="reader",
+            source=src.model_copy(update={"excerpt": src.excerpt[max(0, span.start - 80) : span.end + 80]}),
+            verified=span.text in src.excerpt,
+            warning="found by the reader model without a label; please check",
+        )
+        ctx.scratch.brain_used.add("reader")
+    return record.model_copy(update={"fields": updated})
+
+
+# ---------------------------------------------------------------- filter
+
+
+def _as_decimal(value: Any) -> Decimal | None:
+    try:
+        return Decimal(str(value))
+    except (InvalidOperation, ValueError):
+        return None
+
+
+def _as_date(value: Any) -> date | None:
+    if isinstance(value, date):
+        return value
+    try:
+        return date.fromisoformat(str(value))
+    except ValueError:
+        return None
+
+
+def matches(value: Any, cond: Condition, today: date) -> bool | None:
+    """True/False, or None when the value is missing or not comparable."""
+    if value is None:
+        return None
+    if cond.op == "contains":
+        return str(cond.value).lower() in str(value).lower()
+    if cond.op in ("within_days", "before", "after"):
+        d = _as_date(value)
+        if d is None:
+            return None
+        if cond.op == "within_days":
+            return today <= d <= today + timedelta(days=int(cond.value))
+        limit = _as_date(cond.value)
+        if limit is None:
+            return None
+        return d < limit if cond.op == "before" else d > limit
+    a, b = _as_decimal(value), _as_decimal(cond.value)
+    if a is None or b is None:
+        return str(value).strip().lower() == str(cond.value).strip().lower() if cond.op == "eq" else None
+    return {"gt": a > b, "ge": a >= b, "lt": a < b, "le": a <= b, "eq": a == b}[cond.op]
+
+
+def filter_records(ctx: ToolContext, conditions: list[Condition], today: date | None = None) -> str:
+    today = today or date.today()
+    kept, dropped, unknown = [], [], []
+    for record in ctx.scratch.records:
+        results = [
+            matches(record.fields.get(c.field, ExtractedValue(field=c.field)).value, c, today) for c in conditions
+        ]
+        if any(r is None for r in results):
+            unknown.append(record)
+        elif all(results):
+            kept.append(record)
+        else:
+            dropped.append(record)
+    ctx.scratch.records = kept
+    ctx.scratch.excluded = dropped + unknown
+    if unknown:
+        names = ", ".join(r.name for r in unknown[:5]) + (" …" if len(unknown) > 5 else "")
+        fields = ", ".join(sorted({c.field for c in conditions}))
+        ctx.scratch.warn(f"{len(unknown)} document(s) had no readable {fields} and were excluded: {names}")
+    return f"{len(kept)} match, {len(dropped)} do not, {len(unknown)} unknown"
+
+
+# ---------------------------------------------------------------- calculate
+
+
+def calculate(ctx: ToolContext, op: str, field: str) -> str:
+    values: list[tuple[Decimal, Record]] = []
+    for record in ctx.scratch.records:
+        d = _as_decimal(record.fields.get(field, ExtractedValue(field=field)).value)
+        if d is not None:
+            values.append((d, record))
+    missing = len(ctx.scratch.records) - len(values)
+    if op == "count":
+        result: Decimal | None = Decimal(len(values))
+    elif not values:
+        result = None
+    elif op == "sum":
+        result = sum((v for v, _ in values), Decimal(0))
+    elif op == "avg":
+        result = sum((v for v, _ in values), Decimal(0)) / len(values)
+    elif op == "max":
+        result = max(v for v, _ in values)
+    elif op == "min":
+        result = min(v for v, _ in values)
+    else:
+        raise ToolError(f"Unknown operation {op!r}")
+    ctx.scratch.calc = {
+        "op": op,
+        "field": field,
+        "result": None if result is None else float(round(result, 2)),
+        "count": len(values),
+        "missing": missing,
+    }
+    if missing:
+        ctx.scratch.warn(f"{missing} document(s) had no {field} and were left out of the {op}")
+    return f"{op}({field}) = {ctx.scratch.calc['result']} over {len(values)} values"
+
+
+# ---------------------------------------------------------------- compare
+
+
+def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
+    docs = ctx.docs()
+    if len(docs) < 2:
+        raise ToolError("Comparison needs at least two documents")
+    docs = docs[:5]
+    if len(ctx.docs()) > 5:
+        ctx.scratch.warn("Compared the first 5 documents only")
+    types = {d.doc_type for d in docs}
+    if not fields:
+        # Field-level comparison only where fields are meaningful; otherwise compare the text.
+        fields = (
+            ["invoice_number", "vendor", "date", "subtotal", "tax", "total"]
+            if types <= {"invoice", "receipt"}
+            else ["effective_date", "expiry_date", "contract_value"]
+            if types == {"contract"}
+            else []
+        )
+    specs = [resolve_field(f) for f in fields]
+    records = [extract_record(d, ctx.pages(d.id), specs) for d in docs]
+    ctx.scratch.records = records
+    base, base_doc = records[0], docs[0]
+    lines: list[str] = []
+    sources: list[Source] = []
+    for other, doc in zip(records[1:], docs[1:], strict=True):
+        ctx.check()
+        diffs = []
+        for spec in specs:
+            a, b = base.fields[spec.name], other.fields[spec.name]
+            if a.value != b.value and (a.value is not None or b.value is not None):
+                diffs.append(
+                    f"{spec.name}: {a.value if a.value is not None else '—'} → "
+                    f"{b.value if b.value is not None else '—'}"
+                )
+                sources.extend(x.source for x in (a, b) if x.source)
+        text_a = [norm(x) for x in ctx.library.text(base_doc.id).splitlines() if x.strip()]
+        text_b = [norm(x) for x in ctx.library.text(doc.id).splitlines() if x.strip()]
+        only_a = [x for x in text_a if x not in set(text_b)]
+        only_b = [x for x in text_b if x not in set(text_a)]
+        ratio = difflib.SequenceMatcher(None, "\n".join(text_a), "\n".join(text_b), autojunk=False).ratio()
+        block = [f"**{base_doc.name} vs {doc.name}** — text similarity {ratio:.0%}"]
+        if specs:
+            block.append(
+                "Field differences:\n" + "\n".join(f"  - {d}" for d in diffs)
+                if diffs
+                else "Field differences: none among the compared fields"
+            )
+        changed = _changed_numbers(only_a, only_b)
+        if changed:
+            block.append("Changed figures: " + "; ".join(changed[:8]))
+        if only_a or only_b:
+            block.append(
+                f"Lines only in {base_doc.name} ({len(only_a)}):\n" + "\n".join(f"  - {x[:160]}" for x in only_a[:5])
+            )
+            block.append(
+                f"Lines only in {doc.name} ({len(only_b)}):\n" + "\n".join(f"  - {x[:160]}" for x in only_b[:5])
+            )
+        lines.append("\n".join(block))
+    ctx.scratch.answer = "\n\n".join(lines)
+    if not sources:
+        for doc in docs:
+            first = ctx.library.store.chunks_for([doc.id])[:1]
+            sources.extend(src for _, src in first)
+    ctx.scratch.sources = sources[:10]
+    ctx.scratch.confidence = 0.8
+    return f"compared {len(docs)} documents"
+
+
+def _changed_numbers(only_a: list[str], only_b: list[str]) -> list[str]:
+    """Pair lines that differ only in their figures and report old → new."""
+    out = []
+    shape = re.compile(r"(?<![A-Za-z])\$?\d(?:[\d,]*\d)?(?:\.\d+)?%?")
+    for a in only_a:
+        for b in only_b:
+            # Lines pair up when they match with every digit masked ("Q1" vs "Q2" included).
+            if re.sub(r"\d+", "#", a) == re.sub(r"\d+", "#", b) and a != b:
+                pairs = [f"{x} → {y}" for x, y in zip(shape.findall(a), shape.findall(b), strict=False) if x != y]
+                if pairs:
+                    out.append(f"{', '.join(pairs)} (in “{a[:70]}”)")
+                break
+    return out
+
+
+# ---------------------------------------------------------------- inconsistencies
+
+
+def _key(text: str) -> str:
+    text = re.sub(r"\b(inc|ltd|llc|corp|co|corporation|limited|company|plc|gmbh)\b\.?", "", text.lower())
+    return re.sub(r"[^a-z0-9@]", "", text)
+
+
+def find_inconsistencies(ctx: ToolContext, fields: list[str]) -> str:
+    issues: list[str] = []
+    sources: list[Source] = []
+    records = ctx.scratch.records
+    for name in fields:
+        seen: dict[str, list[tuple[str, Record]]] = {}
+        values = [
+            (str(r.fields[name].value), r)
+            for r in records
+            if name in r.fields and r.fields[name].value is not None and isinstance(r.fields[name].value, str)
+        ]
+        for value, record in values:
+            placed = False
+            for key in list(seen):
+                ratio = difflib.SequenceMatcher(None, key, _key(value)).ratio()
+                if key == _key(value) or ratio >= 0.85:
+                    seen[key].append((value, record))
+                    placed = True
+                    break
+            if not placed:
+                seen[_key(value)] = [(value, record)]
+        for group in seen.values():
+            variants = sorted({v for v, _ in group})
+            if len(variants) > 1:
+                where = "; ".join(f"“{v}” in {r.name}" for v, r in group[:6])
+                issues.append(f"{name}: {len(variants)} spellings of what looks like one value — {where}")
+                sources.extend(src for _, r in group if (src := r.fields[name].source) is not None)
+    for record in records:
+        total = record.fields.get("total")
+        if total and total.warning and "does not equal" in total.warning:
+            issues.append(f"{record.name}: subtotal + tax does not equal total")
+            if total.source:
+                sources.append(total.source)
+        d, due = record.fields.get("date"), record.fields.get("due_date")
+        if d and due and d.value and due.value and str(due.value) < str(d.value):
+            issues.append(f"{record.name}: due date {due.value} is before the document date {d.value}")
+    empty = [r.name for r in records if all(v.value is None for v in r.fields.values())]
+    ctx.scratch.sources = sources[:12]
+    if empty:
+        ctx.scratch.warn(f"{len(empty)} document(s) had none of the requested fields: " + ", ".join(empty[:5]))
+    if issues:
+        ctx.scratch.answer = f"Found {len(issues)} possible inconsistencies:\n" + "\n".join(f"- {i}" for i in issues)
+    else:
+        ctx.scratch.answer = f"No inconsistencies found across {len(records)} documents for: {', '.join(fields)}."
+    ctx.scratch.confidence = 0.75
+    return f"{len(issues)} issues"
+
+
+# ---------------------------------------------------------------- write
+
+
+def render(ctx: ToolContext, fmt: str) -> str:
+    s = ctx.scratch
+    rows = [r.flat() for r in s.records]
+    if fmt == "csv":
+        fields: list[str] = []
+        for record in s.records:
+            for name in record.fields:
+                if name not in fields:
+                    fields.append(name)
+        buf = io.StringIO()
+        writer = csv.writer(buf)
+        writer.writerow(["document", *fields, *[f"{f}_confidence" for f in fields], "pages", "warnings"])
+        for record in s.records:
+            vals = [record.fields[f].value if f in record.fields else None for f in fields]
+            confs = [record.fields[f].confidence if f in record.fields else None for f in fields]
+            pages = sorted({v.source.page for v in record.fields.values() if v.source})
+            warns = "; ".join(f"{k}: {v.warning}" for k, v in record.fields.items() if v.warning)
+            writer.writerow(
+                [_csv_safe(record.name), *map(_csv_safe, vals), *confs, " ".join(map(str, pages)), _csv_safe(warns)]
+            )
+        if not s.records and s.answer:
+            writer.writerow(["answer"])
+            writer.writerow([_csv_safe(s.answer)])
+        return buf.getvalue()
+    if fmt == "json":
+        return json.dumps(
+            {
+                "request": ctx.plan.query,
+                "answer": s.answer,
+                "rows": rows,
+                "records": [r.model_dump(mode="json") for r in s.records],
+                "calculation": s.calc,
+                "sources": [x.model_dump(mode="json") for x in s.sources],
+                "warnings": s.warnings,
+            },
+            indent=2,
+            default=str,
+        )
+    out = [f"# {ctx.plan.query}\n", s.answer or "", ""]
+    if rows:
+        cols = list(rows[0])
+        out += ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+        out += ["| " + " | ".join(_md_cell(r.get(c, "")) for c in cols) + " |" for r in rows]
+    if s.sources:
+        out += ["", "## Sources"] + [f"- {x.cite()}: “{x.excerpt[:200]}”" for x in s.sources]
+    if s.warnings:
+        out += ["", "## Warnings"] + [f"- {w}" for w in s.warnings]
+    return "\n".join(out) + "\n"
+
+
+def _md_cell(value: Any) -> str:
+    """Document text must not break out of a Markdown table cell."""
+    return str(_csv_safe(value)).replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
+def _csv_safe(value: Any) -> Any:
+    """Neutralise spreadsheet formula injection from document text."""
+    if isinstance(value, str) and value[:1] in ("=", "+", "-", "@", "|", "\t", "\r"):
+        return "'" + value
+    return value
+
+
+def write_output(ctx: ToolContext, fmt: str, name: str | None) -> str:
+    policy = ctx.policy
+    content = render(ctx, fmt)
+    root = policy.output_dir or ctx.settings.outputs
+    stem = name or f"inklight-{ctx.plan.intent.value}-{date.today().isoformat()}.{fmt}"
+    if not stem.lower().endswith(f".{fmt}"):
+        stem = f"{stem}.{fmt}"
+    target = safe_output_path(root, stem, {f".{fmt}"})
+    if not policy.allow_write:
+        raise PermissionDenied(
+            f"Writing {target.name} needs permission (CLI: --yes or --out DIR; Python: allow_write=True)"
+        )
+    if target.exists() and not policy.overwrite:
+        base, suffix, n = target.stem, target.suffix, 2
+        while target.exists():
+            target = target.with_name(f"{base}-{n}{suffix}")
+            n += 1
+    if policy.confirm is not None and not policy.confirm(f"Write {len(content):,} bytes to {target}?"):
+        raise PermissionDenied("The user declined the file write")
+    root.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8", newline="")
+    ctx.scratch.files.append(str(target))
+    return f"wrote {target.name} ({len(content):,} bytes)"

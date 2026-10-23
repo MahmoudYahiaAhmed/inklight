@@ -1,0 +1,278 @@
+{
+  "env": {
+    "python": "3.13.9",
+    "platform": "Windows AMD64",
+    "cpu_count": 16,
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "date": "2026-10-23"
+  },
+  "import_s": 0.302,
+  "cli_version_s": 0.459,
+  "indra_load_s": 0.68,
+  "ocr_ms_per_page": {
+    "digital_pdf_page": {
+      "median": 44.1,
+      "p90": 49.1,
+      "n": 20
+    },
+    "scanned_image_page": {
+      "median": 97.3,
+      "p90": 105.7,
+      "n": 20
+    }
+  },
+  "extraction_rules": {
+    "documents": 40,
+    "failed": 0,
+    "ingest_s": 3.26,
+    "pages_per_s": 12.27,
+    "extract_s": 0.1,
+    "field_accuracy": {
+      "invoice_number": 1.0,
+      "vendor": 0.925,
+      "date": 1.0,
+      "subtotal": 1.0,
+      "tax": 1.0,
+      "total": 1.0
+    },
+    "overall_accuracy": 0.988,
+    "digital_accuracy": 1.0,
+    "scanned_accuracy": 0.975,
+    "wrong_values": 3,
+    "wrong_values_flagged": 3,
+    "brain": "rules"
+  },
+  "qa_rules": {
+    "accuracy": 0.917,
+    "citation_accuracy": 0.917,
+    "median_ms": 3.8,
+    "max_ms": 7.6,
+    "items": [
+      {
+        "q": "What is the total of the Globex invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 7.6,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What is the invoice number of the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.3,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 4.0,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.7,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What was revenue growth in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.9,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What was the revenue in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.7,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How much notice is needed to terminate?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 6.6,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "Which state's law governs the agreement?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.4,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What does the memo say about onboarding?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.7,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What is the contract value of the office lease?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 4.2,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "Who is the provider in the cloud services agreement?",
+        "correct": false,
+        "citation_ok": false,
+        "ms": 4.1,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What are the payment terms on the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.1,
+        "brain": "rules (planner: rules)"
+      }
+    ]
+  },
+  "task_latency_ms_rules": {
+    "filter": 4.1,
+    "compare": 4.6,
+    "aggregate": 4.9,
+    "summarize": 1.2
+  },
+  "extraction_auto": {
+    "documents": 40,
+    "failed": 0,
+    "ingest_s": 3.61,
+    "pages_per_s": 11.09,
+    "extract_s": 0.24,
+    "field_accuracy": {
+      "invoice_number": 1.0,
+      "vendor": 0.925,
+      "date": 1.0,
+      "subtotal": 1.0,
+      "tax": 1.0,
+      "total": 1.0
+    },
+    "overall_accuracy": 0.988,
+    "digital_accuracy": 1.0,
+    "scanned_accuracy": 0.975,
+    "wrong_values": 3,
+    "wrong_values_flagged": 3,
+    "brain": "reader:66M+embedder:33M"
+  },
+  "qa_auto": {
+    "accuracy": 0.917,
+    "citation_accuracy": 0.917,
+    "median_ms": 58.5,
+    "max_ms": 101.6,
+    "items": [
+      {
+        "q": "What is the total of the Globex invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 8.2,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "What is the invoice number of the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 7.0,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 58.4,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 67.7,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What was revenue growth in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 58.8,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What was the revenue in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 58.5,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "How much notice is needed to terminate?",
+        "correct": false,
+        "citation_ok": true,
+        "ms": 57.3,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "Which state's law governs the agreement?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 61.8,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What does the memo say about onboarding?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 92.1,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What is the contract value of the office lease?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 14.4,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "Who is the provider in the cloud services agreement?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 101.6,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What are the payment terms on the Acme invoice?",
+        "correct": true,
+        "citation_ok": false,
+        "ms": 58.4,
+        "brain": "embedder+reader (planner: rules)"
+      }
+    ]
+  },
+  "task_latency_ms_auto": {
+    "filter": 6.4,
+    "compare": 6.0,
+    "aggregate": 5.5,
+    "summarize": 1.5
+  },
+  "planner_rules": {
+    "accuracy": 1.0,
+    "n": 40
+  },
+  "planner_writer_135m": {
+    "accuracy": 0.275,
+    "n": 40,
+    "ms_per_request": 437.7
+  },
+  "ingest_profile_share": {
+    "indra_ocr_python": 0.653,
+    "inklight_python": 0.023,
+    "native_c_calls": 0.299,
+    "other_python": 0.025
+  },
+  "peak_rss_mb": 1428.4
+}

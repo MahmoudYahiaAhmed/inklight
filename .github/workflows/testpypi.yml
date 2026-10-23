@@ -1,0 +1,31 @@
+name: testpypi
+
+# Manual dry run: publish the current main to TestPyPI and install it from there.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write   # trusted publishing to TestPyPI
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: testpypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build && twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
+      - name: Install from TestPyPI (dependencies from PyPI)
+        run: |
+          sleep 60
+          python -m venv /tmp/t
+          /tmp/t/bin/pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ inklight
+          /tmp/t/bin/inklight --version

@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inklight</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <header class="brand">
+        <img src="logo.svg" alt="" width="30" height="30">
+        <div>
+          <div class="wordmark">inklight</div>
+          <div class="tagline">See documents. Understand meaning. Take action.</div>
+        </div>
+      </header>
+
+      <label class="drop" id="drop" tabindex="0">
+        <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.txt,.md" hidden>
+        <span class="drop-icon">＋</span>
+        <span><strong>Drop documents</strong> or click to upload</span>
+        <small>PDF · PNG · JPEG · TIFF · text — processed locally</small>
+      </label>
+      <div class="upload-status" id="upload-status" aria-live="polite"></div>
+
+      <div class="section-head">
+        <span>Library</span>
+        <input id="filter" class="filter" placeholder="Filter…" aria-label="Filter documents">
+      </div>
+      <ul class="doc-list" id="docs"></ul>
+
+      <footer class="side-foot">
+        <button class="ghost" id="open-settings">Settings</button>
+        <span id="brain-pill" class="pill">rules</span>
+      </footer>
+    </aside>
+
+    <main class="workspace">
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="ask" role="tab">Agent</button>
+        <button class="tab" data-tab="extract" role="tab">Extract</button>
+        <button class="tab" data-tab="search" role="tab">Search</button>
+        <button class="tab" data-tab="history" role="tab">History</button>
+      </nav>
+
+      <section class="panel active" id="panel-ask">
+        <form id="ask-form" class="composer">
+          <textarea id="ask-input" rows="2" maxlength="4000"
+            placeholder="Ask anything, or give a task — “Find every contract that expires within 90 days”"></textarea>
+          <div class="composer-row">
+            <div class="scope" id="scope-label">Scope: all documents</div>
+            <label class="check"><input type="checkbox" id="allow-write"> Allow saving files</label>
+            <button type="button" class="ghost hidden" id="cancel">Stop</button>
+            <button type="submit" class="primary" id="ask-btn">Run</button>
+          </div>
+        </form>
+        <div class="examples" id="examples"></div>
+        <div id="results" class="results"></div>
+      </section>
+
+      <section class="panel" id="panel-extract">
+        <form id="extract-form" class="composer">
+          <input id="extract-fields" value="invoice_number, vendor, date, tax, total" aria-label="Fields">
+          <div class="composer-row">
+            <div class="scope">Fields are typed (money, dates, ids) and every value keeps its page and box.</div>
+            <button type="submit" class="primary">Extract</button>
+          </div>
+        </form>
+        <div id="extract-out" class="results"></div>
+      </section>
+
+      <section class="panel" id="panel-search">
+        <form id="search-form" class="composer">
+          <input id="search-input" placeholder="Search passages across the library" aria-label="Search">
+          <div class="composer-row"><div class="scope">Keyword BM25, fused with semantic vectors when installed.</div>
+            <button type="submit" class="primary">Search</button></div>
+        </form>
+        <div id="search-out" class="results"></div>
+      </section>
+
+      <section class="panel" id="panel-history">
+        <div id="history-out" class="results"></div>
+      </section>
+    </main>
+
+    <section class="viewer" id="viewer">
+      <div class="viewer-head">
+        <div>
+          <div class="viewer-title" id="viewer-title">No document selected</div>
+          <div class="viewer-meta" id="viewer-meta">Select a document or click a citation.</div>
+        </div>
+        <div class="viewer-tools">
+          <button class="ghost small" id="prev-page" aria-label="Previous page">‹</button>
+          <span id="page-label">–</span>
+          <button class="ghost small" id="next-page" aria-label="Next page">›</button>
+          <button class="ghost small" id="toggle-text">Text</button>
+        </div>
+      </div>
+      <div class="page-wrap" id="page-wrap">
+        <div class="page" id="page"><img id="page-img" alt=""><div id="overlay" class="overlay"></div></div>
+        <pre class="page-text hidden" id="page-text"></pre>
+      </div>
+    </section>
+  </div>
+
+  <dialog id="settings">
+    <form method="dialog" class="settings">
+      <h2>Settings</h2>
+      <label>Brain
+        <select id="set-brain">
+          <option value="auto">Auto — small local models when installed</option>
+          <option value="local">Local — require the small models</option>
+          <option value="rules">Rules — deterministic, no models</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="set-writer"> Let the 135M writer phrase answers (verified)</label>
+      <div id="set-models" class="models"></div>
+      <div id="set-info" class="info"></div>
+      <menu><button class="ghost" value="cancel">Close</button><button class="primary" id="save-settings" value="ok">Apply</button></menu>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

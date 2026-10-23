@@ -1,0 +1,11 @@
+{
+  "fields": [
+    {"name": "invoice_number", "type": "id", "required": true},
+    {"name": "vendor", "type": "text"},
+    {"name": "date", "type": "date", "required": true},
+    {"name": "due_date", "type": "date"},
+    {"name": "subtotal", "type": "money"},
+    {"name": "tax", "type": "money"},
+    {"name": "total", "type": "money", "required": true}
+  ]
+}
