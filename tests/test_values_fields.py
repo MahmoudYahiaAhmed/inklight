@@ -113,6 +113,12 @@ def test_subtotal_not_read_as_total():
 def test_label_on_previous_line():
     page = _page(["Amount Due", "$1,500.00"])
     value = extract_record(_doc(), [page], [resolve_field("total")]).fields["total"]
+    assert value.value == 1500.0 and value.method == "label-below"
+
+
+def test_label_on_previous_line_without_geometry():
+    page = PageContent(number=1, lines=(TextLine(text="Amount Due"), TextLine(text="$1,500.00")))
+    value = extract_record(_doc(), [page], [resolve_field("total")]).fields["total"]
     assert value.value == 1500.0 and value.method == "label-next-line"
 
 

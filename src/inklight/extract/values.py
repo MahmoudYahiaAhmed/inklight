@@ -6,12 +6,14 @@ import re
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
-_CURRENCY = r"(?:E£|[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF|EGP|SAR|AED)"
-# Thousands groups use ',' '.' or a non-breaking/thin space — never a plain space, which would
-# glue a quantity column onto an amount ("2 150.00"). A number followed by '%' is a rate, not money.
+_CURRENCY = r"(?:E£|[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF|EGP|SAR|AED|IDR|Rp\.?)"
+# Thousands groups use ',' '.' or a non-breaking/thin space — a plain space only right after a
+# currency symbol ("$ 2 425,87"); elsewhere it would glue a quantity column onto an amount ("2 150.00").
+# A number followed by '%' is a rate, not money.
 MONEY_RE = re.compile(
     rf"(?P<neg>-|\()?\s*(?P<cur1>{_CURRENCY})?\s*"
-    rf"(?P<num>\d{{1,3}}(?:[,.  ]\d{{3}})+(?:[.,]\d{{1,2}})?|\d+(?:[.,]\d{{1,2}})?)(?![\d.,]*\s*%)"
+    rf"(?P<num>(?(cur1)\d{{1,3}}(?: \d{{3}})+[.,]\d{{2}}(?![\d.,])|(?!))"
+    rf"|\d{{1,3}}(?:[,.  ]\d{{3}})+(?:[.,]\d{{1,2}})?|\d+(?:[.,]\d{{1,2}})?)(?![\d.,]*\s*%)"
     rf"\s*(?P<cur2>{_CURRENCY})?(?P<close>\))?",
     re.IGNORECASE,
 )
@@ -55,8 +57,8 @@ def parse_money(text: str) -> tuple[Decimal, str | None] | None:
     for m in MONEY_RE.finditer(text):
         cur = m.group("cur1") or m.group("cur2")
         num = m.group("num")
-        # Bare small integers without a currency or decimals are rarely money (dates, counts).
-        if not cur and not re.search(r"[.,]\d{2}$", num):
+        # Bare integers without a currency, decimals or thousands groups are rarely money (dates, counts).
+        if not cur and not _money_shaped(num):
             continue
         value = parse_number(num)
         if value is None:
@@ -72,17 +74,23 @@ def all_money(text: str) -> list[Decimal]:
     out = []
     for m in MONEY_RE.finditer(text):
         cur, num = m.group("cur1") or m.group("cur2"), m.group("num")
-        if cur or re.search(r"[.,]\d{2}$", num):
+        if cur or _money_shaped(num):
             value = parse_number(num)
             if value is not None:
                 out.append(value)
     return out
 
 
+def _money_shaped(num: str) -> bool:
+    """Cents ("40.00") or thousands groups ("16,363", "7.000": currencies without cents, like IDR)."""
+    return bool(re.search(r"[.,]\d{2}$", num) or re.fullmatch(r"\d{1,3}(?:[,.]\d{3})+", num))
+
+
 def _norm_currency(cur: str | None) -> str | None:
     if not cur:
         return None
-    return {"$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP"}.get(cur, cur.upper())
+    key = cur.rstrip(".").upper()
+    return {"$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP", "RP": "IDR"}.get(key, key)
 
 
 def _year(y: str) -> int:

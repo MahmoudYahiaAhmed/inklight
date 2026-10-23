@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
@@ -18,6 +19,7 @@ from typing import Any, Literal
 
 from ..errors import InputRejected
 from ..schemas import BBox, DocumentInfo, ExtractedValue, PageContent, Record, Source
+from . import layout
 from .values import EMAIL_RE, PHONE_RE, all_money, parse_dates, parse_money, parse_number
 
 FieldType = Literal["text", "money", "number", "date", "email", "phone", "id"]
@@ -61,12 +63,32 @@ CATALOG: dict[str, FieldSpec] = {
             ("customer name", "bill to", "billed to", "customer", "client", "sold to", "ship to", "name"),
             "Customer or recipient",
         ),
-        FieldSpec("subtotal", "money", ("subtotal", "sub-total", "sub total", "net amount"), "Amount before tax"),
-        FieldSpec("tax", "money", ("total tax", "sales tax", "tax amount", "vat", "gst", "hst", "tax"), "Tax amount"),
+        FieldSpec(
+            "subtotal",
+            "money",
+            ("subtotal", "sub-total", "sub total", "net amount", "net worth", "net total"),
+            "Amount before tax",
+        ),
+        FieldSpec(
+            "tax",
+            "money",
+            ("total tax", "sales tax", "tax amount", "vat", "gst", "hst", "tax", "pajak", "ppn"),
+            "Tax amount",
+        ),
         FieldSpec(
             "total",
             "money",
-            ("grand total", "total due", "amount due", "balance due", "total amount", "amount payable", "total"),
+            (
+                "grand total",
+                "total due",
+                "amount due",
+                "balance due",
+                "total amount",
+                "amount payable",
+                "gross worth",
+                "gross amount",
+                "total",
+            ),
             "Total amount",
         ),
         FieldSpec(
@@ -157,6 +179,7 @@ ALIASES: dict[str, str] = {
 }
 
 _SEP = r"\s*(?:[:#=]|no\.?|number)?\s*[:#]?\s*"
+_TEXT_GAP = 6.0  # a name further right than this many line heights belongs to another column
 
 
 def resolve_field(word: str) -> FieldSpec:
@@ -315,6 +338,10 @@ def _find_candidates(
     def is_label_line(text: str) -> bool:
         return any(p.match(text.strip()) for p, _, _ in patterns)
 
+    def header_field(text: str) -> str | None:
+        """The field a column title names ("Gross worth" -> total), longest label first."""
+        return next((spec.name for p, spec, _ in patterns if p.match(text.strip())), None)
+
     for i, line in enumerate(lines):
         # Claim label spans longest-first so "Subtotal" never also counts as "Total".
         claimed: list[tuple[int, int, FieldSpec]] = []
@@ -337,17 +364,78 @@ def _find_candidates(
             tail = line.text[end:stop]
             parsed = parse_typed(spec.type, tail, day_first)
             quality = 1.0 if line.text[:end].rstrip().endswith((":", "#")) else 0.9
-            if parsed is None and not tail.strip() and i + 1 < len(lines):
-                nxt = lines[i + 1]
-                # The value sits on the next line only if that line is not itself another label.
-                if nxt.page == line.page and not is_label_line(nxt.text):
-                    parsed = parse_typed(spec.type, nxt.text, day_first)
-                    if parsed:
-                        found[spec.name].append(_Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))
+            # A label alone on its line, or followed only by words ("Pajak Resto"), has its value elsewhere.
+            if parsed is None and (not tail.strip() or (spec.type != "text" and not re.search(r"\d", tail))):
+                for name, cand in _value_elsewhere(lines, i, spec, day_first, is_label_line, header_field):
+                    if name in found:
+                        found[name].append(cand)
                 continue
             if parsed is not None:
                 found[spec.name].append(_Candidate(parsed[0], parsed[1], line, quality, "label"))
     return found
+
+
+def _value_elsewhere(
+    lines: list[_Line],
+    i: int,
+    spec: FieldSpec,
+    day_first: bool,
+    is_label: Callable[[str], bool],
+    header_field: Callable[[str], str | None],
+) -> list[tuple[str, _Candidate]]:
+    """Values for a label that stands alone: beside it on its row, else under it in its column.
+
+    A summary row ("Total  2 205,34  220,53  2 425,87") can hold several fields at once; each
+    value whose column title names a field ("Net worth", "VAT", "Gross worth") is returned for it.
+    """
+    line = lines[i]
+    if line.bbox is None:
+        # No geometry: the next line in reading order, unless that line is itself another label.
+        nxt = lines[i + 1] if i + 1 < len(lines) else None
+        if nxt is None or nxt.page != line.page or is_label(nxt.text):
+            return []
+        parsed = parse_typed(spec.type, nxt.text, day_first)
+        return [(spec.name, _Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))] if parsed else []
+    row = [j for j in layout.row_right(lines, i) if not is_label(lines[j].text)]
+    if spec.type == "text":  # a name belongs to its label only when it sits close by
+        row = [j for j in row if layout.gap(line.bbox, lines[j].bbox) <= _TEXT_GAP][:1]  # type: ignore[arg-type]
+    hits = [(j, p) for j in row if (p := _cell_value(spec.type, lines[j].text, day_first)) is not None]
+    if len(hits) == 1:
+        j, (value, raw) = hits[0]
+        return [(spec.name, _Candidate(value, raw, lines[j], 0.9, "label-row"))]
+    if len(hits) > 1:
+        titled: dict[str, list[tuple[int, tuple[Any, str]]]] = {}
+        for j, p in hits:
+            h = layout.header_above(lines, j, is_label)
+            name = header_field(lines[h].text) if h is not None else None
+            if name:
+                titled.setdefault(name, []).append((j, p))
+        out = [
+            (name, _Candidate(p[0], p[1], lines[j], 0.85, "label-row-column"))
+            for name, items in titled.items()
+            if len(items) == 1
+            for j, p in items
+        ]
+        if not any(name == spec.name for name, _ in out):
+            j, (value, raw) = hits[-1]
+            note = f"{len(hits)} values on the {line.text.strip()!r} row and no column title; took the last"
+            out.append((spec.name, _Candidate(value, raw, lines[j], 0.5, "label-row", {"warning": note})))
+        return out
+    j = layout.below(lines, i)
+    if j is None or is_label(lines[j].text):
+        return []
+    parsed = _cell_value(spec.type, lines[j].text, day_first)
+    return [(spec.name, _Candidate(parsed[0], parsed[1], lines[j], 0.8, "label-below"))] if parsed else []
+
+
+def _cell_value(ftype: FieldType, text: str, day_first: bool) -> tuple[Any, str] | None:
+    """A value read from a cell of its own; an amount must account for every digit in the cell,
+    so "14 709,00" is never read as 709,00 and "1 x 28,636" never as one of its numbers."""
+    parsed = parse_typed(ftype, text, day_first)
+    if parsed is None or ftype != "money":
+        return parsed
+    digits = re.sub(r"\D", "", text)
+    return parsed if digits and digits == re.sub(r"\D", "", f"{abs(parsed[0])}") else None
 
 
 def _fallback(spec: FieldSpec, lines: list[_Line], day_first: bool = False) -> _Candidate | None:
@@ -433,8 +521,10 @@ def extract_record(
         conf = best.quality * (best.line.conf if best.line.conf is not None else 0.9)
         distinct = {str(c.value) for c in cands}
         warning = None
-        if best.method not in ("label", "label-next-line"):
+        if not best.method.startswith("label"):
             warning = f"inferred ({best.method}); no label found"
+        elif best.extra.get("warning"):
+            warning = best.extra["warning"]
         elif len(distinct) > 1:
             warning = f"{len(distinct)} different values found; chose the strongest label match"
             conf *= 0.8
@@ -462,7 +552,7 @@ def extract_record(
     return Record(doc_id=doc.id, name=doc.name, path=doc.path, fields=values)
 
 
-_CURRENCY_WORD = re.compile(r"\b(USD|EUR|GBP|EGP|SAR|AED|CAD|AUD|INR|JPY|CHF)\b|E£|[$€£]")
+_CURRENCY_WORD = re.compile(r"\b(USD|EUR|GBP|EGP|SAR|AED|CAD|AUD|INR|JPY|CHF|IDR)\b|E£|[$€£]")
 _SYMBOL = {"$": "USD", "€": "EUR", "£": "GBP", "E£": "EGP"}
 
 
