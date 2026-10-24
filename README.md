@@ -40,7 +40,7 @@ run. After that, everything works offline.
 ```bash
 inklight process ./documents                          # OCR, classify and index (incremental)
 inklight ask ./documents "Which court has jurisdiction?"
-inklight ask ./documents "لخص هذه الوثيقة"
+inklight ask ./documents/letter.pdf "لخص هذه الوثيقة"   # one file; a folder summarises each document
 inklight serve                                        # web workspace on http://127.0.0.1:8765
 ```
 
