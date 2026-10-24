@@ -105,7 +105,7 @@ def freeze(models_out: Path, brain: str) -> None:
     digest, n_files = package_digest()
     config = models_out / "pilot-config.toml"
     config.write_text(
-        "# Written by pilot/freeze.py. The pilot library lives in [paths] home; set it before the first session.\n"
+        "# Written by pilot/freeze.py. `home` holds the pilot library and its reviews: keep it on a backed-up disk.\n"
         f'home = "{(models_out / "pilot-home").as_posix()}"\n\n'
         "[models]\n"
         f'brain = "{brain}"\n'
@@ -182,9 +182,9 @@ def verify(models: Path, config: Path | None) -> int:
         }
         problems += [f"setting {k} is {actual[k]!r}, baseline {v!r}" for k, v in expected.items() if actual[k] != v]
     for p in problems:
-        print(f"✗ {p}")
+        print(f"FAIL {p}")
     if not problems:
-        print(f"✓ matches the pilot baseline: inklight {base['inklight_version']} at {base['git_commit'][:12]}")
+        print(f"OK matches the pilot baseline: inklight {base['inklight_version']} at {base['git_commit'][:12]}")
     return 1 if problems else 0
 
 
