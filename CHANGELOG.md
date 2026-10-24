@@ -75,6 +75,16 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   success and compute no total. `AgentResult.calculation` now exposes the sum: op, result, unit, values used
   and values left out.
 - Rupiah amounts in requests ("above Rp 50.000", "50,000 IDR").
+- **Human review** (Review tab, `/api/reviews`, `inklight review list|export`):
+  - Each prediction is frozen when the review opens, and the database refuses any change to it.
+  - Reviewers accept, correct, enter or mark each field absent, then approve.
+  - The history is append-only, and manual-entry mode hides the predictions for timing.
+  - Export includes approved reviews only.
+- **Pilot tooling** in `pilot/`: permission-checked intake with a vendor-grouped reserved split, a frozen
+  baseline with `verify`, evaluation with confidence intervals and a logged reserved group, latency with and
+  without the second reading, and a dry run. No genuine invoices have been collected yet.
+- Model revisions can be pinned (`models.*_revision`), and `extraction.second_reading` can be switched off.
+- The document viewer can be closed on narrow screens; below 1100 px it used to cover the tabs.
 - **A sum or average that leaves documents out is `partial`, not `succeeded`.** Documents without a value
   were left out with only a warning. The answer now also says how many were left out.
 - Indonesian tax labels (`pajak`, `ppn`, `pb1`, `p.rest`), plus `net worth` and `gross worth`.

@@ -191,3 +191,30 @@ def test_reserved_group_needs_a_reason(tmp_path):
     result = subprocess.run(cmd, capture_output=True, text=True)
     assert result.returncode != 0 and "--reason" in (result.stderr + result.stdout)
     assert not (tmp_path / "reserved_access.log").exists()
+
+
+def test_reserved_access_with_a_reason_is_logged_and_writes_no_failures(tmp_path):
+    config = tmp_path / "c.toml"
+    config.write_text(f'home = "{(tmp_path / "home").as_posix()}"\n[models]\nbrain = "rules"\n', encoding="utf-8")
+    intake_file = tmp_path / "intake.json"
+    intake_file.write_text(json.dumps({"documents": []}))
+    out = tmp_path / "o"
+    cmd = [
+        sys.executable,
+        str(PILOT / "evaluate.py"),
+        "--config",
+        str(config),
+        "--intake",
+        str(intake_file),
+        "--split",
+        "reserved",
+        "--reason",
+        "evaluate build abc123 after the date fix",
+        "--out",
+        str(out),
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    log = [json.loads(line) for line in (tmp_path / "reserved_access.log").read_text().splitlines()]
+    assert log[0]["reason"] == "evaluate build abc123 after the date fix" and log[0]["cohort"] == "genuine-invoice"
+    assert (out / "genuine-invoice-reserved.json").exists() and not list(out.glob("*failures*"))

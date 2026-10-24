@@ -1,0 +1,86 @@
+{
+ "inklight_version": "0.1.1.dev0",
+ "inklight_file": "C:\\Users\\pc\\inklight-pilot\\venv\\Lib\\site-packages\\inklight\\__init__.py",
+ "python": "3.12.10",
+ "machine": "Windows AMD64 (AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD)",
+ "brain": "rules",
+ "repeats": 3,
+ "datasets": [
+  {
+   "dataset": "voxel51",
+   "split": "dev",
+   "documents": 60,
+   "ingest_failed": 0,
+   "ingest_s_total": 19.08,
+   "ingest_s_per_document": 0.318,
+   "second_reading_on": {
+    "documents": 60,
+    "measurements": 180,
+    "median_s": 0.0108,
+    "p90_s": 0.0161,
+    "mean_s": 0.0261,
+    "total_s_per_pass": 1.563,
+    "second_readings_per_pass": [
+     2,
+     2,
+     2
+    ],
+    "second_reading_s_per_pass": 0.673
+   },
+   "second_reading_off": {
+    "documents": 60,
+    "measurements": 180,
+    "median_s": 0.0113,
+    "p90_s": 0.0158,
+    "mean_s": 0.0117,
+    "total_s_per_pass": 0.705,
+    "second_readings_per_pass": [
+     0,
+     0,
+     0
+    ],
+    "second_reading_s_per_pass": 0.0
+   },
+   "added_per_document_median_s": -0.0005,
+   "added_per_document_mean_s": 0.0144
+  },
+  {
+   "dataset": "cord",
+   "split": "dev",
+   "documents": 60,
+   "ingest_failed": 0,
+   "ingest_s_total": 8.01,
+   "ingest_s_per_document": 0.134,
+   "second_reading_on": {
+    "documents": 60,
+    "measurements": 180,
+    "median_s": 0.0041,
+    "p90_s": 0.0078,
+    "mean_s": 0.0047,
+    "total_s_per_pass": 0.281,
+    "second_readings_per_pass": [
+     0,
+     0,
+     0
+    ],
+    "second_reading_s_per_pass": 0.0
+   },
+   "second_reading_off": {
+    "documents": 60,
+    "measurements": 180,
+    "median_s": 0.0042,
+    "p90_s": 0.0081,
+    "mean_s": 0.0049,
+    "total_s_per_pass": 0.294,
+    "second_readings_per_pass": [
+     0,
+     0,
+     0
+    ],
+    "second_reading_s_per_pass": 0.0
+   },
+   "added_per_document_median_s": -0.0001,
+   "added_per_document_mean_s": -0.0002
+  }
+ ]
+}

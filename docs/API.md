@@ -52,9 +52,22 @@ register_engine("tesseract", lambda ocr_settings: MyTesseractEngine(ocr_settings
 # then: [ocr] engine = "tesseract"
 ```
 
+## Human review (Python)
+
+```python
+review = agent.open_review(doc_id, ["vendor", "total"], reviewer="ana", mode="review", cohort="genuine-invoice")
+agent.reviews.decide(review.id, "total", reviewer="ana", action="corrected", value="1,520.00")
+agent.reviews.decide(review.id, "vendor", reviewer="ana", action="accepted")
+agent.reviews.approve(review.id, reviewer="ana", active_seconds=42.0)
+csv_text = agent.reviews.export("csv", actor="ana")       # approved reviews only
+```
+
+Predictions are frozen when a review opens; decisions are stored next to them, never over them; the
+history (`agent.reviews.events(review.id)`) is append-only. See [pilot/README.md](../pilot/README.md).
+
 ## CLI
 
-`inklight process | ask | extract | search | docs | show | remove | reindex | history | watch | serve | tools | doctor | models pull/status`.
+`inklight process | ask | extract | search | docs | show | remove | reindex | history | watch | serve | tools | doctor | models pull/status | review list/export`.
 Run `inklight <command> --help` for options. Exit codes: `0` ok, `1` input or usage error, `2` the task
 did not succeed (`failed` / `cancelled`).
 
@@ -76,3 +89,11 @@ Interactive docs at `/api/docs`. Non-GET requests need the header `X-Inklight: 1
 | GET | `/api/tasks`, `/api/tasks/{id}` | |
 | GET | `/api/outputs/{name}` | files the agent wrote |
 | POST | `/api/settings` | `{"brain": "auto\|local\|rules", "use_writer": bool}` (runtime only) |
+| GET / POST | `/api/reviews` | GET `?status=open\|approved&cohort=`; POST `{"doc_id", "reviewer", "fields"?, "mode": "review\|manual", "cohort"?, "split"?}` |
+| GET | `/api/reviews/{id}` | the review (predictions hidden while a manual entry is open) and its history |
+| POST | `/api/reviews/{id}/decide` | `{"field", "action": "accepted\|corrected\|entered\|absent", "value"?, "reviewer"}` |
+| POST | `/api/reviews/{id}/approve` | `{"reviewer", "active_seconds"?}`; every field must have a decision |
+| POST | `/api/reviews/{id}/reopen` | `{"reviewer", "reason"}` |
+| POST | `/api/reviews/export` | `{"actor", "format": "csv\|json", "cohort"?}`: approved reviews only |
+
+`INKLIGHT_PILOT_BASELINE`, when set, is recorded on every review the server opens.

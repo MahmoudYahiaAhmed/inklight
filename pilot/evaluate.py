@@ -184,6 +184,44 @@ def evaluate(reviews: list[dict], intake: dict, cohort: str, split: str) -> tupl
     return metrics, failures
 
 
+def repredict(reviews: list[dict], config: Path) -> tuple[list[dict], dict]:
+    """Predict every reviewed document again with the *installed* build; keep the approved final values.
+
+    This is how a later improvement is evaluated: same documents, same human ground truth, new predictions.
+    """
+    import inklight
+    from inklight import DocumentAgent
+    from inklight.config import load_settings
+    from inklight.review import is_flagged
+
+    settings = load_settings(config)
+    out = []
+    with DocumentAgent(settings) as agent:
+        by_sha = {d.sha256: d for d in agent.library.documents()}
+        for r in reviews:
+            doc = by_sha.get(r["doc_sha256"])
+            if doc is None:
+                raise SystemExit(f"document of review {r['id']} is no longer in the pilot library")
+            names = [f["field"] for f in r["fields"]]
+            record = agent.extract([doc.path], fields=names)[0]
+            fields = []
+            for f in r["fields"]:
+                v = record.fields.get(f["field"])
+                fields.append(
+                    {
+                        **f,
+                        "predicted": None if v is None else v.value,
+                        "raw": None if v is None else v.raw,
+                        "confidence": None if v is None else v.confidence,
+                        "method": None if v is None else v.method,
+                        "warning": None if v is None else v.warning,
+                        "flagged": bool(v is not None and v.value is not None and is_flagged(v)),
+                    }
+                )
+            out.append({**r, "fields": fields, "baseline": f"re-predicted with {inklight.__version__}"})
+    return out, {"inklight_version": inklight.__version__, "inklight_file": inklight.__file__}
+
+
 def load_reviews(config: Path) -> list[dict]:
     from inklight.config import load_settings
     from inklight.review import ReviewStore
@@ -203,12 +241,15 @@ def markdown(m: dict) -> str:
         lo, hi = x["ci95"]
         return f"{100 * x['value']:.1f}% ({x['k']}/{x['n']}; 95% CI {100 * lo:.0f}–{100 * hi:.0f}%)"
 
-    rb, me = m["review_burden"], m["manual_entry"]
+    rb = m.get("review_burden") or {"flagged_share": "–", "corrected_share": "–", "active_seconds_per_document": "–"}
+    me = m["manual_entry"]
     lines = [
         f"# Pilot evaluation: {m['cohort']} / {m['split']}",
         "",
         f"Documents reviewed: {m['documents_reviewed']} · manual entry: {m['documents_manual_entry']} · "
         f"baselines: {', '.join(m['baselines'])}",
+        "",
+        f"Predictions: {m.get('predictions', 'frozen when each review opened')}",
         "",
         "| Metric | Value |",
         "|---|---|",
@@ -220,7 +261,7 @@ def markdown(m: dict) -> str:
         f"| Predicted values corrected | {rb['corrected_share']} |",
         f"| Active seconds per document, review | {rb['active_seconds_per_document']} |",
         f"| Active seconds per document, manual entry | {me['active_seconds_per_document']} |",
-        f"| Time ratio review / manual (medians) | {m['time_ratio_review_vs_manual']} |",
+        f"| Time ratio review / manual (medians) | {m.get('time_ratio_review_vs_manual', '–')} |",
         f"| Documents entered both ways · agreement | {me['documents_entered_both_ways']} · "
         f"{me['agreement_on_those']} |",
         "",
@@ -238,6 +279,11 @@ def main() -> None:
     ap.add_argument("--reason", default=None, help="Required for --split reserved; recorded in the access log.")
     ap.add_argument("--allow-mixed-baselines", action="store_true")
     ap.add_argument("--out", required=True, type=Path)
+    ap.add_argument(
+        "--repredict",
+        action="store_true",
+        help="Score the installed build's new predictions against the approved values (later improvements).",
+    )
     args = ap.parse_args()
     intake = json.loads(args.intake.read_text(encoding="utf-8"))
     if args.split == "reserved":
@@ -257,7 +303,16 @@ def main() -> None:
                 + "\n"
             )
         print(f"Reserved access recorded in {log}. Only aggregate results are written.")
-    metrics, failures = evaluate(load_reviews(args.config), intake, args.cohort, args.split)
+    reviews = load_reviews(args.config)
+    predicted_by = "predictions frozen when each review opened"
+    if args.repredict:
+        reviews, build = repredict(reviews, args.config)
+        predicted_by = f"re-predicted by the installed build {build}"
+    metrics, failures = evaluate(reviews, intake, args.cohort, args.split)
+    metrics["predictions"] = predicted_by
+    if args.repredict:  # review timings belong to the original predictions, not to the new ones
+        metrics.pop("review_burden", None)
+        metrics.pop("time_ratio_review_vs_manual", None)
     if len(metrics["baselines"]) > 1 and not args.allow_mixed_baselines:
         sys.exit(f"reviews come from several baselines {metrics['baselines']}: evaluate one baseline at a time")
     args.out.mkdir(parents=True, exist_ok=True)

@@ -149,6 +149,8 @@ models are good at (pointing at evidence, ranking passages) and deterministic co
 - The rule planner covers common document tasks. Unusual phrasing falls back to question answering,
   or to a remote model if you configured one.
 - Semantic search scans vectors in memory, which suits libraries up to tens of thousands of chunks.
+- A human-reviewed pilot on genuine invoices is prepared but **not yet run**: the review workflow, intake,
+  frozen baseline and evaluation are in [pilot/](pilot/README.md), and data collection is pending.
 
 ## ⚠ License notice — read before commercial use
 
