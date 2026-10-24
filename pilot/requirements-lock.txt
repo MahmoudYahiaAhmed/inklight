@@ -32,7 +32,7 @@ pypdfium2==5.14.0
 python-multipart==0.0.32
 rich==15.0.0
 shellingham==1.5.4
-starlette==1.9.0
+starlette==1.10.0
 tokenizers==0.23.3
 tqdm==4.70.1
 truststore==0.10.5

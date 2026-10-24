@@ -24,9 +24,9 @@ The pilot runs one exact build. `pilot/baseline.json` and `pilot/requirements-lo
 
 | | |
 |---|---|
-| Code | `inklight 0.1.1.dev0` at `c49d506` (src tree `25b2996`) — **baseline 2**, frozen after the fixes in section 6 |
-| Installed package digest | `3c8c98722bd9…`, 51 files (sha256 over every file of the installed package) |
-| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl` built at `c49d506`, sha256 `731e9cc052c2598c…` |
+| Code | `inklight 0.1.1.dev0` at `0479e68` (src tree `b936f68`) — **baseline 3**, frozen after the fixes in section 6 |
+| Installed package digest | `50452031b184…`, 51 files (sha256 over every file of the installed package) |
+| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl` built at `0479e68`, sha256 `08ba1b13a268183f…` |
 | Python and packages | 3.12.10; 42 packages pinned in `requirements-lock.txt` |
 | OCR | `indra-ocr 1.1.2` with its pinned model snapshot; 12 files copied and hashed |
 | Small models | reader `Xenova/distilbert-base-cased-distilled-squad` @ `bdbb0a5`, embedder `Xenova/bge-small-en-v1.5` @ `ea104da`; copied and hashed (not used by the `rules` brain the pilot runs with) |
@@ -43,8 +43,8 @@ It recomputes the package digest, the installed versions, every model hash and t
 non-zero on any difference. It was tested to fail on a changed model byte, on `second_reading = false`, and
 in a different environment.
 
-Baseline 1 (`aaa8c31`, digest `cbb355dc978c…`) was replaced before any scored review, because of the fixes in
-section 6; it remains in the git history of `pilot/baseline.json`. A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
+Baselines 1 (`aaa8c31`, digest `cbb355dc978c…`) and 2 (`c49d506`, digest `3c8c98722bd9…`) were replaced before
+any scored review, because of the fixes in section 6; it remains in the git history of `pilot/baseline.json`. A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
 predictions, and `evaluate.py` refuses to mix baselines.
 
 ## 2. Permissions and intake
@@ -197,7 +197,7 @@ again on the pilot's own dev invoices: how often it triggers depends on the docu
 
 ## 6. Fixes made before any scored review
 
-Four problems were reproduced on `7177bf7` and fixed. Baseline 1 was then replaced by baseline 2. No scored
+Five problems were found and fixed before any scored review (baselines 1 and 2 were replaced; baseline 3 is current). No scored
 review used baseline 1.
 
 | Problem (reproduced) | Fix | Evidence |
@@ -205,6 +205,7 @@ review used baseline 1.
 | Typed amounts lost characters before parsing: "100 + 20" → 10020, "1e3" → 13, "(45.00)" → +45, "1,2,3" → 12.3 | `inklight.entered`: one well-formed amount or a refusal with the reason; the reviewer's exact input stored and exported next to the parsed value | `tests/test_entered.py`: 18 supported formats, including European, Swiss, French, rupiah and Arabic-Indic digits, and 13 rejected inputs |
 | A dev reprediction ran inference on reserved documents (2 dev and 2 reserved, with both groups present) | The cohort and split are selected before any prediction; reserved access is logged before any document is read | `tests/test_pilot.py`, with a spy on extraction: dev runs predict only dev documents, and every reserved prediction happens after the log entry |
 | "Re-predict" mixed the cached OCR with the full pipeline, and wrote nothing about what ran | `--predictions frozen\|cached\|full`. Full ingests the original files into an isolated empty library with the candidate config. The pilot library is read through a snapshot only; ground truth is written separately; provenance records code, settings, model hashes and ONNX calls | Tests show the pilot database bytes unchanged after cached and full runs. A real full run on 60 invoices made 1,245 ONNX calls and 2 second readings, predicted 60 documents, and gave the same metrics |
+| The Review tab had no Reopen action and approved reviews left its queue, so rehearsal step 9 was impossible (found reading the runbook against the UI) | Approved reviews are listed; Reopen requires a reason | Automated browser walkthrough (not a human rehearsal): reopen blocked without a reason, then reopen, change, re-approve; history shows the reason |
 | Different Arabic vendor names compared equal ([^a-z0-9] removed every letter), in scoring, the pilot evaluator, vendor grouping and the product's inconsistency check | `inklight.textnorm.fold`: every script kept; Unicode digits → ASCII; only tatweel and optional harakat dropped | `tests/test_textnorm.py`: Arabic, Devanagari, CJK and Greek names. Rescoring all 21,632 saved predictions changed no outcome |
 
 ## 7. Remaining limitations

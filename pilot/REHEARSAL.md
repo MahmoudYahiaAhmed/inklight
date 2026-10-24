@@ -1,6 +1,7 @@
 # Human rehearsal (5–10 invoices) — before the pilot expands
 
-**Status: not run yet.** It needs two people and 5–10 permissioned genuine invoices. A script cannot stand in
+**Status: not run yet.** An automated walkthrough of the same steps in the browser (no people, no timing)
+passed on synthetic invoices; it checks the mechanics only and does not count as the rehearsal. It needs two people and 5–10 permissioned genuine invoices. A script cannot stand in
 for it: `check_rehearsal.py` refuses to count scripted reviews, and no timing in this repository comes from
 a person yet.
 
@@ -15,7 +16,7 @@ Its documents and reviews stay out of the scored pilot.
 | Invoices | 5–10 genuine invoices with permission recorded, from at least 3 vendors and 2 layouts. Include at least one scan or photo. If the pilot will contain Arabic invoices, include one. |
 | People | Reviewer A (reviews every invoice) and reviewer B (types 2 invoices by hand, before A sees them) |
 | Screen | at least 1100 px wide, so the page and the fields sit side by side |
-| Build | the frozen pilot baseline (baseline 2, `c49d506`) in its own environment |
+| Build | the frozen pilot baseline (baseline 3, `0479e68`, installed in `C:/Users/pc/inklight-pilot-b3`) |
 | A stopwatch | a phone is fine: it is the independent check on the recorded times |
 
 ## Setup (coordinator)
@@ -27,7 +28,7 @@ python -I pilot/freeze.py verify --models <models dir> --config <models dir>/pil
 # copy pilot-config.toml to rehearsal-config.toml and point `home` at a new, empty folder
 python -I pilot/intake.py --manifest rehearsal-manifest.csv --data <rehearsal data dir>
 inklight process <rehearsal data dir>/genuine-invoice -c rehearsal-config.toml
-set INKLIGHT_PILOT_BASELINE=c49d506       # use export on macOS and Linux
+set INKLIGHT_PILOT_BASELINE=0479e68       # use export on macOS and Linux
 inklight serve -c rehearsal-config.toml
 ```
 
