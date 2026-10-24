@@ -1,114 +1,114 @@
 {
-  "task_id": "2a41e08dae85",
-  "request": "Which court has jurisdiction?",
-  "intent": "ask",
-  "state": "succeeded",
-  "answer": "Miaoli District Court of Taiwan\n\nEvidence: “herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the”",
-  "confidence": 0.6,
-  "interpretation_confidence": 0.6,
-  "evidence_confidence": 0.633,
-  "interpretation": [
-    "task: ask"
-  ],
-  "not_understood": [],
-  "checks": [
-    "provenance: 3 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
-    "interpretation: no conditions in the request",
-    "evidence: heuristic score 0.63 (labels, OCR confidence, arithmetic checks)"
-  ],
-  "sources": [
-    {
-      "doc_id": "350c29981fd346fa",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\cuad-imperial.pdf",
-      "name": "cuad-imperial.pdf",
-      "page": 7,
-      "block": 0,
-      "bbox": [
-        140.2,
-        214.1,
-        1517.3,
-        764.3
-      ],
-      "excerpt": "Article XI.\nDisputes Resolving\nBoth parties herein agree to resolve any dispute regarding interpretation of the Contract in the following methods:\nI.\nShould both Parties be unable to reach an agreement within one month through negotiation, they may apply for an\narbitration in Miaoli County and the arbitration result shall be compulsory.\nII.\nShould either Party herein initiate a legal proceeding for revoking any arbitration result regarding the Contract, both Parties\nherein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the\nR.O.C..\nArticle XII.\nThe Contract shall be made in duplicate and Party A and Party B shall hold a copy respectively in witness thereof.\nCovenanters\nParty A: The HUANG JIA Country CLUB and Recreation Inc.\nAddress: Floor 4, No. 106, Zhouzi Street, Neihu District, Taipei City\nTel: 02-26582502\nParty B:Chang Chen-Bin Architects Office\nUnified No: 95822673\nAddress: No. 1, Floor 10, No. 575, Jinhwa Road, Bei District, Taichung City\nTel: 04-22373588 Fax: 04-22373388",
-      "score": 0.03333,
-      "ocr_conf": 1.0
-    },
-    {
-      "doc_id": "350c29981fd346fa",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\cuad-imperial.pdf",
-      "name": "cuad-imperial.pdf",
-      "page": 5,
-      "block": 1,
-      "bbox": [
-        139.1,
-        662.8,
-        1515.4,
-        877.0
-      ],
-      "excerpt": "Article VI.\nExclusions\nThe service fee shall not include the fees for land measurement and boundary identification, geological drilling, meeting\nrelevant land administration regulations, air pollution prevention, meeting relevant construction regulations, security system\nmonitoring, scrivener service, deposit of soil and water conservation, review of the competent authority, attendance of concerned\nexperts and scholars and meeting relevant administrative regulations.\nArticle VII.\nTerm Planned",
-      "score": 0.01639,
-      "ocr_conf": 1.0
-    },
-    {
-      "doc_id": "350c29981fd346fa",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\cuad-imperial.pdf",
-      "name": "cuad-imperial.pdf",
-      "page": 4,
-      "block": 0,
-      "bbox": [
-        139.1,
-        804.2,
-        230.9,
-        820.8
-      ],
-      "excerpt": "Article V.",
-      "score": 0.01613,
-      "ocr_conf": 1.0
-    }
-  ],
-  "records": [],
-  "calculation": null,
-  "files_written": [],
-  "warnings": [],
-  "trace": [
-    {
-      "index": 0,
-      "tool": "inspect_documents",
-      "args": {
-        "doc_type": null
-      },
-      "status": "ok",
-      "summary": "1 documents (1 contract)",
-      "duration_ms": 0.9,
-      "attempts": 1,
-      "error": null
-    },
-    {
-      "index": 1,
-      "tool": "search",
-      "args": {
-        "query": "Which court has jurisdiction?",
-        "k": 8
-      },
-      "status": "ok",
-      "summary": "8 passages (hybrid)",
-      "duration_ms": 206.8,
-      "attempts": 1,
-      "error": null
-    },
-    {
-      "index": 2,
-      "tool": "answer",
-      "args": {
-        "question": "Which court has jurisdiction?"
-      },
-      "status": "ok",
-      "summary": "reader span (0.63)",
-      "duration_ms": 241.2,
-      "attempts": 1,
-      "error": null
-    }
-  ],
-  "brain": "embedder+reader (planner: rules)",
-  "duration_ms": 451.3
+ "task_id": "2a41e08dae85",
+ "request": "Which court has jurisdiction?",
+ "intent": "ask",
+ "state": "succeeded",
+ "answer": "Miaoli District Court of Taiwan\n\nEvidence: “herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the”",
+ "confidence": 0.6,
+ "interpretation_confidence": 0.6,
+ "evidence_confidence": 0.633,
+ "interpretation": [
+  "task: ask"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 3 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.63 (labels, OCR confidence, arithmetic checks)"
+ ],
+ "sources": [
+  {
+   "doc_id": "350c29981fd346fa",
+   "path": "<local>/docs/cuad-imperial.pdf",
+   "name": "cuad-imperial.pdf",
+   "page": 7,
+   "block": 0,
+   "bbox": [
+    140.2,
+    214.1,
+    1517.3,
+    764.3
+   ],
+   "excerpt": "Article XI.\nDisputes Resolving\nBoth parties herein agree to resolve any dispute regarding interpretation of the Contract in the following methods:\nI.\nShould both Parties be unable to reach an agreement within one month through negotiation, they may apply for an\narbitration in Miaoli County and the arbitration result shall be compulsory.\nII.\nShould either Party herein initiate a legal proceeding for revoking any arbitration result regarding the Contract, both Parties\nherein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the\nR.O.C..\nArticle XII.\nThe Contract shall be made in duplicate and Party A and Party B shall hold a copy respectively in witness thereof.\nCovenanters\nParty A: The HUANG JIA Country CLUB and Recreation Inc.\nAddress: Floor 4, No. 106, Zhouzi Street, Neihu District, Taipei City\nTel: 02-26582502\nParty B:Chang Chen-Bin Architects Office\nUnified No: 95822673\nAddress: No. 1, Floor 10, No. 575, Jinhwa Road, Bei District, Taichung City\nTel: 04-22373588 Fax: 04-22373388",
+   "score": 0.03333,
+   "ocr_conf": 1.0
+  },
+  {
+   "doc_id": "350c29981fd346fa",
+   "path": "<local>/docs/cuad-imperial.pdf",
+   "name": "cuad-imperial.pdf",
+   "page": 5,
+   "block": 1,
+   "bbox": [
+    139.1,
+    662.8,
+    1515.4,
+    877.0
+   ],
+   "excerpt": "Article VI.\nExclusions\nThe service fee shall not include the fees for land measurement and boundary identification, geological drilling, meeting\nrelevant land administration regulations, air pollution prevention, meeting relevant construction regulations, security system\nmonitoring, scrivener service, deposit of soil and water conservation, review of the competent authority, attendance of concerned\nexperts and scholars and meeting relevant administrative regulations.\nArticle VII.\nTerm Planned",
+   "score": 0.01639,
+   "ocr_conf": 1.0
+  },
+  {
+   "doc_id": "350c29981fd346fa",
+   "path": "<local>/docs/cuad-imperial.pdf",
+   "name": "cuad-imperial.pdf",
+   "page": 4,
+   "block": 0,
+   "bbox": [
+    139.1,
+    804.2,
+    230.9,
+    820.8
+   ],
+   "excerpt": "Article V.",
+   "score": 0.01613,
+   "ocr_conf": 1.0
+  }
+ ],
+ "records": [],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": null
+   },
+   "status": "ok",
+   "summary": "1 documents (1 contract)",
+   "duration_ms": 0.9,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "search",
+   "args": {
+    "query": "Which court has jurisdiction?",
+    "k": 8
+   },
+   "status": "ok",
+   "summary": "8 passages (hybrid)",
+   "duration_ms": 206.8,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 2,
+   "tool": "answer",
+   "args": {
+    "question": "Which court has jurisdiction?"
+   },
+   "status": "ok",
+   "summary": "reader span (0.63)",
+   "duration_ms": 241.2,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "embedder+reader (planner: rules)",
+ "duration_ms": 451.3
 }

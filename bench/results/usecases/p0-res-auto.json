@@ -3625,10 +3625,10 @@
    "request": "Export the invoice number, date and total of the invoices to CSV",
    "state": "succeeded",
    "intent": "aggregate",
-   "answer": "sum of total: 22,029.51 USD (over 4 document(s); computed exactly, not by a model)\n\ndocument | invoice_number | date\ninv-fxnb0017.pdf | PM1002 | 1997-08-21\ninv-gnfk0009.pdf | 599971013 | 1998-04-29\ninv-sfwb0046.pdf | — | 1987-10-23\nvoxel-0023.jpg | 33102457 | 2018-09-18\n\nSaved: C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\ev-runs\\p0-res-auto\\exp",
+   "answer": "<local>/ev-runs/p0-res-auto/exp",
    "seconds": 0.14,
    "files": [
-    "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\ev-runs\\p0-res-auto\\exports\\inklight-aggregate-2026-10-25.csv"
+    "<local>/ev-runs/p0-res-auto/exports/inklight-aggregate-2026-10-25.csv"
    ],
    "correct": false,
    "cells": 12,

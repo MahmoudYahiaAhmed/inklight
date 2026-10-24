@@ -3517,10 +3517,10 @@
    "request": "Export the invoice number, date and total of the invoices to CSV",
    "state": "succeeded",
    "intent": "extract",
-   "answer": "Extracted invoice_number, date, total from 4 document(s):\n\ndocument | invoice_number | date | total\ninv-fxnb0017.pdf | PM1002 | 1997-08-21 | 2,035.00\ninv-gnfk0009.pdf | 599971013 | 1998-04-29 | 78.75\ninv-sfwb0046.pdf | — | 1987-10-23 | 1,634.52\nvoxel-0023.jpg | 33102457 | 2018-09-18 | 18,281.24\n\nSaved: C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpa",
+   "answer": "Extracted invoice_number, date, total from 4 document(s):\n\ndocument | invoice_number | date | total\ninv-fxnb0017.pdf | PM1002 | 1997-08-21 | 2,035.00\ninv-gnfk0009.pdf | 599971013 | 1998-04-29 | 78.75\ninv-sfwb0046.pdf | — | 1987-10-23 | 1,634.52\nvoxel-0023.jpg | 33102457 | 2018-09-18 | 18,281.24\n\nSaved: <local>/…",
    "seconds": 0.12,
    "files": [
-    "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\ev-runs\\c8c54921\\res-auto\\exports\\inklight-extract-2026-10-25.csv"
+    "<local>/ev-runs/c8c54921/res-auto/exports/inklight-extract-2026-10-25.csv"
    ],
    "correct": false,
    "cells": 12,

@@ -1,236 +1,236 @@
 {
-  "task_id": "c19876c52ea6",
-  "request": "استخرج رقم الفاتورة والتاريخ والإجمالي",
-  "intent": "extract",
-  "state": "succeeded",
-  "answer": "Extracted invoice_number, vendor, date, total from 1 document(s):\n\ndocument | invoice_number | vendor | date | total\nsyn-ar-invoice-digital.pdf | INV-7731 | شركة الواحة للتجهيزات المكتبية | 2024-05-12 | 4,600.00",
-  "confidence": 0.7,
-  "interpretation_confidence": 0.7,
-  "evidence_confidence": 0.912,
-  "interpretation": [
-    "task: extract",
-    "documents: invoices",
-    "columns: invoice_number, vendor, date, total"
-  ],
-  "not_understood": [],
-  "checks": [
-    "provenance: 4 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
-    "interpretation: no conditions in the request",
-    "evidence: heuristic score 0.91 (labels, OCR confidence, arithmetic checks)"
-  ],
-  "sources": [
-    {
+ "task_id": "c19876c52ea6",
+ "request": "استخرج رقم الفاتورة والتاريخ والإجمالي",
+ "intent": "extract",
+ "state": "succeeded",
+ "answer": "Extracted invoice_number, vendor, date, total from 1 document(s):\n\ndocument | invoice_number | vendor | date | total\nsyn-ar-invoice-digital.pdf | INV-7731 | شركة الواحة للتجهيزات المكتبية | 2024-05-12 | 4,600.00",
+ "confidence": 0.7,
+ "interpretation_confidence": 0.7,
+ "evidence_confidence": 0.912,
+ "interpretation": [
+  "task: extract",
+  "documents: invoices",
+  "columns: invoice_number, vendor, date, total"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 4 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.91 (labels, OCR confidence, arithmetic checks)"
+ ],
+ "sources": [
+  {
+   "doc_id": "e6de2bfc0e6c8c00",
+   "path": "<local>/docs/syn-ar-invoice-digital.pdf",
+   "name": "syn-ar-invoice-digital.pdf",
+   "page": 1,
+   "block": null,
+   "bbox": [
+    894.8,
+    480.0,
+    1021.6,
+    501.7
+   ],
+   "excerpt": "INV-7731",
+   "score": null,
+   "ocr_conf": 0.9995
+  },
+  {
+   "doc_id": "e6de2bfc0e6c8c00",
+   "path": "<local>/docs/syn-ar-invoice-digital.pdf",
+   "name": "syn-ar-invoice-digital.pdf",
+   "page": 1,
+   "block": null,
+   "bbox": [
+    704.8,
+    292.2,
+    1026.9,
+    320.4
+   ],
+   "excerpt": "شركة الواحة للتجهيزات المكتبية",
+   "score": null,
+   "ocr_conf": 0.9971
+  },
+  {
+   "doc_id": "e6de2bfc0e6c8c00",
+   "path": "<local>/docs/syn-ar-invoice-digital.pdf",
+   "name": "syn-ar-invoice-digital.pdf",
+   "page": 1,
+   "block": null,
+   "bbox": [
+    864.7,
+    540.6,
+    1026.0,
+    562.6
+   ],
+   "excerpt": "2024-05-12",
+   "score": null,
+   "ocr_conf": 0.9999
+  },
+  {
+   "doc_id": "e6de2bfc0e6c8c00",
+   "path": "<local>/docs/syn-ar-invoice-digital.pdf",
+   "name": "syn-ar-invoice-digital.pdf",
+   "page": 1,
+   "block": null,
+   "bbox": [
+    477.2,
+    1057.8,
+    661.5,
+    1084.9
+   ],
+   "excerpt": "... 4,600.00",
+   "score": null,
+   "ocr_conf": 0.8593
+  }
+ ],
+ "records": [
+  {
+   "doc_id": "e6de2bfc0e6c8c00",
+   "name": "syn-ar-invoice-digital.pdf",
+   "path": "<local>/docs/syn-ar-invoice-digital.pdf",
+   "fields": {
+    "invoice_number": {
+     "field": "invoice_number",
+     "value": "INV-7731",
+     "raw": "INV-7731",
+     "unit": null,
+     "confidence": 0.9,
+     "method": "label-row",
+     "source": {
       "doc_id": "e6de2bfc0e6c8c00",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
+      "path": "<local>/docs/syn-ar-invoice-digital.pdf",
       "name": "syn-ar-invoice-digital.pdf",
       "page": 1,
       "block": null,
       "bbox": [
-        894.8,
-        480.0,
-        1021.6,
-        501.7
+       894.8,
+       480.0,
+       1021.6,
+       501.7
       ],
       "excerpt": "INV-7731",
       "score": null,
       "ocr_conf": 0.9995
+     },
+     "verified": true,
+     "warning": null
     },
-    {
+    "vendor": {
+     "field": "vendor",
+     "value": "شركة الواحة للتجهيزات المكتبية",
+     "raw": "شركة الواحة للتجهيزات المكتبية",
+     "unit": null,
+     "confidence": 0.897,
+     "method": "label-row",
+     "source": {
       "doc_id": "e6de2bfc0e6c8c00",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
+      "path": "<local>/docs/syn-ar-invoice-digital.pdf",
       "name": "syn-ar-invoice-digital.pdf",
       "page": 1,
       "block": null,
       "bbox": [
-        704.8,
-        292.2,
-        1026.9,
-        320.4
+       704.8,
+       292.2,
+       1026.9,
+       320.4
       ],
       "excerpt": "شركة الواحة للتجهيزات المكتبية",
       "score": null,
       "ocr_conf": 0.9971
+     },
+     "verified": true,
+     "warning": null
     },
-    {
+    "date": {
+     "field": "date",
+     "value": "2024-05-12",
+     "raw": "2024-05-12",
+     "unit": null,
+     "confidence": 0.9,
+     "method": "label-row",
+     "source": {
       "doc_id": "e6de2bfc0e6c8c00",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
+      "path": "<local>/docs/syn-ar-invoice-digital.pdf",
       "name": "syn-ar-invoice-digital.pdf",
       "page": 1,
       "block": null,
       "bbox": [
-        864.7,
-        540.6,
-        1026.0,
-        562.6
+       864.7,
+       540.6,
+       1026.0,
+       562.6
       ],
       "excerpt": "2024-05-12",
       "score": null,
       "ocr_conf": 0.9999
+     },
+     "verified": true,
+     "warning": null
     },
-    {
+    "total": {
+     "field": "total",
+     "value": 4600.0,
+     "raw": "... 4,600.00",
+     "unit": "SAR",
+     "confidence": 0.95,
+     "method": "label-row",
+     "source": {
       "doc_id": "e6de2bfc0e6c8c00",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
+      "path": "<local>/docs/syn-ar-invoice-digital.pdf",
       "name": "syn-ar-invoice-digital.pdf",
       "page": 1,
       "block": null,
       "bbox": [
-        477.2,
-        1057.8,
-        661.5,
-        1084.9
+       477.2,
+       1057.8,
+       661.5,
+       1084.9
       ],
       "excerpt": "... 4,600.00",
       "score": null,
       "ocr_conf": 0.8593
+     },
+     "verified": true,
+     "warning": null
     }
-  ],
-  "records": [
-    {
-      "doc_id": "e6de2bfc0e6c8c00",
-      "name": "syn-ar-invoice-digital.pdf",
-      "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
-      "fields": {
-        "invoice_number": {
-          "field": "invoice_number",
-          "value": "INV-7731",
-          "raw": "INV-7731",
-          "unit": null,
-          "confidence": 0.9,
-          "method": "label-row",
-          "source": {
-            "doc_id": "e6de2bfc0e6c8c00",
-            "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
-            "name": "syn-ar-invoice-digital.pdf",
-            "page": 1,
-            "block": null,
-            "bbox": [
-              894.8,
-              480.0,
-              1021.6,
-              501.7
-            ],
-            "excerpt": "INV-7731",
-            "score": null,
-            "ocr_conf": 0.9995
-          },
-          "verified": true,
-          "warning": null
-        },
-        "vendor": {
-          "field": "vendor",
-          "value": "شركة الواحة للتجهيزات المكتبية",
-          "raw": "شركة الواحة للتجهيزات المكتبية",
-          "unit": null,
-          "confidence": 0.897,
-          "method": "label-row",
-          "source": {
-            "doc_id": "e6de2bfc0e6c8c00",
-            "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
-            "name": "syn-ar-invoice-digital.pdf",
-            "page": 1,
-            "block": null,
-            "bbox": [
-              704.8,
-              292.2,
-              1026.9,
-              320.4
-            ],
-            "excerpt": "شركة الواحة للتجهيزات المكتبية",
-            "score": null,
-            "ocr_conf": 0.9971
-          },
-          "verified": true,
-          "warning": null
-        },
-        "date": {
-          "field": "date",
-          "value": "2024-05-12",
-          "raw": "2024-05-12",
-          "unit": null,
-          "confidence": 0.9,
-          "method": "label-row",
-          "source": {
-            "doc_id": "e6de2bfc0e6c8c00",
-            "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
-            "name": "syn-ar-invoice-digital.pdf",
-            "page": 1,
-            "block": null,
-            "bbox": [
-              864.7,
-              540.6,
-              1026.0,
-              562.6
-            ],
-            "excerpt": "2024-05-12",
-            "score": null,
-            "ocr_conf": 0.9999
-          },
-          "verified": true,
-          "warning": null
-        },
-        "total": {
-          "field": "total",
-          "value": 4600.0,
-          "raw": "... 4,600.00",
-          "unit": "SAR",
-          "confidence": 0.95,
-          "method": "label-row",
-          "source": {
-            "doc_id": "e6de2bfc0e6c8c00",
-            "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\syn-ar-invoice-digital.pdf",
-            "name": "syn-ar-invoice-digital.pdf",
-            "page": 1,
-            "block": null,
-            "bbox": [
-              477.2,
-              1057.8,
-              661.5,
-              1084.9
-            ],
-            "excerpt": "... 4,600.00",
-            "score": null,
-            "ocr_conf": 0.8593
-          },
-          "verified": true,
-          "warning": null
-        }
-      }
-    }
-  ],
-  "calculation": null,
-  "files_written": [],
-  "warnings": [],
-  "trace": [
-    {
-      "index": 0,
-      "tool": "inspect_documents",
-      "args": {
-        "doc_type": "invoice"
-      },
-      "status": "ok",
-      "summary": "1 documents (1 invoice)",
-      "duration_ms": 0.7,
-      "attempts": 1,
-      "error": null
-    },
-    {
-      "index": 1,
-      "tool": "extract_fields",
-      "args": {
-        "fields": [
-          "invoice_number",
-          "vendor",
-          "date",
-          "total"
-        ]
-      },
-      "status": "ok",
-      "summary": "4/4 values from 1 documents",
-      "duration_ms": 210.2,
-      "attempts": 1,
-      "error": null
-    }
-  ],
-  "brain": "rules (planner: rules)",
-  "duration_ms": 211.3
+   }
+  }
+ ],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": "invoice"
+   },
+   "status": "ok",
+   "summary": "1 documents (1 invoice)",
+   "duration_ms": 0.7,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "extract_fields",
+   "args": {
+    "fields": [
+     "invoice_number",
+     "vendor",
+     "date",
+     "total"
+    ]
+   },
+   "status": "ok",
+   "summary": "4/4 values from 1 documents",
+   "duration_ms": 210.2,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "rules (planner: rules)",
+ "duration_ms": 211.3
 }

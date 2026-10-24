@@ -4077,10 +4077,10 @@
    "request": "Export the invoice number, date and total of the invoices to CSV",
    "state": "succeeded",
    "intent": "extract",
-   "answer": "Extracted invoice_number, date, total from 5 document(s):\n\ndocument | invoice_number | date | total\ninv-lkxd0060.pdf | 2750 | 2000-04-10 | 2,000.00\ninv-tgmf0040.pdf | 191 | 1982-02-22 | 70.00\ninv-hjfp0094.pdf | — | 2000-01-04 | 31,000.00\nvoxel-0027.jpg | 44848471 | 2021-03-26 | 838.68\nsyn-ar-invoice-digital.pdf | INV-7731 | 2024-05-12 | 4,600.00\n\nSaved: C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Use",
+   "answer": "Extracted invoice_number, date, total from 5 document(s):\n\ndocument | invoice_number | date | total\ninv-lkxd0060.pdf | 2750 | 2000-04-10 | 2,000.00\ninv-tgmf0040.pdf | 191 | 1982-02-22 | 70.00\ninv-hjfp0094.pdf | — | 2000-01-04 | 31,000.00\nvoxel-0027.jpg | 44848471 | 2021-03-26 | 838.68\nsyn-ar-invoice-digital.pdf | INV-7731 | 2024-05-12 | 4,600.00\n\nSaved: <local>/…",
    "seconds": 0.04,
    "files": [
-    "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\ev-runs\\c8c54921\\dev-rules\\exports\\inklight-extract-2026-10-25.csv"
+    "<local>/ev-runs/c8c54921/dev-rules/exports/inklight-extract-2026-10-25.csv"
    ],
    "correct": false,
    "cells": 15,
