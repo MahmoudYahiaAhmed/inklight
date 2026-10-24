@@ -105,6 +105,7 @@ async function openDoc(id, page, highlight = null) {
   $("#viewer").classList.add("open");
   renderDocs();
   renderPage();
+  reviewLabel();
 }
 
 function renderPage() {
@@ -275,6 +276,134 @@ async function loadHistory() {
     } }, h("td", {}, r.created_at.slice(0, 19).replace("T", " ")), h("td", {}, r.intent), h("td", {}, r.state), h("td", {}, Math.round(r.duration_ms)), h("td", {}, r.request))))) : h("div", { class: "muted" }, "No tasks yet.")));
 }
 
+// ------------------------------------------------------------------ review
+// The prediction (value, OCR text, confidence, warning, source box) is frozen on the server when a review opens.
+// The reviewer decides every field; the decision is stored next to the prediction, never over it.
+
+const review = { current: null, activeMs: 0, since: null };
+
+function storageGet(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+function storageSet(key, value) { try { localStorage.setItem(key, value); } catch (_) { /* private mode */ } }
+
+// Active time: counted only while this page is visible and focused, kept per review across reloads.
+function clockStart() {
+  if (!review.current || review.since !== null || document.hidden || !document.hasFocus()) return;
+  review.since = performance.now();
+}
+function clockStop() {
+  if (review.since === null) return;
+  review.activeMs += performance.now() - review.since;
+  review.since = null;
+  if (review.current) storageSet(`inklight-review-ms-${review.current.id}`, String(Math.round(review.activeMs)));
+}
+function activeSeconds() { clockStop(); clockStart(); return Math.round(review.activeMs) / 1000; }
+
+const reviewer = () => $("#review-name").value.trim();
+
+function reviewLabel() {
+  const d = state.viewer.doc;
+  $("#review-doc-label").textContent = d ? `Document: ${d.name}` : "Open a document in the viewer, then start its review.";
+}
+
+async function startReview(e) {
+  e.preventDefault();
+  const d = state.viewer.doc;
+  if (!d) { $("#review-out").replaceChildren(h("div", { class: "card warning" }, "Open a document in the viewer first.")); return; }
+  if (!reviewer()) { $("#review-name").focus(); return; }
+  storageSet("inklight-reviewer", reviewer());
+  try {
+    const r = await api("/api/reviews", { method: "POST", json: { doc_id: d.id, reviewer: reviewer(), mode: $("#review-mode").value, cohort: $("#review-cohort").value.trim() || null } });
+    showReview(r);
+    loadQueue();
+  } catch (err) { $("#review-out").replaceChildren(h("div", { class: "card warning" }, err.message)); }
+}
+
+function showReview(r) {
+  clockStop();
+  review.current = r;
+  review.activeMs = Number(storageGet(`inklight-review-ms-${r.id}`) || 0);
+  review.since = null;
+  clockStart();
+  renderReview();
+}
+
+async function decide(field, action, value) {
+  try {
+    const r = await api(`/api/reviews/${review.current.id}/decide`, { method: "POST", json: { field, action, value: value ?? null, reviewer: reviewer() } });
+    review.current = r;
+    renderReview();
+  } catch (err) { renderReview(err.message); }
+}
+
+async function approveReview() {
+  try {
+    const r = await api(`/api/reviews/${review.current.id}/approve`, { method: "POST", json: { reviewer: reviewer(), active_seconds: activeSeconds() } });
+    clockStop();
+    review.current = r;
+    renderReview();
+    loadQueue();
+  } catch (err) { renderReview(err.message); }
+}
+
+function predictionCell(f, r) {
+  if (r.mode === "manual" && r.status === "open") return h("td", { class: "muted" }, "hidden (manual entry)");
+  if (f.predicted == null) return h("td", { class: "none" }, "—");
+  const low = f.flagged;
+  const title = `${f.method || ""} · confidence ${f.confidence == null ? "–" : Math.round(f.confidence * 100) + "%"}${f.warning ? ` · ${f.warning}` : ""}`;
+  return h("td", { class: `cell ${low ? "low" : ""}`, title, onclick: () => f.source && openDoc(r.doc_id, f.source.page, f.source.bbox) },
+    fmt(f.predicted), low ? " ⚠" : "", f.raw ? h("div", { class: "muted" }, `OCR: “${f.raw}”`) : null,
+    f.warning ? h("div", { class: "warning" }, f.warning) : null);
+}
+
+function decisionCell(f, r) {
+  if (r.status !== "open") return h("td", {}, f.action === "absent" ? "absent" : fmt(f.final), h("div", { class: "muted" }, f.action || ""));
+  const input = h("input", { value: f.action && f.action !== "absent" ? String(f.final ?? "") : "", placeholder: r.mode === "manual" ? "type the value" : "correct value", "aria-label": `Value for ${f.field}` });
+  const save = () => decide(f.field, r.mode === "manual" ? "entered" : "corrected", input.value);
+  input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); save(); } });
+  return h("td", {}, input,
+    h("div", { class: "actions" },
+      r.mode === "review" && f.predicted != null ? h("button", { class: "ghost small", type: "button", onclick: () => decide(f.field, "accepted") }, "Accept") : null,
+      h("button", { class: "ghost small", type: "button", onclick: save }, r.mode === "manual" ? "Save" : "Save correction"),
+      h("button", { class: "ghost small", type: "button", onclick: () => decide(f.field, "absent") }, "Absent")),
+    f.action ? h("div", { class: "muted" }, `✓ ${f.action}${f.action === "absent" ? "" : `: ${fmt(f.final)}`}`) : null);
+}
+
+function renderReview(error) {
+  const r = review.current;
+  if (!r) { $("#review-out").replaceChildren(); return; }
+  const undecided = r.fields.filter((f) => !f.action).length;
+  $("#review-out").replaceChildren(h("article", { class: "card" },
+    h("div", { class: "card-head" }, h("div", { class: "req" }, r.doc_name), h("span", { class: `state ${r.status === "approved" ? "succeeded" : "partial"}` }, r.status),
+      h("span", {}, r.mode), r.cohort ? h("span", {}, r.cohort) : null, h("span", {}, `review ${r.id}`)),
+    error ? h("div", { class: "warning" }, error) : null,
+    h("div", { class: "muted" }, r.mode === "manual" ? "Type each value from the document, or mark it absent." : "Compare each prediction with the document (click it to see where it came from). ⚠ = flagged for review."),
+    h("table", { class: "grid" },
+      h("thead", {}, h("tr", {}, ...["field", "prediction", "decision"].map((c) => h("th", {}, c)))),
+      h("tbody", {}, ...r.fields.map((f) => h("tr", {}, h("td", {}, f.field), predictionCell(f, r), decisionCell(f, r))))),
+    r.status === "open"
+      ? h("div", { class: "actions" }, h("button", { class: "primary", type: "button", disabled: undecided > 0, onclick: approveReview }, undecided ? `Decide ${undecided} more field(s) to approve` : "Approve"))
+      : h("div", { class: "muted" }, `Approved by ${r.approved_by} · ${r.approved_at.slice(0, 19).replace("T", " ")} · active ${r.active_seconds ?? "–"} s`)));
+}
+
+async function loadQueue() {
+  try {
+    const open = await api("/api/reviews?status=open");
+    $("#review-queue").replaceChildren(h("article", { class: "card" }, h("div", { class: "muted" }, `${open.length} open review(s)`),
+      ...open.map((r) => h("div", { class: "source", onclick: async () => { showReview(await api(`/api/reviews/${r.id}`)); openDoc(r.doc_id, 1); } },
+        h("b", {}, r.doc_name), h("span", {}, `${r.mode} · ${r.cohort || "no cohort"} · opened by ${r.opened_by} · ${r.fields.filter((f) => !f.action).length} undecided`)))));
+  } catch (err) { $("#review-queue").replaceChildren(h("div", { class: "card warning" }, err.message)); }
+}
+
+async function exportReviews() {
+  if (!reviewer()) { $("#review-name").focus(); return; }
+  try {
+    const res = await api("/api/reviews/export", { method: "POST", json: { actor: reviewer(), format: "csv", cohort: $("#review-cohort").value.trim() || null } });
+    const url = URL.createObjectURL(await res.blob());
+    h("a", { href: url, download: "inklight-reviews.csv" }).click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  } catch (err) { $("#review-out").replaceChildren(h("div", { class: "card warning" }, err.message)); }
+}
+
 // ------------------------------------------------------------------ settings
 
 async function loadStatus() {
@@ -301,7 +430,15 @@ function wire() {
     document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("active", x === t));
     document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === `panel-${t.dataset.tab}`));
     if (t.dataset.tab === "history") loadHistory();
+    if (t.dataset.tab === "review") { reviewLabel(); loadQueue(); }
   }));
+  $("#review-name").value = storageGet("inklight-reviewer") || "";
+  $("#review-form").addEventListener("submit", startReview);
+  $("#review-export").addEventListener("click", exportReviews);
+  document.addEventListener("visibilitychange", () => (document.hidden ? clockStop() : clockStart()));
+  window.addEventListener("blur", clockStop);
+  window.addEventListener("focus", clockStart);
+  window.addEventListener("beforeunload", clockStop);
   const drop = $("#drop");
   drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
   drop.addEventListener("dragleave", () => drop.classList.remove("over"));
@@ -318,6 +455,7 @@ function wire() {
   $("#next-page").addEventListener("click", () => state.viewer.doc && openDoc(state.viewer.doc.id, state.viewer.page + 1));
   $("#toggle-text").addEventListener("click", () => { $("#page-text").classList.toggle("hidden"); $("#page").classList.toggle("hidden"); });
   $("#page").addEventListener("dblclick", () => $("#page").classList.toggle("show-blocks"));
+  $("#close-viewer").addEventListener("click", () => $("#viewer").classList.remove("open"));
   $("#open-settings").addEventListener("click", () => { loadStatus(); $("#settings").showModal(); });
   $("#save-settings").addEventListener("click", async (e) => {
     e.preventDefault();

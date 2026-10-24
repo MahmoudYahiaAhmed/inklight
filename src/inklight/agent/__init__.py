@@ -16,7 +16,9 @@ from typing import Any
 
 from ..config import Settings, load_settings
 from ..errors import InklightError, InputRejected
+from ..extract import resolve_field
 from ..library import IngestReport, Library, Progress
+from ..review import Mode, Review, ReviewStore
 from ..schemas import AgentResult, Record, TaskState
 from .context import Policy, Scratch, ToolContext
 from .plan import Intent, Plan
@@ -41,6 +43,7 @@ class DocumentAgent:
             settings = settings.with_overrides(**overrides)
         self.settings = settings
         self._owns_library = library is None  # a library passed in belongs to the caller
+        self._reviews: ReviewStore | None = None
         self.library = library or Library(settings)
         self.policy = Policy(allow_write=allow_write, output_dir=Path(output_dir).resolve() if output_dir else None)
         lim = settings.limits
@@ -175,6 +178,34 @@ class DocumentAgent:
     def ask_many(self, requests: list[str], files: Iterable[str | Path] | None = None) -> list[AgentResult]:
         files_list = list(files) if files is not None else None
         return [self.ask(r, files_list) for r in requests]
+
+    @property
+    def reviews(self) -> ReviewStore:
+        """Human review of extracted values (see inklight.review)."""
+        if self._reviews is None:
+            self._reviews = ReviewStore(self.library.store)
+        return self._reviews
+
+    def open_review(
+        self,
+        doc_id: str,
+        fields: list[str],
+        *,
+        reviewer: str,
+        mode: Mode = "review",
+        cohort: str | None = None,
+        split: str | None = None,
+        baseline: str | None = None,
+    ) -> Review:
+        """Extract ``fields`` from one library document and open a review of the predictions."""
+        doc = self.library.get(doc_id)
+        if doc is None:
+            raise InputRejected(f"Unknown document {doc_id!r}")
+        names = [resolve_field(f).name for f in fields]
+        record = self.extract([doc.path], fields=names)[0]
+        return self.reviews.open(
+            doc, record, names, mode=mode, reviewer=reviewer, cohort=cohort, split=split, baseline=baseline
+        )
 
     def extract(
         self,

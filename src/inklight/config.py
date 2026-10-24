@@ -55,6 +55,10 @@ class ModelSettings(BaseModel):
     reader: str = "Xenova/distilbert-base-cased-distilled-squad"
     embedder: str = "Xenova/bge-small-en-v1.5"
     writer: str = "HuggingFaceTB/SmolLM2-135M-Instruct"
+    # Pin a model to an exact Hugging Face commit, so an upstream change cannot alter results. None: latest.
+    reader_revision: str | None = None
+    embedder_revision: str | None = None
+    writer_revision: str | None = None
     use_writer: bool = Field(False, description="Let the 135M writer phrase answers (verified against evidence).")
     allow_download: bool = Field(False, description="Allow fetching model weights on first use.")
     model_dir: str | None = None
@@ -69,6 +73,11 @@ class ExtractionSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     day_first: bool = Field(False, description="Read 03/04/2026 as 3 April (day first), as in most of the world.")
+    second_reading: bool = Field(
+        True,
+        description="OCR the image region of a suspicious amount again before flagging it. Off: the amount check "
+        "uses the other signals only (faster, fewer confirmed flags).",
+    )
 
 
 class Privacy(BaseModel):

@@ -35,6 +35,10 @@ class Brain:
     def _repo(self, role: str) -> str:
         return str(getattr(self.settings.models, role))
 
+    def _revision(self, role: str) -> str | None:
+        revision = getattr(self.settings.models, f"{role}_revision", None)
+        return str(revision) if revision else None
+
     def _load(self, role: str) -> Any:
         if self.mode == "rules":
             return None
@@ -46,7 +50,11 @@ class Brain:
             cls = {"reader": Reader, "embedder": Embedder, "writer": Writer}[role]
             try:
                 files = hub.resolve(
-                    self._repo(role), hub.FILES[role], self.settings.model_cache, self.settings.models.allow_download
+                    self._repo(role),
+                    hub.FILES[role],
+                    self.settings.model_cache,
+                    self.settings.models.allow_download,
+                    revision=self._revision(role),
                 )
                 model = cls(files, self._repo(role), threads=self.settings.ocr.threads)
             except ModelUnavailable as exc:
@@ -115,7 +123,8 @@ class Brain:
             out[role] = {
                 "repo": repo,
                 "params": PARAMS[role],
-                "installed": hub.installed(repo, hub.FILES[role], cache),
+                "installed": hub.installed(repo, hub.FILES[role], cache, self._revision(role)),
+                "revision": self._revision(role),
                 "loaded": role in self._cache and self._cache[role] is not None,
                 "error": self._failed.get(role),
             }

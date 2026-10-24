@@ -44,6 +44,7 @@
         <button class="tab" data-tab="extract" role="tab">Extract</button>
         <button class="tab" data-tab="search" role="tab">Search</button>
         <button class="tab" data-tab="history" role="tab">History</button>
+        <button class="tab" data-tab="review" role="tab">Review</button>
       </nav>
 
       <section class="panel active" id="panel-ask">
@@ -84,6 +85,26 @@
       <section class="panel" id="panel-history">
         <div id="history-out" class="results"></div>
       </section>
+
+      <section class="panel" id="panel-review">
+        <form id="review-form" class="composer">
+          <div class="composer-row">
+            <input id="review-name" placeholder="Your name" maxlength="100" aria-label="Reviewer name" required>
+            <select id="review-mode" aria-label="Review mode">
+              <option value="review">Review: check the predicted values</option>
+              <option value="manual">Manual entry: type every value (predictions hidden)</option>
+            </select>
+            <input id="review-cohort" placeholder="Cohort (e.g. genuine-invoice)" maxlength="64" aria-label="Cohort">
+          </div>
+          <div class="composer-row">
+            <div class="scope" id="review-doc-label">Open a document in the viewer, then start its review.</div>
+            <button type="button" class="ghost" id="review-export">Export approved (CSV)</button>
+            <button type="submit" class="primary">Start review</button>
+          </div>
+        </form>
+        <div id="review-out" class="results"></div>
+        <div id="review-queue" class="results"></div>
+      </section>
     </main>
 
     <section class="viewer" id="viewer">
@@ -97,6 +118,7 @@
           <span id="page-label">–</span>
           <button class="ghost small" id="next-page" aria-label="Next page">›</button>
           <button class="ghost small" id="toggle-text">Text</button>
+          <button class="ghost small" id="close-viewer" aria-label="Close the document viewer">✕</button>
         </div>
       </div>
       <div class="page-wrap" id="page-wrap">

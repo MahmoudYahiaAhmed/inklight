@@ -25,6 +25,10 @@ app = typer.Typer(
 )
 models_app = typer.Typer(help="Install and inspect the small local models.", no_args_is_help=True)
 app.add_typer(models_app, name="models")
+review_app = typer.Typer(
+    help="Human review of extracted values (open reviews in `inklight serve`).", no_args_is_help=True
+)
+app.add_typer(review_app, name="review")
 
 ConfigOpt = Annotated[Path | None, typer.Option("--config", "-c", help="Path to a config.toml.")]
 BrainOpt = Annotated[str | None, typer.Option("--brain", help="auto | local | rules")]
@@ -473,6 +477,40 @@ def doctor(config: ConfigOpt = None) -> None:
         )
 
 
+@review_app.command("list")
+def review_list(
+    status: Annotated[str | None, typer.Option(help="open or approved")] = None,
+    cohort: Annotated[str | None, typer.Option(help="Only this cohort.")] = None,
+    config: ConfigOpt = None,
+) -> None:
+    """List reviews: document, mode, cohort, status, undecided fields, approval."""
+    agent = _agent(config, brain="rules")
+    for r in agent.reviews.find(status=status, cohort=cohort):
+        undecided = sum(f.action is None for f in r.fields)
+        approved = f"approved by {r.approved_by} {r.approved_at}" if r.approved_by else f"{undecided} undecided"
+        console.print(Text(f"{r.id}  {r.status:<8} {r.mode:<6} {r.cohort or '-':<16} {r.doc_name}  ({approved})"))
+
+
+@review_app.command("export")
+def review_export(
+    out: Annotated[Path, typer.Option("--out", "-o", help="File to write (.csv or .json).")],
+    actor: Annotated[str, typer.Option(help="Who exports (recorded in each review's history).")],
+    cohort: Annotated[str | None, typer.Option(help="Only this cohort.")] = None,
+    config: ConfigOpt = None,
+) -> None:
+    """Export approved reviews: prediction, warning, decision and approval, one row per field."""
+    if out.exists():  # checked first: the export is recorded in each review's history
+        _fail(InklightError(f"{out} exists; choose a new file name"))
+    fmt = "json" if out.suffix.lower() == ".json" else "csv"
+    agent = _agent(config, brain="rules")
+    try:
+        content = agent.reviews.export(fmt, actor=actor, cohort=cohort)  # type: ignore[arg-type]
+    except InklightError as exc:
+        _fail(exc)
+    out.write_text(content, encoding="utf-8", newline="")
+    console.print(Text(f"✓ wrote {out}", "ok"))
+
+
 @models_app.command("status")
 def models_status(config: ConfigOpt = None) -> None:
     """Show which small models are installed."""
@@ -496,7 +534,7 @@ def models_pull(
         repo = getattr(settings.models, role)
         with console.status(f"Downloading {role} ({repo})…", spinner_style=CYAN):
             try:
-                hub.pull(repo, hub.FILES[role], settings.model_cache)
+                hub.pull(repo, hub.FILES[role], settings.model_cache, getattr(settings.models, f"{role}_revision"))
             except Exception as exc:
                 _fail(InklightError(f"{role}: {exc}"))
         console.print(Text.assemble(("✓ ", "ok"), (f"{role:<9}", "bold"), (repo, "muted")))

@@ -34,6 +34,7 @@ from ..agent import DocumentAgent, Policy
 from ..config import Settings
 from ..errors import InklightError, InputRejected
 from ..safety import SUPPORTED_EXTENSIONS, safe_filename
+from . import review_api
 from .render import render_page
 
 STATIC = Path(__file__).parent / "static"
@@ -126,6 +127,8 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         return JSONResponse({"detail": str(exc)}, status_code=status)
 
     # -- status & settings ----------------------------------------------------
+
+    review_api.register(app, current)  # human review: /api/reviews
 
     @app.get("/api/status")
     def status() -> dict[str, Any]:

@@ -18,8 +18,13 @@ FILES = {
 }
 
 
-def resolve(repo: str, files: list[str], model_dir: Path | None, allow_download: bool) -> dict[str, Path]:
-    """Return {relative name: local path} for every file, or raise ModelUnavailable."""
+def resolve(
+    repo: str, files: list[str], model_dir: Path | None, allow_download: bool, revision: str | None = None
+) -> dict[str, Path]:
+    """Return {relative name: local path} for every file, or raise ModelUnavailable.
+
+    ``revision`` pins an exact Hugging Face commit; a cached copy of another revision is not used.
+    """
     if model_dir is not None:
         base = model_dir / repo.replace("/", "--")
         found = {f: base / f for f in files}
@@ -31,7 +36,7 @@ def resolve(repo: str, files: list[str], model_dir: Path | None, allow_download:
         raise ModelUnavailable("huggingface_hub is required to locate models") from exc
     out: dict[str, Path] = {}
     for name in files:
-        cached = try_to_load_from_cache(repo, name)
+        cached = try_to_load_from_cache(repo, name, revision=revision)
         if isinstance(cached, str):
             out[name] = Path(cached)
             continue
@@ -40,29 +45,29 @@ def resolve(repo: str, files: list[str], model_dir: Path | None, allow_download:
                 f"{repo} is not installed. Run `inklight models pull` (downloads once, then works offline)."
             )
         try:
-            out[name] = Path(hf_hub_download(repo, name))
+            out[name] = Path(hf_hub_download(repo, name, revision=revision))
         except Exception as exc:
             raise ModelUnavailable(f"Could not download {repo}/{name}: {exc}") from exc
     return out
 
 
-def pull(repo: str, files: list[str], model_dir: Path | None = None) -> dict[str, Path]:
+def pull(repo: str, files: list[str], model_dir: Path | None = None, revision: str | None = None) -> dict[str, Path]:
     """Download (or copy into ``model_dir``) the files of one model."""
     from huggingface_hub import hf_hub_download
 
     out = {}
     for name in files:
         if model_dir is not None:
-            local = hf_hub_download(repo, name, local_dir=str(model_dir / repo.replace("/", "--")))
+            local = hf_hub_download(repo, name, revision=revision, local_dir=str(model_dir / repo.replace("/", "--")))
         else:
-            local = hf_hub_download(repo, name)
+            local = hf_hub_download(repo, name, revision=revision)
         out[name] = Path(local)
     return out
 
 
-def installed(repo: str, files: list[str], model_dir: Path | None) -> bool:
+def installed(repo: str, files: list[str], model_dir: Path | None, revision: str | None = None) -> bool:
     try:
-        resolve(repo, files, model_dir, allow_download=False)
+        resolve(repo, files, model_dir, allow_download=False, revision=revision)
     except ModelUnavailable:
         return False
     return True

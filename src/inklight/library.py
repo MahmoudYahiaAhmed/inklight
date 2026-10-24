@@ -228,6 +228,8 @@ class Library:
 
         Used to double-check a suspicious amount; the stored reading is never replaced.
         """
+        if not self.settings.extraction.second_reading:
+            return None
         engine = self.engine
         reread = getattr(engine, "reread", None)
         path = Path(doc.path)
