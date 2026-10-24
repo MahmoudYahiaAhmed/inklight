@@ -382,15 +382,36 @@ function renderReview(error) {
       h("tbody", {}, ...r.fields.map((f) => h("tr", {}, h("td", {}, f.field), predictionCell(f, r), decisionCell(f, r))))),
     r.status === "open"
       ? h("div", { class: "actions" }, h("button", { class: "primary", type: "button", disabled: undecided > 0, onclick: approveReview }, undecided ? `Decide ${undecided} more field(s) to approve` : "Approve"))
-      : h("div", { class: "muted" }, `Approved by ${r.approved_by} · ${r.approved_at.slice(0, 19).replace("T", " ")} · active ${r.active_seconds ?? "–"} s`)));
+      : h("div", {},
+          h("div", { class: "muted" }, `Approved by ${r.approved_by} · ${r.approved_at.slice(0, 19).replace("T", " ")} · active ${r.active_seconds ?? "–"} s`),
+          reopenForm(r))));
+}
+
+// Reopening an approved review needs a reason; the history keeps both approvals and the reason.
+function reopenForm(r) {
+  const reason = h("input", { placeholder: "Why reopen? (required)", maxlength: "500", "aria-label": "Reason for reopening" });
+  return h("div", { class: "actions" }, reason,
+    h("button", { class: "ghost small", type: "button", onclick: async () => {
+      if (!reviewer()) { $("#review-name").focus(); return; }
+      if (!reason.value.trim()) { reason.focus(); return; }
+      try {
+        const reopened = await api(`/api/reviews/${r.id}/reopen`, { method: "POST", json: { reviewer: reviewer(), reason: reason.value.trim() } });
+        showReview(reopened);
+        loadQueue();
+      } catch (err) { renderReview(err.message); }
+    } }, "Reopen"));
 }
 
 async function loadQueue() {
   try {
-    const open = await api("/api/reviews?status=open");
-    $("#review-queue").replaceChildren(h("article", { class: "card" }, h("div", { class: "muted" }, `${open.length} open review(s)`),
-      ...open.map((r) => h("div", { class: "source", onclick: async () => { showReview(await api(`/api/reviews/${r.id}`)); openDoc(r.doc_id, 1); } },
-        h("b", {}, r.doc_name), h("span", {}, `${r.mode} · ${r.cohort || "no cohort"} · opened by ${r.opened_by} · ${r.fields.filter((f) => !f.action).length} undecided`)))));
+    const [open, approved] = await Promise.all([api("/api/reviews?status=open"), api("/api/reviews?status=approved")]);
+    const row = (r, detail) => h("div", { class: "source", onclick: async () => { showReview(await api(`/api/reviews/${r.id}`)); openDoc(r.doc_id, 1); } },
+      h("b", {}, r.doc_name), h("span", {}, `${r.mode} · ${r.cohort || "no cohort"} · ${detail}`));
+    $("#review-queue").replaceChildren(
+      h("article", { class: "card" }, h("div", { class: "muted" }, `${open.length} open review(s)`),
+        ...open.map((r) => row(r, `opened by ${r.opened_by} · ${r.fields.filter((f) => !f.action).length} undecided`))),
+      h("article", { class: "card" }, h("div", { class: "muted" }, `${approved.length} approved review(s) — open one to reopen it`),
+        ...approved.slice(-20).reverse().map((r) => row(r, `approved by ${r.approved_by} · ${r.approved_at.slice(0, 16).replace("T", " ")}`))));
   } catch (err) { $("#review-queue").replaceChildren(h("div", { class: "card warning" }, err.message)); }
 }
 
