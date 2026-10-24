@@ -523,6 +523,46 @@ def test_sum_reports_documents_left_out(mixed):
     assert calc["missing"] == 1 and calc["count"] == len(MIXED) - 1
 
 
+GAP = {**FOUR, "nototal": ("Acme Supplies Ltd.", None, "2026-06-01")}  # one total missing, one currency
+
+
+@pytest.fixture
+def gap(tmp_path):
+    with _agent(tmp_path, GAP) as a:
+        yield a
+
+
+@pytest.mark.parametrize(
+    ("request_", "result_"),
+    [("What is the total of all invoices?", 25050.0), ("What is the average total of all invoices?", 6262.5)],
+)
+def test_aggregate_that_leaves_documents_out_is_partial(gap, request_, result_):
+    result = ask(gap, request_)
+    assert result.state == TaskState.PARTIAL  # a sum over 4 of 5 invoices is not the sum asked for
+    assert result.calculation["missing"] == 1 and result.calculation["result"] == result_
+    assert any("left out" in w for w in result.warnings)
+    assert "1 document(s) with no total left out" in result.answer
+    assert any("only part of the job" in c for c in result.checks)
+
+
+def test_aggregate_over_every_document_still_succeeds(agent):
+    result = ask(agent, "What is the total of all invoices?")
+    assert result.state == TaskState.SUCCEEDED and result.calculation["missing"] == 0
+    assert result.calculation["result"] == 25050.0
+    assert "left out" not in result.answer
+
+
+def test_aggregate_whose_conditions_exclude_the_gap_succeeds(gap):
+    # The invoice without a total does not match "from Globex", so nothing in scope is left out.
+    result = ask(gap, "What is the total of invoices from Globex?")
+    assert result.state == TaskState.SUCCEEDED and result.calculation["missing"] == 0
+
+
+def test_left_out_documents_are_named_in_a_per_currency_answer(mixed):
+    result = ask(mixed, "What is the total of all invoices?")
+    assert result.state == TaskState.PARTIAL and "1 document(s) with no total left out" in result.answer
+
+
 @pytest.mark.parametrize(
     "request_", ["Find receipts above Rp 50.000", "Find receipts above Rp 50,000", "Find receipts above 50,000 IDR"]
 )

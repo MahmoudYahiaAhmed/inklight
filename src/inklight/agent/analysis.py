@@ -240,6 +240,8 @@ def calculate(ctx: ToolContext, op: str, field: str) -> str:
         calc["unit"] = next(iter(groups)) if len(groups) == 1 and op != "count" else None
     ctx.scratch.calc = calc
     if missing:
+        # A sum or average over part of the documents is not the answer to the request: partial, not succeeded.
+        ctx.scratch.partial = True
         ctx.scratch.warn(f"{missing} document(s) had no {field} and were left out of the {op}")
     return f"{op}({field}) = {calc.get('result', calc.get('by_unit'))} over {len(values)} values"
 

@@ -99,14 +99,15 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
                 per_unit = " · ".join(f"{u} {_fmt(v)}" for u, v in calc["by_unit"].items())
                 text = (
                     f"No single {calc.get('op', '')}: the {calc.get('field', '')} values are in different "
-                    f"currencies and are not converted. By currency: {per_unit}\n\n"
+                    f"currencies and are not converted. By currency: {per_unit}{_left_out(calc)}\n\n"
                     f"{table_text(s.records, columns=cols)}"
                 )
             else:
                 unit = f" {calc['unit']}" if calc.get("unit") else ""
                 text = (
                     f"{calc.get('op', '')} of {calc.get('field', '')}: {_fmt(calc.get('result'))}{unit} "
-                    f"(over {calc.get('count', 0)} document(s){matched}; computed exactly, not by a model)\n\n"
+                    f"(over {calc.get('count', 0)} document(s){matched}{_left_out(calc)}; "
+                    "computed exactly, not by a model)\n\n"
                     f"{table_text(s.records, columns=cols)}"
                 )
         case Intent.COUNT:
@@ -132,6 +133,11 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
     if s.files:
         text += "\n\nSaved: " + ", ".join(s.files)
     return text.strip()
+
+
+def _left_out(calc: dict) -> str:
+    missing = calc.get("missing") or 0
+    return f"; {missing} document(s) with no {calc.get('field', 'value')} left out" if missing else ""
 
 
 def _with_interpretation(plan: Plan, text: str) -> str:
