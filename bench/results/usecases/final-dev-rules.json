@@ -1,0 +1,4144 @@
+{
+ "label": "AUTOMATED USE-CASE EVALUATION",
+ "split": "dev",
+ "brain": "rules",
+ "ocr_mode": "auto",
+ "build": {
+  "inklight_file": "C:\\Users\\pc\\inklight\\src\\inklight\\__init__.py",
+  "version": "0.1.1.dev0",
+  "git_commit_if_source_tree": "8c549213594aab28fe758a0ba5512e2a8cc54052"
+ },
+ "run_label": "",
+ "evidence": "live",
+ "documents": {
+  "un50-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2023/50",
+   "ingest": {
+    "pages": 3,
+    "doc_type": "letter",
+    "mean_conf": 1.0,
+    "sources": {
+     "hybrid": 1,
+     "text": 2
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "84fd219ad624199f"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the date of the letter?",
+     "answer": "The date is 2023-01-18",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who signed the letter?",
+     "answer": "mockery of the Heads of State who signed the above-mentioned Final Communiqué",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which region does the communiqué concern?",
+     "answer": "Region, the Government of the Democratic Republic of the Congo will assume all its",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 3,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the invoice total?",
+     "answer": "failed to keep their commitment, in total defiance of the East African Community, the",
+     "state": "succeeded",
+     "outcome": "silent_answer"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**un50-en.pdf** (letter, 3 pages)\n  - the Permanent Mission of the Democratic Republic of the (un50-en.pdf p.1)\n  - Congo to the United Nations addressed to the President of the (un50-en.pdf p.1)\n  - communiqué of the Government of the Democratic Republic of the Congo concerning (un50-en.pdf p.1)\n  - issued following the Luanda mini-summit held on 23 November 2022, the M23 (un50-en.pdf p.2)\n  - peace plan established by the Luanda mini-s"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2023-01-18",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "f5877007832e4cd1"
+   }
+  },
+  "un50-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2023/50",
+   "ingest": {
+    "pages": 3,
+    "doc_type": "letter",
+    "mean_conf": 0.9512,
+    "sources": {
+     "ocr": 3
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "8deda78dfb420224"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما تاريخ هذه الرسالة؟",
+     "answer": "رسالة مؤرخة 18 كانون الثاني/يناير 2023 موجهة إلى رئيس مجلس الأمن من القائمة",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من وقّع الرسالة؟",
+     "answer": "رسالة مؤرخة 18 كانون الثاني/يناير 2023 موجهة إلى رئيس مجلس الأمن من القائمة",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "عن أي منطقة يتحدث البيان المرفق؟",
+     "answer": "مرفق الرسالة المؤرخة 18 كانون الثاني/يناير 2023 الموجهة إلى رئيس مجلس الأمن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الحساب المصرفي المذكور في الرسالة؟",
+     "answer": "القمة المصغر المذكور أعلاه واستهزائهما برؤساء الدول الذين وقعوا البيان الختامي المذكور أعلاه بلجوئهما",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**un50-ar.pdf** (letter, 3 pages)\n  - رسالة مؤرخة 18 كانون الثاني/يناير 2023 موجهة إلى رئيس مجلس الأمن من القائمة (un50-ar.pdf p.1)\n  - بالأعمال بالنيابة للبعثة الدائمة لجمهورية الكونغو الديمقراطية لدى الأمم المتحدة (un50-ar.pdf p.1)\n  - وتلاحظ حكومة جمهورية الكونغو الديمقراطية أن إرهابيي حركة 23 مارس والسلطات الرواندية (un50-ar.pdf p.2)\n  - في بوجومبورا يوم 8 تشرين الثاني/نوفمبر 2022، وفي مؤتمر قمة لواندا المصغر المعقود في 23 تشرين (un5"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2023-01-18",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "136197941abd499e"
+   }
+  },
+  "un90-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2023/90",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "letter",
+    "mean_conf": 0.9997,
+    "sources": {
+     "hybrid": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "efbfb4406cd50175"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "answer": "Letter dated 6 February 2023 from the Permanent Representative",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.406,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "When was the Security Council briefing on the situation concerning Iraq held?",
+     "answer": "recent Security Council briefing on the situation concerning Iraq, held on 2 February",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Under which law did Iran say it exercised its right to self-defence?",
+     "answer": "exercised its inherent right to self-defence under international law in order to protect",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the contract value?",
+     "answer": "The closest passage is:\n“In the meantime, during the aforementioned Security Council briefing, the\nSpecial Representative of the Secretary-General for Iraq and some Member States\nmade reference to the",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**un90-en.pdf** (letter, 1 page)\n  - Letter dated 6 February 2023 from the Permanent Representative (un90-en.pdf p.1)\n  - of the Islamic Republic of Iran to the United Nations addressed to (un90-en.pdf p.1)\n  - the Secretary-General and the President of the Security Council (un90-en.pdf p.1)\n  - recent Security Council briefing on the situation concerning Iraq, held on 2 February (un90-en.pdf p.1)\n  - As has been stated in our letter (S/"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2023-02-06",
+     "outcome": "correct_flagged",
+     "warning": "2 different values found; chose the strongest label match"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "e6021ef7d6c24419"
+   }
+  },
+  "un90-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2023/90",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "unknown",
+    "mean_conf": 0.9676,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "e0b86eb08bbe3714"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من أرسل هذه الرسالة؟",
+     "answer": "وأرجو ممتنا تعميم هذه الرسالة باعتبارها وثيقة من وثائق مجلس الأمن.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "إلى من وُجّهت الرسالة؟",
+     "answer": "رسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "answer": "رسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما قيمة الضريبة المستحقة؟",
+     "answer": "The closest passage is:\n“الأمم المتحدة\nمجلس الأمن\nS/2023/90\nDistr.: General\n6 February 2023\nArabic\nOriginal: English\nرسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن\nمن الممثل ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**un90-ar.pdf** (unknown, 1 page)\n  - رسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن (un90-ar.pdf p.1)\n  - جلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023 (un90-ar.pdf p.1)\n  - (انظر S/PV.9253)، والتي اتهم فيها ممثل جمهورية العراق إيران بانتهاك سيادة العراق الوطنية وسلامته (un90-ar.pdf p.1)\n  - وفي الوقت نفسه، أشار الممثل الخاص للأمين العام للعراق وبعض الدول الأعضاء، خلال جلسة (un"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "db7bf3b4c1294239"
+   }
+  },
+  "r20-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/20",
+   "ingest": {
+    "pages": 14,
+    "doc_type": "report",
+    "mean_conf": 1.0,
+    "sources": {
+     "hybrid": 1,
+     "text": 13
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "35107013460768e5"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Which resolution established the Investigative Team?",
+     "answer": "Within the parameters established by the Security Council in its resolution 2379",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the Investigative Team known as?",
+     "answer": "known by the designation of United Nations Investigative Team to Promote",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "The report covers the implementation of which resolution?",
+     "answer": "Implementation of resolution 2697 (2023)",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.534,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "answer": "The closest passage is:\n“30. I note that full respect for the conditions on the use of evidence collected by the\nInvestigative Team, as specified by information providers, is essential at all times, i",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.1,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**r20-en.pdf** (report, 14 pages)\n  - In its resolution 2379 (2017), the Security Council requested the Secretary- (r20-en.pdf p.1)\n  - General to establish an Investigative Team, headed by a Special Adviser, to support (r20-en.pdf p.1)\n  - Investigative Team shall share the evidence with the competent Iraqi authorities in (r20-en.pdf p.3)\n  - Investigative Team for the provision of evidence to the competent Iraqi authorities. (r20-en.pd"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2024-01-15",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "d91f50cc798940c0"
+   }
+  },
+  "r20-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/20",
+   "ingest": {
+    "pages": 15,
+    "doc_type": "report",
+    "mean_conf": 0.9666,
+    "sources": {
+     "ocr": 15
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "cca995a75cc98cfc"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما القرار الذي طلب فيه مجلس الأمن إنشاء فريق التحقيق؟",
+     "answer": "1 - طلب مجلس الأمن، في قراره 2017 2379)، إلى الأمين العام إنشاء فريق تحقيق، برئاسة مستشار",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.06,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "تنفيذ أي قرار يتناوله هذا التقرير؟",
+     "answer": "تنفيذ القرار 2023 2697)",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من أعدّ هذا التقرير؟",
+     "answer": "8 - وأعد الأمين العام هذا التقرير بالتنسيق مع المستشار الخاص لفريق التحقيق، المكلف من قبل",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "The closest passage is:\n“(ب) نسخ من السجلات المقدمة من سلطات دول ثالثة أو منظمات دولية، تقدم فيها موافقة على\nإتاحة السجلات المذكورة، بعد إدخال ما يلزم من تعديلات للوفاء بالشروط المنطبقة المتعلقة بعدم ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.08,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**r20-ar.pdf** (report, 15 pages)\n  - 1 - طلب مجلس الأمن، في قراره 2017 2379)، إلى الأمين العام إنشاء فريق تحقيق، برئاسة مستشار (r20-ar.pdf p.1)\n  - خاص، لدعم الجهود المحلية الرامية إلى محاسبة تنظيم الدولة الإسلامية في العراق والشام (داعش)، عن طريق (r20-ar.pdf p.1)\n  - المجلس علما أيضا بالطلب المقدم من حكومة العراق إلى فريق التحقيق بأن يقدم ما في حوزته من أدلة إلى (r20-ar.pdf p.5)\n  - 1 - عملا بالفقرة 4 من قرار مجلس الأمن 2023 2697)، يقد"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2024-01-15",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "3fa6af7f9f204c7d"
+   }
+  },
+  "s16000-en": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/16000",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "letter",
+    "mean_conf": 0.9822,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "invisible text 100% (OCR layer)"
+    ],
+    "text_sha": "ae97b1c83433b751"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the date of the letter?",
+     "answer": "The date is 1983-09-22",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which city was hit by artillery fire on 8 September?",
+     "answer": "8 September, when the city of Abadan was barraged by Iragi long-range artillery",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which mission sent the letter?",
+     "answer": "OF THE PERMANENT MISSION OF THE ISLAMIC REPUBLIC",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the due date?",
+     "answer": "The closest passage is:\n“UNITED\nNATIONS\nSecurity Council\nDistr.\nGENERAL\nS/16000\n22 September 1983\nORIGINAL: ENGLISH\nLETTER DATED 22 SEPTEMBER 1983 FROM THE CHARGE D'AFFAIRES\nOF THE PERMANENT MISSION O",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**s16000-en.pdf** (letter, 2 pages)\n  - LETTER DATED 22 SEPTEMBER 1983 FROM THE CHARGE D'AFFAIRES (s16000-en.pdf p.1)\n  - Pursuant to my Ambassador's letter of 7 September 1983 (S/15962) regarding the (s16000-en.pdf p.1)\n  - constant bombardment of civilian areas in Iran by the ruling Baathist régime of (s16000-en.pdf p.1)\n  - On 7 September Iragi war-planes attacked the city of Marivan in Kurdestan (s16000-en.pdf p.1)\n  - of Marivan was"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "1983-09-22",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "1a0594c092564b01"
+   }
+  },
+  "s16000-ar": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/16000",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "unknown",
+    "mean_conf": 0.9092,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "no text layer"
+    ],
+    "text_sha": "68ca4ebcaa55a951"
+   },
+   "text_has_answers": [
+    false,
+    true,
+    false
+   ],
+   "qa": [
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "answer": "رسالة مؤرخةفي ٢٢ أبلول /سبتمبر ١٩٨٣ موموجية",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من أي بعثة أُرسلت الرسالة؟",
+     "answer": "المستمر للمناطق المدنية في أيران من جانب النظام البعثي الحاكم في العراق 4 تلقيت تمليمات من",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما المدينة التي قُصفت بالمدفعية؟",
+     "answer": "كما قصفت نيران مدفعية العدو الاحيا* السكنية في سارد اشت بمقاطعة",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما إجمالي الفاتورة؟",
+     "answer": "The closest passage is:\n“وفي ٧ أيلول /سبتمبر أغارت الطائرات الحربية العراقية على مدينةء ريخ1 ن في مقاطعة\nكردستان فقصفت ضواحيها والسهول المجاورة لها من الساعة ١٢/١٥ الى الساعة ١٢/٣٠ بالتوقيت\nالمحلي ما ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**s16000-ar.pdf** (unknown, 2 pages)\n  - في أعقاب رسالة سغيرى المؤرخة في ٧ أيلول /سبتمبر 15g6e٣) والمتعلقة بالقصف (s16000-ar.pdf p.1)\n  - المستمر للمناطق المدنية في أيران من جانب النظام البعثي الحاكم في العراق 4 تلقيت تمليمات من (s16000-ar.pdf p.1)\n  - مرة أخرى علىمدينة ل ريفان في ٨ أيلول /سبتمبر في الساعة ٩/٣ و ١٠/٣٠ بالتوقيت المحلسي ٠ (s16000-ar.pdf p.1)\n  - كثيرة بأضرار ، وفي صباح يوم 1 أيلول /سبتمبر 4 واصل عدد من الطائرات قصف المناطق"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "7724e6e97ace461d"
+   }
+  },
+  "s15700-en": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/15700",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "letter",
+    "mean_conf": 0.9648,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "invisible text 100% (OCR layer)"
+    ],
+    "text_sha": "98aee991605ffafd"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    false
+   ],
+   "qa": [
+    {
+     "q": "Which country's Permanent Representative wrote the letter?",
+     "answer": "Council, said in his statement that his country respected international commitments",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who is the Minister for Foreign Affairs of Honduras?",
+     "answer": "El Salvador, Honduras and Guatemala should be urged to hold a meeting of Ministers",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the date of the letter?",
+     "answer": "The meeting would be held on the date and at the place decided on",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the total amount due?",
+     "answer": "The closest passage is:\n“For all the reasons stated above, the Government of Honduras is of the view\nthat, in order that the eagerly awaited dialogue may become a reality at the\nearliest possible mome",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**s15700-en.pdf** (letter, 2 pages)\n  - LETTER DATED ll APRIL 1983 FROM THE PERMANENT REPRESENTATIVE OF HONDURAS (s15700-en.pdf p.1)\n  - TO THE UNITED NATIONS ADDRESSED TO THE PRESIDENT OF THE SECURITY COUNCIL (s15700-en.pdf p.1)\n  - The Ministry of Foreign Affairs of Honduras has instructed me to express our (s15700-en.pdf p.1)\n  - Foreign Affairs of Honduras, to the Council of the Organization of American States (s15700-en.pdf p.1)\n  -"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "336bdff4c85a471c"
+   }
+  },
+  "s15700-ar": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/15700",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "contract",
+    "mean_conf": 0.9002,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "no text layer"
+    ],
+    "text_sha": "dfcb2cd450679fb2"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ممثل أي بلد كتب هذه الرسالة؟",
+     "answer": "وسأغدو ستنا ١ذا تفضلتم بتعميم هذه الرسالة بوصغها وشيقة من وثائق مجلس الأمن .",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "answer": "رسالة ملرخة في ١١ نيسان /ابريل ١٩٣٣ ء وموجهة الى رئيس",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "إلى من وُجّهت الرسالة؟",
+     "answer": "رسالة ملرخة في ١١ نيسان /ابريل ١٩٣٣ ء وموجهة الى رئيس",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الضريبة؟",
+     "answer": "The closest passage is:\n“ثانيا _ تعتقد حكومة هندوراسان ما سبق يمكن تحقيقه اذا قاست جميع الدول ء في الحالسة\nالسياسية السائد ة حاليا في المريكا الوسطى ۽ بالونا* بصدق واخلاصبالا لتزامات الدولية التي تعهد",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.01,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**s15700-ar.pdf** (contract, 2 pages)\n  - المؤرخة في ٦ نيسان /ابريل ١٩٨٣ والموجهة اليكم من مثل فرنسا الدائم لدى الأسم المتحدة (s15700-ar.pdf p.1)\n  - أولا — تود هند وراسان تكرر مرة أخرى انه للساهمة في اقامة سلم دائم في امريكا الوسطى ء (s15700-ar.pdf p.1)\n  - بها ء وخصوصا فيما يتعلق بالترتييات المقررة في ميئاق الأمم المتحدة وميثاق منظمة الدول الا مريكيسة (s15700-ar.pdf p.1)\n  - قده في مجلس الأمن في ٢٩ آذار/مارس ١٩٨٣ مثل العطكة المتحدة بأن"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "67fc295542994dd6"
+   }
+  },
+  "res3314-en": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "group": "un-A/RES/3314",
+   "ingest": {
+    "pages": 3,
+    "doc_type": "contract",
+    "mean_conf": 0.9812,
+    "sources": {
+     "ocr": 3
+    },
+    "notes": [
+     "invisible text 100% (OCR layer)"
+    ],
+    "text_sha": "1e82eaf93d89ff10"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    false
+   ],
+   "qa": [
+    {
+     "q": "What does resolution 3314 define?",
+     "answer": "lished pursuant to its resolution 2330 (XXII)’of",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "On what date was resolution 3314 adopted?",
+     "answer": "Resolutions adopted on the reports of the Sixth Committee",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "retrieval",
+     "confidence": 0.327,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "At which plenary meeting was resolution 3314 adopted?",
+     "answer": "2280th plenary meeting",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the invoice number?",
+     "answer": "The closest passage is:\n“Recalling that the Security Council, in accordance with\nArticle 39 of the Charter of the United Nations, shall deter-\nmine the existence of any threat to the peace, breach of ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.03,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**res3314-en.pdf** (contract, 3 pages)\n  - General Assembly—Twenty-ninth Session (res3314-en.pdf p.1)\n  - Law of Treaties, Documents of the Conference (United Nations (res3314-en.pdf p.1)\n  - tion on Principles of International Law concerning Friendly (res3314-en.pdf p.3)\n  - session, the International Law Commission, in the light (res3314-en.pdf p.3)\n  - session by the International Law Commission on State (res3314-en.pdf p.3)"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "e51d3ec724094b46"
+   }
+  },
+  "res3314-ar": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "group": "un-A/RES/3314",
+   "ingest": {
+    "pages": 5,
+    "doc_type": "report",
+    "mean_conf": 0.8993,
+    "sources": {
+     "ocr": 5
+    },
+    "notes": [
+     "no text layer"
+    ],
+    "text_sha": "e1eb0f735d93f570"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما موضوع القرار ٣٣١٤؟",
+     "answer": "(١١) القرار ٢٦٢٥(د – ٢٥) ، المرفق .",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 5,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "متى اعتُمد القرار؟",
+     "answer": "(١١) القرار ٢٦٢٥(د – ٢٥) ، المرفق .",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 5,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "في أي جلسة عامة اعتُمد القرار؟",
+     "answer": "(٧) القرار ٢٦٢٥ (د – ٢٥) ، المرفق ٠",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما سعر الوحدة؟",
+     "answer": "The closest passage is:\n“- rii -\n(ب) قيام القوات السلحة لدولة ءا بقذف اقيم دولة أخرى بالقتابل ، أو استعمال\nدولة ما أية أسلحة ضد اظيم دولة أخرى ٤\n(ج ) ضرب حصار عى موانئ دولة ما أوعلىسواحلها من قبل القو",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.02,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**res3314-ar.pdf** (report, 5 pages)\n  - وقد نظرت في تقربر اللجنة الخاصة المعنية بسألة تعريف العدوان ، المنشأة عملا (res3314-ar.pdf p.1)\n  - تمريف العدوان الذى اعتدته اللجنة الخاصة باتغاق الآرا* وأوصت الجمعية الماسة (res3314-ar.pdf p.1)\n  - القوة المتمارضة مع سيثاق الام المتحدة ومع اعلان باد ئ القانون الدولي المتصلة (res3314-ar.pdf p.1)\n  - وان يؤكد بن جديد كذلك احكام اعلان بادئ القانون الدولي المتصلة بالملاقات الودبسة (res3314-ar.pdf p."
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "1974-04-12",
+     "outcome": "wrong_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "16ef0783def84b9b"
+   }
+  },
+  "a45594-en": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": true,
+   "group": "un-A/45/594",
+   "ingest": {
+    "pages": 15,
+    "doc_type": "contract",
+    "mean_conf": 0.9778,
+    "sources": {
+     "ocr": 15
+    },
+    "notes": [
+     "invisible text 10% (OCR layer)",
+     "invisible text 11% (OCR layer)",
+     "invisible text 12% (OCR layer)",
+     "invisible text 13% (OCR layer)"
+    ],
+    "text_sha": "3d21d9e842f852d7"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What does the model agreement concern?",
+     "answer": "agreement between the United Nations and host countries and to make that model",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.428,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "When was the document issued?",
+     "answer": "collective movement order issued by or under the authority of the Special",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 9,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "retrieval",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.13,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which resolution requested the model agreement?",
+     "answer": "In paragraph 11 of its resolution 44/49 of 8 December 1989, the General",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the monthly rent?",
+     "answer": "The closest passage is:\n“j\nrelevancy.\nThe insertion of this provision in an agreoment is subject to its\nk/\nSee footnote i.\n1.”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.06,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**a45594-en.pdf** (contract, 15 pages)\n  - Model status-of-forces agreement for peace-keeping operations (a45594-en.pdf p.1)\n  - from [host country/territory], members of the United Nations peace-keeping (a45594-en.pdf p.8)\n  - Representative/Commander and members ofthe United Nations peace-keeping operation (a45594-en.pdf p.9)\n  - (b) When such a member ofthe United Nations peace-keeping operation is (a45594-en.pdf p.11)\n  - element of "
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "1990-10-09",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "03cee4395cfb494e"
+   }
+  },
+  "a45594-ar": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": true,
+   "group": "un-A/45/594",
+   "ingest": {
+    "pages": 18,
+    "doc_type": "contract",
+    "mean_conf": 0.8196,
+    "sources": {
+     "ocr": 18
+    },
+    "notes": [
+     "no text layer"
+    ],
+    "text_sha": "0a08f8c0a37aac41"
+   },
+   "text_has_answers": [
+    false,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما موضوع نموذج الاتفاق؟",
+     "answer": "المضيفة ، لتحديد مركن القوات ، وإتاحة نموذج الاتفاق ذاك للدول الأعضاء .",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما رقم القرار الذي طلب إعداد النموذج؟",
+     "answer": "العامة [رقم وتاريخ القرار] ، وليى له تاثير على موقف كل من الطرفين فيما بيتعشق",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 18,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "لمن قُدّم التقرير؟",
+     "answer": "الأصانة العامة ، بؤعداد تموذج الاتفاق لتحديد مركن القوات المرفق بهذا التقرير ،",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما قيمة الإيجار الشهري؟",
+     "answer": "The closest passage is:\n“٣٩ - يحمى الأيراد اليشتركون في عيلية الامم المتحدة لصيانة الطلم من الخراشي علس\nما يحمون عليه من أجور ومكافات من الأمم المتحدة fو من (حدى افدول المختكة وعل—م\nفي دخل يحلون عليه ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.06,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**a45594-ar.pdf** (contract, 18 pages)\n  - (4) تتمتع عملية الأمم المتحدة لصيانة السلم داخل اراضي [البلد المضيف/ (a45594-ar.pdf p.6)\n  - ٣٦ - يتمين على الأفراد اليشتركين في عملية الأمم المتحدة لصيانة السلم والموظفين (a45594-ar.pdf p.12)\n  - الخاح/التائد أن ياذن للافراد المشتركين في عملية الأمم المتحدة لصيانة السلم (a45594-ar.pdf p.13)\n  - ميتلكات فرد عيلية الأمم المتحدة لصيانة السلم التي يشهد الممثل الخاى/القاشد (a45594-ar.pdf p.16)\n  - ل"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "1990-10-09",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "006dcecb3bf04802"
+   }
+  },
+  "cuad-imperial": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "group": "cuad-imperial",
+   "ingest": {
+    "pages": 7,
+    "doc_type": "contract",
+    "mean_conf": 1.0,
+    "sources": {
+     "text": 7
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "b27131168ee4ada7"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "When was the agreement signed?",
+     "answer": "Signing & Verification of Technicians and Architects",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 3,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "retrieval",
+     "confidence": 0.324,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which court has jurisdiction?",
+     "answer": "herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 7,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who is the architect?",
+     "answer": "In case the Contract cannot be performed due to any reason other than the architect herein, the client agrees the fees paid will",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 5,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT number?",
+     "answer": "Full name, address and ID card number of the person in charge;",
+     "state": "succeeded",
+     "outcome": "silent_answer"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.02,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**cuad-imperial.pdf** (contract, 7 pages)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (cuad-imperial.pdf p.1)\n  - Source: IMPERIAL GARDEN & RESORT, INC., DRS (on F-1), 10/28/2016 (cuad-imperial.pdf p.1)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (cuad-imperial.pdf p.2)\n  - The service fee of NTD 1 million (SAY ONE MILLION ONLY) shall be paid after the Environmental Impact (cuad-imperial."
+   },
+   "fields": [
+    {
+     "field": "agreement_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    },
+    {
+     "field": "governing_court",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "agreement_date",
+     "governing_court"
+    ],
+    "review_id": "6c9c113daf484eba"
+   }
+  },
+  "cuad-rare": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "group": "cuad-rare",
+   "ingest": {
+    "pages": 16,
+    "doc_type": "contract",
+    "mean_conf": 1.0,
+    "sources": {
+     "text": 16
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "997f17c4c420fd8d"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the date of the agreement?",
+     "answer": "The date is 2017-10-02",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 15,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.12,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which law governs the agreement?",
+     "answer": "Governing Law; Jurisdiction; Dispute Resolution",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 14,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who are the parties?",
+     "answer": "exclusive rights granted to Investor under this Article 3.02 do not include the right to grant sublicenses to Third Parties.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 3,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the receipt number?",
+     "answer": "possession free of any obligation of confidentiality prior to its first receipt from Company.",
+     "state": "succeeded",
+     "outcome": "silent_answer"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.05,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**cuad-rare.pdf** (contract, 16 pages)\n  - or more Affiliates, the \"Investor\"), and Rare Element Resources Ltd., a British Columbia Corporation having a principal place of business at P.O. (cuad-rare.pdf p.1)\n  - 1.01 Investor wishes to acquire certain rights under the Patents and related Technical Information in accordance with the terms of this IP (cuad-rare.pdf p.1)\n  - during the term of this IP Agreement, and Company agrees to and h"
+   },
+   "fields": [
+    {
+     "field": "agreement_date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    },
+    {
+     "field": "governing_law",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "agreement_date",
+     "governing_law"
+    ],
+    "review_id": "168f3de525744f45"
+   }
+  },
+  "cuad-lucid": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "group": "cuad-lucid",
+   "ingest": {
+    "pages": 8,
+    "doc_type": "contract",
+    "mean_conf": 1.0,
+    "sources": {
+     "text": 8
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "018270db0fb6b1cd"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Which law governs the agreement?",
+     "answer": "A) This Agreement shall be governed by and interpreted in accordance with the laws of the State of New York, USA without regard to conflict of",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 7,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "How long is the initial term of the agreement?",
+     "answer": "A) The initial term of this Agreement shall be three (3) calendar years from the Agreement date.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.506,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.02,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the agreement date?",
+     "answer": "IN WITNESS WHEREOF, the parties have duly executed this Agreement on the date first above written.",
+     "state": "succeeded",
+     "outcome": "silent_answer"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.02,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**cuad-lucid.pdf** (contract, 8 pages)\n  - entitled to purchase certain Lucid products and resell them to End User customers within the following market segments:- hospital and medical (cuad-lucid.pdf p.1)\n  - B) The Distributor agrees to undertake detailed sales demonstrations of the Product(s) to potential End Users within all relevant market segments (cuad-lucid.pdf p.2)\n  - B) The Distributor agrees to supply to Lucid on a monthly ba"
+   },
+   "fields": [
+    {
+     "field": "governing_law",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "governing_law"
+    ],
+    "review_id": "84dba2a9327d43f3"
+   }
+  },
+  "irs-w9": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "form",
+   "genuine": true,
+   "group": "irs-w9",
+   "ingest": {
+    "pages": 6,
+    "doc_type": "form",
+    "mean_conf": 1.0,
+    "sources": {
+     "text": 6
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "77d0538ed26310c9"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is this form requesting?",
+     "answer": "requesting this form if you are uncertain if the financial institution is",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 4,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.522,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the revision date of the form?",
+     "answer": "Date",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "retrieval",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Should the form be sent to the IRS?",
+     "answer": "information return with the IRS is giving you this form because they",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.409,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the requester's name?",
+     "answer": "Note: See What Name and Number To Give the Requester, later, for",
+     "state": "succeeded",
+     "outcome": "silent_answer"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.06,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**irs-w9.pdf** (form, 6 pages)\n  - 3a Check the appropriate box for federal tax classification of the entity/individual whose name is entered on line 1. (irs-w9.pdf p.1)\n  - Note: Check the “LLC” box above and, in the entry space, enter the appropriate code (C, S, or P) for the tax (irs-w9.pdf p.1)\n  - 3b If on line 3a you checked “Partnership” or “Trust/estate,” or checked “LLC” and entered “P” as its tax classification, (irs-w9.pdf p.1"
+   },
+   "fields": [
+    {
+     "field": "form_number",
+     "value": "W-9",
+     "outcome": "correct_flagged",
+     "warning": "28 different values found; chose the strongest label match"
+    },
+    {
+     "field": "revision",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "form_number",
+     "revision"
+    ],
+    "review_id": "a4f19d881f84452e"
+   }
+  },
+  "funsd-82092117": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "group": "funsd-82092117",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "form",
+    "mean_conf": 0.7678,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "303697380f03b261"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who is the fax addressed to?",
+     "answer": "OFFICE Fax:614-466-5087",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.524,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "How many pages including the cover sheet?",
+     "answer": "PARTIAL RESULT, not the complete answer to your request.",
+     "state": "partial",
+     "intent": "count",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": null,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "request parsing",
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": false
+    },
+    {
+     "q": "What is the phone number?",
+     "answer": "The phone is (336) 335-7363",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the invoice total?",
+     "answer": "The closest passage is:\n“NOTE:\nTHIS MESSAGE IS INTENDED ONLY FOR THE USE OF THE INDIVIDUAL OR ENTITY TO\nWHOM IT IS ADDRESSED AND MAY CONTAIN INFORMATION THAT IS PRIVILEGED,\nCONFIDENTIAL, AND EXEMPT FR",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**funsd-82092117.png** (form, 1 page)\n  - FAX NUMBER: _(336) 335-7392_ (funsd-82092117.png p.1)\n  - PHONE NUMBER: (336) 335-7363 (funsd-82092117.png p.1)\n  - NUMBER OF PAGES INCLUDING COVER SHEET: __3_ (funsd-82092117.png p.1)\n  - SENDER/PHONE NUMBER:June Flynn for Eric Browa/(614) 466-8980 (funsd-82092117.png p.1)\n  - reader of this message is not the intended recipient or the employee or agent responsible for delivering (funsd-82092117"
+   },
+   "fields": [
+    {
+     "field": "to",
+     "value": "George Baroody",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "to"
+    ],
+    "review_id": "058372cf587b4bb5"
+   }
+  },
+  "funsd-82250337": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "group": "funsd-82250337",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "report",
+    "mean_conf": 0.8922,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "da8c5cb161fd1b57"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who is the form from?",
+     "answer": "The closest passage is:\n“SALES FORCE INVOLVEMENT:\nThey have crew-worked distribution, and it is reported that they may crew-work it again. Sales force has been busy\npromoting old style packs to clean up inventory. All POS is being converted to \"B\" Kool.\nDISTRIBUTORS - ACCEPTANCE/INTRO TERMS/INTRO DE",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.15,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What brand is tested?",
+     "answer": "BRAND:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.473,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who is the manufacturer?",
+     "answer": "MANUFACTURER:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "answer": "The closest passage is:\n“SALES FORCE INVOLVEMENT:\nThey have crew-worked distribution, and it is reported that they may crew-work it again. Sales force has been busy\npromoting old style packs to clean ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**funsd-82250337.png** (report, 1 page)\n  - promoting old style packs to clean up inventory. (funsd-82250337.png p.1)\n  - All POS is being converted to \"B\" Kool. (funsd-82250337.png p.1)\n  - It was not a problem obtaining new distribution. (funsd-82250337.png p.1)\n  - New packaging is just following up on the old \"packaging\". (funsd-82250337.png p.1)\n  - The old packs are boing consolidated and promoted in select retail locations at 40f "
+   },
+   "fields": [
+    {
+     "field": "brand",
+     "value": "Kool Waterfall",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "from",
+     "value": "D. J. Landro",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "brand",
+     "from"
+    ],
+    "review_id": "edbdb15d803f4bbf"
+   }
+  },
+  "inv-lkxd0060": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "group": "invcdip-three-tree",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "invoice",
+    "mean_conf": 0.9184,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "invisible text 99% (OCR layer)"
+    ],
+    "text_sha": "f8c58854501902e1"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "answer": "The invoice number is 2750",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the total?",
+     "answer": "The total is 2,000.00",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "answer": "The closest passage is:\n“Invoice”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 4,
+    "sentences_found_in_document": 4,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**inv-lkxd0060.pdf** (invoice, 1 page)\n  - Philip Morris USA/YSP \"Brothers\"TV:60 (inv-lkxd0060.pdf p.1)\n  - PLEASE MAKE CHECK PAYABLE TO (inv-lkxd0060.pdf p.1)\n  - THREE TREE PRODUTIONS, INC. (inv-lkxd0060.pdf p.1)\n  - Source: https://www.industrydocuments.ucsf.edu/docs/lkxd0060 (inv-lkxd0060.pdf p.1)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": "2750",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2000-04-10",
+     "outcome": "correct_flagged",
+     "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    },
+    {
+     "field": "total",
+     "value": "2000.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "total"
+    ],
+    "review_id": "a517bd4463134cc4"
+   }
+  },
+  "inv-tgmf0040": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "group": "invcdip-msl",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "invoice",
+    "mean_conf": 0.741,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "invisible text 100% (OCR layer)"
+    ],
+    "text_sha": "11988147ef31122f"
+   },
+   "text_has_answers": [
+    false,
+    false
+   ],
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "answer": "The invoice number is 191",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the invoice date?",
+     "answer": "INVOICE DATE: O1 /31 /92",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who signed the contract?",
+     "answer": "The closest passage is:\n“ORIGINAL INVOICE\nMANNING, SELVAGE & LEE, INC,\nACCOUNTING DEPARTMENT\n99 PARK AVENUE, NEW YORK, N.Y. 10016\n(212) 599-6900\n|THE TOBACCO INSTITUTE\n2601 FLOWERS ROAD, SOUTH\nSUITE 1",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**inv-tgmf0040.pdf** (invoice, 1 page)\n  - MANNING, SELVAGE & LEE, INC, (inv-tgmf0040.pdf p.1)\n  - 99 PARK AVENUE, NEW YORK, N.Y. (inv-tgmf0040.pdf p.1)\n  - TERMS: NET - 10 DAYS FROM RECEIPT OF INVOICE (inv-tgmf0040.pdf p.1)\n  - 229 Peachtree St., N.E., Suite 1600 (inv-tgmf0040.pdf p.1)\n  - Source: https://www.industrydocuments.ucsf.edu/docs/tgmf0040 (inv-tgmf0040.pdf p.1)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": "191",
+     "outcome": "silent_wrong",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "1982-02-22",
+     "outcome": "wrong_flagged",
+     "warning": "inferred (first-date); no label found"
+    },
+    {
+     "field": "total",
+     "value": "70.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "total"
+    ],
+    "review_id": "ff9705f966eb40bd"
+   }
+  },
+  "inv-hjfp0094": {
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "group": "invcdip-bozell",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "invoice",
+    "mean_conf": 0.8717,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "invisible text 98% (OCR layer)"
+    ],
+    "text_sha": "8ed18f4dc4a70c7a"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "answer": "Invoice Number __",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 2,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.534,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the due date?",
+     "answer": "The due date is 2000-01-24",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT rate?",
+     "answer": "The closest passage is:\n“Bozell Worldwide, Inc.\n40 WEST 23RD STREET\nNEW YORK, NY 10010-5201\nINVOICE DATE JAN04/00\nDUE DATE\nJAN24/00\nINVOICE PRO1-005651\nPAGE\n1\nCLIENT\nPRODUCT\nJOB NUM\nFISCAL YR\nLRL\n\nLOR",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**inv-hjfp0094.pdf** (invoice, 2 pages)\n  - LORILLARD TOBACCO COMPANY INC. (inv-hjfp0094.pdf p.1)\n  - YOUTH SMOKING PREVENTION PROG. (inv-hjfp0094.pdf p.1)\n  - LORILLARD TOBACCO COMPANY INC. (inv-hjfp0094.pdf p.1)\n  - YOUTH SMOKING PREVENTION PRGM. (inv-hjfp0094.pdf p.1)\n  - LORILLARD TOBACCO COMPANY INC. (inv-hjfp0094.pdf p.2)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2000-01-04",
+     "outcome": "correct_flagged",
+     "warning": "2 different values found; chose the strongest label match"
+    },
+    {
+     "field": "due_date",
+     "value": "2000-01-24",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "total",
+     "value": "31000.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "due_date",
+     "total"
+    ],
+    "review_id": "945434fd6f604c50"
+   }
+  },
+  "voxel-0027": {
+   "lang": "en",
+   "modality": "image",
+   "type": "invoice",
+   "genuine": false,
+   "group": "voxel51",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "invoice",
+    "mean_conf": 0.9514,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "1467b7b99894857f"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "answer": "The invoice number is 44848471",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the total?",
+     "answer": "The total is 838.68",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who is the seller?",
+     "answer": "The vendor is Proctor, Levy and Willis",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "answer": "The closest passage is:\n“Invoice no: 44848471\nDate of issue:\n03/26/2021\nSeller:\nProctor, Levy and Willis\n2297 Jessica Locks Apt. 407\nJonside, LA 78714\nTax Id: 902-74-7536\nClient:\nIBAN: GB89NZLM6124786",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**voxel-0027.jpg** (invoice, 1 page)\n  - IBAN: GB89NZLM61247862676381 (voxel-0027.jpg p.1)\n  - Adidas Baseball Youth Cleats (voxel-0027.jpg p.1)\n  - Spikes Kids Shoes Black White (voxel-0027.jpg p.1)\n  - MARIO 64 NINTENDO Little Kids (voxel-0027.jpg p.1)\n  - NWT VANS BOYS/YOUTH SK8-HI (voxel-0027.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": "44848471",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2021-03-26",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "total",
+     "value": "838.68",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "total"
+    ],
+    "review_id": "2343a4f827174c98"
+   }
+  },
+  "coru-magicplanet": {
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-magicplanet",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "receipt",
+    "mean_conf": 0.9422,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "0efe66cad6f7465b"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the receipt number?",
+     "answer": "SALE RECEIPT",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.394,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the total amount?",
+     "answer": "The total is 50.00",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the VAT amount?",
+     "answer": "The tax is 3.99",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "answer": "The closest passage is:\n“TAX INVOICE\nMAJID AL FUTTAIM LEISURE &\nENTER.TAINMENT\nTRN: 416-200-869\nMagic planet - Cairo Festival City\nNasr City – Cairo\nSALE RECEIPT\nCUSTOMER COPY\nun 29 2022 05:32 PM\nRECE",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 2,
+    "sentences_found_in_document": 2,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-031b2b34.jpg** (receipt, 1 page)\n  - MAJID AL FUTTAIM LEISURE & (coru-031b2b34.jpg p.1)\n  - Magic planet - Cairo Festival City (coru-031b2b34.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "50.0",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "f38ad66e4a1645bd"
+   }
+  },
+  "coru-abuauf-mall": {
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-abuauf",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "receipt",
+    "mean_conf": 0.9433,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "3d7ecf22df98a8c9"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "answer": "Transaction #:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.473,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What was the total amount?",
+     "answer": "The total is 160.00",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.11,
+     "onnx": {
+      "ocr": 4
+     },
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who was the cashier?",
+     "answer": "Cashier:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "answer": "The closest passage is:\n“Abutil\nthere’s nore to uts\nMall Of Egypt\nSales Receipt”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 2,
+    "sentences_found_in_document": 2,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-0002998f.jpg** (receipt, 1 page)\n  - Default, Abu auf, Cairo, Egypt (coru-0002998f.jpg p.1)\n  - facebook abusul - Instagra n abun (coru-0002998f.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "160.0",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2022-09-03",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "e60dc6be4b3043c2"
+   }
+  },
+  "coru-abuauf-order": {
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-abuauf",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "receipt",
+    "mean_conf": 0.8755,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "7b2adc339a98e17a"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the order number?",
+     "answer": "The closest passage is:\n“4 호 拠 l 13%\n9:08.L. B @ .\nAbu Att\nتم استلام طلبکم بنجاح\nالتوصيل خلال ساعتين في القاهره والجيزه والاسكندريه اما باقي\nالمحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد\nعمل الفروع الرسمية.\nرقم الطلب _\n- التاريخ\nوسيلة الدفع\ne 23.11 2022-#WSO 0000059905\n07-31\nالتسليم مباش",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.15,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the total price?",
+     "answer": "The closest passage is:\n“4 호 拠 l 13%\n9:08.L. B @ .\nAbu Att\nتم استلام طلبکم بنجاح\nالتوصيل خلال ساعتين في القاهره والجيزه والاسكندريه اما باقي\nالمحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد\nعمل الفروع الرسمية.\nرقم الطلب _\n- التاريخ\nوسيلة الدفع\ne 23.11 2022-#WSO 0000059905\n07-31\nالتسليم مباش",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.15,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما هي تكلفة الشحن؟",
+     "answer": "الشحن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the contract term?",
+     "answer": "The closest passage is:\n“4 호 拠 l 13%\n9:08.L. B @ .\nAbu Att\nتم استلام طلبکم بنجاح\nالتوصيل خلال ساعتين في القاهره والجيزه والاسكندريه اما باقي\nالمحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد\nع",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 3,
+    "sentences_found_in_document": 3,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-017e490a.jpg** (receipt, 1 page)\n  - التوصيل خلال ساعتين في القاهره والجيزه والاسكندريه اما باقي (coru-017e490a.jpg p.1)\n  - المحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد (coru-017e490a.jpg p.1)\n  - e 23.11 2022-#WSO 0000059905 (coru-017e490a.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "251.0",
+     "outcome": "wrong_flagged",
+     "warning": "inferred (largest-amount); no label found; low OCR confidence (0.85)"
+    },
+    {
+     "field": "date",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "73cf578bec6e4eda"
+   }
+  },
+  "coru-abuauf-credit": {
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-abuauf",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "receipt",
+    "mean_conf": 0.9113,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "7a89dfbcd13e813a"
+   },
+   "text_has_answers": [
+    true,
+    false,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "answer": "Transaction #:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.477,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Who is the customer?",
+     "answer": "The customer is le",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What was the total amount?",
+     "answer": "The total is 330.00",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.07,
+     "onnx": {
+      "ocr": 4
+     },
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "answer": "The closest passage is:\n“Abu At\nthere’s more to nuts\nMakram Ebeid\nSales Receipt\nCustomer Name: le ”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 4,
+    "sentences_found_in_document": 4,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-0027b0e7.jpg** (receipt, 1 page)\n  - Bulidingi , (هد 201 حي ملقي اتعربي الشيرتون الزمه. (coru-0027b0e7.jpg p.1)\n  - Facebook abuauf | Instagram abuauf. (coru-0027b0e7.jpg p.1)\n  - يرجد» الأختفة بالايصال في حالة المرتيع أريعة با من تاريله (coru-0027b0e7.jpg p.1)\n  - مجل تجاران: 150361 5 الفاهرد (coru-0027b0e7.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "330.0",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2023-11-02",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "25a6391a09c84bd0"
+   }
+  },
+  "coru-starbucks": {
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-starbucks",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "receipt",
+    "mean_conf": 0.869,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "904468249c61db45"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    false
+   ],
+   "qa": [
+    {
+     "q": "What is the check number?",
+     "answer": "The closest passage is:\n“Starbucks Coffee\n1\nSokhna\nAl Shaya Group\nTe1/:+20224803699\nCRNO, 18522//TAX Card N),21271959g\nStarbucks Coffee\n99048 Safwa ;)\nChk 3118”",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.15,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the total payment amount?",
+     "answer": "Payment",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.281,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the TAX Card number?",
+     "answer": "CRNO, 18522//TAX Card N),21271959g",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.473,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the employer?",
+     "answer": "The closest passage is:\n“Starbucks Coffee\n1\nSokhna\nAl Shaya Group\nTe1/:+20224803699\nCRNO, 18522//TAX Card N),21271959g\nStarbucks Coffee\n99048 Safwa ;)\nChk 3118”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-0063a6c8.jpg** (receipt, 1 page)\n  - CRNO, 18522//TAX Card N),21271959g (coru-0063a6c8.jpg p.1)\n  - المشتريات في هالة وجود عبوب (coru-0063a6c8.jpg p.1)\n  - ليوما 30ممنهية وذلك في غفون (coru-0063a6c8.jpg p.1)\n  - من تاريع الشاء كمنا يمكن استبدال (coru-0063a6c8.jpg p.1)\n  - أو إسترجاع المشتريان السليمة في (coru-0063a6c8.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "51.0",
+     "outcome": "wrong_flagged",
+     "warning": "inferred (largest-amount); no label found"
+    },
+    {
+     "field": "date",
+     "value": "2022-06-19",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "c2ce42dc78a44127"
+   }
+  },
+  "coru-masary": {
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "group": "coru-masary",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "unknown",
+    "mean_conf": 0.8807,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "883013fb6615c6c7"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "What is the operation number?",
+     "answer": "The closest passage is:\n“\nO Sila\n53gili sia Tedata”",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.15,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما رقم العملية؟",
+     "answer": "رقم العملية:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما المبلغ الإجمالي؟",
+     "answer": "المبلغ المدقوع:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.01,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما اسم الطرف الثاني في العقد؟",
+     "answer": "The closest passage is:\n“\nO Sila\n53gili sia Tedata”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 0,
+    "key_facts": 3,
+    "sentences": 2,
+    "sentences_found_in_document": 2,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**coru-0128a9df.jpg** (unknown, 1 page)\n  - 13.12.2022-13:36:51 (2014 391 (coru-0128a9df.jpg p.1)\n  - شكرا لإستخدامكم مصاري تخدمات الدفع الذكية (coru-0128a9df.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "total",
+     "value": "13.12",
+     "outcome": "wrong_flagged",
+     "warning": "inferred (largest-amount); no label found; low OCR confidence (0.79)"
+    },
+    {
+     "field": "date",
+     "value": "2022-12-13",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found; low OCR confidence (0.79)"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "total",
+     "date"
+    ],
+    "review_id": "658a44bb3c544389"
+   }
+  },
+  "wiki-egypt": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "wikipedia-ar-egypt",
+   "ingest": {
+    "pages": 23,
+    "doc_type": "unknown",
+    "mean_conf": 0.9286,
+    "sources": {
+     "ocr": 23
+    },
+    "notes": [
+     "right-to-left text in visual order"
+    ],
+    "text_sha": "985fdefcf90f8240"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما عاصمة مصر؟",
+     "answer": "الأكبر قبل مغادرته مصر في حملة عسكرية إلى بلاد الشرق، وجعل بطليموس الأول الإسكندرية عاصمة",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 6,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من رئيس مصر؟",
+     "answer": "رئيس الجمهورية هو رئيس الدولة ورئيس السلطة التنفيذية، ويُنتخب عن طريق الاقتراع العام السري المُبا",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 11,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من رئيس الوزراء؟",
+     "answer": "للإشراف على أعمالها وتوجيها، (196 ورئيس الوزراء الحالي هو مصطفى مدبولي.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 11,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم فاتورة الكهرباء؟",
+     "answer": "بدأ إنتاج الكهرباء في مصر سنة 1893 وكانت أشهر شركات الكهرباء شركة لوبان الفرنسية وقد أمم هذا ال",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.18,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**wiki-egypt.pdf** (unknown, 23 pages)\n  - يعد الاقتصاد المصري من أكثر اقتصاديات دول منطقة الشرق الأوسط تنوعًا، حيث تشارك قطاعات (wiki-egypt.pdf p.13)\n  - وفي عام 1968 اكتمل بناء السد العالي والذي ساهم في زيادة الطاقة الإجمالية لكهرباء مصر، حيث تبلغ عدد (wiki-egypt.pdf p.15)\n  - المصرية وفي عام 1962 بدأ إرسال ثالث قناة بالتليفزيون المصري، وبدأ بث (wiki-egypt.pdf p.20)\n  - تنضم للفيفا، (13 كما تعدّ أيضًا من المؤسسين للاتحاد الإفريقي لكرة "
+   },
+   "fields": [
+    {
+     "field": "capital",
+     "value": "اللغة الرسمية",
+     "outcome": "silent_wrong",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "capital"
+    ],
+    "review_id": "42a743ee75724372"
+   }
+  },
+  "syn-cert-digital": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "certificate",
+   "genuine": false,
+   "group": "syn-certificate",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "certificate",
+    "mean_conf": 0.9761,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "right-to-left text in visual order"
+    ],
+    "text_sha": "696b5b27ccbcf140"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما اسم المتدرب؟",
+     "answer": "يشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة المشاريع الاحترافية بعدد",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما رقم الشهادة؟",
+     "answer": "رقم الشهادة:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "كم عدد الساعات التدريبية؟",
+     "answer": "1 document(s) in scope: 1 certificate",
+     "state": "succeeded",
+     "intent": "count",
+     "outcome": "silent_wrong",
+     "cited_passage_supports": false,
+     "cited_page": null,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "request parsing",
+     "confidence": 0.8,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": false
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الحساب البنكي؟",
+     "answer": "رقم الشهادة:",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 3,
+    "sentences_found_in_document": 3,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-certificate-digital.pdf** (certificate, 1 page)\n  - الرياض، المملكة العربية السعودية (syn-ar-certificate-digital.pdf p.1)\n  - يشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة المشاريع الاحترافية بعدد (syn-ar-certificate-digital.pdf p.1)\n  - ساعات تدريبية بلغ ٤٠ ساعة، وذلك خلال الفترة من ٣ آذار/مارس ٢٠٢٤ إلى ١٤ آذار/مارس ٢٠٢٤، بتقدير ممتاز. (syn-ar-certificate-digital.pdf p.1)"
+   },
+   "fields": [
+    {
+     "field": "certificate_number",
+     "value": "NR-2024-0457",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "issue_date",
+     "value": "2024-03-17",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "trainee",
+     "value": null,
+     "outcome": "missing",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "certificate_number",
+     "date",
+     "trainee"
+    ],
+    "review_id": "bc44d9e93c5b40c6"
+   }
+  },
+  "syn-cert-photo": {
+   "lang": "ar",
+   "modality": "photo",
+   "type": "certificate",
+   "genuine": false,
+   "group": "syn-certificate",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "certificate",
+    "mean_conf": 0.9735,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "696b5b27ccbcf140"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما اسم المتدرب؟",
+     "answer": "يشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة المشاريع الاحترافية بعدد",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما رقم الشهادة؟",
+     "answer": "رقم الشهادة:",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما تقدير المتدرب؟",
+     "answer": "يشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة المشاريع الاحترافية بعدد",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما قيمة الضريبة؟",
+     "answer": "The closest passage is:\n“معهد النور للتدريب المهني\nالرياض، المملكة العربية السعودية\nشهادة إتمام دورة تدريبية\nيشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة ا",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 3,
+    "sentences_found_in_document": 3,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-certificate-photo.jpg** (certificate, 1 page)\n  - الرياض، المملكة العربية السعودية (syn-ar-certificate-photo.jpg p.1)\n  - يشهد معهد النور للتدريب المهني بأن المتدرب سالم عبد الله القحطاني قد أتم بنجاح دورة إدارة المشاريع الاحترافية بعدد (syn-ar-certificate-photo.jpg p.1)\n  - ساعات تدريبية بلغ ٤٠ ساعة، وذلك خلال الفترة من ٣ آذار/مارس ٢٠٢٤ إلى ١٤ آذار/مارس ٢٠٢٤، بتقدير ممتاز. (syn-ar-certificate-photo.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "certificate_number",
+     "value": "NR-2024-0457",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "issue_date",
+     "value": "2024-03-17",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "certificate_number",
+     "date"
+    ],
+    "review_id": "9d078b51e8834453"
+   }
+  },
+  "syn-inv-digital": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "invoice",
+   "genuine": false,
+   "group": "syn-invoice",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "invoice",
+    "mean_conf": 0.9675,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "right-to-left text in visual order"
+    ],
+    "text_sha": "4f29ae2149499918"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "The invoice number is INV-7731",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما الإجمالي؟",
+     "answer": "The total is 4,600.00",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من المشتري؟",
+     "answer": "The customer is مؤسسة الفجر للاستشارات",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "من وقّع العقد؟",
+     "answer": "The closest passage is:\n“فاتورة ضريبية”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 2,
+    "sentences_found_in_document": 2,
+    "language_matches": false,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-invoice-digital.pdf** (invoice, 1 page)\n  - شركة الواحة للتجهيزات المكتبية (syn-ar-invoice-digital.pdf p.1)\n  - ضريبة القيمة المضافة (15%): (syn-ar-invoice-digital.pdf p.1)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": "INV-7731",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2024-05-12",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "total",
+     "value": "4600.0",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "tax",
+     "value": "600.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "total",
+     "tax"
+    ],
+    "review_id": "3b78fdc2537d4e9f"
+   }
+  },
+  "syn-inv-scan": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": false,
+   "group": "syn-invoice",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "invoice",
+    "mean_conf": 0.9642,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "522ab86b2370d036"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "The invoice number is INV-7731",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما تاريخ الاستحقاق؟",
+     "answer": "The due date is 2024-06-11",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "من البائع؟",
+     "answer": "The vendor is شركة الواحة للتجهيزات المكتبية",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.4,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما اسم المستأجر؟",
+     "answer": "The closest passage is:\n“فاتورة ضريبية”",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 2,
+    "sentences_found_in_document": 2,
+    "language_matches": false,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-invoice-scan.jpg** (invoice, 1 page)\n  - شركة الواحة للتجهيزات المكتبية (syn-ar-invoice-scan.jpg p.1)\n  - ضريبة القيمة المضافة (15%): (syn-ar-invoice-scan.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "invoice_number",
+     "value": "INV-7731",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "date",
+     "value": "2024-05-12",
+     "outcome": "correct",
+     "warning": null
+    },
+    {
+     "field": "total",
+     "value": "4600.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "invoice_number",
+     "date",
+     "total"
+    ],
+    "review_id": "a111876be90e4e45"
+   }
+  }
+ },
+ "library_tasks": [
+  {
+   "id": "dev-find-en",
+   "kind": "find",
+   "request": "Which document is the letter from the Permanent Representative of Iran dated 6 February 2023?",
+   "state": "succeeded",
+   "intent": "ask",
+   "answer": "The date is 2023-02-06",
+   "seconds": 0.02,
+   "first_source": "un90-en",
+   "correct": true
+  },
+  {
+   "id": "dev-find-ar",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتضمن رسالة الممثل الدائم لهندوراس المؤرخة في 11 نيسان/أبريل 1983؟",
+   "state": "succeeded",
+   "intent": "ask",
+   "answer": "المؤرخة في ٦ نيسان /ابريل ١٩٨٣ والموجهة اليكم من مثل فرنسا الدائم لدى الأسم المتحدة",
+   "seconds": 0.01,
+   "first_source": "s15700-ar",
+   "correct": true
+  },
+  {
+   "id": "dev-compare-letters",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "state": "succeeded",
+   "intent": "compare",
+   "answer": "**un50-en.pdf vs un90-en.pdf** — text similarity 13%\nField differences:\n  - date: 2023-01-18 → 2023-02-06\nChanged figures: 50 → 90 (in “/2023/50”)\nLines only in un50-en.pdf (92):\n  - /2023/50\n  - 23 january 2023\n  - english\n  - original: french\n  - letter dated 18 january 2023 from the chargé d’affaires a.i. of\nLines only in un90-en.pdf (36):\n  - /2023/90\n  - 6 february 2023\n  - original: english\n",
+   "seconds": 0.23,
+   "correct": true
+  },
+  {
+   "id": "dev-count-receipts",
+   "kind": "count",
+   "request": "How many receipts are there?",
+   "state": "succeeded",
+   "intent": "count",
+   "answer": "5 document(s) in scope: 5 receipt",
+   "seconds": 0.0,
+   "calculation": {},
+   "correct": false,
+   "partial_reported": false
+  },
+  {
+   "id": "dev-sum-receipts",
+   "kind": "sum",
+   "request": "What is the total of all receipts?",
+   "state": "succeeded",
+   "intent": "aggregate",
+   "answer": "sum of total: 842.00 EGP (over 5 document(s); computed exactly, not by a model)\n\ndocument | total\ncoru-0002998f.jpg | 160.00\ncoru-0027b0e7.jpg | 330.00\ncoru-0063a6c8.jpg | 51.00\ncoru-017e490a.jpg | 251.00\ncoru-031b2b34.jpg | 50.00",
+   "seconds": 0.18,
+   "calculation": {
+    "op": "sum",
+    "field": "total",
+    "count": 5,
+    "missing": 0,
+    "unit": "EGP",
+    "result": 842.0
+   },
+   "correct": false,
+   "partial_reported": false
+  },
+  {
+   "id": "dev-filter-receipts",
+   "kind": "filter",
+   "request": "Show the receipts with a total above 150",
+   "state": "succeeded",
+   "intent": "filter",
+   "answer": "Understood as: documents: receipts; where total > 150; columns: vendor, date, total\n\n3 of 5 document(s) match total > 150:\n\ndocument | vendor | date | total\ncoru-0002998f.jpg | — | 2022-09-03 | 160.00\ncoru-0027b0e7.jpg | — | 2023-11-02 | 330.00\ncoru-017e490a.jpg | — | — | 251.00",
+   "seconds": 0.19,
+   "records": [
+    "coru-abuauf-credit",
+    "coru-abuauf-mall",
+    "coru-abuauf-order"
+   ],
+   "correct": true
+  },
+  {
+   "id": "dev-export-invoices",
+   "kind": "export",
+   "request": "Export the invoice number, date and total of the invoices to CSV",
+   "state": "succeeded",
+   "intent": "extract",
+   "answer": "Extracted invoice_number, date, total from 5 document(s):\n\ndocument | invoice_number | date | total\ninv-lkxd0060.pdf | 2750 | 2000-04-10 | 2,000.00\ninv-tgmf0040.pdf | 191 | 1982-02-22 | 70.00\ninv-hjfp0094.pdf | — | 2000-01-04 | 31,000.00\nvoxel-0027.jpg | 44848471 | 2021-03-26 | 838.68\nsyn-ar-invoice-digital.pdf | INV-7731 | 2024-05-12 | 4,600.00\n\nSaved: C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Use",
+   "seconds": 0.04,
+   "files": [
+    "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\ev-runs\\c8c54921\\dev-rules\\exports\\inklight-extract-2026-10-25.csv"
+   ],
+   "correct": false,
+   "cells": 15,
+   "cells_correct": 12,
+   "rows": 5
+  },
+  {
+   "id": "dev-unsupported-translate",
+   "kind": "unsupported",
+   "request": "Translate this letter into French",
+   "state": "unsupported",
+   "intent": "ask",
+   "answer": "Understood as: documents: letters\n\nNothing was run, to avoid guessing what you meant:\n- translation is not something Inklight does: it reads, searches, answers from and extracts documents",
+   "seconds": 0.0,
+   "correct": true
+  },
+  {
+   "id": "dev-unsupported-email",
+   "kind": "unsupported",
+   "request": "أرسل هذه الفاتورة بالبريد الإلكتروني إلى المحاسب",
+   "state": "unsupported",
+   "intent": "ask",
+   "answer": "Understood as: task: ask\n\nNothing was run, to avoid guessing what you meant:\n- sending is not something Inklight does: it reads, searches, answers from and extracts documents",
+   "seconds": 0.0,
+   "correct": true
+  }
+ ],
+ "ingest": {
+  "seconds": 37.6,
+  "failed": [],
+  "onnx": {
+   "ocr": 2300
+  }
+ },
+ "review_export": {
+  "rows": 62,
+  "arabic_values": 0,
+  "documents": 35
+ },
+ "brain_usage": {
+  "reader": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ },
+ "replay_misses": 0,
+ "onnx_total": {
+  "ocr": 2340
+ }
+}

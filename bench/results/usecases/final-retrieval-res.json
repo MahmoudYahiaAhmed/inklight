@@ -1,0 +1,694 @@
+{
+ "summary": {
+  "en": {
+   "questions": 42,
+   "keyword_at1": 18,
+   "hybrid_at1": 22,
+   "keyword_at3": 28,
+   "hybrid_at3": 27,
+   "hybrid_better": 12,
+   "hybrid_worse": 8
+  },
+  "ar": {
+   "questions": 23,
+   "keyword_at1": 14,
+   "hybrid_at1": 14,
+   "keyword_at3": 18,
+   "hybrid_at3": 18,
+   "hybrid_better": 0,
+   "hybrid_worse": 4
+  },
+  "mixed": {
+   "questions": 15,
+   "keyword_at1": 7,
+   "hybrid_at1": 9,
+   "keyword_at3": 10,
+   "hybrid_at3": 13,
+   "hybrid_better": 4,
+   "hybrid_worse": 1
+  }
+ },
+ "rows": [
+  {
+   "doc": "un110-en",
+   "lang": "en",
+   "q": "Which country's Permanent Representative wrote the letter?",
+   "keyword": 4,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un110-en",
+   "lang": "en",
+   "q": "Who is the Minister of Foreign Affairs of Ukraine?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un110-en",
+   "lang": "en",
+   "q": "What initiative do the Russian actions obstruct?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un110-ar",
+   "lang": "ar",
+   "q": "ممثل أي بلد كتب الرسالة؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "keyword"
+  },
+  {
+   "doc": "un110-ar",
+   "lang": "ar",
+   "q": "من هو وزير خارجية أوكرانيا المذكور؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "un110-ar",
+   "lang": "ar",
+   "q": "ما تاريخ الرسالة؟",
+   "keyword": 8,
+   "hybrid": null,
+   "method": "keyword"
+  },
+  {
+   "doc": "un500-en",
+   "lang": "en",
+   "q": "Who signed the letters?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un500-en",
+   "lang": "en",
+   "q": "Which country's violations of Iraqi territory are summarized?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un500-en",
+   "lang": "en",
+   "q": "What period do the violations cover?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un500-ar",
+   "lang": "ar",
+   "q": "من وقّع الرسالتين؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "un500-ar",
+   "lang": "ar",
+   "q": "ما البلد الذي ارتكب الخروقات؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "un500-ar",
+   "lang": "ar",
+   "q": "ما الفترة التي تغطيها الخروقات؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "r30-en",
+   "lang": "en",
+   "q": "Who has been appointed alternate representative of Albania?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r30-en",
+   "lang": "en",
+   "q": "Under which rule of the provisional rules of procedure is the report made?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r30-ar",
+   "lang": "ar",
+   "q": "من عُيّنت ممثلة مناوبة لألبانيا؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "r30-ar",
+   "lang": "ar",
+   "q": "بموجب أي مادة من النظام الداخلي المؤقت قُدّم التقرير؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "s15900-en",
+   "lang": "en",
+   "q": "Which country's Permanent Representative wrote the letter?",
+   "keyword": 5,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15900-en",
+   "lang": "en",
+   "q": "Where did the Ministers for Foreign Affairs meet?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15900-en",
+   "lang": "en",
+   "q": "When was the meeting held?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15900-ar",
+   "lang": "ar",
+   "q": "ممثل أي بلد كتب الرسالة؟",
+   "keyword": 7,
+   "hybrid": null,
+   "method": "keyword"
+  },
+  {
+   "doc": "s15900-ar",
+   "lang": "ar",
+   "q": "ما تاريخ الرسالة؟",
+   "keyword": 7,
+   "hybrid": null,
+   "method": "keyword"
+  },
+  {
+   "doc": "s16200-en",
+   "lang": "en",
+   "q": "Which country's Permanent Representative wrote the letter?",
+   "keyword": 6,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16200-en",
+   "lang": "en",
+   "q": "Which Nicaraguan coastguard vessel was attacked?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16200-en",
+   "lang": "en",
+   "q": "Who is the Minister for Foreign Affairs of Nicaragua?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16200-ar",
+   "lang": "ar",
+   "q": "ممثل أي بلد كتب الرسالة؟",
+   "keyword": 6,
+   "hybrid": null,
+   "method": "keyword"
+  },
+  {
+   "doc": "s16200-ar",
+   "lang": "ar",
+   "q": "ما رقم زورق خفر السواحل النيكاراغوي؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "s16100-en",
+   "lang": "en",
+   "q": "Who is the Governor-General of Grenada?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16100-en",
+   "lang": "en",
+   "q": "After the suspension of which meeting was the report submitted?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16100-ar",
+   "lang": "ar",
+   "q": "من هو الحاكم العام لغرينادا؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "s16100-ar",
+   "lang": "ar",
+   "q": "بعد تعليق أي جلسة قُدّم التقرير؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "cuad-curaegis",
+   "lang": "en",
+   "q": "When is the effective date of the agreement?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-curaegis",
+   "lang": "en",
+   "q": "When does the term of the agreement conclude?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-curaegis",
+   "lang": "en",
+   "q": "Which law governs the agreement?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-galacticomm",
+   "lang": "en",
+   "q": "Who are the parties to the agreement?",
+   "keyword": 3,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-galacticomm",
+   "lang": "en",
+   "q": "What is the date of the agreement?",
+   "keyword": 3,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w4",
+   "lang": "en",
+   "q": "What is the title of Form W-4?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w4",
+   "lang": "en",
+   "q": "Who should the employee give Form W-4 to?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w4",
+   "lang": "en",
+   "q": "What is the OMB number?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82200067",
+   "lang": "en",
+   "q": "Who is the form addressed to?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82200067",
+   "lang": "en",
+   "q": "Who is the form from?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82253058",
+   "lang": "en",
+   "q": "What brand is tested?",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82253058",
+   "lang": "en",
+   "q": "Who is the manufacturer?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82253058",
+   "lang": "en",
+   "q": "Who is the form from?",
+   "keyword": 7,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-fxnb0017",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 3,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-fxnb0017",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-gnfk0009",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-gnfk0009",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": 10,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-sfwb0046",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 6,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-sfwb0046",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": 11,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-sfwb0046",
+   "lang": "en",
+   "q": "What is the tax amount?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-holdout-0023",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 12,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-holdout-0023",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": null,
+   "hybrid": 8,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-holdout-0023",
+   "lang": "en",
+   "q": "Who is the client?",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-alfa",
+   "lang": "mixed",
+   "q": "What is the receipt number?",
+   "keyword": 4,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-alfa",
+   "lang": "mixed",
+   "q": "What is the amount received?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-alfa",
+   "lang": "mixed",
+   "q": "What is the patient number?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-tema",
+   "lang": "mixed",
+   "q": "What is the transaction number?",
+   "keyword": 3,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-tema",
+   "lang": "mixed",
+   "q": "What is the total amount?",
+   "keyword": 5,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-tema",
+   "lang": "mixed",
+   "q": "What is the cashier name?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-mcdonalds",
+   "lang": "mixed",
+   "q": "What was the take-out total including tax?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-mcdonalds",
+   "lang": "mixed",
+   "q": "What was the amount of cash tendered?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-mcdonalds",
+   "lang": "mixed",
+   "q": "What is the tax amount?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-dunkin",
+   "lang": "en",
+   "q": "What is the check number?",
+   "keyword": 8,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-dunkin",
+   "lang": "en",
+   "q": "How much was the VAT?",
+   "keyword": 6,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-dunkin",
+   "lang": "en",
+   "q": "What was the subtotal?",
+   "keyword": 2,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "wiki-cairo",
+   "lang": "ar",
+   "q": "متى تأسست القاهرة؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "wiki-cairo",
+   "lang": "ar",
+   "q": "من محافظ القاهرة؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "wiki-cairo",
+   "lang": "ar",
+   "q": "ما لقب القاهرة؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-form-digital",
+   "lang": "mixed",
+   "q": "ما الاسم الكامل لمقدم الطلب؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-form-digital",
+   "lang": "mixed",
+   "q": "What is the ID number?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-form-digital",
+   "lang": "mixed",
+   "q": "ما رسوم العضوية؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-digital",
+   "lang": "ar",
+   "q": "من المؤجر؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-digital",
+   "lang": "ar",
+   "q": "كم الأجرة الشهرية؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-digital",
+   "lang": "ar",
+   "q": "ما المحكمة المختصة بالنزاع؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-scan",
+   "lang": "ar",
+   "q": "من المستأجر؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-scan",
+   "lang": "ar",
+   "q": "كم مبلغ التأمين؟",
+   "keyword": null,
+   "hybrid": null,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-lease-scan",
+   "lang": "ar",
+   "q": "ما مدة العقد؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-salary-digital",
+   "lang": "mixed",
+   "q": "ما الراتب الشهري الإجمالي؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "keyword"
+  },
+  {
+   "doc": "syn-salary-digital",
+   "lang": "mixed",
+   "q": "What is the employee's job title?",
+   "keyword": 4,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-salary-digital",
+   "lang": "mixed",
+   "q": "Who signed as HR manager?",
+   "keyword": 5,
+   "hybrid": 1,
+   "method": "hybrid"
+  }
+ ],
+ "onnx": {
+  "embedder": 54
+ },
+ "brain_usage": {
+  "reader": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": true,
+   "inference_calls": 54,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ },
+ "documents_in_library": 30
+}

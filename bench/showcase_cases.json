@@ -1,0 +1,6 @@
+[
+ {"id": "contract-question", "documents": ["cuad-imperial.pdf"], "request": "Which court has jurisdiction?"},
+ {"id": "arabic-summary", "documents": ["un90-ar.pdf"], "request": "لخص هذه الوثيقة"},
+ {"id": "arabic-extract", "documents": ["syn-ar-invoice-digital.pdf"], "request": "استخرج رقم الفاتورة والتاريخ والإجمالي"},
+ {"id": "scanned-letter", "documents": ["s16000-en.pdf"], "request": "Which city was hit by artillery fire on 8 September?"}
+]

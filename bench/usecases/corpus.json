@@ -1,0 +1,4771 @@
+{
+ "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes).",
+ "gaps": [
+  "Genuine Arabic forms, certificates, invoices and contracts with an open licence: none found. Synthetic stand-ins are used and labelled.",
+  "Handwriting: not covered.",
+  "Arabic-only genuine receipts: CORU receipts are mostly bilingual; treated as mixed."
+ ],
+ "documents": [
+  {
+   "id": "un50-en",
+   "group": "un-S/2023/50",
+   "split": "dev",
+   "file": "un50-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2023/50 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "18 January 2023",
+      "2023-01-18"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Victoria Liolocha Lieta",
+      "Liolocha"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which region does the communiqué concern?",
+     "accept": [
+      "North Kivu"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Democratic Republic of the Congo",
+    "North Kivu",
+    "M23"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2023-01-18"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice total?"
+   ]
+  },
+  {
+   "id": "un50-ar",
+   "group": "un-S/2023/50",
+   "split": "dev",
+   "file": "un50-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2023/50 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "ما تاريخ هذه الرسالة؟",
+     "accept": [
+      "18 كانون الثاني/يناير 2023",
+      "18 كانون الثاني",
+      "2023-01-18"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "فيكتوريا ليولوشا ليتا",
+      "ليولوشا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "عن أي منطقة يتحدث البيان المرفق؟",
+     "accept": [
+      "شمال كيفو",
+      "كيفو"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "الكونغو الديمقراطية",
+    "شمال كيفو",
+    "مجلس الأمن"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2023-01-18"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الحساب المصرفي المذكور في الرسالة؟"
+   ]
+  },
+  {
+   "id": "un90-en",
+   "group": "un-S/2023/90",
+   "split": "dev",
+   "file": "un90-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2023/90 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Permanent Representative of the Islamic Republic of Iran",
+      "Islamic Republic of Iran",
+      "Iran"
+     ],
+     "page": 1
+    },
+    {
+     "q": "When was the Security Council briefing on the situation concerning Iraq held?",
+     "accept": [
+      "2 February 2023",
+      "2023-02-02"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Under which law did Iran say it exercised its right to self-defence?",
+     "accept": [
+      "international law"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Iran",
+    "Iraq",
+    "self-defence"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2023-02-06"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the contract value?"
+   ]
+  },
+  {
+   "id": "un90-ar",
+   "group": "un-S/2023/90",
+   "split": "dev",
+   "file": "un90-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2023/90 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من أرسل هذه الرسالة؟",
+     "accept": [
+      "الممثل الدائم لجمهورية إيران الإسلامية",
+      "جمهورية إيران الإسلامية",
+      "إيران"
+     ],
+     "page": 1
+    },
+    {
+     "q": "إلى من وُجّهت الرسالة؟",
+     "accept": [
+      "الأمين العام ورئيس مجلس الأمن",
+      "الأمين العام"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "6 شباط/فبراير 2023",
+      "6 شباط",
+      "2023-02-06"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "إيران",
+    "العراق",
+    "الدفاع عن النفس"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2023-02-06"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الضريبة المستحقة؟"
+   ]
+  },
+  {
+   "id": "r20-en",
+   "group": "un-S/2024/20",
+   "split": "dev",
+   "file": "r20-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/20 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which resolution established the Investigative Team?",
+     "accept": [
+      "2379"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the Investigative Team known as?",
+     "accept": [
+      "UNITAD"
+     ],
+     "page": 1
+    },
+    {
+     "q": "The report covers the implementation of which resolution?",
+     "accept": [
+      "2697"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "UNITAD",
+    "2379",
+    "Iraq"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-15"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the IBAN?"
+   ]
+  },
+  {
+   "id": "r20-ar",
+   "group": "un-S/2024/20",
+   "split": "dev",
+   "file": "r20-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/20 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "ما القرار الذي طلب فيه مجلس الأمن إنشاء فريق التحقيق؟",
+     "accept": [
+      "2379"
+     ],
+     "page": 1
+    },
+    {
+     "q": "تنفيذ أي قرار يتناوله هذا التقرير؟",
+     "accept": [
+      "2697"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من أعدّ هذا التقرير؟",
+     "accept": [
+      "الأمين العام"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "فريق التحقيق",
+    "داعش",
+    "العراق"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-15"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  },
+  {
+   "id": "s16000-en",
+   "group": "un-S/16000",
+   "split": "dev",
+   "file": "s16000-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16000 (English, 1983 typewritten scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "22 September 1983",
+      "1983-09-22"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which city was hit by artillery fire on 8 September?",
+     "accept": [
+      "Abadan"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which mission sent the letter?",
+     "accept": [
+      "Islamic Republic of Iran",
+      "Iran"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Iran",
+    "Abadan",
+    "civilian"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "LETTER DATED"
+     ],
+     "accept": [
+      "1983-09-22"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the due date?"
+   ]
+  },
+  {
+   "id": "s16000-ar",
+   "group": "un-S/16000",
+   "split": "dev",
+   "file": "s16000-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16000 (Arabic, 1983 typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "22 أيلول/سبتمبر 1983",
+      "٢٢ أيلول",
+      "22 أيلول",
+      "1983-09-22"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من أي بعثة أُرسلت الرسالة؟",
+     "accept": [
+      "جمهورية ايران الاسلامية",
+      "جمهورية إيران الإسلامية",
+      "إيران",
+      "ايران"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المدينة التي قُصفت بالمدفعية؟",
+     "accept": [
+      "عبادان"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "ايران",
+    "عبادان",
+    "المدنيين"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة في"
+     ],
+     "accept": [
+      "1983-09-22"
+     ]
+    }
+   ],
+   "missing": [
+    "ما إجمالي الفاتورة؟"
+   ]
+  },
+  {
+   "id": "s15700-en",
+   "group": "un-S/15700",
+   "split": "dev",
+   "file": "s15700-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/15700 (English, 1983 typewritten scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which country's Permanent Representative wrote the letter?",
+     "accept": [
+      "Honduras"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the Minister for Foreign Affairs of Honduras?",
+     "accept": [
+      "Edgardo Paz Barnica",
+      "Paz Barnica"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "11 April 1983",
+      "1983-04-11"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Honduras",
+    "Central America",
+    "peace"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "LETTER DATED"
+     ],
+     "accept": [
+      "1983-04-11"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the total amount due?"
+   ]
+  },
+  {
+   "id": "s15700-ar",
+   "group": "un-S/15700",
+   "split": "dev",
+   "file": "s15700-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/15700 (Arabic, 1983 typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ممثل أي بلد كتب هذه الرسالة؟",
+     "accept": [
+      "هندوراس",
+      "هندوراس"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "11 نيسان/ابريل 1983",
+      "١١ نيسان",
+      "11 نيسان",
+      "1983-04-11"
+     ],
+     "page": 1
+    },
+    {
+     "q": "إلى من وُجّهت الرسالة؟",
+     "accept": [
+      "رئيس مجلس الأمن",
+      "رئيس مجلس الامن"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "هندوراس",
+    "امريكا الوسطى",
+    "السلم"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة في"
+     ],
+     "accept": [
+      "1983-04-11"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الضريبة؟"
+   ]
+  },
+  {
+   "id": "res3314-en",
+   "group": "un-A/RES/3314",
+   "split": "dev",
+   "file": "res3314-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org A/RES/3314(XXIX) (English, resolutions volume scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What does resolution 3314 define?",
+     "accept": [
+      "aggression"
+     ]
+    },
+    {
+     "q": "On what date was resolution 3314 adopted?",
+     "accept": [
+      "14 December 1974",
+      "1974-12-14"
+     ]
+    },
+    {
+     "q": "At which plenary meeting was resolution 3314 adopted?",
+     "accept": [
+      "2319"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Definition of Aggression",
+    "General Assembly",
+    "Security Council"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1974-12-14"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice number?"
+   ]
+  },
+  {
+   "id": "res3314-ar",
+   "group": "un-A/RES/3314",
+   "split": "dev",
+   "file": "res3314-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org A/RES/3314(XXIX) (Arabic, typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما موضوع القرار ٣٣١٤؟",
+     "accept": [
+      "تعريف العدوان",
+      "العدوان"
+     ],
+     "page": 1
+    },
+    {
+     "q": "متى اعتُمد القرار؟",
+     "accept": [
+      "14 كانون الأول/ديسمبر 1974",
+      "١٤ كانون الاول",
+      "1974-12-14",
+      "1974"
+     ],
+     "page": 1
+    },
+    {
+     "q": "في أي جلسة عامة اعتُمد القرار؟",
+     "accept": [
+      "2319"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "تعريف العدوان",
+    "الجمعية العامة",
+    "مجلس الأمن"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1974-12-14"
+     ]
+    }
+   ],
+   "missing": [
+    "ما سعر الوحدة؟"
+   ]
+  },
+  {
+   "id": "a45594-en",
+   "group": "un-A/45/594",
+   "split": "dev",
+   "file": "a45594-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": true,
+   "source": "https://documents.un.org A/45/594 (English, model status-of-forces agreement, 1990 scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What does the model agreement concern?",
+     "accept": [
+      "status-of-forces",
+      "status of forces"
+     ],
+     "page": 1
+    },
+    {
+     "q": "When was the document issued?",
+     "accept": [
+      "9 October 1990",
+      "1990-10-09"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which resolution requested the model agreement?",
+     "accept": [
+      "44/49"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "status-of-forces",
+    "peace-keeping",
+    "host"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1990-10-09"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the monthly rent?"
+   ]
+  },
+  {
+   "id": "a45594-ar",
+   "group": "un-A/45/594",
+   "split": "dev",
+   "file": "a45594-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": true,
+   "source": "https://documents.un.org A/45/594 (Arabic, fax scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما موضوع نموذج الاتفاق؟",
+     "accept": [
+      "مركز القوات"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم القرار الذي طلب إعداد النموذج؟",
+     "accept": [
+      "44/49",
+      "49/44",
+      "٤٤/٤٩",
+      "٤٩/٤٤"
+     ],
+     "page": 1
+    },
+    {
+     "q": "لمن قُدّم التقرير؟",
+     "accept": [
+      "الجمعية العامة"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "مركز القوات",
+    "حفظ السلم",
+    "الأمين العام"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1990-10-09"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الإيجار الشهري؟"
+   ]
+  },
+  {
+   "id": "cuad-imperial",
+   "group": "cuad-imperial",
+   "split": "dev",
+   "file": "cuad-imperial.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 ImperialGardenResortInc_20161028 EX-10.13 Outsourcing Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "CUAD labels",
+   "qa": [
+    {
+     "q": "When was the agreement signed?",
+     "accept": [
+      "October 29, 2015",
+      "2015-10-29"
+     ]
+    },
+    {
+     "q": "Which court has jurisdiction?",
+     "accept": [
+      "Miaoli District Court"
+     ]
+    },
+    {
+     "q": "Who is the architect?",
+     "accept": [
+      "Chang Chen"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Miaoli",
+    "HUANG JIA",
+    "Outsourcing"
+   ],
+   "fields": [
+    {
+     "name": "agreement_date",
+     "type": "date",
+     "labels": [
+      "dated",
+      "date",
+      "signed on"
+     ],
+     "accept": [
+      "2015-10-29"
+     ]
+    },
+    {
+     "name": "governing_court",
+     "type": "text",
+     "labels": [
+      "competent court"
+     ],
+     "accept": [
+      "Miaoli District Court"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the VAT number?"
+   ]
+  },
+  {
+   "id": "cuad-rare",
+   "group": "cuad-rare",
+   "split": "dev",
+   "file": "cuad-rare.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 RareElementResourcesLtd_20171019 EX-99.4 Intellectual Property Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "CUAD labels",
+   "qa": [
+    {
+     "q": "What is the date of the agreement?",
+     "accept": [
+      "October 2, 2017",
+      "2017-10-02"
+     ]
+    },
+    {
+     "q": "Which law governs the agreement?",
+     "accept": [
+      "New York"
+     ]
+    },
+    {
+     "q": "Who are the parties?",
+     "accept": [
+      "Rare Element Resources",
+      "Synchron"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Rare Element",
+    "Synchron",
+    "Patents"
+   ],
+   "fields": [
+    {
+     "name": "agreement_date",
+     "type": "date",
+     "labels": [
+      "dated as of",
+      "dated"
+     ],
+     "accept": [
+      "2017-10-02"
+     ]
+    },
+    {
+     "name": "governing_law",
+     "type": "text",
+     "labels": [
+      "substantive laws of",
+      "laws of"
+     ],
+     "accept": [
+      "New York"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the receipt number?"
+   ]
+  },
+  {
+   "id": "cuad-lucid",
+   "group": "cuad-lucid",
+   "split": "dev",
+   "file": "cuad-lucid.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 LUCIDINC_04_15_2011 EX-10.9 Distributor Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "CUAD labels",
+   "qa": [
+    {
+     "q": "Which law governs the agreement?",
+     "accept": [
+      "New York"
+     ]
+    },
+    {
+     "q": "How long is the initial term of the agreement?",
+     "accept": [
+      "three (3) calendar years",
+      "three years",
+      "3 calendar years"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Lucid",
+    "Distributor",
+    "New York"
+   ],
+   "fields": [
+    {
+     "name": "governing_law",
+     "type": "text",
+     "labels": [
+      "laws of"
+     ],
+     "accept": [
+      "New York"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the agreement date?"
+   ],
+   "notes": "The agreement date is redacted ([*]) in the filing: a correct answer says it is not available."
+  },
+  {
+   "id": "irs-w9",
+   "group": "irs-w9",
+   "split": "dev",
+   "file": "irs-w9.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "form",
+   "genuine": true,
+   "source": "https://www.irs.gov/pub/irs-pdf/fw9.pdf (Rev. March 2024)",
+   "licence": "US government work, public domain",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is this form requesting?",
+     "accept": [
+      "Taxpayer Identification Number"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the revision date of the form?",
+     "accept": [
+      "March 2024"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Should the form be sent to the IRS?",
+     "accept": [
+      "Do not send to the IRS",
+      "Do not send"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Taxpayer Identification Number",
+    "requester",
+    "W-9"
+   ],
+   "fields": [
+    {
+     "name": "form_number",
+     "type": "id",
+     "labels": [
+      "Form"
+     ],
+     "accept": [
+      "W-9"
+     ]
+    },
+    {
+     "name": "revision",
+     "type": "text",
+     "labels": [
+      "Rev."
+     ],
+     "accept": [
+      "March 2024"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the requester's name?"
+   ],
+   "notes": "The form is blank: the requester's name is not filled in."
+  },
+  {
+   "id": "funsd-82092117",
+   "group": "funsd-82092117",
+   "split": "dev",
+   "file": "funsd-82092117.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82092117 (fax cover sheet)",
+   "licence": "FUNSD: non-commercial research",
+   "gold_from": "FUNSD annotation",
+   "qa": [
+    {
+     "q": "Who is the fax addressed to?",
+     "accept": [
+      "George Baroody",
+      "Baroody"
+     ],
+     "page": 1
+    },
+    {
+     "q": "How many pages including the cover sheet?",
+     "accept": [
+      "3"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the phone number?",
+     "accept": [
+      "335- 7363",
+      "335-7363"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Baroody",
+    "fax",
+    "Attorney General"
+   ],
+   "fields": [
+    {
+     "name": "to",
+     "type": "text",
+     "labels": [
+      "TO"
+     ],
+     "accept": [
+      "George Baroody"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice total?"
+   ]
+  },
+  {
+   "id": "funsd-82250337",
+   "group": "funsd-82250337",
+   "split": "dev",
+   "file": "funsd-82250337.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82250337_0338 (test market form)",
+   "licence": "FUNSD: non-commercial research",
+   "gold_from": "FUNSD annotation",
+   "qa": [
+    {
+     "q": "Who is the form from?",
+     "accept": [
+      "D. J. Landro",
+      "Landro"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What brand is tested?",
+     "accept": [
+      "Kool Waterfall"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the manufacturer?",
+     "accept": [
+      "B&W",
+      "B & W"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Kool Waterfall",
+    "Landro",
+    "test market"
+   ],
+   "fields": [
+    {
+     "name": "brand",
+     "type": "text",
+     "labels": [
+      "BRAND"
+     ],
+     "accept": [
+      "Kool Waterfall"
+     ]
+    },
+    {
+     "name": "from",
+     "type": "text",
+     "labels": [
+      "FROM"
+     ],
+     "accept": [
+      "Landro"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the IBAN?"
+   ]
+  },
+  {
+   "id": "inv-lkxd0060",
+   "group": "invcdip-three-tree",
+   "split": "dev",
+   "file": "inv-lkxd0060.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/lkxd0060 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "2750"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "2,000.00",
+      "2000.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Three Tree",
+    "2750",
+    "2,000.00"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "2750"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2000-04-10"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "2000"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "inv-tgmf0040",
+   "group": "invcdip-msl",
+   "split": "dev",
+   "file": "inv-tgmf0040.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/tgmf0040 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "019114"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the invoice date?",
+     "accept": [
+      "01/31/82",
+      "1982-01-31"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Manning, Selvage",
+    "TV NEWS MONITOR",
+    "70.00"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "019114"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1982-01-31"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "70"
+     ]
+    }
+   ],
+   "missing": [
+    "Who signed the contract?"
+   ]
+  },
+  {
+   "id": "inv-hjfp0094",
+   "group": "invcdip-bozell",
+   "split": "dev",
+   "file": "inv-hjfp0094.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/hjfp0094 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "PR01-005651"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the due date?",
+     "accept": [
+      "JAN24/00",
+      "2000-01-24"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Bozell",
+    "31,000.00",
+    "Lorillard"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "PR01-005651"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2000-01-04"
+     ]
+    },
+    {
+     "name": "due_date",
+     "type": "date",
+     "accept": [
+      "2000-01-24"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "31000"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the VAT rate?"
+   ]
+  },
+  {
+   "id": "voxel-0027",
+   "group": "voxel51",
+   "split": "dev",
+   "file": "voxel-0027.jpg",
+   "lang": "en",
+   "modality": "image",
+   "type": "invoice",
+   "genuine": false,
+   "source": "Voxel51/high-quality-invoice-images-for-ocr batch1-0027 (SYNTHETIC invoice image)",
+   "licence": "dataset card",
+   "gold_from": "dataset annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "44848471"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "838.68"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the seller?",
+     "accept": [
+      "Proctor, Levy and Willis"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Proctor",
+    "44848471",
+    "838.68"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "44848471"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2021-03-26"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "838.68"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "coru-magicplanet",
+   "group": "coru-magicplanet",
+   "split": "dev",
+   "file": "coru-031b2b34.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 031b2b34-c62d-44ec-93ae-c5db5e923db5",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the receipt number?",
+     "accept": [
+      "3861884"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total amount?",
+     "accept": [
+      "50.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "6.14"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Magic Planet",
+    "50.00",
+    "3861884"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "50"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2022-06-29"
+     ]
+    }
+   ],
+   "missing": [
+    "Who is the landlord?"
+   ],
+   "total_egp": 50.0
+  },
+  {
+   "id": "coru-abuauf-mall",
+   "group": "coru-abuauf",
+   "split": "dev",
+   "file": "coru-0002998f.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0002998f-3b42-4806-b669-6b89a5bfd512",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "accept": [
+      "626972"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What was the total amount?",
+     "accept": [
+      "160.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who was the cashier?",
+     "accept": [
+      "abdallah hussain"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Abu Auf",
+    "160.00",
+    "Delicious Mix"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "160"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2022-09-03"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ],
+   "total_egp": 160.0
+  },
+  {
+   "id": "coru-abuauf-order",
+   "group": "coru-abuauf",
+   "split": "dev",
+   "file": "coru-017e490a.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 017e490a-a999-490f-b524-b5caa19f2d0c",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the order number?",
+     "accept": [
+      "WSO_0000059905",
+      "0000059905"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total price?",
+     "accept": [
+      "220.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما هي تكلفة الشحن؟",
+     "accept": [
+      "0.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Almond",
+    "220.00",
+    "0000059905"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "220"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2022-07-31"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the contract term?"
+   ],
+   "total_egp": 220.0
+  },
+  {
+   "id": "coru-abuauf-credit",
+   "group": "coru-abuauf",
+   "split": "dev",
+   "file": "coru-0027b0e7.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0027b0e7-817a-468e-9377-5caba1f14339",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "accept": [
+      "482204"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the customer?",
+     "accept": [
+      "شركة صفقة"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What was the total amount?",
+     "accept": [
+      "330.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Abu Auf",
+    "330.00",
+    "Coffee Brazilian"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "330"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2023-11-02"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the IBAN?"
+   ],
+   "total_egp": 330.0
+  },
+  {
+   "id": "coru-starbucks",
+   "group": "coru-starbucks",
+   "split": "dev",
+   "file": "coru-0063a6c8.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0063a6c8-e3ff-4f14-8ba4-4922c917d141",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the check number?",
+     "accept": [
+      "3118"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total payment amount?",
+     "accept": [
+      "46.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the TAX Card number?",
+     "accept": [
+      "212719599"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Starbucks",
+    "46.00",
+    "3118"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "46"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2022-06-19"
+     ]
+    }
+   ],
+   "missing": [
+    "Who is the employer?"
+   ],
+   "total_egp": 46.0
+  },
+  {
+   "id": "coru-masary",
+   "group": "coru-masary",
+   "split": "dev",
+   "file": "coru-0128a9df.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0128a9df-b434-4238-92bb-13092ed6b7fa (Masary payment receipt, mostly Arabic)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the operation number?",
+     "accept": [
+      "334713895836"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم العملية؟",
+     "accept": [
+      "334713895836"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المبلغ الإجمالي؟",
+     "accept": [
+      "137.6"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "334713895836",
+    "137.6",
+    "Tedata"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "labels": [
+      "الإجمالي",
+      "اجمالي"
+     ],
+     "accept": [
+      "137.6"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2022-12-13"
+     ]
+    }
+   ],
+   "missing": [
+    "ما اسم الطرف الثاني في العقد؟"
+   ],
+   "total_egp": 137.6
+  },
+  {
+   "id": "wiki-egypt",
+   "group": "wikipedia-ar-egypt",
+   "split": "dev",
+   "file": "wiki-egypt.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/مصر (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما عاصمة مصر؟",
+     "accept": [
+      "القاهرة"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من رئيس مصر؟",
+     "accept": [
+      "عبد الفتاح السيسي",
+      "السيسي"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من رئيس الوزراء؟",
+     "accept": [
+      "مصطفى مدبولي",
+      "مدبولي"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "القاهرة",
+    "النيل",
+    "مصر"
+   ],
+   "fields": [
+    {
+     "name": "capital",
+     "type": "text",
+     "labels": [
+      "العاصمة"
+     ],
+     "accept": [
+      "القاهرة"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم فاتورة الكهرباء؟"
+   ]
+  },
+  {
+   "id": "syn-cert-digital",
+   "group": "syn-certificate",
+   "split": "dev",
+   "file": "syn-ar-certificate-digital.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "certificate",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (certificate)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما اسم المتدرب؟",
+     "accept": [
+      "سالم عبد الله القحطاني"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم الشهادة؟",
+     "accept": [
+      "NR-2024-0457"
+     ],
+     "page": 1
+    },
+    {
+     "q": "كم عدد الساعات التدريبية؟",
+     "accept": [
+      "٤٠ ساعة",
+      "40 ساعة",
+      "٤٠"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "إدارة المشاريع",
+    "القحطاني",
+    "معهد النور"
+   ],
+   "fields": [
+    {
+     "name": "certificate_number",
+     "type": "id",
+     "labels": [
+      "رقم الشهادة"
+     ],
+     "accept": [
+      "NR-2024-0457"
+     ]
+    },
+    {
+     "name": "issue_date",
+     "type": "date",
+     "labels": [
+      "تاريخ الإصدار"
+     ],
+     "accept": [
+      "2024-03-17"
+     ]
+    },
+    {
+     "name": "trainee",
+     "type": "text",
+     "labels": [
+      "المتدرب"
+     ],
+     "accept": [
+      "سالم عبد الله القحطاني"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الحساب البنكي؟"
+   ]
+  },
+  {
+   "id": "syn-cert-photo",
+   "group": "syn-certificate",
+   "split": "dev",
+   "file": "syn-ar-certificate-photo.jpg",
+   "lang": "ar",
+   "modality": "photo",
+   "type": "certificate",
+   "genuine": false,
+   "source": "SYNTHETIC: degraded image of syn-cert-digital",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما اسم المتدرب؟",
+     "accept": [
+      "سالم عبد الله القحطاني"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم الشهادة؟",
+     "accept": [
+      "NR-2024-0457"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تقدير المتدرب؟",
+     "accept": [
+      "ممتاز"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "إدارة المشاريع",
+    "القحطاني",
+    "معهد النور"
+   ],
+   "fields": [
+    {
+     "name": "certificate_number",
+     "type": "id",
+     "labels": [
+      "رقم الشهادة"
+     ],
+     "accept": [
+      "NR-2024-0457"
+     ]
+    },
+    {
+     "name": "issue_date",
+     "type": "date",
+     "labels": [
+      "تاريخ الإصدار"
+     ],
+     "accept": [
+      "2024-03-17"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الضريبة؟"
+   ]
+  },
+  {
+   "id": "syn-inv-digital",
+   "group": "syn-invoice",
+   "split": "dev",
+   "file": "syn-ar-invoice-digital.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "invoice",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (tax invoice)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "accept": [
+      "INV-7731"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما الإجمالي؟",
+     "accept": [
+      "4,600.00",
+      "4600"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من المشتري؟",
+     "accept": [
+      "مؤسسة الفجر للاستشارات"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "INV-7731",
+    "4,600.00",
+    "الواحة"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "labels": [
+      "رقم الفاتورة"
+     ],
+     "accept": [
+      "INV-7731"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "labels": [
+      "تاريخ الفاتورة"
+     ],
+     "accept": [
+      "2024-05-12"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "labels": [
+      "الإجمالي"
+     ],
+     "accept": [
+      "4600"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "labels": [
+      "ضريبة القيمة المضافة"
+     ],
+     "accept": [
+      "600"
+     ]
+    }
+   ],
+   "missing": [
+    "من وقّع العقد؟"
+   ]
+  },
+  {
+   "id": "syn-inv-scan",
+   "group": "syn-invoice",
+   "split": "dev",
+   "file": "syn-ar-invoice-scan.jpg",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": false,
+   "source": "SYNTHETIC: degraded image of syn-inv-digital",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "accept": [
+      "INV-7731"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الاستحقاق؟",
+     "accept": [
+      "2024-06-11"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من البائع؟",
+     "accept": [
+      "شركة الواحة للتجهيزات المكتبية"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "INV-7731",
+    "4,600.00",
+    "الواحة"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "labels": [
+      "رقم الفاتورة"
+     ],
+     "accept": [
+      "INV-7731"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "labels": [
+      "تاريخ الفاتورة"
+     ],
+     "accept": [
+      "2024-05-12"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "labels": [
+      "الإجمالي"
+     ],
+     "accept": [
+      "4600"
+     ]
+    }
+   ],
+   "missing": [
+    "ما اسم المستأجر؟"
+   ]
+  },
+  {
+   "id": "un110-en",
+   "group": "un-S/2023/110",
+   "split": "reserved",
+   "file": "un110-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org A/77/750-S/2023/110 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which country's Permanent Representative wrote the letter?",
+     "accept": [
+      "Ukraine"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the Minister of Foreign Affairs of Ukraine?",
+     "accept": [
+      "Dmytro Kuleba",
+      "Kuleba"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What initiative do the Russian actions obstruct?",
+     "accept": [
+      "Black Sea Grain Initiative"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Ukraine",
+    "Black Sea",
+    "grain"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2023-02-15"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice number?"
+   ]
+  },
+  {
+   "id": "un110-ar",
+   "group": "un-S/2023/110",
+   "split": "reserved",
+   "file": "un110-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org A/77/750-S/2023/110 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "ممثل أي بلد كتب الرسالة؟",
+     "accept": [
+      "أوكرانيا",
+      "لأوكرانيا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من هو وزير خارجية أوكرانيا المذكور؟",
+     "accept": [
+      "دميترو كوليبا",
+      "كوليبا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "15 شباط/فبراير 2023",
+      "15 شباط",
+      "2023-02-15"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "أوكرانيا",
+    "البحر الأسود",
+    "الحبوب"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2023-02-15"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الفاتورة؟"
+   ]
+  },
+  {
+   "id": "un500-en",
+   "group": "un-S/2022/500",
+   "split": "reserved",
+   "file": "un500-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2022/500 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who signed the letters?",
+     "accept": [
+      "Mohammed Hussein Bahr Aluloom",
+      "Bahr Aluloom"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which country's violations of Iraqi territory are summarized?",
+     "accept": [
+      "Türkiye",
+      "Turkey"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What period do the violations cover?",
+     "accept": [
+      "1 January 2022 and 31 March 2022",
+      "1 January 2022 to 31 March 2022"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Iraq",
+    "Türkiye",
+    "violations"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "letters dated",
+      "Letter dated"
+     ],
+     "accept": [
+      "2022-06-21"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the total amount?"
+   ]
+  },
+  {
+   "id": "un500-ar",
+   "group": "un-S/2022/500",
+   "split": "reserved",
+   "file": "un500-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2022/500 (Arabic original)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالتين؟",
+     "accept": [
+      "محمد حسين بحر العلوم",
+      "بحر العلوم"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما البلد الذي ارتكب الخروقات؟",
+     "accept": [
+      "تركيا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما الفترة التي تغطيها الخروقات؟",
+     "accept": [
+      "1 كانون الثاني/يناير 2022 لغاية 31 آذار/مارس 2022",
+      "31 آذار/مارس 2022",
+      "1 كانون الثاني/يناير 2022"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "العراق",
+    "تركيا",
+    "الخروقات"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "مؤرختان",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2022-06-21"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم السجل التجاري؟"
+   ]
+  },
+  {
+   "id": "r30-en",
+   "group": "un-S/2024/30",
+   "split": "reserved",
+   "file": "r30-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/30 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who has been appointed alternate representative of Albania?",
+     "accept": [
+      "Almona Bajramaj",
+      "Bajramaj"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Under which rule of the provisional rules of procedure is the report made?",
+     "accept": [
+      "rule 15",
+      "15"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Albania",
+    "Almona Bajramaj",
+    "credentials"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "r30-ar",
+   "group": "un-S/2024/30",
+   "split": "reserved",
+   "file": "r30-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/30 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من عُيّنت ممثلة مناوبة لألبانيا؟",
+     "accept": [
+      "ألمونا باجراماج",
+      "باجراماج"
+     ],
+     "page": 1
+    },
+    {
+     "q": "بموجب أي مادة من النظام الداخلي المؤقت قُدّم التقرير؟",
+     "accept": [
+      "المادة 15",
+      "15"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "ألبانيا",
+    "باجراماج",
+    "وثائق تفويض"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الضريبة؟"
+   ]
+  },
+  {
+   "id": "s15900-en",
+   "group": "un-S/15900",
+   "split": "reserved",
+   "file": "s15900-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org A/38/322-S/15900 (English, 1983 scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which country's Permanent Representative wrote the letter?",
+     "accept": [
+      "Panama"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Where did the Ministers for Foreign Affairs meet?",
+     "accept": [
+      "Panama City"
+     ],
+     "page": 1
+    },
+    {
+     "q": "When was the meeting held?",
+     "accept": [
+      "28 to 30 July 1983"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Panama",
+    "Ministers for Foreign Affairs",
+    "Central America"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "1983-08-01"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice date?"
+   ]
+  },
+  {
+   "id": "s15900-ar",
+   "group": "un-S/15900",
+   "split": "reserved",
+   "file": "s15900-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org A/38/322-S/15900 (Arabic, 1983 scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ممثل أي بلد كتب الرسالة؟",
+     "accept": [
+      "بنما",
+      "لبنما"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "1 آب/أغسطس 1983",
+      "١ آب",
+      "1983-08-01"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "بنما",
+    "وزراء خارجية",
+    "النشرة الاعلامية"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة في"
+     ],
+     "accept": [
+      "1983-08-01"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  },
+  {
+   "id": "s16200-en",
+   "group": "un-S/16200",
+   "split": "reserved",
+   "file": "s16200-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16200 (English, 1983 scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which country's Permanent Representative wrote the letter?",
+     "accept": [
+      "Nicaragua"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which Nicaraguan coastguard vessel was attacked?",
+     "accept": [
+      "No. 282",
+      "282"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the Minister for Foreign Affairs of Nicaragua?",
+     "accept": [
+      "Miguel D'Escoto Brockmann",
+      "D'Escoto"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Nicaragua",
+    "Honduran",
+    "coastguard"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "LETTER DATED"
+     ],
+     "accept": [
+      "1983-12-06"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the contract value?"
+   ]
+  },
+  {
+   "id": "s16200-ar",
+   "group": "un-S/16200",
+   "split": "reserved",
+   "file": "s16200-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16200 (Arabic, 1983 scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ممثل أي بلد كتب الرسالة؟",
+     "accept": [
+      "نيكاراغوا",
+      "لنيكاراغوا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم زورق خفر السواحل النيكاراغوي؟",
+     "accept": [
+      "282",
+      "٢٨٢"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "نيكاراغوا",
+    "هندوراس",
+    "خفر السواحل"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة في"
+     ],
+     "accept": [
+      "1983-12-06"
+     ]
+    }
+   ],
+   "missing": [
+    "ما إجمالي الإيصال؟"
+   ]
+  },
+  {
+   "id": "s16100-en",
+   "group": "un-S/16100",
+   "split": "reserved",
+   "file": "s16100-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/16100 (English, 1983 scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who is the Governor-General of Grenada?",
+     "accept": [
+      "Sir Paul Scoon",
+      "Paul Scoon"
+     ],
+     "page": 1
+    },
+    {
+     "q": "After the suspension of which meeting was the report submitted?",
+     "accept": [
+      "2491st",
+      "2491"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Grenada",
+    "Paul Scoon",
+    "Governor-General"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1983-10-31"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the tax amount?"
+   ]
+  },
+  {
+   "id": "s16100-ar",
+   "group": "un-S/16100",
+   "split": "reserved",
+   "file": "s16100-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/16100 (Arabic, 1983 scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "من هو الحاكم العام لغرينادا؟",
+     "accept": [
+      "السير بول سكون",
+      "بول سكون"
+     ],
+     "page": 1
+    },
+    {
+     "q": "بعد تعليق أي جلسة قُدّم التقرير؟",
+     "accept": [
+      "2491",
+      "٢٤٩١"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "غرينادا",
+    "بول سكون",
+    "الحاكم العام"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1983-10-31"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الإيصال؟"
+   ]
+  },
+  {
+   "id": "cuad-curaegis",
+   "group": "cuad-curaegis",
+   "split": "reserved",
+   "file": "cuad-curaegis.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 CURAEGISTECHNOLOGIES,INC_05_26_2010 EX-1 Corporate Sponsorship Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "CUAD labels",
+   "qa": [
+    {
+     "q": "When is the effective date of the agreement?",
+     "accept": [
+      "May 18, 2010",
+      "2010-05-18"
+     ]
+    },
+    {
+     "q": "When does the term of the agreement conclude?",
+     "accept": [
+      "October 31, 2010",
+      "2010-10-31"
+     ]
+    },
+    {
+     "q": "Which law governs the agreement?",
+     "accept": [
+      "New York"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Phoenix Performance",
+    "Torvec",
+    "Sponsorship"
+   ],
+   "fields": [
+    {
+     "name": "effective_date",
+     "type": "date",
+     "labels": [
+      "Effective Date",
+      "dated"
+     ],
+     "accept": [
+      "2010-05-18"
+     ]
+    },
+    {
+     "name": "governing_law",
+     "type": "text",
+     "labels": [
+      "laws of"
+     ],
+     "accept": [
+      "New York"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the VAT amount?"
+   ]
+  },
+  {
+   "id": "cuad-galacticomm",
+   "group": "cuad-galacticomm",
+   "split": "reserved",
+   "file": "cuad-galacticomm.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 GALACTICOMMTECHNOLOGIESINC_11_07_1997 EX-10.46 Web Hosting Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "CUAD labels",
+   "qa": [
+    {
+     "q": "Who are the parties to the agreement?",
+     "accept": [
+      "Horst Entertainment",
+      "Galacticomm"
+     ]
+    },
+    {
+     "q": "What is the date of the agreement?",
+     "accept": [
+      "9/9/97",
+      "September 9, 1997",
+      "1997-09-09"
+     ]
+    }
+   ],
+   "summary_keys": [
+    "Galacticomm",
+    "Horst Entertainment",
+    "hosting"
+   ],
+   "fields": [
+    {
+     "name": "agreement_date",
+     "type": "date",
+     "labels": [
+      "dated",
+      "date"
+     ],
+     "accept": [
+      "1997-09-09"
+     ]
+    }
+   ],
+   "missing": [
+    "Which law governs the agreement?"
+   ],
+   "notes": "CUAD finds no governing-law clause in this contract."
+  },
+  {
+   "id": "irs-w4",
+   "group": "irs-w4",
+   "split": "reserved",
+   "file": "irs-w4.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "form",
+   "genuine": true,
+   "source": "https://www.irs.gov/pub/irs-pdf/fw4.pdf (Form W-4 2026)",
+   "licence": "US government work, public domain",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the title of Form W-4?",
+     "accept": [
+      "Employee’s Withholding Certificate",
+      "Employee's Withholding Certificate"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who should the employee give Form W-4 to?",
+     "accept": [
+      "employer"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the OMB number?",
+     "accept": [
+      "1545-0074"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Withholding",
+    "employer",
+    "W-4"
+   ],
+   "fields": [
+    {
+     "name": "omb_number",
+     "type": "id",
+     "labels": [
+      "OMB No."
+     ],
+     "accept": [
+      "1545-0074"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the employee's social security number?"
+   ],
+   "notes": "The form is blank."
+  },
+  {
+   "id": "funsd-82200067",
+   "group": "funsd-82200067",
+   "split": "reserved",
+   "file": "funsd-82200067.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82200067_0069",
+   "licence": "FUNSD: non-commercial research",
+   "gold_from": "FUNSD annotation",
+   "qa": [
+    {
+     "q": "Who is the form addressed to?",
+     "accept": [
+      "K. A. Sparrow",
+      "Sparrow"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the form from?",
+     "accept": [
+      "T. D. Blachly",
+      "Blachly"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Sparrow",
+    "Blachly",
+    "Portland"
+   ],
+   "fields": [
+    {
+     "name": "to",
+     "type": "text",
+     "labels": [
+      "TO"
+     ],
+     "accept": [
+      "Sparrow"
+     ]
+    },
+    {
+     "name": "from",
+     "type": "text",
+     "labels": [
+      "FROM"
+     ],
+     "accept": [
+      "Blachly"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice total?"
+   ]
+  },
+  {
+   "id": "funsd-82253058",
+   "group": "funsd-82253058",
+   "split": "reserved",
+   "file": "funsd-82253058.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82253058_3059",
+   "licence": "FUNSD: non-commercial research",
+   "gold_from": "FUNSD annotation",
+   "qa": [
+    {
+     "q": "What brand is tested?",
+     "accept": [
+      "Camel Menthol"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the manufacturer?",
+     "accept": [
+      "R. J. Reynolds",
+      "Reynolds"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the form from?",
+     "accept": [
+      "R. G. Ryan",
+      "Ryan"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Camel Menthol",
+    "Reynolds",
+    "Region 7"
+   ],
+   "fields": [
+    {
+     "name": "brand",
+     "type": "text",
+     "labels": [
+      "BRAND"
+     ],
+     "accept": [
+      "Camel Menthol"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "labels": [
+      "DATE"
+     ],
+     "accept": [
+      "1996-12-10"
+     ],
+     "ambiguous": true
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ],
+   "notes": "DATE 12/10/96 is ambiguous (December 10 or 12 October): the expected value assumes month-first and a correct extraction must carry an ambiguity warning."
+  },
+  {
+   "id": "inv-fxnb0017",
+   "group": "invcdip-fxnb0017",
+   "split": "reserved",
+   "file": "inv-fxnb0017.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/fxnb0017 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "PM1002"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "2035.00",
+      "2,035.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "PM1002",
+    "2035.00",
+    "Invoice"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "PM1002"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1997-08-21"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "2035"
+     ]
+    }
+   ],
+   "missing": [
+    "Who signed the contract?"
+   ]
+  },
+  {
+   "id": "inv-gnfk0009",
+   "group": "invcdip-gnfk0009",
+   "split": "reserved",
+   "file": "inv-gnfk0009.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/gnfk0009 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "12410"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "78.75"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "12410",
+    "78.75",
+    "Invoice"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "12410"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1998-04-29"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "78.75"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "inv-sfwb0046",
+   "group": "invcdip-sfwb0046",
+   "split": "reserved",
+   "file": "inv-sfwb0046.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "invoice",
+   "genuine": true,
+   "source": "https://www.industrydocuments.ucsf.edu/docs/sfwb0046 (INV-CDIP test)",
+   "licence": "UCSF IDL research use; INV-CDIP CC BY-NC 4.0",
+   "gold_from": "INV-CDIP annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "133255698"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "1,634.52",
+      "1634.52"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "92.52"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "133255698",
+    "1,634.52",
+    "Invoice"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "133255698"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1987-11-09"
+     ],
+     "ambiguous": true
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "1634.52"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "92.52"
+     ]
+    }
+   ],
+   "missing": [
+    "Who is the landlord?"
+   ],
+   "notes": "11/09/87 is ambiguous; the annotation's month-first reading is expected, with an ambiguity warning."
+  },
+  {
+   "id": "voxel-holdout-0023",
+   "group": "voxel51-holdout",
+   "split": "reserved",
+   "file": "voxel-0023.jpg",
+   "lang": "en",
+   "modality": "image",
+   "type": "invoice",
+   "genuine": false,
+   "source": "Voxel51/high-quality-invoice-images-for-ocr batch1-0023, holdout split (SYNTHETIC invoice image)",
+   "licence": "dataset card",
+   "gold_from": "dataset annotation",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "33102457"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "18281.24",
+      "18,281.24"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the client?",
+     "accept": [
+      "Pierce, Bush and Jones"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Harris LLC",
+    "33102457",
+    "18"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "33102457"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2018-09-18"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "18281.24"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "1661.93"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "coru-alfa",
+   "group": "coru-alfa",
+   "split": "reserved",
+   "file": "coru-0152c3f7.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0152c3f7-5cd4-48d5-9b27-c566b8c7ba46 (lab money receipt)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the receipt number?",
+     "accept": [
+      "184348"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the amount received?",
+     "accept": [
+      "100.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the patient number?",
+     "accept": [
+      "40-57900"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Alfa",
+    "100.00",
+    "184348"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "100"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ],
+   "total_egp": 100.0
+  },
+  {
+   "id": "coru-tema",
+   "group": "coru-tema",
+   "split": "reserved",
+   "file": "coru-02559352.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 02559352-1118-410b-a13a-4e398ca87a34 (LC Waikiki)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "accept": [
+      "0000114403"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total amount?",
+     "accept": [
+      "249.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the cashier name?",
+     "accept": [
+      "ABDELKAREEM AMER"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "TEMA",
+    "249.00",
+    "SWIMWEAR"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "249"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2023-09-18"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the contract term?"
+   ],
+   "total_egp": 249.0
+  },
+  {
+   "id": "coru-mcdonalds",
+   "group": "coru-mcdonalds",
+   "split": "reserved",
+   "file": "coru-025d7b7f.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 025d7b7f-23be-42b2-8569-e6c92f61728e",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What was the take-out total including tax?",
+     "accept": [
+      "70.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What was the amount of cash tendered?",
+     "accept": [
+      "100.00"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "8.59"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "McDonald",
+    "70.00",
+    "Big Tasty"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "70"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "8.59"
+     ]
+    }
+   ],
+   "missing": [
+    "Who signed the letter?"
+   ],
+   "total_egp": 70.0
+  },
+  {
+   "id": "coru-dunkin",
+   "group": "coru-dunkin",
+   "split": "reserved",
+   "file": "coru-016e36fe.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 016e36fe-7920-4249-809e-11b79d8f7f13",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation",
+   "qa": [
+    {
+     "q": "What is the check number?",
+     "accept": [
+      "119130"
+     ],
+     "page": 1
+    },
+    {
+     "q": "How much was the VAT?",
+     "accept": [
+      "5.15"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What was the subtotal?",
+     "accept": [
+      "36.82"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Dunkin",
+    "119130",
+    "Dark Roast"
+   ],
+   "fields": [
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "5.15"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the agreement date?"
+   ]
+  },
+  {
+   "id": "wiki-cairo",
+   "group": "wikipedia-ar-cairo",
+   "split": "reserved",
+   "file": "wiki-cairo.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/القاهرة (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "متى تأسست القاهرة؟",
+     "accept": [
+      "969"
+     ],
+     "page": 1
+    },
+    {
+     "q": "من محافظ القاهرة؟",
+     "accept": [
+      "إبراهيم صابر خليل",
+      "إبراهيم صابر"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما لقب القاهرة؟",
+     "accept": [
+      "مدينة الألف مئذنة",
+      "مدينة الألف مأذنة"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "القاهرة",
+    "النيل",
+    "مصر"
+   ],
+   "fields": [
+    {
+     "name": "founded",
+     "type": "text",
+     "labels": [
+      "تاريخ التأسيس"
+     ],
+     "accept": [
+      "969"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  },
+  {
+   "id": "syn-form-digital",
+   "group": "syn-form",
+   "split": "reserved",
+   "file": "syn-mx-form-digital.pdf",
+   "lang": "mixed",
+   "modality": "digital",
+   "type": "form",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (bilingual membership form)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما الاسم الكامل لمقدم الطلب؟",
+     "accept": [
+      "ليلى حسن الزعبي",
+      "Layla Hasan Al-Zoubi"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the ID number?",
+     "accept": [
+      "9876543210"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رسوم العضوية؟",
+     "accept": [
+      "25.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "ليلى",
+    "Membership",
+    "9876543210"
+   ],
+   "fields": [
+    {
+     "name": "id_number",
+     "type": "id",
+     "labels": [
+      "رقم الهوية",
+      "ID number"
+     ],
+     "accept": [
+      "9876543210"
+     ]
+    },
+    {
+     "name": "date_of_birth",
+     "type": "date",
+     "labels": [
+      "Date of birth",
+      "تاريخ الميلاد"
+     ],
+     "accept": [
+      "1990-03-04"
+     ],
+     "ambiguous": true
+    },
+    {
+     "name": "application_date",
+     "type": "date",
+     "labels": [
+      "Application date",
+      "تاريخ الطلب"
+     ],
+     "accept": [
+      "2024-09-02"
+     ]
+    },
+    {
+     "name": "email",
+     "type": "email",
+     "labels": [
+      "Email"
+     ],
+     "accept": [
+      "layla.zoubi@example.org"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice number?"
+   ],
+   "notes": "Date of birth 03/04/1990 is ambiguous on purpose: month-first gives 1990-03-04 and must be flagged."
+  },
+  {
+   "id": "syn-lease-digital",
+   "group": "syn-lease",
+   "split": "reserved",
+   "file": "syn-ar-lease-digital.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (apartment lease)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "من المؤجر؟",
+     "accept": [
+      "كريم فؤاد الشامي"
+     ],
+     "page": 1
+    },
+    {
+     "q": "كم الأجرة الشهرية؟",
+     "accept": [
+      "8,000",
+      "ثمانية آلاف"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المحكمة المختصة بالنزاع؟",
+     "accept": [
+      "محاكم الجيزة"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "الشامي",
+    "8,000",
+    "الجيزة"
+   ],
+   "fields": [
+    {
+     "name": "monthly_rent",
+     "type": "money",
+     "labels": [
+      "الأجرة الشهرية"
+     ],
+     "accept": [
+      "8000"
+     ]
+    },
+    {
+     "name": "tenant",
+     "type": "text",
+     "labels": [
+      "المستأجر"
+     ],
+     "accept": [
+      "نور الهدى عادل سليم"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة الضريبية؟"
+   ]
+  },
+  {
+   "id": "syn-lease-scan",
+   "group": "syn-lease",
+   "split": "reserved",
+   "file": "syn-ar-lease-scan.jpg",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": false,
+   "source": "SYNTHETIC: degraded image of syn-lease-digital",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "من المستأجر؟",
+     "accept": [
+      "نور الهدى عادل سليم"
+     ],
+     "page": 1
+    },
+    {
+     "q": "كم مبلغ التأمين؟",
+     "accept": [
+      "16,000"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما مدة العقد؟",
+     "accept": [
+      "سنتان"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "الشامي",
+    "8,000",
+    "الجيزة"
+   ],
+   "fields": [
+    {
+     "name": "monthly_rent",
+     "type": "money",
+     "labels": [
+      "الأجرة الشهرية"
+     ],
+     "accept": [
+      "8000"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الضريبة؟"
+   ]
+  },
+  {
+   "id": "syn-salary-digital",
+   "group": "syn-salary",
+   "split": "reserved",
+   "file": "syn-mx-salary-letter-digital.pdf",
+   "lang": "mixed",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (bilingual salary certificate letter)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "ما الراتب الشهري الإجمالي؟",
+     "accept": [
+      "18,500",
+      "18500"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the employee's job title?",
+     "accept": [
+      "مهندس برمجيات أول"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who signed as HR manager?",
+     "accept": [
+      "Sara Ibrahim",
+      "سارة إبراهيم"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "عمر يوسف الخطيب",
+    "18,500",
+    "المدار"
+   ],
+   "fields": [
+    {
+     "name": "reference",
+     "type": "id",
+     "labels": [
+      "Ref"
+     ],
+     "accept": [
+      "HR/2024/318"
+     ]
+    },
+    {
+     "name": "date",
+     "type": "date",
+     "labels": [
+      "Date"
+     ],
+     "accept": [
+      "2024-10-21"
+     ]
+    },
+    {
+     "name": "salary",
+     "type": "money",
+     "labels": [
+      "راتباً شهرياً إجمالياً قدره"
+     ],
+     "accept": [
+      "18500"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the employee's passport number?"
+   ]
+  },
+  {
+   "id": "f-r32-en",
+   "group": "un-S/2024/32",
+   "split": "fresh",
+   "file": "f-r32-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/32 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who would represent Brazil at the meeting?",
+     "accept": [
+      "Helene Lobato da Jornada",
+      "Lobato da Jornada"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which meeting of the Security Council is mentioned?",
+     "accept": [
+      "9299th",
+      "9299"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Brazil",
+    "credentials",
+    "Lobato da Jornada"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the invoice total?"
+   ]
+  },
+  {
+   "id": "f-r32-ar",
+   "group": "un-S/2024/32",
+   "split": "fresh",
+   "file": "f-r32-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/32 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من ستمثل البرازيل في الجلسة؟",
+     "accept": [
+      "هيلينا لوباتو دا جورنادا",
+      "لوباتو دا جورنادا"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما رقم جلسة مجلس الأمن المذكورة؟",
+     "accept": [
+      "9299"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "البرازيل",
+    "وثائق تفويض",
+    "جورنادا"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "ما قيمة الضريبة؟"
+   ]
+  },
+  {
+   "id": "f-r40-en",
+   "group": "un-S/2024/40",
+   "split": "fresh",
+   "file": "f-r40-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/40 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Which country's alternate representatives are reported?",
+     "accept": [
+      "Mozambique"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the date of the letter the Secretary-General received?",
+     "accept": [
+      "27 February 2023",
+      "2023-02-27"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Mozambique",
+    "alternate representatives",
+    "credentials"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the governing law?"
+   ]
+  },
+  {
+   "id": "f-r40-ar",
+   "group": "un-S/2024/40",
+   "split": "fresh",
+   "file": "f-r40-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/40 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "ممثلو أي بلد المناوبون؟",
+     "accept": [
+      "موزامبيق"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما تاريخ الرسالة التي تلقاها الأمين العام؟",
+     "accept": [
+      "27 شباط/فبراير 2023",
+      "27 شباط"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "موزامبيق",
+    "المناوبين",
+    "وثائق تفويض"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "2024-01-02"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  },
+  {
+   "id": "f-l35-en",
+   "group": "un-S/2024/35",
+   "split": "fresh",
+   "file": "f-l35-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/35 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Sidi Mohamed Laghdaf",
+      "Laghdaf"
+     ],
+     "page": 1
+    },
+    {
+     "q": "With which country does the statement express solidarity?",
+     "accept": [
+      "Somalia"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Mauritania",
+    "Somalia",
+    "Organization of Islamic Cooperation"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2024-01-09"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the contract term?"
+   ]
+  },
+  {
+   "id": "f-l35-ar",
+   "group": "un-S/2024/35",
+   "split": "fresh",
+   "file": "f-l35-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/35 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "سيدي محمد لغظف",
+      "لغظف"
+     ],
+     "page": 1
+    },
+    {
+     "q": "مع أي بلد يعرب البيان عن التضامن؟",
+     "accept": [
+      "الصومال"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "موريتانيا",
+    "الصومال",
+    "منظمة التعاون الإسلامي"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2024-01-09"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الإيصال؟"
+   ]
+  },
+  {
+   "id": "f-l43-en",
+   "group": "un-S/2024/43",
+   "split": "fresh",
+   "file": "f-l43-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/43 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who is the President of the Security Council who signed the letter?",
+     "accept": [
+      "Nicolas de Rivière",
+      "de Rivière"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which commission does the support team assist?",
+     "accept": [
+      "Cameroon-Nigeria Mixed Commission"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Cameroon-Nigeria",
+    "support team",
+    "regular budget"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2024-01-09"
+     ]
+    }
+   ],
+   "missing": [
+    "What is the VAT amount?"
+   ]
+  },
+  {
+   "id": "f-l43-ar",
+   "group": "un-S/2024/43",
+   "split": "fresh",
+   "file": "f-l43-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2024/43 (Arabic)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "نيكولا دي ريفيير",
+      "دي ريفيير"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما اللجنة التي يدعمها الفريق؟",
+     "accept": [
+      "لجنة الكاميرون ونيجيريا المختلطة",
+      "الكاميرون ونيجيريا"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "الكاميرون",
+    "نيجيريا",
+    "الميزانية العادية"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2024-01-09"
+     ]
+    }
+   ],
+   "missing": [
+    "ما اسم المستأجر؟"
+   ]
+  },
+  {
+   "id": "f-syn-lease2-digital",
+   "group": "syn-lease2",
+   "split": "fresh",
+   "file": "syn-ar-lease2-digital.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (shop lease, Jeddah)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "من المستأجر؟",
+     "accept": [
+      "فهد ناصر العتيبي"
+     ],
+     "page": 1
+    },
+    {
+     "q": "كم الأجرة الشهرية؟",
+     "accept": [
+      "5,000",
+      "خمسة آلاف"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المحكمة المختصة؟",
+     "accept": [
+      "المحكمة التجارية في جدة",
+      "المحكمة التجارية"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "العتيبي",
+    "5,000",
+    "جدة"
+   ],
+   "fields": [
+    {
+     "name": "monthly_rent",
+     "type": "money",
+     "labels": [
+      "الأجرة الشهرية"
+     ],
+     "accept": [
+      "5000"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  },
+  {
+   "id": "f-syn-lease2-scan",
+   "group": "syn-lease2",
+   "split": "fresh",
+   "file": "syn-ar-lease2-scan.jpg",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": false,
+   "source": "SYNTHETIC: bench/usecases/make_synthetic.py (shop lease, Jeddah)",
+   "licence": "generated",
+   "gold_from": "generator data",
+   "qa": [
+    {
+     "q": "من المستأجر؟",
+     "accept": [
+      "فهد ناصر العتيبي"
+     ],
+     "page": 1
+    },
+    {
+     "q": "كم الأجرة الشهرية؟",
+     "accept": [
+      "5,000",
+      "خمسة آلاف"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المحكمة المختصة؟",
+     "accept": [
+      "المحكمة التجارية في جدة",
+      "المحكمة التجارية"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "العتيبي",
+    "5,000",
+    "جدة"
+   ],
+   "fields": [
+    {
+     "name": "monthly_rent",
+     "type": "money",
+     "labels": [
+      "الأجرة الشهرية"
+     ],
+     "accept": [
+      "5000"
+     ]
+    }
+   ],
+   "missing": [
+    "ما رقم الفاتورة؟"
+   ]
+  }
+ ],
+ "library_tasks": [
+  {
+   "id": "dev-find-en",
+   "split": "dev",
+   "kind": "find",
+   "request": "Which document is the letter from the Permanent Representative of Iran dated 6 February 2023?",
+   "expect_docs": [
+    "un90-en"
+   ]
+  },
+  {
+   "id": "dev-find-ar",
+   "split": "dev",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتضمن رسالة الممثل الدائم لهندوراس المؤرخة في 11 نيسان/أبريل 1983؟",
+   "expect_docs": [
+    "s15700-ar"
+   ]
+  },
+  {
+   "id": "dev-compare-letters",
+   "split": "dev",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "scope": [
+    "un50-en",
+    "un90-en"
+   ],
+   "expect_values": {
+    "un50-en": "2023-01-18",
+    "un90-en": "2023-02-06"
+   }
+  },
+  {
+   "id": "dev-count-receipts",
+   "split": "dev",
+   "kind": "count",
+   "request": "How many receipts are there?",
+   "expect_number": 6
+  },
+  {
+   "id": "dev-sum-receipts",
+   "split": "dev",
+   "kind": "sum",
+   "request": "What is the total of all receipts?",
+   "scope_type": "receipt",
+   "expect_number": 943.6
+  },
+  {
+   "id": "dev-filter-receipts",
+   "split": "dev",
+   "kind": "filter",
+   "request": "Show the receipts with a total above 150",
+   "expect_docs": [
+    "coru-abuauf-mall",
+    "coru-abuauf-order",
+    "coru-abuauf-credit"
+   ]
+  },
+  {
+   "id": "dev-export-invoices",
+   "split": "dev",
+   "kind": "export",
+   "request": "Export the invoice number, date and total of the invoices to CSV",
+   "scope": [
+    "inv-lkxd0060",
+    "inv-tgmf0040",
+    "inv-hjfp0094",
+    "voxel-0027",
+    "syn-inv-digital"
+   ],
+   "expect_rows": {
+    "inv-lkxd0060": {
+     "invoice_number": "2750",
+     "date": "2000-04-10",
+     "total": "2000"
+    },
+    "inv-tgmf0040": {
+     "invoice_number": "019114",
+     "date": "1982-01-31",
+     "total": "70"
+    },
+    "inv-hjfp0094": {
+     "invoice_number": "PR01-005651",
+     "date": "2000-01-04",
+     "total": "31000"
+    },
+    "voxel-0027": {
+     "invoice_number": "44848471",
+     "date": "2021-03-26",
+     "total": "838.68"
+    },
+    "syn-inv-digital": {
+     "invoice_number": "INV-7731",
+     "date": "2024-05-12",
+     "total": "4600"
+    }
+   }
+  },
+  {
+   "id": "dev-unsupported-translate",
+   "split": "dev",
+   "kind": "unsupported",
+   "request": "Translate this letter into French",
+   "scope": [
+    "un50-en"
+   ]
+  },
+  {
+   "id": "dev-unsupported-email",
+   "split": "dev",
+   "kind": "unsupported",
+   "request": "أرسل هذه الفاتورة بالبريد الإلكتروني إلى المحاسب",
+   "scope": [
+    "syn-inv-digital"
+   ]
+  },
+  {
+   "id": "res-find-en",
+   "split": "reserved",
+   "kind": "find",
+   "request": "Which document reports violations of Iraqi territory by Türkiye?",
+   "expect_docs": [
+    "un500-en"
+   ]
+  },
+  {
+   "id": "res-find-ar",
+   "split": "reserved",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتحدث عن عرقلة مبادرة البحر الأسود لنقل الحبوب؟",
+   "expect_docs": [
+    "un110-ar"
+   ]
+  },
+  {
+   "id": "res-compare-letters",
+   "split": "reserved",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "scope": [
+    "un110-en",
+    "un500-en"
+   ],
+   "expect_values": {
+    "un110-en": "2023-02-15",
+    "un500-en": "2022-06-21"
+   }
+  },
+  {
+   "id": "res-count-receipts",
+   "split": "reserved",
+   "kind": "count",
+   "request": "How many receipts are there?",
+   "expect_number": 4
+  },
+  {
+   "id": "res-sum-receipts",
+   "split": "reserved",
+   "kind": "sum",
+   "request": "What is the total of all receipts?",
+   "scope_type": "receipt",
+   "expect_number": 419.0,
+   "notes": "Alfa 100 + TEMA 249 + McDonald's 70; Dunkin has no annotated total and is excluded from the expected sum, so a correct answer reports it as left out."
+  },
+  {
+   "id": "res-filter-receipts",
+   "split": "reserved",
+   "kind": "filter",
+   "request": "Show the receipts with a total above 150",
+   "expect_docs": [
+    "coru-tema"
+   ]
+  },
+  {
+   "id": "res-export-invoices",
+   "split": "reserved",
+   "kind": "export",
+   "request": "Export the invoice number, date and total of the invoices to CSV",
+   "scope": [
+    "inv-fxnb0017",
+    "inv-gnfk0009",
+    "inv-sfwb0046",
+    "voxel-holdout-0023"
+   ],
+   "expect_rows": {
+    "inv-fxnb0017": {
+     "invoice_number": "PM1002",
+     "date": "1997-08-21",
+     "total": "2035"
+    },
+    "inv-gnfk0009": {
+     "invoice_number": "12410",
+     "date": "1998-04-29",
+     "total": "78.75"
+    },
+    "inv-sfwb0046": {
+     "invoice_number": "133255698",
+     "date": "1987-11-09",
+     "total": "1634.52"
+    },
+    "voxel-holdout-0023": {
+     "invoice_number": "33102457",
+     "date": "2018-09-18",
+     "total": "18281.24"
+    }
+   }
+  },
+  {
+   "id": "res-unsupported-translate",
+   "split": "reserved",
+   "kind": "unsupported",
+   "request": "ترجم هذه الرسالة إلى الإنجليزية",
+   "scope": [
+    "un110-ar"
+   ]
+  },
+  {
+   "id": "res-unsupported-sign",
+   "split": "reserved",
+   "kind": "unsupported",
+   "request": "Sign this contract on my behalf",
+   "scope": [
+    "cuad-curaegis"
+   ]
+  },
+  {
+   "id": "fresh-find-en",
+   "split": "fresh",
+   "kind": "find",
+   "request": "Which document reports the credentials of the representative of Brazil?",
+   "expect_docs": [
+    "f-r32-en"
+   ]
+  },
+  {
+   "id": "fresh-find-ar",
+   "split": "fresh",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتضمن وثائق تفويض الممثلين المناوبين لموزامبيق؟",
+   "expect_docs": [
+    "f-r40-ar"
+   ]
+  },
+  {
+   "id": "fresh-compare-letters",
+   "split": "fresh",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "scope": [
+    "f-l35-en",
+    "f-l43-en"
+   ],
+   "expect_values": {
+    "f-l35-en": "2024-01-09",
+    "f-l43-en": "2024-01-09"
+   }
+  },
+  {
+   "id": "fresh-unsupported",
+   "split": "fresh",
+   "kind": "unsupported",
+   "request": "Translate this report into Spanish",
+   "scope": [
+    "f-r32-en"
+   ]
+  }
+ ]
+}

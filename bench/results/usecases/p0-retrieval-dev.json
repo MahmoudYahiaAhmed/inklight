@@ -1,0 +1,862 @@
+{
+ "summary": {
+  "en": {
+   "questions": 53,
+   "keyword_at1": 24,
+   "hybrid_at1": 26,
+   "keyword_at3": 37,
+   "hybrid_at3": 42,
+   "hybrid_better": 17,
+   "hybrid_worse": 12
+  },
+  "ar": {
+   "questions": 36,
+   "keyword_at1": 11,
+   "hybrid_at1": 12,
+   "keyword_at3": 29,
+   "hybrid_at3": 20,
+   "hybrid_better": 6,
+   "hybrid_worse": 19
+  },
+  "mixed": {
+   "questions": 12,
+   "keyword_at1": 2,
+   "hybrid_at1": 2,
+   "keyword_at3": 7,
+   "hybrid_at3": 5,
+   "hybrid_better": 1,
+   "hybrid_worse": 3
+  }
+ },
+ "rows": [
+  {
+   "doc": "un50-en",
+   "lang": "en",
+   "q": "What is the date of the letter?",
+   "keyword": 5,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un50-en",
+   "lang": "en",
+   "q": "Who signed the letter?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un50-en",
+   "lang": "en",
+   "q": "Which region does the communiqué concern?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un50-ar",
+   "lang": "ar",
+   "q": "ما تاريخ هذه الرسالة؟",
+   "keyword": 3,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un50-ar",
+   "lang": "ar",
+   "q": "من وقّع الرسالة؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un50-ar",
+   "lang": "ar",
+   "q": "عن أي منطقة يتحدث البيان المرفق؟",
+   "keyword": 2,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-en",
+   "lang": "en",
+   "q": "Who sent the letter?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-en",
+   "lang": "en",
+   "q": "When was the Security Council briefing on the situation concerning Iraq held?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-en",
+   "lang": "en",
+   "q": "Under which law did Iran say it exercised its right to self-defence?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-ar",
+   "lang": "ar",
+   "q": "من أرسل هذه الرسالة؟",
+   "keyword": 4,
+   "hybrid": 8,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-ar",
+   "lang": "ar",
+   "q": "إلى من وُجّهت الرسالة؟",
+   "keyword": 3,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "un90-ar",
+   "lang": "ar",
+   "q": "ما تاريخ الرسالة؟",
+   "keyword": 10,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-en",
+   "lang": "en",
+   "q": "Which resolution established the Investigative Team?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-en",
+   "lang": "en",
+   "q": "What is the Investigative Team known as?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-en",
+   "lang": "en",
+   "q": "The report covers the implementation of which resolution?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-ar",
+   "lang": "ar",
+   "q": "ما القرار الذي طلب فيه مجلس الأمن إنشاء فريق التحقيق؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-ar",
+   "lang": "ar",
+   "q": "تنفيذ أي قرار يتناوله هذا التقرير؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "r20-ar",
+   "lang": "ar",
+   "q": "من أعدّ هذا التقرير؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-en",
+   "lang": "en",
+   "q": "What is the date of the letter?",
+   "keyword": 6,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-en",
+   "lang": "en",
+   "q": "Which city was hit by artillery fire on 8 September?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-en",
+   "lang": "en",
+   "q": "Which mission sent the letter?",
+   "keyword": 4,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-ar",
+   "lang": "ar",
+   "q": "ما تاريخ الرسالة؟",
+   "keyword": 5,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-ar",
+   "lang": "ar",
+   "q": "من أي بعثة أُرسلت الرسالة؟",
+   "keyword": 5,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s16000-ar",
+   "lang": "ar",
+   "q": "ما المدينة التي قُصفت بالمدفعية؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-en",
+   "lang": "en",
+   "q": "Which country's Permanent Representative wrote the letter?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-en",
+   "lang": "en",
+   "q": "Who is the Minister for Foreign Affairs of Honduras?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-en",
+   "lang": "en",
+   "q": "What is the date of the letter?",
+   "keyword": 4,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-ar",
+   "lang": "ar",
+   "q": "ممثل أي بلد كتب هذه الرسالة؟",
+   "keyword": 3,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-ar",
+   "lang": "ar",
+   "q": "ما تاريخ الرسالة؟",
+   "keyword": 4,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "s15700-ar",
+   "lang": "ar",
+   "q": "إلى من وُجّهت الرسالة؟",
+   "keyword": 2,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-en",
+   "lang": "en",
+   "q": "What does resolution 3314 define?",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-en",
+   "lang": "en",
+   "q": "On what date was resolution 3314 adopted?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-en",
+   "lang": "en",
+   "q": "At which plenary meeting was resolution 3314 adopted?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-ar",
+   "lang": "ar",
+   "q": "ما موضوع القرار ٣٣١٤؟",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-ar",
+   "lang": "ar",
+   "q": "متى اعتُمد القرار؟",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "res3314-ar",
+   "lang": "ar",
+   "q": "في أي جلسة عامة اعتُمد القرار؟",
+   "keyword": 3,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-en",
+   "lang": "en",
+   "q": "What does the model agreement concern?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-en",
+   "lang": "en",
+   "q": "When was the document issued?",
+   "keyword": 1,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-en",
+   "lang": "en",
+   "q": "Which resolution requested the model agreement?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-ar",
+   "lang": "ar",
+   "q": "ما موضوع نموذج الاتفاق؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-ar",
+   "lang": "ar",
+   "q": "ما رقم القرار الذي طلب إعداد النموذج؟",
+   "keyword": 4,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "a45594-ar",
+   "lang": "ar",
+   "q": "لمن قُدّم التقرير؟",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-imperial",
+   "lang": "en",
+   "q": "When was the agreement signed?",
+   "keyword": 9,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-imperial",
+   "lang": "en",
+   "q": "Which court has jurisdiction?",
+   "keyword": 9,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-imperial",
+   "lang": "en",
+   "q": "Who is the architect?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-rare",
+   "lang": "en",
+   "q": "What is the date of the agreement?",
+   "keyword": 3,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-rare",
+   "lang": "en",
+   "q": "Which law governs the agreement?",
+   "keyword": 2,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-rare",
+   "lang": "en",
+   "q": "Who are the parties?",
+   "keyword": 4,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-lucid",
+   "lang": "en",
+   "q": "Which law governs the agreement?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "cuad-lucid",
+   "lang": "en",
+   "q": "How long is the initial term of the agreement?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w9",
+   "lang": "en",
+   "q": "What is this form requesting?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w9",
+   "lang": "en",
+   "q": "What is the revision date of the form?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "irs-w9",
+   "lang": "en",
+   "q": "Should the form be sent to the IRS?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82092117",
+   "lang": "en",
+   "q": "Who is the fax addressed to?",
+   "keyword": 3,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82092117",
+   "lang": "en",
+   "q": "How many pages including the cover sheet?",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82092117",
+   "lang": "en",
+   "q": "What is the phone number?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82250337",
+   "lang": "en",
+   "q": "Who is the form from?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82250337",
+   "lang": "en",
+   "q": "What brand is tested?",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "funsd-82250337",
+   "lang": "en",
+   "q": "Who is the manufacturer?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-lkxd0060",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 4,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-lkxd0060",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": 4,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-tgmf0040",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 3,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-tgmf0040",
+   "lang": "en",
+   "q": "What is the invoice date?",
+   "keyword": 3,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-hjfp0094",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "inv-hjfp0094",
+   "lang": "en",
+   "q": "What is the due date?",
+   "keyword": 1,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-0027",
+   "lang": "en",
+   "q": "What is the invoice number?",
+   "keyword": 8,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-0027",
+   "lang": "en",
+   "q": "What is the total?",
+   "keyword": 6,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "voxel-0027",
+   "lang": "en",
+   "q": "Who is the seller?",
+   "keyword": 1,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-magicplanet",
+   "lang": "en",
+   "q": "What is the receipt number?",
+   "keyword": 5,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-magicplanet",
+   "lang": "en",
+   "q": "What is the total amount?",
+   "keyword": 8,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-magicplanet",
+   "lang": "en",
+   "q": "What is the VAT amount?",
+   "keyword": 7,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-mall",
+   "lang": "en",
+   "q": "What is the transaction number?",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-mall",
+   "lang": "en",
+   "q": "What was the total amount?",
+   "keyword": 9,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-mall",
+   "lang": "en",
+   "q": "Who was the cashier?",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-order",
+   "lang": "mixed",
+   "q": "What is the order number?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-order",
+   "lang": "mixed",
+   "q": "What is the total price?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-order",
+   "lang": "mixed",
+   "q": "ما هي تكلفة الشحن؟",
+   "keyword": 1,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-credit",
+   "lang": "mixed",
+   "q": "What is the transaction number?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-credit",
+   "lang": "mixed",
+   "q": "Who is the customer?",
+   "keyword": 2,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-abuauf-credit",
+   "lang": "mixed",
+   "q": "What was the total amount?",
+   "keyword": 2,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-starbucks",
+   "lang": "mixed",
+   "q": "What is the check number?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-starbucks",
+   "lang": "mixed",
+   "q": "What is the total payment amount?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-starbucks",
+   "lang": "mixed",
+   "q": "What is the TAX Card number?",
+   "keyword": 2,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-masary",
+   "lang": "mixed",
+   "q": "What is the operation number?",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-masary",
+   "lang": "mixed",
+   "q": "ما رقم العملية؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "coru-masary",
+   "lang": "mixed",
+   "q": "ما المبلغ الإجمالي؟",
+   "keyword": 3,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "wiki-egypt",
+   "lang": "ar",
+   "q": "ما عاصمة مصر؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "wiki-egypt",
+   "lang": "ar",
+   "q": "من رئيس مصر؟",
+   "keyword": 1,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "wiki-egypt",
+   "lang": "ar",
+   "q": "من رئيس الوزراء؟",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-digital",
+   "lang": "ar",
+   "q": "ما اسم المتدرب؟",
+   "keyword": 2,
+   "hybrid": 6,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-digital",
+   "lang": "ar",
+   "q": "ما رقم الشهادة؟",
+   "keyword": 1,
+   "hybrid": 4,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-digital",
+   "lang": "ar",
+   "q": "كم عدد الساعات التدريبية؟",
+   "keyword": null,
+   "hybrid": null,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-photo",
+   "lang": "ar",
+   "q": "ما اسم المتدرب؟",
+   "keyword": 3,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-photo",
+   "lang": "ar",
+   "q": "ما رقم الشهادة؟",
+   "keyword": 2,
+   "hybrid": 5,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-cert-photo",
+   "lang": "ar",
+   "q": "ما تقدير المتدرب؟",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-digital",
+   "lang": "ar",
+   "q": "ما رقم الفاتورة؟",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-digital",
+   "lang": "ar",
+   "q": "ما الإجمالي؟",
+   "keyword": 3,
+   "hybrid": 1,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-digital",
+   "lang": "ar",
+   "q": "من المشتري؟",
+   "keyword": 1,
+   "hybrid": 2,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-scan",
+   "lang": "ar",
+   "q": "ما رقم الفاتورة؟",
+   "keyword": 2,
+   "hybrid": 3,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-scan",
+   "lang": "ar",
+   "q": "ما تاريخ الاستحقاق؟",
+   "keyword": 2,
+   "hybrid": 7,
+   "method": "hybrid"
+  },
+  {
+   "doc": "syn-inv-scan",
+   "lang": "ar",
+   "q": "من البائع؟",
+   "keyword": 2,
+   "hybrid": 4,
+   "method": "hybrid"
+  }
+ ],
+ "onnx": {
+  "embedder": 101
+ },
+ "brain_usage": {
+  "reader": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": true,
+   "inference_calls": 101,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ },
+ "documents_in_library": 35
+}

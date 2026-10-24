@@ -1,0 +1,474 @@
+{
+  "env": {
+    "python": "3.12.10",
+    "platform": "Windows AMD64",
+    "cpu_count": 16,
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "date": "2026-10-25"
+  },
+  "import_s": 0.346,
+  "cli_version_s": 0.533,
+  "indra_load_s": 0.78,
+  "ocr_ms_per_page": {
+    "digital_pdf_page": {
+      "median": 42.9,
+      "p90": 52.7,
+      "n": 20
+    },
+    "scanned_image_page": {
+      "median": 99.9,
+      "p90": 106.7,
+      "n": 20
+    }
+  },
+  "fidelity_rules": {
+    "exact_set_accuracy": 0.889,
+    "unsupported_flagged": "3/3",
+    "sum_matches_truth": true,
+    "items": [
+      {
+        "request": "Find invoices above $5,000",
+        "exact": true,
+        "returned": 28,
+        "expected": 28,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne above $2,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "partial"
+      },
+      {
+        "request": "Find invoices below $1,000 or above $10,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices between $1,000 and $3,000",
+        "exact": true,
+        "returned": 8,
+        "expected": 8,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices not from Wayne",
+        "exact": false,
+        "returned": 30,
+        "expected": 31,
+        "state": "partial"
+      },
+      {
+        "request": "how many invoices are above $8,000?",
+        "exact": true,
+        "returned": 13,
+        "expected": 13,
+        "state": "succeeded"
+      },
+      {
+        "request": "Extract totals from Wayne",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "partial"
+      },
+      {
+        "request": "Find invoices between $1,000 and $3,000 or above $10,000",
+        "exact": true,
+        "returned": 15,
+        "expected": 15,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne or Acme",
+        "exact": true,
+        "returned": 11,
+        "expected": 11,
+        "state": "partial"
+      }
+    ],
+    "unsupported": [
+      {
+        "request": "Find invoices that were paid late",
+        "flagged": true,
+        "not_understood": [
+          "paid late"
+        ]
+      },
+      {
+        "request": "invoices from last month",
+        "flagged": true,
+        "not_understood": [
+          "last month"
+        ]
+      },
+      {
+        "request": "top 3 invoices by total",
+        "flagged": true,
+        "not_understood": [
+          "top 3"
+        ]
+      }
+    ]
+  },
+  "extraction_rules": {
+    "by_layout": {
+      "A": 1.0,
+      "B": 1.0,
+      "C": 0.897
+    },
+    "documents": 40,
+    "failed": 0,
+    "ingest_s": 3.48,
+    "pages_per_s": 11.51,
+    "extract_s": 0.12,
+    "field_accuracy": {
+      "invoice_number": 1.0,
+      "vendor": 0.975,
+      "date": 0.825,
+      "subtotal": 1.0,
+      "tax": 1.0,
+      "total": 1.0
+    },
+    "overall_accuracy": 0.967,
+    "digital_accuracy": 0.975,
+    "scanned_accuracy": 0.958,
+    "wrong_values": 8,
+    "wrong_values_flagged": 8,
+    "brain": "rules"
+  },
+  "qa_rules": {
+    "accuracy": 0.917,
+    "citation_accuracy": 0.917,
+    "median_ms": 2.9,
+    "max_ms": 12.9,
+    "items": [
+      {
+        "q": "What is the total of the Globex invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 12.9,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What is the invoice number of the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 7.1,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.1,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 2.6,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What was revenue growth in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 2.5,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What was the revenue in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 2.3,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "How much notice is needed to terminate?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 5.2,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "Which state's law governs the agreement?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 2.7,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What does the memo say about onboarding?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 2.3,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What is the contract value of the office lease?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 3.3,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "Who is the provider in the cloud services agreement?",
+        "correct": false,
+        "citation_ok": false,
+        "ms": 2.6,
+        "brain": "rules (planner: rules)"
+      },
+      {
+        "q": "What are the payment terms on the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 6.2,
+        "brain": "rules (planner: rules)"
+      }
+    ]
+  },
+  "task_latency_ms_rules": {
+    "filter": 4.6,
+    "compare": 4.1,
+    "aggregate": 6.0,
+    "summarize": 1.2
+  },
+  "fidelity_auto": {
+    "exact_set_accuracy": 1.0,
+    "unsupported_flagged": "3/3",
+    "sum_matches_truth": true,
+    "items": [
+      {
+        "request": "Find invoices above $5,000",
+        "exact": true,
+        "returned": 28,
+        "expected": 28,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne above $2,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices below $1,000 or above $10,000",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices between $1,000 and $3,000",
+        "exact": true,
+        "returned": 8,
+        "expected": 8,
+        "state": "succeeded"
+      },
+      {
+        "request": "invoices not from Wayne",
+        "exact": true,
+        "returned": 31,
+        "expected": 31,
+        "state": "succeeded"
+      },
+      {
+        "request": "how many invoices are above $8,000?",
+        "exact": true,
+        "returned": 13,
+        "expected": 13,
+        "state": "succeeded"
+      },
+      {
+        "request": "Extract totals from Wayne",
+        "exact": true,
+        "returned": 9,
+        "expected": 9,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices between $1,000 and $3,000 or above $10,000",
+        "exact": true,
+        "returned": 15,
+        "expected": 15,
+        "state": "succeeded"
+      },
+      {
+        "request": "Find invoices from Wayne or Acme",
+        "exact": true,
+        "returned": 11,
+        "expected": 11,
+        "state": "succeeded"
+      }
+    ],
+    "unsupported": [
+      {
+        "request": "Find invoices that were paid late",
+        "flagged": true,
+        "not_understood": [
+          "paid late"
+        ]
+      },
+      {
+        "request": "invoices from last month",
+        "flagged": true,
+        "not_understood": [
+          "last month"
+        ]
+      },
+      {
+        "request": "top 3 invoices by total",
+        "flagged": true,
+        "not_understood": [
+          "top 3"
+        ]
+      }
+    ]
+  },
+  "extraction_auto": {
+    "by_layout": {
+      "A": 1.0,
+      "B": 1.0,
+      "C": 0.897
+    },
+    "documents": 40,
+    "failed": 0,
+    "ingest_s": 3.83,
+    "pages_per_s": 10.43,
+    "extract_s": 0.22,
+    "field_accuracy": {
+      "invoice_number": 1.0,
+      "vendor": 0.975,
+      "date": 0.825,
+      "subtotal": 1.0,
+      "tax": 1.0,
+      "total": 1.0
+    },
+    "overall_accuracy": 0.967,
+    "digital_accuracy": 0.975,
+    "scanned_accuracy": 0.958,
+    "wrong_values": 8,
+    "wrong_values_flagged": 8,
+    "brain": "reader:66M+embedder:33M"
+  },
+  "qa_auto": {
+    "accuracy": 0.917,
+    "citation_accuracy": 0.917,
+    "median_ms": 65.2,
+    "max_ms": 81.5,
+    "items": [
+      {
+        "q": "What is the total of the Globex invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 14.5,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "What is the invoice number of the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 13.4,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 63.9,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "How many employees were there in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 66.2,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What was revenue growth in Q2?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 64.2,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What was the revenue in Q1?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 81.4,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "How much notice is needed to terminate?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 77.1,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "Which state's law governs the agreement?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 81.5,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What does the memo say about onboarding?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 67.7,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What is the contract value of the office lease?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 7.8,
+        "brain": "embedder (planner: rules)"
+      },
+      {
+        "q": "Who is the provider in the cloud services agreement?",
+        "correct": false,
+        "citation_ok": false,
+        "ms": 71.9,
+        "brain": "embedder+reader (planner: rules)"
+      },
+      {
+        "q": "What are the payment terms on the Acme invoice?",
+        "correct": true,
+        "citation_ok": true,
+        "ms": 39.1,
+        "brain": "embedder+reader (planner: rules)"
+      }
+    ]
+  },
+  "task_latency_ms_auto": {
+    "filter": 6.3,
+    "compare": 4.4,
+    "aggregate": 5.8,
+    "summarize": 1.2
+  },
+  "planner_rules": {
+    "accuracy": 1.0,
+    "n": 40
+  },
+  "planner_writer_135m": {
+    "accuracy": 0.275,
+    "n": 40,
+    "ms_per_request": 559.9
+  },
+  "ingest_profile_share": {
+    "indra_ocr_python": 0.655,
+    "inklight_python": 0.004,
+    "native_c_calls": 0.299,
+    "other_python": 0.042
+  },
+  "peak_rss_mb": 0.0
+}
