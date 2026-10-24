@@ -97,6 +97,18 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   - `--predictions frozen|cached|full` separates re-extraction from stored OCR from a full pipeline run in an
     isolated library, and records the provenance of each.
   - `check_rehearsal.py` and `REHEARSAL.md` cover the 5–10 invoice human rehearsal, which has not run yet.
+- **Broken Arabic PDF text layers are OCR'd instead of indexed.** The UN's Arabic PDFs carry a text layer in
+  Arabic letters, but the wrong ones ("األمم" for "الأمم", "امرساااااا" for "المرسلة"). Indra's own checks
+  accept it, so the broken text was indexed, searched and quoted.
+  - *How it is detected:* `inklight.ocr.textcheck`. A page whose Arabic words show a split lam-alef or an
+    alef run in at least 1.5% of words, judged on 20 or more Arabic words, is read by OCR instead, and the
+    page and document say so.
+  - *Diagnostic, default `auto` mode:* key phrases on the two Arabic digital documents went 0/3 → 3/3 and
+    1/3 → 3/3, and QA 0/6 → 2/6. 18 pages were OCR'd again; ingest time for the 26 documents went 56 → 60 s.
+  - *False positives:* none on 124 pages of correct Arabic (65 OCR'd pages, 59 Wikipedia text-layer pages).
+  - If OCR of such a page fails or reads nothing, the layer is kept and the page says so. One page never
+    ends the document.
+  - Mode `text` still uses the layer as it is.
 - **Extraction reads month-name dates as invoices print them**: "JAN04/00", "04-JAN-00", "19Jun'22",
   "Sept 30, 82". Before, only 4-digit years with spaces were read. On 80 INV-CDIP invoices and 60 Voxel51
   invoices with date labels, correct dates went from 131 to 136 of 151 and missing from 13 to 7. No value

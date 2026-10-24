@@ -15,6 +15,7 @@ from typing import Any
 from ..config import OCRSettings
 from ..errors import ModelUnavailable, OCRError
 from ..schemas import BBox, Block, DocumentContent, PageContent, TextLine
+from .textcheck import layer_is_broken
 
 _IMAGE_KINDS = {"png", "jpeg", "tiff", "bmp", "webp"}
 
@@ -72,6 +73,13 @@ class IndraEngine:
         except Exception as exc:
             raise OCRError(f"{path.name}: {type(exc).__name__}: {exc}") from exc
         warnings = [f"Page {p.number} failed: {p.note}" for p in pages if p.source == "error"]
+        broken = [p for p in pages if p.note.startswith("broken Arabic text layer")]
+        reread = [str(p.number) for p in broken if p.source == "ocr"]
+        kept = [str(p.number) for p in broken if p.source != "ocr"]
+        if reread:
+            warnings.append(f"Pages {', '.join(reread)}: broken Arabic text layer, read by OCR instead")
+        if kept:
+            warnings.append(f"Pages {', '.join(kept)}: broken Arabic text layer; OCR failed, kept the text layer")
         if total > len(pages):
             warnings.append(f"Read the first {len(pages)} of {total} pages (max_pages limit)")
         return DocumentContent(
@@ -97,11 +105,38 @@ class IndraEngine:
         for index, page in conv.convert(path, max_pages=max_pages, password=password):
             w_pt, h_pt = sizes[index]
             scale = _pdf_scale(w_pt, h_pt, self.settings.dpi)
+            note = None
+            if self.settings.mode == "auto" and page.source in ("text", "hybrid") and _broken_layer(page):
+                page, note = self._reread_broken_page(conv, path, index, scale, password, page)
             width, height = w_pt * scale, h_pt * scale
             if page.rotation in (90, 270):
                 width, height = height, width
-            pages.append(_to_page(index + 1, page, width, height))
+            content = _to_page(index + 1, page, width, height)
+            if note:
+                content = content.model_copy(update={"note": f"{note}; {content.note}".rstrip("; ")})
+            pages.append(content)
         return pages, total
+
+    def _reread_broken_page(
+        self, conv: Any, path: Path, index: int, scale: float, password: str | None, layer_page: Any
+    ) -> tuple[Any, str]:
+        """OCR a page whose text layer is broken. If OCR fails or reads nothing, keep the layer: broken text is
+        still partly searchable, and one page must not end the document."""
+        import pypdfium2 as pdfium
+
+        try:
+            doc = pdfium.PdfDocument(str(path), password=password)
+            try:
+                arr = doc[index].render(scale=scale, grayscale=True).to_numpy()  # Indra's scale: same box frame
+            finally:
+                doc.close()
+            page = conv.ocr(arr[..., 0] if arr.ndim == 3 else arr)
+        except Exception as exc:  # noqa: BLE001 - recorded on the page, never fatal
+            return layer_page, f"broken Arabic text layer; OCR failed ({type(exc).__name__}), kept the text layer"
+        if not any(ln.text.strip() for ln in page.lines):
+            return layer_page, "broken Arabic text layer; OCR failed (read nothing), kept the text layer"
+        page.source = "ocr"
+        return page, "broken Arabic text layer; OCR instead"
 
     def _read_image(self, conv: Any, path: Path, max_pages: int) -> tuple[list[PageContent], int]:
         from indra_ocr.document import read_images
@@ -159,6 +194,10 @@ class IndraEngine:
             return None
         text = " ".join(ln.text for ln in result.lines if ln.text.strip())
         return text or None
+
+
+def _broken_layer(page: Any) -> bool:
+    return layer_is_broken(" ".join(ln.text for ln in page.lines))
 
 
 def _is_pdf(path: Path) -> bool:
