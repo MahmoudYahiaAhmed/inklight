@@ -87,6 +87,9 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
 - **Strict parsing of typed amounts** (`inklight.entered`). "100 + 20", "1e3", "12abc 34" and irregular groups
   are refused with the reason; they are no longer turned into numbers by deleting characters. Accounting
   parentheses keep their sign. The reviewer's exact input is stored and exported next to the parsed value.
+- **Typed dates follow the same rule** (`parse_entered_date`). A date can be typed the way the invoice prints
+  it ("JAN04/00", "04-JAN-00", "Jan. 4, 2000"), which the review form used to refuse. Input with extra words
+  ("01/31/82 approx") or two dates is now refused, where the first date used to be taken.
 - **Names in every script are compared correctly** (`inklight.textnorm`): different Arabic names were equal
   in the inconsistency check, because every non-ASCII letter was deleted.
 - Pilot evaluation:

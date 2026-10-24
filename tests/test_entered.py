@@ -5,7 +5,7 @@ from decimal import Decimal
 import pytest
 
 from inklight import DocumentAgent
-from inklight.entered import parse_entered_amount
+from inklight.entered import parse_entered_amount, parse_entered_date
 from inklight.errors import InputRejected
 
 from .conftest import make_settings
@@ -104,3 +104,54 @@ def test_an_older_review_table_gains_the_input_column(tmp_path):
         ReviewStore(store)
         columns = {row[1] for row in store._conn().execute("PRAGMA table_info(review_fields)")}
     assert "entered" in columns
+
+
+@pytest.mark.parametrize(
+    ("text", "iso"),
+    [
+        ("JAN04/00", "2000-01-04"),  # as the Bozell invoice in the rehearsal writes it
+        ("JAN24/00", "2000-01-24"),
+        ("FEB12/03", "2003-02-12"),
+        ("jan04/00", "2000-01-04"),
+        ("JAN 04/00", "2000-01-04"),
+        ("Jan-04-2000", "2000-01-04"),
+        ("Jan. 4, 2000", "2000-01-04"),
+        ("January 4 2000", "2000-01-04"),
+        ("Sept 30, 82", "1982-09-30"),
+        ("04-JAN-00", "2000-01-04"),
+        ("04JAN00", "2000-01-04"),
+        ("4 January 2000", "2000-01-04"),
+        ("4th Jan 2000", "2000-01-04"),
+        ("01/31/82", "1982-01-31"),  # numeric forms keep working
+        ("12-03-91", "1991-12-03"),
+        ("4/1/91", "1991-04-01"),
+        ("2026-01-31", "2026-01-31"),
+        ("  2000-01-04 ", "2000-01-04"),
+        ("٠١/٣١/١٩٨٢", "1982-01-31"),  # Arabic-Indic digits
+    ],
+)
+def test_entered_dates(text, iso):
+    assert parse_entered_date(text).isoformat() == iso
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "JAN32/00",  # no such day
+        "FEB30/03",
+        "13/13/2020",
+        "JAN04",  # no year
+        "JAN/00",
+        "JAN04/000",
+        "JANX4/00",
+        "Janu 4 2000",  # not a month name
+        "JAN04/00 approx",  # extra words are not dropped
+        "about 01/31/82",
+        "01/31/82 or 02/01/82",  # two dates
+        "soon",
+        "",
+    ],
+)
+def test_entered_dates_are_strict(text):
+    with pytest.raises(InputRejected):
+        parse_entered_date(text)

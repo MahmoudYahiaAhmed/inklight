@@ -67,6 +67,8 @@ def test_accept_correct_and_absent_keep_the_prediction(agent):
         ("total", "Rp 63.000", 63000.0),
         ("total", "-45.00", -45.0),
         ("date", "2026-01-31", "2026-01-31"),
+        ("date", "JAN04/00", "2000-01-04"),
+        ("due_date", "04-Jan-2000", "2000-01-04"),
     ],
 )
 def test_typed_values(agent, field, value, expected):
@@ -75,7 +77,9 @@ def test_typed_values(agent, field, value, expected):
     assert r.fields[0].final == expected
 
 
-@pytest.mark.parametrize(("field", "value"), [("total", "about ten"), ("date", "soon"), ("vendor", "   ")])
+@pytest.mark.parametrize(
+    ("field", "value"), [("total", "about ten"), ("date", "soon"), ("date", "01/31/82 approx"), ("vendor", "   ")]
+)
 def test_invalid_values_are_rejected(agent, field, value):
     r = agent.open_review(_doc(agent, "acme").id, [field], reviewer="ana")
     with pytest.raises(InputRejected):

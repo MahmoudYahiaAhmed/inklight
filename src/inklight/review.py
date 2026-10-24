@@ -28,7 +28,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-from .entered import parse_entered_amount
+from .entered import parse_entered_amount, parse_entered_date
 from .errors import InputRejected
 from .extract.fields import parse_typed, resolve_field
 from .schemas import DocumentInfo, ExtractedValue, Record
@@ -426,6 +426,8 @@ def typed_value(field: str, value: Any) -> Any:
         # Strict: one well-formed amount, or a rejection saying why (see inklight.entered).
         value, _currency = parse_entered_amount(text, money=spec.type == "money")
         return float(value)
+    if spec.type == "date":
+        return parse_entered_date(text).isoformat()  # strict, like amounts (see inklight.entered)
     parsed = parse_typed(spec.type, text)
     if parsed is None:
         raise InputRejected(f"{text!r} is not a valid {spec.type} for {field}")
