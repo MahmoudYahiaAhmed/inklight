@@ -106,6 +106,7 @@ class Runner:
             checks=_checks(plan, s, state),
             sources=tuple(s.sources[:12]),
             records=tuple(r.project(plan.fields) for r in s.records),
+            calculation=dict(s.calc) if s.calc else None,
             files_written=tuple(s.files),
             warnings=tuple(s.warnings),
             trace=tuple(trace),

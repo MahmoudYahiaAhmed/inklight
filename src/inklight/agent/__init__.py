@@ -208,7 +208,10 @@ class DocumentAgent:
 
             docs = [d for d in (self.library.get(i) for i in scope) if d is not None]
             day_first = self.settings.extraction.day_first
-            return [extract_record(d, self.library.pages(d.id), specs, day_first=day_first) for d in docs]
+            return [
+                extract_record(d, self.library.pages(d.id), specs, day_first=day_first, reread=self.library.rereader(d))
+                for d in docs
+            ]
         result = self.run_plan(plan.model_copy(update={"steps": steps_for(plan)}), scope, save=False)
         if result.state == TaskState.FAILED:
             raise InputRejected(result.answer)

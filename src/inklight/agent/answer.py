@@ -275,7 +275,8 @@ def _field_shortcut(ctx: ToolContext, question: str) -> bool:
         if doc is None:
             continue
         day_first = ctx.settings.extraction.day_first
-        value = extract_record(doc, ctx.pages(doc_id), [spec], day_first=day_first).fields[spec.name]
+        reread = ctx.library.rereader(doc)
+        value = extract_record(doc, ctx.pages(doc_id), [spec], day_first=day_first, reread=reread).fields[spec.name]
         if value.value is None or not value.method.startswith("label") or value.source is None:
             continue
         shown = _fmt(value.value, spec.type)

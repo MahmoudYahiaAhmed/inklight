@@ -500,3 +500,32 @@ def test_lowercase_or_code_words_before_invoice_are_not_names(agent, question):
 def test_set_questions_stay_record_level(agent):
     assert agent.plan("What invoices are above $5,000?").intent == Intent.FILTER
     assert names(ask(agent, "Which invoices are from Acme?")) == ["large", "small"]
+
+
+# ---------------------------------------------------------------- sums are computed and exposed, not just listed
+
+
+def test_total_of_a_set_is_a_sum_with_a_structured_result(agent):
+    plan = agent.plan("What is the total of invoices above $5,000?")
+    assert plan.intent == Intent.AGGREGATE and plan.aggregate == "sum"
+    result = ask(agent, "What is the total of invoices above $5,000?")
+    calc = result.calculation
+    assert calc["result"] == 25000.0 and calc["unit"] == "USD" and calc["count"] == 3 and calc["missing"] == 0
+    assert result.state == TaskState.SUCCEEDED
+
+
+def test_total_of_one_named_invoice_is_not_a_sum(agent):
+    assert agent.plan("What is the total of the Globex invoice?").intent != Intent.AGGREGATE
+
+
+def test_sum_reports_documents_left_out(mixed):
+    calc = ask(mixed, "What is the total of all invoices?").calculation
+    assert calc["missing"] == 1 and calc["count"] == len(MIXED) - 1
+
+
+@pytest.mark.parametrize(
+    "request_", ["Find receipts above Rp 50.000", "Find receipts above Rp 50,000", "Find receipts above 50,000 IDR"]
+)
+def test_rupiah_amounts_in_requests(agent, request_):
+    where = agent.plan(request_).where
+    assert where is not None and where.value == 50000.0 and where.unit == "IDR"

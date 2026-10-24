@@ -20,6 +20,7 @@ from typing import Any, Literal
 from ..errors import InputRejected
 from ..schemas import BBox, DocumentInfo, ExtractedValue, PageContent, Record, Source
 from . import layout
+from .amounts import PAYMENT, Reread, check_amounts
 from .values import EMAIL_RE, PHONE_RE, all_money, parse_dates, parse_money, parse_number
 
 FieldType = Literal["text", "money", "number", "date", "email", "phone", "id"]
@@ -508,14 +509,9 @@ def _fallback(spec: FieldSpec, lines: list[_Line], day_first: bool = False) -> _
     return None
 
 
-_PAYMENT = re.compile(
-    r"\b(cash|change|kembali(?:an)?|tunai|card|debit|credit|paid|tendered|bayar|payment)\b", re.IGNORECASE
-)
-
-
 def _is_payment(lines: list[_Line], k: int) -> bool:
     """Money handed over or given back ("Cash 100,000", "Change 33,500") is not what the document costs."""
-    if _PAYMENT.search(lines[k].text):
+    if PAYMENT.search(lines[k].text):
         return True
     me = lines[k].bbox
     return me is not None and any(
@@ -523,7 +519,7 @@ def _is_payment(lines: list[_Line], k: int) -> bool:
         and ln.bbox is not None
         and ln.bbox[2] <= me[0] + 4
         and layout.same_row(me, ln.bbox)
-        and _PAYMENT.search(ln.text)
+        and PAYMENT.search(ln.text)
         for ln in lines
     )
 
@@ -549,14 +545,19 @@ def _jsonable(value: Any) -> Any:
 
 
 def extract_record(
-    doc: DocumentInfo, pages: list[PageContent], specs: list[FieldSpec], *, day_first: bool = False
+    doc: DocumentInfo,
+    pages: list[PageContent],
+    specs: list[FieldSpec],
+    *,
+    day_first: bool = False,
+    reread: Reread | None = None,
 ) -> Record:
     """Typed values with provenance. ``day_first`` reads 03/04/2026 as 3 April (most of the world)."""
     names = {s.name for s in specs}
     if "total" in names and not {"subtotal", "tax"} <= names:
         # Read subtotal and tax as hidden helpers so a total is always arithmetic-checked.
         helpers = [CATALOG[n] for n in ("subtotal", "tax") if n not in names]
-        full = extract_record(doc, pages, [*specs, *helpers], day_first=day_first)
+        full = extract_record(doc, pages, [*specs, *helpers], day_first=day_first, reread=reread)
         return full.model_copy(update={"fields": {k: v for k, v in full.fields.items() if k in names}})
     lines = _lines(pages)
     doc_currency = _document_currency(lines)
@@ -606,7 +607,7 @@ def extract_record(
             warning=warning,
         )
     _cross_check(values, raw_values)
-    _check_digit_loss(values, lines)
+    values = check_amounts(values, [s.name for s in specs if s.type == "money"], lines, reread)
     return Record(doc_id=doc.id, name=doc.name, path=doc.path, fields=values)
 
 
@@ -642,43 +643,6 @@ def _document_currency(lines: list[_Line]) -> str | None:
         if money and money[1]:
             seen.add(money[1])
     return seen.pop() if len(seen) == 1 else None
-
-
-_GROUPED_NO_CENTS = re.compile(r"(?<![\d.,])\d{1,3}(?:[.,]\d{3})+(?![\d.,])")
-_WITH_CENTS = re.compile(r"(?<![\d.,])\d+(?:[.,]\d{3})*[.,]\d{2}(?![\d.,%])")
-_ENDS_IN_CENTS = re.compile(r"[.,]\d{2}\s*\)?\s*$")
-_DIGIT_LOSS = (
-    "this amount has cents, but the document's other amounts have none (e.g. 63.000); "
-    "OCR may have dropped a digit, please check"
-)
-
-
-def _check_digit_loss(values: dict[str, ExtractedValue], lines: list[_Line]) -> None:
-    """Flag amounts that OCR may have shortened: "63.000" read as "63.00" is 63, not 63,000.
-
-    Receipts in currencies without cents (IDR, JPY, ...) write every amount as thousands groups.
-    In such a document, an amount with two decimals, or a total far below its subtotal, is more
-    likely a dropped digit than a real value. The value is kept and flagged, never rewritten.
-    """
-    text = "\n".join(ln.text for ln in lines)
-    grouped = len(_GROUPED_NO_CENTS.findall(text))
-    cents = len(_WITH_CENTS.findall(text))
-    no_cents_document = grouped >= 3 and grouped >= 3 * max(cents, 1)
-    suspects: set[str] = set()
-    for name, item in values.items():
-        if item.value is None or not isinstance(item.value, float | int) or not item.raw:
-            continue
-        if no_cents_document and _ENDS_IN_CENTS.search(item.raw):
-            suspects.add(name)
-    subtotal, total = values.get("subtotal"), values.get("total")
-    if subtotal and total and subtotal.value and total.value and 0 < total.value * 2 < subtotal.value:
-        suspects.update({"subtotal", "total"})  # a total under half its subtotal: one of them is misread
-    for name in suspects:
-        item = values[name]
-        warning = f"{item.warning}; {_DIGIT_LOSS}" if item.warning else _DIGIT_LOSS
-        values[name] = item.model_copy(
-            update={"warning": warning, "verified": False, "confidence": round(item.confidence * 0.5, 3)}
-        )
 
 
 def _cross_check(values: dict[str, ExtractedValue], raw: dict[str, Any]) -> None:

@@ -42,7 +42,13 @@ def extract_fields(ctx: ToolContext, fields: list[str]) -> str:
     records = []
     for doc in ctx.docs():
         ctx.check()
-        record = extract_record(doc, ctx.pages(doc.id), specs, day_first=ctx.settings.extraction.day_first)
+        record = extract_record(
+            doc,
+            ctx.pages(doc.id),
+            specs,
+            day_first=ctx.settings.extraction.day_first,
+            reread=ctx.library.rereader(doc),
+        )
         record = _reader_fill(ctx, record, specs)
         records.append(record)
         for name, value in record.fields.items():
@@ -272,7 +278,9 @@ def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
         )
     specs = [resolve_field(f) for f in fields]
     day_first = ctx.settings.extraction.day_first
-    records = [extract_record(d, ctx.pages(d.id), specs, day_first=day_first) for d in docs]
+    records = [
+        extract_record(d, ctx.pages(d.id), specs, day_first=day_first, reread=ctx.library.rereader(d)) for d in docs
+    ]
     ctx.scratch.records = records
     base, base_doc = records[0], docs[0]
     lines: list[str] = []

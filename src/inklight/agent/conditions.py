@@ -42,7 +42,7 @@ _CMP = {
     "equal to": "eq",
     "exactly": "eq",
 }
-_CUR = r"E£|[$€£]|USD|EUR|GBP|EGP|SAR|AED"
+_CUR = r"E£|[$€£]|Rp\.?|USD|EUR|GBP|EGP|SAR|AED|IDR"
 _MONTH_NUM = {
     m: i + 1 for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"])
 }
@@ -55,7 +55,7 @@ _CMP_RE = re.compile(
     rf"(?:{_FIELD_WORDS}\s+(?:is\s+|of\s+)?)?"
     r"(?P<op>" + "|".join(sorted((re.escape(k) for k in _CMP), key=len, reverse=True)) + r")\s*"
     rf"(?P<cur>{_CUR})?\s*(?P<num>\d[\d,]*(?:\.\d+)?)\s*(?P<mult>k|m|thousand|grand|million)?\b"
-    rf"(?:\s*(?P<cur2>USD|EUR|GBP|EGP|SAR|AED)\b)?{_NOT_AMOUNT}",
+    rf"(?:\s*(?P<cur2>USD|EUR|GBP|EGP|SAR|AED|IDR)\b)?{_NOT_AMOUNT}",
     re.IGNORECASE,
 )
 _BETWEEN_RE = re.compile(
@@ -212,7 +212,7 @@ _UNSUPPORTED_RE = re.compile(
     r"|december)\b(?!\s*\d)"
     r"|\btop\s+\d+\b"
     r"|\b(?:not|except|excluding|without|unless)\b(?:\s+\w+){0,2}"
-    rf"|(?:{_CUR})\s?\d[\d,]*(?:\.\d+)?\s*[km]?\b|\b\d[\d,]*(?:\.\d+)?\s?(?:USD|EUR|GBP|EGP|SAR|AED)\b",
+    rf"|(?:{_CUR})\s?\d[\d,]*(?:\.\d+)?\s*[km]?\b|\b\d[\d,]*(?:\.\d+)?\s?(?:USD|EUR|GBP|EGP|SAR|AED|IDR)\b",
     re.IGNORECASE,
 )
 
@@ -269,14 +269,29 @@ def _amount(num: str | None, mult: str | None) -> float | None:
 def _unknown_unit(word: str) -> bool:
     """A word right after an amount that is neither a connector, a filler nor a known unit."""
     low = word.lower()
-    known = {"usd", "eur", "gbp", "egp", "sar", "aed", "dollars", "dollar", "euros", "euro", "pounds", "pound"}
+    known = {
+        "usd",
+        "eur",
+        "gbp",
+        "egp",
+        "sar",
+        "aed",
+        "idr",
+        "rupiah",
+        "dollars",
+        "dollar",
+        "euros",
+        "euro",
+        "pounds",
+        "pound",
+    }
     return not (low in known or low in _FILLER or low in _NAME_STOP or low in _VERBS or low in _FIELD_VOCAB)
 
 
 def _unit(*raw: str | None) -> str | None:
     for r in raw:
         if r:
-            return _CUR_CODE.get(r, r.upper())
+            return "IDR" if r.rstrip(".").lower() == "rp" else _CUR_CODE.get(r, r.upper())
     return None
 
 

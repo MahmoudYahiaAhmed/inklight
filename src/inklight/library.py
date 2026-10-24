@@ -21,7 +21,7 @@ from .extract import classify
 from .ocr import OCREngine, PlainTextEngine, create_engine
 from .retrieval import Retriever
 from .safety import check_file, discover, injection_signals
-from .schemas import DocStatus, DocumentInfo, PageContent, SearchHit
+from .schemas import BBox, DocStatus, DocumentInfo, PageContent, SearchHit
 from .store import Store
 
 log = logging.getLogger(__name__)
@@ -222,6 +222,24 @@ class Library:
     @property
     def closed(self) -> bool:
         return self._closed
+
+    def rereader(self, doc: DocumentInfo) -> Callable[[int, BBox], str | None] | None:
+        """A function that OCRs one region of ``doc`` again, or None when its engine cannot.
+
+        Used to double-check a suspicious amount; the stored reading is never replaced.
+        """
+        engine = self.engine
+        reread = getattr(engine, "reread", None)
+        path = Path(doc.path)
+        if reread is None or doc.engine != getattr(engine, "name", None) or not path.is_file():
+            return None
+
+        def again(page: int, bbox: BBox) -> str | None:  # only runs for a suspicious amount
+            rotation = next((p.rotation for p in self.pages(doc.id) if p.number == page), 0)
+            text: str | None = reread(path, page, bbox, rotation)
+            return text
+
+        return again
 
     def close(self) -> None:
         """Release what this library owns (database connection, loaded models). Idempotent."""

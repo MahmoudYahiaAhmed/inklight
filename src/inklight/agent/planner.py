@@ -126,6 +126,9 @@ def _output(text: str) -> tuple[str | None, str | None]:
 _AGG_RE = re.compile(
     r"\b(sum|total of all|add up|combined|in total|average|mean|maximum|highest|largest|"
     r"minimum|lowest|smallest)\b"
+    # "the total of invoices above $X" sums a set; "the total of the Globex invoice" (singular) is a field
+    r"|\b(?P<set_total>total) of (?:(?:all|the|these|those|my)\s+)*"
+    r"(?:invoices|receipts|bills|orders|documents)\b"
 )
 
 
@@ -164,7 +167,7 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         intent = Intent.COUNT
     elif (m := _AGG_RE.search(text)) and (doc_type or conds or re.search(r"\b(all|these|every)\b", text)):
         intent = Intent.AGGREGATE
-        word = m.group(1)
+        word = m.group(1) or "sum"  # "the total of invoices ..." is a sum
         aggregate = (
             "avg"
             if word in ("average", "mean")

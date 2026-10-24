@@ -208,6 +208,11 @@ class AgentResult(Frozen):
     )
     sources: tuple[Source, ...] = ()
     records: tuple[Record, ...] = ()
+    calculation: dict[str, Any] | None = Field(
+        None,
+        description="For sums, averages, minima and maxima: op, field, result, unit, count (values used), "
+        "missing (documents without a value, left out) and by_unit when currencies differ.",
+    )
     files_written: tuple[str, ...] = ()
     warnings: tuple[str, ...] = ()
     trace: tuple[TraceStep, ...] = ()

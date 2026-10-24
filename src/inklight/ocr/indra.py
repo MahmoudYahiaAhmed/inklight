@@ -128,6 +128,38 @@ class IndraEngine:
             pages.append(_to_page(index + 1, page, float(width), float(height)))
         return pages, len(frames)
 
+    def reread(self, path: Path, page: int, bbox: BBox, rotation: int = 0) -> str | None:
+        """OCR one region of an image again, enlarged, to double-check a value read from it.
+
+        Returns None where a re-read is not supported: PDFs (a text layer needs no re-read and a scan would
+        need re-rendering), rotated pages (stored boxes are in the upright frame), or an empty crop.
+        """
+        if _is_pdf(path) or rotation:
+            return None
+        import cv2
+        from indra_ocr.document import read_images
+
+        frames = read_images(path)
+        if not 1 <= page <= len(frames):
+            return None
+        gray = frames[page - 1]
+        x0, y0, x1, y1 = bbox
+        pad = max(y1 - y0, 8.0)
+        h, w = gray.shape[:2]
+        left, top = max(int(x0 - pad), 0), max(int(y0 - pad / 2), 0)
+        right, bottom = min(int(x1 + pad), w), min(int(y1 + pad / 2), h)
+        if right - left < 4 or bottom - top < 4:
+            return None
+        crop = gray[top:bottom, left:right]
+        scale = max(1.0, 64.0 / max(y1 - y0, 1.0))  # enlarge so the text is ~64 px tall
+        crop = cv2.resize(crop, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+        try:
+            result = self.converter().ocr(crop)
+        except Exception:  # a failed double-check is "no second reading", never an error
+            return None
+        text = " ".join(ln.text for ln in result.lines if ln.text.strip())
+        return text or None
+
 
 def _is_pdf(path: Path) -> bool:
     with path.open("rb") as fh:
