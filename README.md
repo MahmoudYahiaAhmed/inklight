@@ -62,7 +62,15 @@ something looks off, and a trace of every step the agent took.
       is the sum over all receipts, which reported `succeeded` while leaving 5 receipts out. Since `69675a0`
       such a sum reports `partial`; that was measured on development data only.
 
-  Real-world *invoices* are not yet measured, and handwriting and non-Latin scripts are not measured at all.
+  Real-world *invoices* are not yet measured, and handwriting is not measured at all.
+- **Arabic is not ready yet, and the gaps are measured.** A small diagnostic on original English, Arabic and
+  mixed documents (contracts, letters, reports, forms, invoices) shows:
+  - Arabic questions are answered correctly 2 of 15 times.
+  - Arabic summary requests are not recognised.
+  - Arabic digital PDFs need OCR because their text layers can be broken.
+  - English answers are reliable only on clean invoices.
+
+  See the [capability matrix](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md).
 - **Small-model intelligence, measured.** Optional models are each under 200M parameters: a 66M reader that
   can only point at text in your document, a 33M embedder for search, and an optional 135M writer whose output
   must be grounded. Calculations and filters are exact Python, not model guesses. On the external sets above,
