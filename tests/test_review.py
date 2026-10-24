@@ -284,3 +284,21 @@ def test_review_cli_lists_and_exports_approved_reviews(tmp_path, monkeypatch):
     assert again.exit_code != 0  # never overwrites an export
     with DocumentAgent(make_settings(home)) as a:
         assert [e["kind"] for e in a.reviews.events(r.id)].count("exported") == 1  # the refused one is not logged
+
+
+def test_review_fields_follow_the_document_type_unless_given(client, agent, tmp_path):
+    """Letters and reports are not reviewed as invoices: an empty field list uses the document type's preset."""
+    letter = tmp_path / "letter.txt"
+    letter.write_text(
+        "Letter dated 6 February 2023 addressed to the Secretary-General. I have the honour to inform you.\n"
+        "(Signed) Ambassador",
+        encoding="utf-8",
+    )
+    doc_id = agent.add([letter]).documents[0].id
+    r = client.post("/api/reviews", json={"doc_id": doc_id, "reviewer": "ana"}, headers=H).json()
+    assert [f["field"] for f in r["fields"]] == ["date"]
+    body = {"doc_id": doc_id, "reviewer": "ana", "fields": ["date", "sender"]}
+    chosen = client.post("/api/reviews", json=body, headers=H)
+    assert [f["field"] for f in chosen.json()["fields"]] == ["date", "sender"]
+    invoice = client.post("/api/reviews", json={"doc_id": _doc(agent, "acme").id, "reviewer": "ana"}, headers=H).json()
+    assert len(invoice["fields"]) == 8

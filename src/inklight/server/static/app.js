@@ -158,7 +158,7 @@ function sourceRow(s, i) {
   const conf = s.ocr_conf != null ? ` · OCR ${(s.ocr_conf * 100).toFixed(0)}%` : "";
   return h("div", { class: "source", onclick: () => openDoc(s.doc_id, s.page, s.bbox) },
     h("b", {}, `[${i + 1}] ${s.name} p.${s.page}${conf}`),
-    h("span", {}, `“${s.excerpt.replace(/\s+/g, " ").slice(0, 220)}${s.excerpt.length > 220 ? "…" : ""}”`));
+    h("span", { dir: "auto" }, `“${s.excerpt.replace(/\s+/g, " ").slice(0, 220)}${s.excerpt.length > 220 ? "…" : ""}”`));
 }
 
 function recordsTable(records) {
@@ -171,7 +171,7 @@ function recordsTable(records) {
       if (!v || v.value == null) return h("td", { class: "none" }, "—");
       const cls = `cell ${v.confidence < 0.7 || v.warning ? "low" : ""}`;
       const title = `${v.method} · confidence ${(v.confidence * 100).toFixed(0)}%${v.warning ? ` · ${v.warning}` : ""}`;
-      return h("td", { class: cls, title, onclick: () => v.source && openDoc(v.source.doc_id, v.source.page, v.source.bbox) },
+      return h("td", { class: cls, title, dir: "auto", onclick: () => v.source && openDoc(v.source.doc_id, v.source.page, v.source.bbox) },
         fmt(v.value), v.warning ? " ⚠" : "");
     })))));
 }
@@ -202,13 +202,13 @@ function resultCard(r) {
     : null;
   return h("article", { class: "card" },
     h("div", { class: "card-head" },
-      h("div", { class: "req" }, r.request),
+      h("div", { class: "req", dir: "auto" }, r.request),
       h("span", { class: `state ${r.state}` }, r.state), h("span", {}, r.intent),
       confBar("understood", r.interpretation_confidence, "How sure the agent is that it read your request correctly"),
       confBar("evidence", r.evidence_confidence, "How well the documents support the result (OCR, labels, cross-checks)"),
       h("span", {}, `${Math.round(r.duration_ms)} ms`), h("span", { title: "Which models were used" }, r.brain)),
     understood,
-    h("div", { class: "answer" }, answer),
+    h("div", { class: "answer", dir: "auto" }, answer),
     table,
     r.records.length ? h("div", { class: "actions" }, h("button", { class: "ghost small", type: "button", onclick: () => csvDownload(r.records) }, "Download CSV")) : null,
     r.files_written.length ? h("div", { class: "files muted" }, "Saved: ", ...r.files_written.map((f) => { const n = f.split(/[\\/]/).pop(); return h("a", { href: withToken(`/api/outputs/${encodeURIComponent(n)}`) }, n); })) : null,
@@ -312,7 +312,8 @@ async function startReview(e) {
   if (!reviewer()) { $("#review-name").focus(); return; }
   storageSet("inklight-reviewer", reviewer());
   try {
-    const r = await api("/api/reviews", { method: "POST", json: { doc_id: d.id, reviewer: reviewer(), mode: $("#review-mode").value, cohort: $("#review-cohort").value.trim() || null } });
+    const fields = $("#review-fields").value.split(",").map((f) => f.trim()).filter(Boolean);
+    const r = await api("/api/reviews", { method: "POST", json: { doc_id: d.id, reviewer: reviewer(), mode: $("#review-mode").value, cohort: $("#review-cohort").value.trim() || null, fields: fields.length ? fields : null } });
     showReview(r);
     loadQueue();
   } catch (err) { $("#review-out").replaceChildren(h("div", { class: "card warning" }, err.message)); }
@@ -350,14 +351,14 @@ function predictionCell(f, r) {
   if (f.predicted == null) return h("td", { class: "none" }, "—");
   const low = f.flagged;
   const title = `${f.method || ""} · confidence ${f.confidence == null ? "–" : Math.round(f.confidence * 100) + "%"}${f.warning ? ` · ${f.warning}` : ""}`;
-  return h("td", { class: `cell ${low ? "low" : ""}`, title, onclick: () => f.source && openDoc(r.doc_id, f.source.page, f.source.bbox) },
+  return h("td", { class: `cell ${low ? "low" : ""}`, title, dir: "auto", onclick: () => f.source && openDoc(r.doc_id, f.source.page, f.source.bbox) },
     fmt(f.predicted), low ? " ⚠" : "", f.raw ? h("div", { class: "muted" }, `OCR: “${f.raw}”`) : null,
     f.warning ? h("div", { class: "warning" }, f.warning) : null);
 }
 
 function decisionCell(f, r) {
-  if (r.status !== "open") return h("td", {}, f.action === "absent" ? "absent" : fmt(f.final), h("div", { class: "muted" }, f.action || ""));
-  const input = h("input", { value: f.action && f.action !== "absent" ? String(f.entered ?? f.final ?? "") : "", placeholder: r.mode === "manual" ? "type the value" : "correct value", "aria-label": `Value for ${f.field}` });
+  if (r.status !== "open") return h("td", { class: "review-value", dir: "auto" }, f.action === "absent" ? "absent" : fmt(f.final), h("div", { class: "muted" }, f.action || ""));
+  const input = h("input", { dir: "auto", value: f.action && f.action !== "absent" ? String(f.entered ?? f.final ?? "") : "", placeholder: r.mode === "manual" ? "type the value" : "correct value", "aria-label": `Value for ${f.field}` });
   const save = () => decide(f.field, r.mode === "manual" ? "entered" : "corrected", input.value);
   input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); save(); } });
   return h("td", {}, input,

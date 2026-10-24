@@ -12,14 +12,16 @@ from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from ..agent import DocumentAgent
+from ..extract.presets import PRESETS, preset_fields
 
-INVOICE_FIELDS = ["vendor", "customer", "invoice_number", "date", "due_date", "subtotal", "tax", "total"]
+INVOICE_FIELDS = list(PRESETS["invoice"])  # kept for callers; the default now follows the document type
 
 
 class OpenBody(BaseModel):
     doc_id: str = Field(min_length=1, max_length=64)
     reviewer: str = Field(min_length=1, max_length=100)
-    fields: list[str] = Field(default_factory=lambda: list(INVOICE_FIELDS), min_length=1, max_length=40)
+    # None: the preset for the document's type (invoice fields only for invoices and receipts)
+    fields: list[str] | None = Field(None, min_length=1, max_length=40)
     mode: Literal["review", "manual"] = "review"
     cohort: str | None = Field(None, max_length=64)
     split: str | None = Field(None, max_length=32)
@@ -60,10 +62,13 @@ def register(app: FastAPI, current: Callable[[], DocumentAgent]) -> None:
 
     @app.post("/api/reviews")
     async def open_review(body: OpenBody) -> dict[str, Any]:
+        agent = current()
+        doc = agent.library.get(body.doc_id)
+        fields = body.fields or preset_fields(doc.doc_type if doc else None)
         review = await run_in_threadpool(
-            current().open_review,
+            agent.open_review,
             body.doc_id,
-            body.fields,
+            fields,
             reviewer=body.reviewer,
             mode=body.mode,
             cohort=body.cohort,
