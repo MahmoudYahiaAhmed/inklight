@@ -29,7 +29,6 @@ import csv
 import getpass
 import json
 import math
-import re
 import statistics
 import sys
 from collections import Counter, defaultdict
@@ -38,6 +37,8 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bench"))
+from textnorm import fold  # noqa: E402
 
 OUTCOMES = ("correct_unflagged", "correct_flagged", "wrong_unflagged", "wrong_flagged", "missing")
 MONEY = {"subtotal", "tax", "total", "contract_value"}
@@ -56,8 +57,7 @@ def same(field: str, a: Any, b: Any) -> bool:
             return False
     if field.endswith("date") or field == "date":
         return str(a) == str(b)
-    norm = lambda v: re.sub(r"[^a-z0-9]", "", str(v).lower())  # noqa: E731
-    return norm(a) == norm(b)
+    return fold(a) == fold(b)  # every script kept: different Arabic vendors never compare equal
 
 
 def outcome(field: dict) -> str:

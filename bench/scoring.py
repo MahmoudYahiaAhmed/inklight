@@ -13,8 +13,12 @@ confidence below FLAG_CONFIDENCE, i.e. it asks for human review.
 from __future__ import annotations
 
 import collections
-import re
+import sys
+from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from textnorm import fold  # noqa: E402
 
 FLAG_CONFIDENCE = 0.7
 MONEY = {"tax", "total", "subtotal"}
@@ -22,7 +26,7 @@ OUTCOMES = ("correct_unflagged", "correct_flagged", "wrong_unflagged", "wrong_fl
 
 
 def _norm_text(v: object) -> str:
-    return re.sub(r"[^a-z0-9]", "", str(v).lower())
+    return fold(v)  # Unicode letters and digits kept: different Arabic names never compare equal
 
 
 def same(field: str, got: object, want: object) -> bool:

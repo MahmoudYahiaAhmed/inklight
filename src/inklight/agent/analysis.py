@@ -16,6 +16,7 @@ from ..extract import CATALOG, extract_record, resolve_field
 from ..extract.fields import parse_typed
 from ..safety import safe_output_path
 from ..schemas import ExtractedValue, Record, Source
+from ..textnorm import fold
 from .answer import norm
 from .context import ToolContext
 from .expr import evaluate, leaves
@@ -351,7 +352,7 @@ def _changed_numbers(only_a: list[str], only_b: list[str]) -> list[str]:
 
 def _key(text: str) -> str:
     text = re.sub(r"\b(inc|ltd|llc|corp|co|corporation|limited|company|plc|gmbh)\b\.?", "", text.lower())
-    return re.sub(r"[^a-z0-9@]", "", text)
+    return fold(text, keep="@")  # every script kept: different Arabic names are different keys
 
 
 def find_inconsistencies(ctx: ToolContext, fields: list[str]) -> str:

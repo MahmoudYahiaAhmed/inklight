@@ -33,6 +33,9 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "bench"))
+from textnorm import fold  # noqa: E402
+
 COHORTS = ("genuine-invoice", "synthetic-invoice", "receipt")
 EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 MAX_BYTES = 20 * 1024 * 1024
@@ -51,10 +54,11 @@ COLUMNS = (
 
 
 def vendor_key(vendor: str) -> str:
-    """'ACME Supplies, Ltd.' and 'Acme Supplies Ltd' are one vendor."""
-    words = re.sub(r"[^a-z0-9 ]", " ", vendor.lower()).split()
+    """'ACME Supplies, Ltd.' and 'Acme Supplies Ltd' are one vendor; names in any script stay distinct."""
+    words = [fold(w) for w in re.split(r"[\s,./&()-]+", vendor)]
+    words = [w for w in words if w]
     drop = {"ltd", "limited", "inc", "llc", "plc", "gmbh", "co", "corp", "corporation", "company", "the", "pt", "tbk"}
-    return " ".join(w for w in words if w not in drop) or vendor.lower().strip()
+    return " ".join(w for w in words if w not in drop) or " ".join(words) or vendor.strip()
 
 
 def split_for(vendor: str, salt: str, reserved_share: float) -> str:

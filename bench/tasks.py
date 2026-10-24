@@ -22,16 +22,20 @@ from __future__ import annotations
 
 import csv
 import re
+import sys
 import time
 import traceback
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from textnorm import fold  # noqa: E402
+
 TOLERANCE = 0.011
 
 
 def _key(text: str) -> str:
-    return re.sub(r"[^a-z0-9]", "", text.lower())
+    return fold(text)
 
 
 def cases(dataset: str, truth: dict[str, dict]) -> list[dict[str, Any]]:
