@@ -76,6 +76,23 @@ def _component(model_path: str) -> str:
     return "other"
 
 
+def _harness_commit() -> str | None:
+    """The commit of this evaluation code, and whether it has uncommitted changes."""
+    import subprocess
+
+    here = Path(__file__).resolve().parent
+    try:
+        head = subprocess.run(  # noqa: S603, S607 - fixed git command
+            ["git", "-C", str(here), "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+        dirty = subprocess.run(  # noqa: S603, S607
+            ["git", "-C", str(here), "status", "--porcelain", "--", "."], capture_output=True, text=True, check=True
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return f"{head}{' (bench/ modified)' if dirty else ''}"
+
+
 def provenance() -> dict:
     import inklight
 
@@ -95,6 +112,7 @@ def provenance() -> dict:
         "install_method": method,
         "wheel_sha256": os.environ.get("INKLIGHT_EVAL_WHEEL_SHA256"),
         "git_commit": os.environ.get("INKLIGHT_EVAL_COMMIT"),
+        "harness_commit": _harness_commit(),
         "python": sys.version.split()[0],
         "executable": sys.executable,
         "platform": f"{platform.system()} {platform.machine()}",

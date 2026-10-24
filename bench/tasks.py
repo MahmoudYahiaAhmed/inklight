@@ -251,36 +251,64 @@ def run_case(agent: Any, case: dict[str, Any], ids: list[str], time_budget_s: fl
 
 
 def _check_export(res: Any, case: dict[str, Any], complete: bool) -> dict[str, Any]:
+    """Rows and values of the written file, and whether each wrong value is flagged *in the file*
+    (its ``total_confidence`` below 0.7 or a ``total:`` entry in the ``warnings`` column)."""
     files = [Path(f) for f in res.files_written]
     if not files:
         explained = bool(getattr(res, "not_understood", ())) or any("not saved" in w.lower() for w in res.warnings)
         return {"file": None, "outcome": "flagged" if explained else "silent_wrong" if complete else "flagged"}
-    rows = list(csv.DictReader(files[0].open(encoding="utf-8", newline="")))
-    name_col = next((c for c in ("document", "name", "file") if rows and c in rows[0]), None)
-    total_col = next((c for c in (rows[0] if rows else {}) if c.lower() == "total"), None)
-    exported = {r.get(name_col or "", ""): r.get(total_col or "", "") for r in rows}
+    with files[0].open(encoding="utf-8", newline="") as fh:
+        rows = list(csv.DictReader(fh))
+    header = list(rows[0]) if rows else []
+    name_col = next((c for c in ("document", "name", "file") if c in header), None)
+    total_col = next((c for c in header if c.lower() == "total"), None)
+    by_name = {r.get(name_col or "", ""): r for r in rows}
     expected = case["rows"]
-    wrong_values = []
+    wrong, wrong_flagged, right_flagged = [], 0, 0
     for name, want in expected.items():
-        got = exported.get(name)
+        row = by_name.get(name)
+        if row is None:
+            continue
+        got = row.get(total_col or "", "")
         try:
             ok = got not in (None, "") and abs(float(str(got).replace(",", "")) - want) < TOLERANCE
         except ValueError:
             ok = False
-        if not ok and name in exported:
-            wrong_values.append((name, want, got))
-    right_rows = set(exported) == set(expected)
-    right = right_rows and not wrong_values
+        flagged = _flagged_in_file(row)
+        if ok:
+            right_flagged += flagged
+        else:
+            wrong.append((name, want, got, "flagged in file" if flagged else "NOT flagged in file"))
+            wrong_flagged += flagged
+    rows_right = set(by_name) == set(expected)
+    right = rows_right and not wrong
+    every_error_flagged = len(wrong) == wrong_flagged
+    if right:
+        outcome = "correct" if complete else "unnecessary_flag"
+    elif complete and (not rows_right or not every_error_flagged):
+        outcome = "silent_wrong"  # missing/extra rows, or a wrong value the file does not flag
+    else:
+        outcome = "flagged"
     return {
         "file": files[0].name,
-        "columns": list(rows[0]) if rows else [],
-        "rows_exported": len(exported),
+        "columns": header,
+        "rows_exported": len(by_name),
         "rows_expected": len(expected),
-        "missing_rows": sorted(set(expected) - set(exported))[:10],
-        "extra_rows": sorted(set(exported) - set(expected))[:10],
-        "wrong_values": wrong_values[:10],
-        "outcome": _grade(right, complete),
+        "missing_rows": sorted(set(expected) - set(by_name))[:10],
+        "extra_rows": sorted(set(by_name) - set(expected))[:10],
+        "wrong_values": wrong[:10],
+        "wrong_values_flagged_in_file": wrong_flagged,
+        "correct_values_flagged_in_file": right_flagged,
+        "outcome": outcome,
     }
+
+
+def _flagged_in_file(row: dict[str, str]) -> bool:
+    try:
+        low = float(row.get("total_confidence") or 0) < 0.7
+    except ValueError:
+        low = True
+    return low or "total:" in (row.get("warnings") or "")
 
 
 def _grade(right: bool, complete: bool) -> str:
