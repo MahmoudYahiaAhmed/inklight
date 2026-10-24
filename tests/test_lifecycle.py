@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import gc
+import sys
 import threading
 import time
 import warnings
@@ -48,6 +49,7 @@ def test_repeated_create_use_close_cycles_leave_nothing_open(tmp_path):
     assert _resource_warnings(cycles) == []
 
 
+@pytest.mark.skipif(sys.version_info < (3, 13), reason="sqlite3 warns about unclosed connections only from Python 3.13")
 def test_unclosed_agent_is_what_the_warning_check_detects(tmp_path):
     """The check above is meaningful: forgetting close() is visible."""
     docs = _write(tmp_path / "docs")
