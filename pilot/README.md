@@ -1,8 +1,11 @@
 # Inklight pilot: human-reviewed genuine invoices
 
-**Status: the workflow is ready; data collection is pending.** No genuine invoices have been collected,
-reviewed or measured yet. Every number in this folder comes from synthetic invoices or from development
-data, and is labelled so. Nothing here is a pilot result.
+**Status: the workflow is ready; the human rehearsal and data collection are pending.** No genuine invoices
+have been collected, reviewed or measured yet. Every number in this folder comes from synthetic invoices or
+from development data, and is labelled so. Nothing here is a pilot result.
+
+**Next step:** the 5–10 invoice human rehearsal in [REHEARSAL.md](REHEARSAL.md). It must pass before scored
+reviews start.
 
 The pilot measures, on 50–100 permissioned **genuine** invoices from several vendors and layouts:
 
@@ -21,9 +24,9 @@ The pilot runs one exact build. `pilot/baseline.json` and `pilot/requirements-lo
 
 | | |
 |---|---|
-| Code | `inklight 0.1.1.dev0`, built at `aaa8c31` (src tree `35997c3`, identical to `89e03e3`) |
-| Installed package digest | `cbb355dc978c…` (sha256 over every file of the installed package) |
-| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl`, built at `200e0f3` (same src tree), sha256 `a7645ea92b086206…` |
+| Code | `inklight 0.1.1.dev0` at `c49d506` (src tree `25b2996`) — **baseline 2**, frozen after the fixes in section 6 |
+| Installed package digest | `3c8c98722bd9…`, 51 files (sha256 over every file of the installed package) |
+| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl` built at `c49d506`, sha256 `731e9cc052c2598c…` |
 | Python and packages | 3.12.10; 42 packages pinned in `requirements-lock.txt` |
 | OCR | `indra-ocr 1.1.2` with its pinned model snapshot; 12 files copied and hashed |
 | Small models | reader `Xenova/distilbert-base-cased-distilled-squad` @ `bdbb0a5`, embedder `Xenova/bge-small-en-v1.5` @ `ea104da`; copied and hashed (not used by the `rules` brain the pilot runs with) |
@@ -40,7 +43,8 @@ It recomputes the package digest, the installed versions, every model hash and t
 non-zero on any difference. It was tested to fail on a changed model byte, on `second_reading = false`, and
 in a different environment.
 
-A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
+Baseline 1 (`aaa8c31`, digest `cbb355dc978c…`) was replaced before any scored review, because of the fixes in
+section 6; it remains in the git history of `pilot/baseline.json`. A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
 predictions, and `evaluate.py` refuses to mix baselines.
 
 ## 2. Permissions and intake
@@ -168,7 +172,7 @@ what to change, and report every access in the write-up.
 ## 5. What has been checked so far (not pilot results)
 
 **Rehearsal on synthetic invoices** (`results/dryrun-synthetic/`): 60 Voxel51 *development* invoices, the
-frozen environment and config, and a **scripted** reviewer that takes final values from the dataset
+frozen environment and config of **baseline 1** (`aaa8c31`), and a **scripted** reviewer that takes final values from the dataset
 annotations.
 - The run completed: intake 60/60, 75 approved reviews (15 entered both ways), 450 exported rows.
 - The evaluator gives the same accuracy and silent-error rate as the benchmark harness on the same
@@ -180,7 +184,7 @@ annotations.
 - Timings are 0 s and agreement is perfect by construction. Neither means anything for real reviewers.
 
 **Latency of the second OCR reading** (`results/latency-dev/latency.json`): development splits only, the
-frozen environment, 3 alternating repeats, AMD Zen 4 laptop CPU.
+frozen environment of **baseline 1** (baseline 2 changes no OCR or extraction code path that this measures), 3 alternating repeats, AMD Zen 4 laptop CPU.
 
 | Dev data | Extraction per document, median (on / off) | p90 (on / off) | Mean (on / off) | Second readings per 60 documents | OCR ingest per document |
 |---|---|---|---|---|---|
@@ -191,10 +195,24 @@ A second reading costs about 0.34 s, close to OCR'ing a whole invoice page, beca
 again. It runs on few documents, so the median is unchanged; the mean rises by 14 ms per invoice. Run it
 again on the pilot's own dev invoices: how often it triggers depends on the documents.
 
-## 6. Remaining limitations
+## 6. Fixes made before any scored review
 
-1. **No genuine invoice has been measured.** Collection, permission and review are still to do. The workflow
-   was rehearsed only on synthetic invoices with a scripted reviewer.
+Four problems were reproduced on `7177bf7` and fixed. Baseline 1 was then replaced by baseline 2. No scored
+review used baseline 1.
+
+| Problem (reproduced) | Fix | Evidence |
+|---|---|---|
+| Typed amounts lost characters before parsing: "100 + 20" → 10020, "1e3" → 13, "(45.00)" → +45, "1,2,3" → 12.3 | `inklight.entered`: one well-formed amount or a refusal with the reason; the reviewer's exact input stored and exported next to the parsed value | `tests/test_entered.py`: 18 supported formats, including European, Swiss, French, rupiah and Arabic-Indic digits, and 13 rejected inputs |
+| A dev reprediction ran inference on reserved documents (2 dev and 2 reserved, with both groups present) | The cohort and split are selected before any prediction; reserved access is logged before any document is read | `tests/test_pilot.py`, with a spy on extraction: dev runs predict only dev documents, and every reserved prediction happens after the log entry |
+| "Re-predict" mixed the cached OCR with the full pipeline, and wrote nothing about what ran | `--predictions frozen\|cached\|full`. Full ingests the original files into an isolated empty library with the candidate config. The pilot library is read through a snapshot only; ground truth is written separately; provenance records code, settings, model hashes and ONNX calls | Tests show the pilot database bytes unchanged after cached and full runs. A real full run on 60 invoices made 1,245 ONNX calls and 2 second readings, predicted 60 documents, and gave the same metrics |
+| Different Arabic vendor names compared equal ([^a-z0-9] removed every letter), in scoring, the pilot evaluator, vendor grouping and the product's inconsistency check | `inklight.textnorm.fold`: every script kept; Unicode digits → ASCII; only tatweel and optional harakat dropped | `tests/test_textnorm.py`: Arabic, Devanagari, CJK and Greek names. Rescoring all 21,632 saved predictions changed no outcome |
+
+## 7. Remaining limitations
+
+1. **No genuine invoice has been measured, and no person has used the workflow yet.** The 5–10 invoice human
+   rehearsal ([REHEARSAL.md](REHEARSAL.md)) and the collection, permission and review of the pilot invoices are
+   still to do. The workflow was exercised only on synthetic invoices with a scripted reviewer, whose timings
+   mean nothing.
 2. **Ground truth is a person.** Reviewers can anchor on predictions. The 25% manual-entry subset measures
    agreement, but does not remove the bias. A single reviewer per document is not double annotation.
 3. **Small samples.** With 50–100 invoices, and a reserved group of perhaps 20–40, confidence intervals are

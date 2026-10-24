@@ -84,6 +84,16 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   baseline with `verify`, evaluation with confidence intervals and a logged reserved group, latency with and
   without the second reading, and a dry run. No genuine invoices have been collected yet.
 - Model revisions can be pinned (`models.*_revision`), and `extraction.second_reading` can be switched off.
+- **Strict parsing of typed amounts** (`inklight.entered`). "100 + 20", "1e3", "12abc 34" and irregular groups
+  are refused with the reason; they are no longer turned into numbers by deleting characters. Accounting
+  parentheses keep their sign. The reviewer's exact input is stored and exported next to the parsed value.
+- **Names in every script are compared correctly** (`inklight.textnorm`): different Arabic names were equal
+  in the inconsistency check, because every non-ASCII letter was deleted.
+- Pilot evaluation:
+  - The cohort and split are selected before any reprediction, and reserved access is logged first.
+  - `--predictions frozen|cached|full` separates re-extraction from stored OCR from a full pipeline run in an
+    isolated library, and records the provenance of each.
+  - `check_rehearsal.py` and `REHEARSAL.md` cover the 5–10 invoice human rehearsal, which has not run yet.
 - The document viewer can be closed on narrow screens; below 1100 px it used to cover the tabs.
 - **A sum or average that leaves documents out is `partial`, not `succeeded`.** Documents without a value
   were left out with only a warning. The answer now also says how many were left out.

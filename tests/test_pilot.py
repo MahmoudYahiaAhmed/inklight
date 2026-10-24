@@ -383,3 +383,123 @@ def test_a_document_reviewed_twice_is_predicted_once(workspace, spy):
     during = spy[before:]
     assert len(during) == len(workspace["shas"]["dev"]) == metrics["provenance"]["inference"]["documents_predicted"]
     assert "cached (re-extracted" in evaluate.markdown(metrics)
+
+
+# ---------------------------------------------------------------- the human rehearsal checker
+
+check_rehearsal = _load("check_rehearsal")
+
+
+def _human_review(rid, reviewer, mode="review", active=40.0, wall=60.0, entered="1,520.00"):
+    fields = [
+        {
+            "field": "total",
+            "action": "corrected" if mode == "review" else "entered",
+            "entered": entered,
+            "final": 1520.0,
+        },
+        {"field": "vendor", "action": "absent", "entered": None, "final": None},
+    ]
+    return {
+        "id": rid,
+        "doc_sha256": f"sha-{rid}",
+        "mode": mode,
+        "opened_by": reviewer,
+        "approved_by": reviewer,
+        "baseline": "c49d506",
+        "active_seconds": active,
+        "wall_seconds": wall,
+        "fields": fields,
+    }
+
+
+def _events(rid, reopen_reason=None):
+    kinds = [{"kind": "opened", "note": None}, {"kind": "set", "note": None}, {"kind": "approved", "note": None}]
+    if reopen_reason is not None:
+        kinds += [{"kind": "reopened", "note": reopen_reason}, {"kind": "approved", "note": None}]
+    return kinds
+
+
+def _export(reviews):
+    return [
+        {"review_id": r["id"], "field": f["field"], "action": f["action"], "entered_input": f["entered"] or ""}
+        for r in reviews
+        for f in r["fields"]
+    ]
+
+
+def _good():
+    reviews = [_human_review("r1", "ana"), _human_review("r2", "ben", mode="manual", active=90.0, wall=120.0)]
+    events = {"r1": _events("r1", reopen_reason="total misread"), "r2": _events("r2")}
+    return reviews, events, _export(reviews)
+
+
+def test_a_complete_human_rehearsal_passes():
+    result = check_rehearsal.check(*_good())
+    assert result["passed"], result["problems"]
+    assert result["coverage"] == {"reviewers": 2, "manual_entries": 1, "corrections": 1, "absent": 2, "reopenings": 1}
+    assert result["timing"]["manual_active_s"]["median"] == 90.0
+
+
+def test_scripted_reviews_never_count_as_human():
+    reviews = [{**_human_review("r1", "dry-run-script"), "baseline": "dry-run"}]
+    result = check_rehearsal.check(reviews, {"r1": _events("r1")}, _export(reviews))
+    assert not result["passed"] and any("no human reviews" in p for p in result["problems"])
+
+
+@pytest.mark.parametrize(
+    ("change", "problem"),
+    [
+        (lambda rv, ev, ex: rv[0].update(active_seconds=0.0), "active time is 0 s"),
+        (lambda rv, ev, ex: rv[0].update(active_seconds=500.0), "exceeds wall time"),
+        (lambda rv, ev, ex: rv[0]["fields"][0].update(entered=None), "without the reviewer's input"),
+        (lambda rv, ev, ex: ex.clear(), "missing from the export"),
+        (lambda rv, ev, ex: ex[0].update(action="accepted"), "does not match the review"),
+        (lambda rv, ev, ex: ex.append({"review_id": "zz", "field": "total", "action": "accepted"}), "not approved"),
+        (lambda rv, ev, ex: ev.update(r1=[{"kind": "set", "note": None}]), "history does not run"),
+        (lambda rv, ev, ex: ev.update(r1=_events("r1", reopen_reason=" ")), "without a reason"),
+    ],
+)
+def test_rehearsal_problems_are_reported(change, problem):
+    reviews, events, exported = _good()
+    change(reviews, events, exported)
+    result = check_rehearsal.check(reviews, events, exported)
+    assert not result["passed"] and any(problem in p for p in result["problems"]), result["problems"]
+
+
+def test_a_rehearsal_without_a_second_reviewer_or_manual_entry_is_incomplete():
+    reviews = [_human_review("r1", "ana")]
+    result = check_rehearsal.check(reviews, {"r1": _events("r1", reopen_reason="x y z")}, _export(reviews))
+    assert any("2 reviewers" in p for p in result["problems"]) and any(
+        "manual entries" in p for p in result["problems"]
+    )
+
+
+def test_rehearsal_check_reads_a_real_library_and_export(workspace, tmp_path):
+    config = workspace["config"]
+    with DocumentAgent(make_settings(workspace["home"])) as agent:
+        docs = agent.library.documents()
+        r = agent.open_review(docs[0].id, ["total"], reviewer="ben", mode="manual")
+        agent.reviews.decide(r.id, "total", reviewer="ben", action="entered", value="(12.00)")
+        agent.reviews.approve(r.id, reviewer="ben", active_seconds=1.0)
+        export = tmp_path / "export.csv"
+        export.write_text(agent.reviews.export("csv", actor="ben"), encoding="utf-8")
+    out = tmp_path / "check"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(PILOT / "check_rehearsal.py"),
+            "--config",
+            str(config),
+            "--export",
+            str(export),
+            "--out",
+            str(out),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    report = json.loads((out / "rehearsal-check.json").read_text())
+    assert report["human_reviews"] == 5 and report["coverage"]["manual_entries"] == 1
+    # the fixture's reviews were approved instantly with no active time: reported, so the check fails
+    assert result.returncode == 1 and any("no active time" in p for p in report["problems"])
