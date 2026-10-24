@@ -10,6 +10,7 @@ vowel marks (harakat). Unicode digits become ASCII, so "INV-١٢٣" and "INV-123
 
 from __future__ import annotations
 
+import re
 import unicodedata
 
 _TATWEEL = "ـ"
@@ -55,3 +56,35 @@ def search_form(text: str) -> str:
                 pass
         out.append(ch)
     return "".join(out).translate(_SEARCH_LETTERS)
+
+
+_AR_TOKEN = re.compile(r"[ء-ي]+")
+_AR_INDEX_PREFIXES = (
+    "وال",
+    "بال",
+    "كال",
+    "فال",
+    "لل",
+    "ال",
+)  # only the article forms: a bare و/ب/ل is often a root letter
+
+
+def index_form(text: str) -> str:
+    """search_form plus a light Arabic prefix stem: the article and attached conjunctions or prepositions are
+    removed from each Arabic word ("بالنزاع" → "نزاع", "والعقد" → "عقد"), keeping at least three letters.
+    Used for the full-text index and for queries alike; never for text shown to users."""
+
+    def stem(m: re.Match[str]) -> str:
+        w = m.group(0)
+        for prefix in _AR_INDEX_PREFIXES:
+            if w.startswith(prefix) and len(w) - len(prefix) >= 3:
+                return w[len(prefix) :]
+        return w
+
+    return _AR_TOKEN.sub(stem, search_form(text))
+
+
+def mostly_arabic(text: str, share: float = 0.5) -> bool:
+    """True when at least ``share`` of the letters are Arabic. Used to route around English-only models."""
+    letters = [c for c in text if c.isalpha()]
+    return bool(letters) and sum("؀" <= c <= "ۿ" for c in letters) / len(letters) >= share

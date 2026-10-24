@@ -12,6 +12,7 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 from ..extract import SINGULAR
+from ..textnorm import mostly_arabic
 from . import analysis, answer
 from .context import ToolContext
 from .expr import leaves
@@ -96,8 +97,10 @@ def _inspect(ctx: ToolContext, a: InspectArgs) -> str:
 def _search(ctx: ToolContext, a: SearchArgs) -> str:
     ctx.scratch.hits = ctx.library.search(a.query, ctx.scratch.doc_ids, k=a.k)
     method = ctx.scratch.hits[0].method if ctx.scratch.hits else "keyword"
-    if method != "keyword":
+    if method in ("hybrid", "semantic"):
         ctx.scratch.brain_used.add("embedder")
+    elif mostly_arabic(a.query) and ctx.brain.mode != "rules":
+        ctx.scratch.models_skipped.append("embedder not used: Arabic query (the embedder is an English model)")
     return f"{len(ctx.scratch.hits)} passages ({method})"
 
 

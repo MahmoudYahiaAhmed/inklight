@@ -216,7 +216,7 @@ def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
         "(this shows where values came from, not that they answer the question)"
     ]
     if plan.blocked:
-        out.append("interpretation: not run; the request was ambiguous")
+        out.append("interpretation: not run; " + "; ".join(plan.blocked))
     elif plan.not_understood:
         out.append(f"interpretation: partial; {len(plan.not_understood)} part(s) of the request were not applied")
     elif plan.where is not None:
@@ -226,6 +226,8 @@ def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
     out.append(f"evidence: heuristic score {s.confidence:.2f} (labels, OCR confidence, arithmetic checks)")
     if state == TaskState.PARTIAL and s.partial:
         out.append("result: only part of the job could be done (see warnings)")
+    for note in dict.fromkeys(s.models_skipped):
+        out.append(f"models: {note}")
     return tuple(out)
 
 

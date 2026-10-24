@@ -21,9 +21,9 @@ import numpy as np
 from .chunking import Chunk
 from .errors import StoreClosed
 from .schemas import AgentResult, Block, DocStatus, DocumentContent, DocumentInfo, PageContent, Source, TextLine
-from .textnorm import search_form
+from .textnorm import index_form
 
-SCHEMA_VERSION = 2  # 2: the full-text index holds search_form(text), not the raw text
+SCHEMA_VERSION = 3  # 2: the full-text index holds normalised text; 3: plus a light Arabic prefix stem
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
@@ -76,7 +76,7 @@ _WORD = re.compile(r"[\w$€£%.-]+", re.UNICODE)
 
 def fts_query(text: str) -> str:
     """Turn free text into a safe FTS5 OR-query of quoted terms."""
-    terms = [t.strip(".-") for t in _WORD.findall(search_form(text).lower())]
+    terms = [t.strip(".-") for t in _WORD.findall(index_form(text).lower())]
     terms = [t for t in terms if len(t) > 1 or t.isdigit()]
     return " OR ".join(f'"{t.replace(chr(34), "")}"' for t in dict.fromkeys(terms))
 
@@ -108,7 +108,7 @@ class Store:
         self._closed = False
 
     def _migrate_search_index(self) -> None:
-        """Version 1 indexed the raw chunk text: add search_text, fill it, and rebuild the index from it.
+        """Older libraries indexed other text: add search_text if needed, fill it, and rebuild the index from it.
 
         Runs under the write lock and re-checks inside it, so two processes opening the same old library at
         once migrate it once."""
@@ -127,7 +127,7 @@ class Store:
             db.execute("DROP TABLE IF EXISTS chunks_fts")
             rows = db.execute("SELECT id, text FROM chunks").fetchall()
             db.executemany(
-                "UPDATE chunks SET search_text = ? WHERE id = ?", [(search_form(t or ""), i) for i, t in rows]
+                "UPDATE chunks SET search_text = ? WHERE id = ?", [(index_form(t or ""), i) for i, t in rows]
             )
             db.execute(
                 "CREATE VIRTUAL TABLE chunks_fts USING fts5(search_text, content='chunks', content_rowid='id', "
@@ -142,7 +142,10 @@ class Store:
 
     def _search_index_current(self) -> bool:
         row = self._db.execute("SELECT sql FROM sqlite_master WHERE name = 'chunks_fts'").fetchone()
-        return row is not None and "search_text" in row[0]
+        if row is None or "search_text" not in row[0]:
+            return False
+        version = self._db.execute("SELECT value FROM meta WHERE key = 'schema_version'").fetchone()
+        return version is None or int(version[0]) >= SCHEMA_VERSION  # None: a new library, created current
 
     @property
     def closed(self) -> bool:
@@ -284,7 +287,7 @@ class Store:
                         _j(c.bbox),
                         c.conf,
                         int(i in flagged),
-                        search_form(c.text),
+                        index_form(c.text),
                     )
                     for i, c in enumerate(chunks)
                 ],

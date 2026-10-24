@@ -23,6 +23,7 @@ from ..errors import ModelUnavailable, PlanError
 from ..extract import CATALOG, SINGULAR, resolve_field
 from . import conditions as _cond
 from . import expr as _expr
+from . import lexicon as _lex
 from .plan import Condition, Group, Intent, Plan, Step
 
 log = logging.getLogger(__name__)
@@ -92,6 +93,8 @@ def _fields(request: str) -> list[str]:
         word = re.sub(r"\s+", " ", part).strip(" :'\"").lower()
         word = re.sub(r"^(?:the|all|every|each|their|its)\s+", "", word)
         word = re.sub(r"\s+(?:of|from|in)$", "", word)
+        # "total of the invoices": the column is "total"; "of the invoices" names the documents
+        word = re.sub(rf"\s+of\s+(?:the\s+|these\s+|all\s+|my\s+)?(?:{'|'.join(SINGULAR)})\b.*$", "", word)
         if word in _NOISE or word in SINGULAR or word.rstrip("s") in SINGULAR.values() or len(word) > 40:
             continue
         doc_words = set(SINGULAR) | set(SINGULAR.values())
@@ -100,6 +103,29 @@ def _fields(request: str) -> list[str]:
             continue  # "acme's invoices" names documents, not a column ("invoice number" is a column)
         name = resolve_field(word).name
         if name not in out:
+            out.append(name)
+    return out
+
+
+_COMPARE_WHAT = re.compile(r"\bcompare\s+(?:the\s+)?(?P<what>.+?)\s+(?:of|between|in|across|for|on)\b")
+
+
+def _compare_fields(text: str) -> list[str]:
+    """ "compare the letter dates of these documents" compares dates: the named fields, not the whole text."""
+    m = _COMPARE_WHAT.search(text)
+    if not m:
+        return []
+    out: list[str] = []
+    doc_words = set(SINGULAR) | set(SINGULAR.values())
+    for part in re.split(r",|\band\b|&|/", m.group("what")):
+        words = [w for w in part.split() if w not in doc_words and w not in _NOISE]
+        if not words:
+            continue
+        word = " ".join(words)
+        if word.endswith("s") and not word.endswith("ss"):
+            word = word[:-1]
+        name = resolve_field(word).name
+        if name in CATALOG and name not in out:
             out.append(name)
     return out
 
@@ -139,13 +165,18 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
     known = frozenset(w for f in fields for w in f.split("_"))  # requested columns are not dropped names
     parsed = _cond.parse(request, today, known)
     conds = bool(parsed.atoms)  # recognised constraints, even when their grouping is ambiguous (blocked)
-    doc_type = _doc_type(text)
+    doc_type = _doc_type(text) or (_lex.arabic_doc_type(request) if _lex.arabic(request) else None)
     output, output_name = _output(text)
     confidence = 0.8
     aggregate = aggregate_field = None
+    arabic_intent = _lex.arabic_intent(request) if _lex.arabic(request) else None
+    content_question = False
 
-    if re.search(r"\b(compare|comparison|differences?|differ|versus|vs\.?|what changed|diff)\b", text):
+    if arabic_intent is not None:
+        intent = arabic_intent
+    elif re.search(r"\b(compare|comparison|differences?|differ|versus|vs\.?|what changed|diff)\b", text):
         intent = Intent.COMPARE
+        fields = fields or _compare_fields(text)
     elif re.search(r"\b(inconsisten\w*|discrepanc\w*|mismatch\w*|conflicting|duplicates?)\b", text) or (
         re.search(r"\bflag\b", text) and not conds
     ):
@@ -165,7 +196,12 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         text,
     ):
         intent = Intent.COUNT
-    elif (m := _AGG_RE.search(text)) and (doc_type or conds or re.search(r"\b(all|these|every)\b", text)):
+    elif (
+        (m := _AGG_RE.search(text))
+        and (doc_type or conds or re.search(r"\b(all|these|every)\b", text))
+        # "export the number, date and total of the invoices to CSV" lists columns; it is not a sum
+        and not (m.group("set_total") and (output or re.search(r"\b(export|extract|tabulate)\b", text)))
+    ):
         intent = Intent.AGGREGATE
         word = m.group(1) or "sum"  # "the total of invoices ..." is a sum
         aggregate = (
@@ -180,6 +216,12 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
         money = [f for f in fields if f in _MONEY_FIELDS]
         aggregate_field = money[0] if money else ("tax" if re.search(r"\btax|vat\b", text) else "total")
         fields = fields or [aggregate_field]
+    elif _lex.content_question(text) and not (conds and doc_type and _open_question(text)):
+        # "Which city was hit by artillery fire on 8 September?" asks what a document says. Words in it
+        # ("by artillery fire", "on 8 September") are not conditions on which documents to read.
+        intent = Intent.ASK
+        confidence = 0.6
+        content_question = True
     elif conds and not fields and _open_question(text):
         # "What are the payment terms on Acme's invoice?" asks about one document's content: the
         # question is answered, from the documents the conditions select, never turned into a list.
@@ -225,17 +267,25 @@ def rule_plan(request: str, today: date | None = None) -> Plan:
     # `fields` stays the requested output columns; condition fields are added only to what is
     # extracted (see steps_for), never to what is shown or exported.
 
-    blocked = list(parsed.blocked)
+    blocked = [] if content_question else list(parsed.blocked)
     if parsed.where is not None and intent == Intent.PROCESS:
         blocked.append("conditions do not apply to indexing; ask for the matching documents instead")
+    if action := _lex.unsupported_action(request):
+        blocked.append(action)
+    if intent == Intent.ASK and (content_question or arabic_intent is None and _lex.arabic(request)):
+        # "Who signed the letter?" names its document by a noun: classification must not narrow the
+        # search to documents typed "letter" (a misclassified letter would hide the answer).
+        doc_type = None
     if blocked:
         confidence = min(confidence, 0.3)
+    if content_question:
+        not_understood = []
 
     plan = Plan(
         intent=intent,
         query=request.strip(),
         fields=tuple(fields),
-        where=None if blocked else parsed.where,
+        where=None if blocked or content_question else parsed.where,
         doc_type=doc_type,
         output=output,
         output_name=output_name,  # type: ignore[arg-type]
@@ -266,6 +316,8 @@ def _default_fields(doc_type: str | None) -> list[str]:
         return ["effective_date", "expiry_date", "contract_value"]
     if doc_type == "receipt":
         return ["vendor", "date", "total"]
+    if doc_type in ("letter", "report", "form", "certificate"):
+        return ["date"]  # no invoice fields on general documents: ask for the fields you want
     return ["invoice_number", "vendor", "date", "total"]
 
 

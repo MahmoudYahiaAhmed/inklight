@@ -40,6 +40,7 @@ class Scratch:
     files: list[str] = field(default_factory=list)
     calc: dict[str, Any] | None = None
     brain_used: set[str] = field(default_factory=set)
+    models_skipped: list[str] = field(default_factory=list)  # optional models deliberately not used, and why
     partial: bool = False  # a tool could only do part of the job (e.g. mixed currencies)
 
     def warn(self, message: str) -> None:

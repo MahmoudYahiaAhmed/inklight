@@ -20,6 +20,7 @@ from ..extract.fields import ALIASES
 from ..extract.values import all_money, parse_dates
 from ..safety import fence_untrusted
 from ..schemas import Source
+from ..textnorm import mostly_arabic, search_form
 from .context import ToolContext
 
 _STOP = set(
@@ -129,14 +130,35 @@ _STOP = set(
     ]
 )
 
-_SENT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(])|\n+")
+# Arabic function words, in search_form (ة → ه, أ/إ/آ → ا, ى → ي).
+_STOP_AR = set(
+    (  # noqa: SIM905 - one readable word list
+        "ما ماذا من هو هي هم هذه هذا هذان هاتان ذلك تلك الذي التي الذين في علي الي عن مع بين عند منذ حتي "
+        "ثم او ام و ف ب ل ك لا لم لن قد كان كانت يكون ان كل اي كم متي اين كيف لماذا هل نعم بعد قبل حول "
+        "ضد دون غير تم يتم وفق لدي لدى عليه عليها اليه فيه فيها منه منها به بها له لها"
+    ).split()
+)
+_STOP |= _STOP_AR
+_AR_PREFIXES = ("وال", "بال", "كال", "فال", "لل", "ال")
+_AR_SUFFIXES = ("ات", "ين", "ون", "ها", "هم", "ه", "ي", "ت")
+_SENT = re.compile(r"(?<=[.!?؟؛])\s+(?=[A-Z0-9\"'(؀-ۿ])|\n+")
 
 
 def words(text: str) -> list[str]:
-    return [w for w in re.findall(r"[a-z0-9]+", text.lower()) if w not in _STOP and len(w) > 1]
+    """Words for matching, in any script: Arabic is compared in its search form (no harakat, one alef)."""
+    return [w for w in re.findall(r"[^\W_]+", search_form(text).lower()) if w not in _STOP and len(w) > 1]
 
 
 def _stem(w: str) -> str:
+    if re.match(r"[؀-ۿ]", w):  # light Arabic stem: article, conjunction, common endings
+        for prefix in _AR_PREFIXES:
+            if w.startswith(prefix) and len(w) - len(prefix) >= 3:
+                w = w[len(prefix) :]
+                break
+        for suffix in _AR_SUFFIXES:
+            if w.endswith(suffix) and len(w) - len(suffix) >= 3:
+                return w[: -len(suffix)]
+        return w
     for suffix in ("ing", "ed", "es", "s"):
         if w.endswith(suffix) and len(w) - len(suffix) >= 3:
             return w[: -len(suffix)]
@@ -151,7 +173,21 @@ def norm(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
+_AR_KINDS = [  # in search_form
+    ("number", re.compile(r"(?:^|\s)(?:كم عدد|ما عدد|عدد)")),
+    ("date", re.compile(r"(?:^|\s)(?:متي|تاريخ|موعد|في اي يوم)")),
+    (
+        "money",
+        re.compile(r"(?:^|\s)(?:كم|المبلغ|مبلغ|الاجمالي|اجمالي|السعر|الاجره|قيمه|الضريبه|الراتب|الرسوم|التكلفه|تكلفه)"),
+    ),
+    ("name", re.compile(r"^(?:من|ما اسم|ما الجهه)")),
+]
+
+
 def expected_kind(question: str) -> str | None:
+    if re.search(r"[؀-ۿ]", question):
+        q = search_form(question).strip()
+        return next((kind for kind, pattern in _AR_KINDS if pattern.search(q)), None)
     q = question.lower()
     if re.search(r"\b(how many|number of|count of|what percent\w*|how big|how large)\b", q):
         return "number"
@@ -314,11 +350,28 @@ def _evidence(ctx: ToolContext, k: int = 5) -> list[Source]:
     return out
 
 
-def _reader_answer(ctx: ToolContext, question: str) -> str | None:
+_READER_SKIPPED = "reader not used: Arabic question or evidence (the reader is an English extractive model)"
+
+
+def _english_reader(ctx: ToolContext, question: str, evidence: list[Source]):  # type: ignore[no-untyped-def]
+    """The reader, unless the question or the evidence is Arabic.
+
+    The reader is distilbert fine-tuned on English SQuAD. With the same passages, Arabic answers went from 17 of
+    36 correct without it to 3 of 36 with it (bench/usecases, dev split), so it is not asked about Arabic."""
     reader = ctx.brain.reader
     if reader is None:
         return None
+    if mostly_arabic(question) or mostly_arabic(" ".join(e.excerpt for e in evidence)):
+        ctx.scratch.models_skipped.append(_READER_SKIPPED)
+        return None
+    return reader
+
+
+def _reader_answer(ctx: ToolContext, question: str) -> str | None:
     evidence = _evidence(ctx)
+    reader = _english_reader(ctx, question, evidence)
+    if reader is None:
+        return None
     spans = reader.answer(question, [e.excerpt for e in evidence], top=8, check=ctx.check)
     if not spans:
         return None
@@ -388,6 +441,12 @@ def _rule_answer(ctx: ToolContext, question: str) -> str:
     s.answer = sent
     s.sources = [narrow(ctx, src, sent, question)] + [h.source for h in ctx.scratch.hits[1:3] if h.source is not src]
     s.confidence = round(min(0.75, 0.25 + 0.5 * coverage), 3)
+    shared = len(set(q_terms) & {_stem(w) for w in words(sent)}) / max(len(set(q_terms)), 1)
+    if mostly_arabic(question) or shared < 0.5:
+        # A sentence chosen by shared words, without a model reading it, needs a check when the question is
+        # Arabic (right about one time in three on the dev set) or when it shares under half the question's
+        # words ("the employee's passport number" answered by a sentence that only mentions the employee).
+        s.confidence = min(s.confidence, 0.29)
     return f"best sentence ({s.confidence:.2f})"
 
 
@@ -501,12 +560,12 @@ def cite(ctx: ToolContext, question: str) -> str:
     if not s.hits:
         s.answer, s.confidence = "No passage in these documents matches that.", 0.0
         return "no evidence"
-    reader = ctx.brain.reader
+    evidence = _evidence(ctx)
+    reader = _english_reader(ctx, question, evidence)
     best = s.hits[0].source
     needle = ""
     confirmed = False
     if reader is not None:
-        evidence = _evidence(ctx)
         spans = reader.answer(question, [e.excerpt for e in evidence], top=1, check=ctx.check)
         if spans and spans[0].score > 0.2:
             best = evidence[spans[0].passage]

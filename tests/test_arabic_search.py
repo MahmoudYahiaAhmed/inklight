@@ -27,7 +27,7 @@ def test_search_form(text, expected):
 
 
 def test_query_is_not_split_at_vowel_marks():
-    assert fts_query("المُستحق") == '"المستحق"'
+    assert fts_query("المُستحق") == '"مستحق"'  # one term: no split at the mark, article removed
 
 
 TEXT = (
@@ -47,7 +47,21 @@ def arabic_agent(tmp_path):
 
 @pytest.mark.parametrize(
     "query",
-    ["المستحق", "المُستحق", "القاهره", "القاهرة", "الى رئيس", "الامن", "2023", "٥٠٠", "الأول", "الاول"],
+    [
+        "المستحق",
+        "المُستحق",
+        "القاهره",
+        "القاهرة",
+        "الى رئيس",
+        "الامن",
+        "2023",
+        "٥٠٠",
+        "الأول",
+        "الاول",
+        "بالقاهرة",
+        "والمبلغ",
+        "مستحق",
+    ],
 )
 def test_arabic_queries_find_the_document(arabic_agent, query):
     assert arabic_agent.search(query), query
@@ -93,7 +107,7 @@ def test_a_version_1_library_is_reindexed(tmp_path):
         assert store.keyword_search("المستحق", None, 5)
         assert store.keyword_search("القاهره", None, 5)
         version = store._conn().execute("SELECT value FROM meta WHERE key = 'schema_version'").fetchone()[0]
-    assert version == "2"
+    assert version == "3"
     with Store(db_path) as store:  # opening again does not migrate twice
         assert len(store.keyword_search("المستحق", None, 5)) == 1
 
@@ -102,3 +116,22 @@ def test_deleting_a_document_removes_it_from_the_index(arabic_agent):
     doc = arabic_agent.library.documents()[0]
     arabic_agent.library.remove(doc.id)
     assert not arabic_agent.search("المستحق")
+
+
+def test_a_version_2_library_is_reindexed_with_the_prefix_stem(tmp_path):
+    db_path = tmp_path / "library.db"
+    with Store(db_path) as store:
+        db = store._conn()
+        db.execute(
+            "INSERT INTO documents (id, path, name, sha256, status) VALUES ('d1', '/x/a.txt', 'a.txt', '0', 'ready')"
+        )
+        # what version 2 stored: search_form only, without the prefix stem
+        db.execute(
+            "INSERT INTO chunks (doc_id, page, block_start, block_end, text, search_text) "
+            "VALUES ('d1', 1, 0, 0, 'تختص محاكم الجيزة بالنزاع', 'تختص محاكم الجيزه بالنزاع')"
+        )
+        db.execute("UPDATE meta SET value = '2' WHERE key = 'schema_version'")
+        assert not store.keyword_search("نزاع", None, 5)
+    with Store(db_path) as store:
+        assert store.keyword_search("نزاع", None, 5)
+        assert store.keyword_search("النزاع", None, 5)

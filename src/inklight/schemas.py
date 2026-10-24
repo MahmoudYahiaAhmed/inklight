@@ -230,4 +230,4 @@ class AgentResult(Frozen):
 class SearchHit(Frozen):
     source: Source
     score: float
-    method: Literal["keyword", "semantic", "hybrid"] = "keyword"
+    method: Literal["keyword", "semantic", "hybrid", "scope"] = "keyword"

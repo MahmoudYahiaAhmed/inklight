@@ -9,9 +9,11 @@ import numpy as np
 from .brains import Brain
 from .schemas import SearchHit
 from .store import Store
+from .textnorm import mostly_arabic
 
 log = logging.getLogger(__name__)
 RRF_K = 60
+SCOPE_FALLBACK_DOCS = 2
 
 
 class Retriever:
@@ -34,7 +36,15 @@ class Retriever:
     def search(self, query: str, doc_ids: list[str] | None = None, k: int = 8) -> list[SearchHit]:
         keyword = self.store.keyword_search(query, doc_ids, limit=k * 3)
         semantic: list[tuple[int, float]] = []
-        embedder = self.brain.embedder
+        # The embedder is an English model. On Arabic queries it ranked the right document lower than keyword
+        # search alone (bench/usecases/retrieval_ablation.py), so Arabic queries are keyword-only.
+        embedder = None if mostly_arabic(query) else self.brain.embedder
+        if not keyword and doc_ids and len(doc_ids) <= SCOPE_FALLBACK_DOCS:
+            # A question about one or two named documents that shares no indexed word with them (Arabic
+            # inflection, a synonym): read their passages in order rather than answer "nothing found".
+            scoped = self.store.chunks_for(doc_ids)[:k]
+            if scoped and embedder is None:
+                return [SearchHit(source=src, score=0.0, method="scope") for _, src in scoped]
         if embedder is not None:
             try:
                 self.index_embeddings()
