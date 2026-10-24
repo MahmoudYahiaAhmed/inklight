@@ -27,8 +27,17 @@ _MON = (
 DATE_PATTERNS = [
     re.compile(r"\b(?P<y>\d{4})[-/.](?P<m>\d{1,2})[-/.](?P<d>\d{1,2})\b"),
     re.compile(r"\b(?P<a>\d{1,2})[-/.](?P<b>\d{1,2})[-/.](?P<y>\d{4}|\d{2})\b"),
-    re.compile(rf"\b(?P<d>\d{{1,2}})(?:st|nd|rd|th)?[\s-]+{_MON}\.?,?[\s-]+(?P<y>\d{{4}})\b", re.IGNORECASE),
-    re.compile(rf"\b{_MON}\.?\s+(?P<d>\d{{1,2}})(?:st|nd|rd|th)?,?\s+(?P<y>\d{{4}})\b", re.IGNORECASE),
+    # Month names, with a 2- or 4-digit year, spaced or compact as invoices print them: "14 Mar 2026",
+    # "04-JAN-00", "19Jun'22", "March 14, 2026", "JAN04/00". A year followed by ".5" or ":30" is an amount
+    # or a time, not a year ("QTY 2 MAY 15.00").
+    re.compile(
+        rf"\b(?P<d>\d{{1,2}})(?:st|nd|rd|th)?[\s\-/.]*{_MON}\.?,?[\s\-/.']*(?P<y>\d{{4}}|\d{{2}})\b(?![.,:]\d)",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        rf"\b{_MON}\.?[\s\-/.]*(?P<d>\d{{1,2}})(?![.,]\d)(?:st|nd|rd|th)?,?[\s\-/.']+(?P<y>\d{{4}}|\d{{2}})\b(?![.,:]\d)",
+        re.IGNORECASE,
+    ),
 ]
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 PHONE_RE = re.compile(r"(?:\+\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?)?\d{3,4}[\s.-]\d{3,4}(?:[\s.-]\d{2,4})?")
@@ -114,7 +123,7 @@ def parse_dates(text: str, day_first: bool = False) -> list[tuple[date, str, int
                 continue
             g = m.groupdict()
             if g.get("mon"):
-                parsed = _safe_date(int(g["y"]), _MONTHS[g["mon"][:3].lower()], int(g["d"]))
+                parsed = _safe_date(_year(g["y"]), _MONTHS[g["mon"][:3].lower()], int(g["d"]))
             elif "a" in g and g.get("a"):
                 a, b, y = int(g["a"]), int(g["b"]), _year(g["y"])
                 if a > 12:

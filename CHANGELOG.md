@@ -97,6 +97,13 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   - `--predictions frozen|cached|full` separates re-extraction from stored OCR from a full pipeline run in an
     isolated library, and records the provenance of each.
   - `check_rehearsal.py` and `REHEARSAL.md` cover the 5–10 invoice human rehearsal, which has not run yet.
+- **Extraction reads month-name dates as invoices print them**: "JAN04/00", "04-JAN-00", "19Jun'22",
+  "Sept 30, 82". Before, only 4-digit years with spaces were read. On 80 INV-CDIP invoices and 60 Voxel51
+  invoices with date labels, correct dates went from 131 to 136 of 151 and missing from 13 to 7. No value
+  changed on any of the 180 Voxel51 and CORD documents, so earlier benchmark results stand. A year followed
+  by ".5" or ":30" is not read as a year ("QTY 2 MAY 15.00"). Measured with `bench/compare_dates.py`.
+- An issue date more than a year in the future is flagged ("check the year"); due, expiry and end dates are
+  not. Archive OCR had read "08-OCT-85" as "08-OCT-35".
 - The document viewer can be closed on narrow screens; below 1100 px it used to cover the tabs.
 - **A sum or average that leaves documents out is `partial`, not `succeeded`.** Documents without a value
   were left out with only a warning. The answer now also says how many were left out.

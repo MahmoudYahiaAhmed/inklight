@@ -12,7 +12,7 @@ import json
 import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
@@ -592,6 +592,9 @@ def extract_record(
                 f"ambiguous date, read {order}; set [extraction] day_first if your documents use the other order"
             )
             conf *= 0.6
+        if spec.type == "date" and _implausibly_future(spec.name, best.value):
+            warning = (warning + "; " if warning else "") + "date is more than a year in the future; check the year"
+            conf *= 0.5
         if best.line.conf is not None and best.line.conf < 0.85:
             warning = (warning + "; " if warning else "") + f"low OCR confidence ({best.line.conf:.2f})"
         raw_values[spec.name] = best.value
@@ -625,6 +628,16 @@ def _currency_of(raw: str, line: str, doc_currency: str | None) -> str | None:
 
 
 _AMBIGUOUS_DATE = re.compile(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})\b")
+
+
+_FUTURE_FIELD = re.compile(r"due|expir|end|until|renew|valid|term|deadline|maturity", re.IGNORECASE)
+
+
+def _implausibly_future(name: str, value: Any) -> bool:
+    """An issue date (not a due, expiry or end date) over a year ahead is usually a misread year ("85" as "35")."""
+    if not isinstance(value, date) or _FUTURE_FIELD.search(name):
+        return False
+    return value > date.today() + timedelta(days=366)
 
 
 def _ambiguous_date(raw: str) -> bool:

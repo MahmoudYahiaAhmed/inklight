@@ -60,6 +60,46 @@ def test_parse_dates_rejects_impossible():
     assert parse_dates("2026-02-31") == []
 
 
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("INVOICE DATE JAN04/00", date(2000, 1, 4)),  # genuine invoice (INV-CDIP hjfp0094)
+        ("DUE DATE JAN24/00", date(2000, 1, 24)),
+        ("INVOICE DATE FEB12/03", date(2003, 2, 12)),
+        ("Date: 04-JAN-00", date(2000, 1, 4)),
+        ("04JAN2000", date(2000, 1, 4)),
+        ("19Jun'22 09:48", date(2022, 6, 19)),  # Egyptian receipt (CORU)
+        ("Jan. 4, 2000", date(2000, 1, 4)),
+        ("Sept 30, 82", date(1982, 9, 30)),
+        ("Date: Mar 14 2026", date(2026, 3, 14)),
+    ],
+)
+def test_parse_dates_month_name_forms(text, expected):
+    assert parse_dates(text)[0][0] == expected
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "QTY 2 MAY 15.00",  # an amount after a month word is not a year
+        "MAY 5 10.50",
+        "Prices may 30 change",
+        "Mar 12",  # no year
+        "JAN32/00",  # no such day
+        "Item JAN04/005",
+    ],
+)
+def test_parse_dates_month_name_forms_do_not_overreach(text):
+    assert parse_dates(text) == []
+
+
+def test_extract_invoice_style_month_dates():
+    page = _page(["Bozell Worldwide, Inc.", "INVOICE DATE JAN04/00", "DUE DATE JAN24/00", "Invoice Amount 31,000.00"])
+    rec = extract_record(_doc(), [page], [resolve_field("date"), resolve_field("due date")])
+    assert rec.fields["date"].value == "2000-01-04"
+    assert rec.fields["due_date"].value == "2000-01-24"
+
+
 def _doc():
     return DocumentInfo(id="d" * 16, path="/x/inv.pdf", name="inv.pdf", sha256="0", size=1, mtime=0)
 
@@ -194,3 +234,12 @@ def test_next_line_fallback_skips_other_labels():
 def test_single_char_invoice_id():
     rec = extract_record(_doc(), [_page(["Invoice #7"])], [resolve_field("invoice number")])
     assert rec.fields["invoice_number"].value == "7"
+
+
+def test_issue_date_far_in_the_future_is_flagged():
+    # Archive OCR read "08-OCT-85" as "08-OCT-35" (INV-CDIP tngn0205): keep the value, flag the year.
+    page = _page(["INVOICE", "Date of Inv: 08-OCT-35", "Due Date: 08-OCT-36"])
+    rec = extract_record(_doc(), [page], [resolve_field("date"), resolve_field("due date")])
+    assert rec.fields["date"].value == "2035-10-08"
+    assert "future" in rec.fields["date"].warning
+    assert "future" not in (rec.fields["due_date"].warning or "")  # due and expiry dates may lie ahead

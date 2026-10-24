@@ -1,0 +1,12 @@
+old: C:\Users\pc\inklight-pilot-b4\venv\Lib\site-packages\inklight\__init__.py
+new: C:\Users\pc\inklight\src\inklight\__init__.py
+old: {'labelled': 151, 'correct': 131, 'missing': 13, 'wrong': 7}
+new: {'labelled': 151, 'correct': 136, 'missing': 7, 'wrong': 8}
+unscored labels (2): ["kthk0189.date='25/02/2000'", 'qpjd0006.date="06/08/\'01"']
+changed values (6):
+  fybn0018.date: None -> 2003-02-12   label='FEB12/03' RIGHT
+  hjfp0094.date: None -> 2000-01-04   label='JAN04/00' RIGHT
+  hjfp0094.due_date: None -> 2000-01-24   label='JAN24/00' RIGHT
+  jnbn0018.date: None -> 2002-02-14   label='FEB14/02' RIGHT
+  jnbn0018.due_date: None -> 2002-03-06   label='MAR06/02' RIGHT
+  tngn0205.date: None -> 2035-10-08   label='08-OCT-85' WRONG
