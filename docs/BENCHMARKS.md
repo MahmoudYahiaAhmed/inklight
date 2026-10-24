@@ -211,8 +211,40 @@ some "Rp" as "¥" or "$", and Inklight refuses to add them).
 
 One state is too optimistic. On fresh CORD, H's sum over *all* receipts reports `succeeded` while leaving
 out 5 receipts with no readable total. It warns "5 document(s) had no total and were left out", and
-`calculation.missing` is 5, but the state alone overstates completeness. This is recorded as a limitation
-and is not changed in this round, so that the fresh measurement describes the shipped code.
+`calculation.missing` is 5, but the state alone overstates completeness. Build I changes this (next
+section). The fresh results above remain build H's and were not re-run.
+
+### Follow-up: aggregates that leave documents out (build I, dev only)
+
+**The change** (`69675a0`, wheel `d37bd91cca7740f5…`):
+- A sum, average, minimum or maximum that leaves out documents without a value now reports `partial`, not
+  `succeeded`.
+- The answer says how many documents were left out, for example "(over 53 document(s); 5 document(s) with
+  no total left out; …)", including when the currencies differ.
+- The value itself is unchanged, and `calculation.missing` still gives the count.
+
+**Measured on dev only.** The fresh split was not re-run, so the fresh table above is build H's and does not
+include this change.
+
+| Dev run | Field results vs H | Task outcomes vs H | Aggregates leaving documents out | …of those reported `succeeded` |
+|---|---|---|---|---|
+| Voxel51 dev, rules + auto | identical | identical (no state changed) | 0 | 0 |
+| CORD dev, rules + auto | identical | identical (no state changed) | 1 (sum over all receipts, 2 left out) | 0 (in H already `partial`) |
+
+Dev therefore shows **no regression, but no observable effect either**:
+- On dev the only aggregate that leaves documents out was already `partial` for other reasons: low OCR
+  confidence, and inferred totals.
+- Dev contains no case where leaving documents out is the *only* gap, so the behaviour rests on unit tests
+  in `tests/test_condition_enforcement.py`. Those tests cover a sum and an average over 4 of 5 invoices
+  (`partial`, with the left-out count in the answer and the checks), a complete sum (`succeeded`), a
+  filtered sum whose conditions exclude the gap (`succeeded`), and the per-currency answer.
+- The motivating case, the fresh all-receipts sum, is not re-measured here.
+
+Build I's ONNX call counts on dev equal H's. H itself makes 210 more OCR calls than F on Voxel51 dev (1,445
+vs 1,235). These are second readings by the amount-consistency check, triggered by its format or magnitude
+signal, that agreed with the first reading and flagged nothing.
+
+Results: `bench/results/external/partial-I-*.json`, `provenance_partial.md`.
 
 ### Development split: baseline → fixes
 
@@ -343,9 +375,10 @@ wheels and dev data.
 
 ## Generated documents (regression checks, speed and memory)
 
-Produced by `python bench/run.py` and `python bench/memory.py` on the code of build H (`3788bf9`; later commits
-change only the evaluation harness, tests and documentation). Raw output is in
-`bench/results.json`.
+Produced by `python bench/run.py` and `python bench/memory.py` on the code of build H (`3788bf9`). Raw output
+is in `bench/results.json`. Re-running `bench/run.py` on build I (`69675a0`) changed only timings: every
+accuracy, request and citation result is identical. Later commits change only the evaluation harness, tests
+and documentation.
 
 ### Test set, and what it does not cover
 
@@ -451,6 +484,8 @@ python bench/run.py && python bench/memory.py
 
 ## Change log of this document
 
+- 2026-10-24: added build I (aggregates that leave documents out report `partial`), measured on dev only and
+  reported separately; the fresh tables are unchanged.
 - 2026-10-24 (fourth review): applied five-outcome scoring (correct/wrong × flagged/unflagged, missing) to
   every saved prediction. Added numeric task checks: counts, sums, currency, values left out, exported rows
   and values, and refusals that name what they refuse. Evaluated the amount-consistency check v2 on a

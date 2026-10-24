@@ -27,6 +27,7 @@ BUILDS = {
     "F": "final (05206d7)",
     "G": "digit-loss v1 (e61a8d6)",
     "H": "amount check v2 (3788bf9)",
+    "I": "partial aggregates (69675a0)",
 }
 TASK_OUTCOMES = (
     "correct",

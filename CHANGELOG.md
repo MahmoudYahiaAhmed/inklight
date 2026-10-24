@@ -75,6 +75,8 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   success and compute no total. `AgentResult.calculation` now exposes the sum: op, result, unit, values used
   and values left out.
 - Rupiah amounts in requests ("above Rp 50.000", "50,000 IDR").
+- **A sum or average that leaves documents out is `partial`, not `succeeded`.** Documents without a value
+  were left out with only a warning. The answer now also says how many were left out.
 - Indonesian tax labels (`pajak`, `ppn`, `pb1`, `p.rest`), plus `net worth` and `gross worth`.
 - **Possessive requests**: "Show acme's invoices", curly apostrophes, the name first ("Acme's invoices above
   $5,000"), and coordinated owners. A possessive owner stops at a preposition ("terms on Acme's" → Acme) unless

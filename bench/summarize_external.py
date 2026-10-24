@@ -21,6 +21,7 @@ ENV_NAMES = {
     "F": "final",
     "G": "digit-loss check",
     "H": "amount check v2",
+    "I": "partial aggregates",
 }
 
 

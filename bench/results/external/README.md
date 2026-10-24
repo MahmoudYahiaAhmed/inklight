@@ -12,6 +12,7 @@ Produced by `bench/external.py` and summarised by `bench/summarize_external.py`.
 | `unplanned-D-*` | an intermediate build's holdout run started by mistake and not read before the final run |
 | `digitloss-G-*` | build `e61a8d6` (digit-loss check v1) on dev and holdout |
 | `devtasks-*` | builds A, F, H on dev with the final task harness (numeric task checks) |
+| `partial-I-*` | build I (`69675a0`, partial state for aggregates that leave documents out), dev only |
 | `fresh1-*` | the fresh split: Voxel51 (only run), CORD first run (two annotation-parsing bugs, corrected in rescoring) |
 | `fresh2-*` | the fresh CORD split re-run after the parsing fix, same wheels |
 | `truth_corrections.json` | parsing errors in our preparation script, removed from scoring by `bench/rescore.py` |
