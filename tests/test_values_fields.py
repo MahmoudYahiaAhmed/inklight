@@ -243,3 +243,64 @@ def test_issue_date_far_in_the_future_is_flagged():
     assert rec.fields["date"].value == "2035-10-08"
     assert "future" in rec.fields["date"].warning
     assert "future" not in (rec.fields["due_date"].warning or "")  # due and expiry dates may lie ahead
+
+
+@pytest.mark.parametrize(
+    "text,expected",
+    [
+        ("رسالة مؤرخة 18 كانون الثاني/يناير 2023 موجهة", date(2023, 1, 18)),  # UN letters (dev)
+        ("مؤرخة 6 شباط/فبراير 2023", date(2023, 2, 6)),
+        ("في ٢٢ أيلول/سبتمبر ١٩٨٣", date(1983, 9, 22)),  # Arabic-Indic digits
+        ("من ٣ آذار/مارس ٢٠٢٤ إلى ١٤ آذار/مارس ٢٠٢٤", date(2024, 3, 3)),
+        ("بتاريخ 13 ديسمبر 2022", date(2022, 12, 13)),
+        ("في 1 آب/أغسطس 1983", date(1983, 8, 1)),
+        ("تشرين الأول 2023 في 5 تشرين الأول 2023", date(2023, 10, 5)),
+        ("يوم ٧ كانون الثاني/يناير ٢٠٢٤", date(2024, 1, 7)),
+    ],
+)
+def test_parse_dates_arabic_month_names(text, expected):
+    assert parse_dates(text)[0][0] == expected
+
+
+@pytest.mark.parametrize("text", ["الباب 12 من 2023", "كانون 2023", "انتخاب 5 مارسيل 2020"])
+def test_arabic_month_names_need_a_day_month_and_year(text):
+    assert parse_dates(text) == []
+
+
+@pytest.mark.parametrize(
+    "text,value,currency",
+    [
+        ("Total 160.00 L.E", "160.00", "EGP"),  # Egyptian receipts (CORU, dev)
+        ("LE 249.00", "249.00", "EGP"),
+        ("الإجمالي 137.6 ج.م", "137.6", "EGP"),
+        ("8,000 جنيه مصري", "8000", "EGP"),
+        ("الإجمالي: 4,600.00 ر.س", "4600.00", "SAR"),
+        ("1,800.00 ريال", "1800.00", "SAR"),
+        ("18,500 درهم إماراتي", "18500", "AED"),
+        ("Sale 5.00", "5.00", None),  # "le" inside a word is not a currency
+    ],
+)
+def test_regional_currencies(text, value, currency):
+    amount, cur = parse_money(text)
+    assert amount == Decimal(value) and cur == currency
+
+
+def test_total_tendered_is_not_the_total():
+    # CORU receipt 0002998f (dev): "Total 160.00", then "Total Tendered 210.00" and "Change -50.00"
+    page = _page(["Abu Auf", "Total 160.00", "Cash 210.00 L.E", "Total Tendered 210.00", "Change Due -50.00"])
+    rec = extract_record(_doc(), [page], [resolve_field("total")])
+    assert rec.fields["total"].value == 160.0
+
+
+@pytest.mark.parametrize(
+    "text,value",
+    [
+        ("الأجرة الشهرية ثمانية آلاف جنيه مصري (8,000 ج.م) تدفع مقدماً", "8000"),  # restates the amount
+        ("Fee: twenty dollars ($20.00)", "20.00"),
+        ("Total (45.00)", "-45.00"),  # accounting negative is unchanged
+        ("Refund (12.50 USD)", "-12.50"),
+        ("الأجرة الشهرية خمسه الاف ريال سعودى (5,000 ر.س) تسدد", "5000"),  # OCR changed the words: still a restatement
+    ],
+)
+def test_parentheses_restating_a_written_amount_are_not_negative(text, value):
+    assert parse_money(text)[0] == Decimal(value)

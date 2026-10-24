@@ -6,7 +6,22 @@ import re
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
-_CURRENCY = r"(?:E£|[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF|EGP|SAR|AED|IDR|Rp\.?)"
+_CURRENCY = (
+    r"(?:E£|[$€£¥₹]|USD|EUR|GBP|CAD|AUD|INR|JPY|CHF|EGP|SAR|AED|IDR|Rp\.?"
+    # Egypt, Saudi Arabia, the UAE: "L.E" / "LE" (not inside a word), ج.م, جنيه, ر.س, ريال, د.إ, درهم
+    r"|(?<![A-Za-z])L\.?E\b\.?|ج\.?\s?م\b\.?|جنيه(?:ا)?(?:\s+مصري)?|ر\.?\s?س\b\.?|ريال(?:\s+سعودي)?"
+    r"|د\.?\s?إ\b\.?|درهم(?:\s+إماراتي)?)"
+)
+# "ثمانية آلاف جنيه مصري (8,000 ج.م)", "twenty dollars ($20.00)": parentheses after a written-out amount restate
+# it; they are not an accounting negative. Nor are parentheses after an Arabic word (prose, not a ledger).
+_AMOUNT_WORDS_BEFORE = re.compile(
+    rf"(?:{_CURRENCY}|dollars?|euros?|pounds?|riyals?|dirhams?|dinars?|دينار|[ء-ي]{{2,}})\s*$", re.IGNORECASE
+)
+_CURRENCY_CODES = {
+    "$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP", "RP": "IDR",
+    "LE": "EGP", "جم": "EGP", "جنيه": "EGP", "جنيها": "EGP", "جنيهمصري": "EGP", "جنيهامصري": "EGP",
+    "رس": "SAR", "ريال": "SAR", "ريالسعودي": "SAR", "دإ": "AED", "درهم": "AED", "درهمإماراتي": "AED",
+}  # fmt: skip
 # Thousands groups use ',' '.' or a non-breaking/thin space — a plain space only right after a
 # currency symbol ("$ 2 425,87"); elsewhere it would glue a quantity column onto an amount ("2 150.00").
 # A number followed by '%' is a rate, not money.
@@ -39,6 +54,39 @@ DATE_PATTERNS = [
         re.IGNORECASE,
     ),
 ]
+# Arabic month names: the Gregorian names used in Egypt and the Gulf, and the Levantine/Iraqi names. UN documents
+# write both ("18 كانون الثاني/يناير 2023"). Written plain here; letter variants are matched by _ar_class.
+_AR_MONTHS = {
+    "يناير": 1, "فبراير": 2, "مارس": 3, "ابريل": 4, "مايو": 5, "يونيو": 6, "يونيه": 6, "يوليو": 7, "يوليه": 7,
+    "اغسطس": 8, "سبتمبر": 9, "اكتوبر": 10, "نوفمبر": 11, "ديسمبر": 12,
+    "كانون الثاني": 1, "شباط": 2, "اذار": 3, "نيسان": 4, "ايار": 5, "حزيران": 6, "تموز": 7, "اب": 8,
+    "ايلول": 9, "تشرين الاول": 10, "تشرين الثاني": 11, "كانون الاول": 12,
+}  # fmt: skip
+_AR_VARIANTS = {"ا": "[اأإآ]", "ي": "[يى]", "ه": "[هة]"}
+
+
+def _ar_class(name: str) -> str:
+    return "".join(_AR_VARIANTS.get(c, re.escape(c)) for c in name).replace(r"\ ", r"\s+")
+
+
+_AR_MONTH_NAMES = sorted(_AR_MONTHS, key=len, reverse=True)
+_AR_MON = "|".join(_ar_class(m) for m in _AR_MONTH_NAMES)
+_AR_LETTER = "[" + chr(0x621) + "-" + chr(0x64A) + "]"
+AR_DATE_RE = re.compile(
+    rf"(?<!\d)(?P<d>\d{{1,2}})\s+(?P<amon>{_AR_MON})(?!{_AR_LETTER})(?:\s*/\s*(?:{_AR_MON})(?!{_AR_LETTER}))?"
+    rf"\s*،?\s*(?P<y>\d{{4}})(?!\d)"
+)
+
+
+def _ar_month(raw: str) -> int | None:
+    plain = re.sub(r"\s+", " ", raw.strip())
+    for name in _AR_MONTH_NAMES:
+        if re.fullmatch(_ar_class(name), plain):
+            return _AR_MONTHS[name]
+    return None
+
+
+DATE_PATTERNS.append(AR_DATE_RE)
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
 PHONE_RE = re.compile(r"(?:\+\d{1,3}[\s.-]?)?(?:\(\d{2,4}\)[\s.-]?)?\d{3,4}[\s.-]\d{3,4}(?:[\s.-]\d{2,4})?")
 
@@ -73,7 +121,8 @@ def parse_money(text: str) -> tuple[Decimal, str | None] | None:
         if value is None:
             continue
         # "(40.00)" is negative; a lone "(" before a number ("(see note) 40.00") is not.
-        if m.group("neg") == "-" or (m.group("neg") == "(" and m.group("close")):
+        restates = m.group("neg") == "(" and _AMOUNT_WORDS_BEFORE.search(text[: m.start()])
+        if m.group("neg") == "-" or (m.group("neg") == "(" and m.group("close") and not restates):
             value = -value
         return value, _norm_currency(cur)
     return None
@@ -98,8 +147,8 @@ def _money_shaped(num: str) -> bool:
 def _norm_currency(cur: str | None) -> str | None:
     if not cur:
         return None
-    key = cur.rstrip(".").upper()
-    return {"$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP", "RP": "IDR"}.get(key, key)
+    key = re.sub(r"[.\s]", "", cur).upper()
+    return _CURRENCY_CODES.get(key, key)
 
 
 def _year(y: str) -> int:
@@ -122,7 +171,10 @@ def parse_dates(text: str, day_first: bool = False) -> list[tuple[date, str, int
             if any(start <= m.start() < start + len(raw) for start, (_, raw, _) in found.items()):
                 continue
             g = m.groupdict()
-            if g.get("mon"):
+            if g.get("amon"):
+                month = _ar_month(g["amon"])
+                parsed = _safe_date(int(g["y"]), month, int(g["d"])) if month else None
+            elif g.get("mon"):
                 parsed = _safe_date(_year(g["y"]), _MONTHS[g["mon"][:3].lower()], int(g["d"]))
             elif "a" in g and g.get("a"):
                 a, b, y = int(g["a"]), int(g["b"]), _year(g["y"])

@@ -45,29 +45,77 @@ CATALOG: dict[str, FieldSpec] = {
         FieldSpec(
             "invoice_number",
             "id",
-            ("invoice number", "invoice no", "invoice #", "invoice id", "inv no", "inv #", "bill number", "invoice"),
+            (
+                "invoice number",
+                "invoice no",
+                "invoice #",
+                "invoice id",
+                "inv no",
+                "inv #",
+                "bill number",
+                "invoice",
+                "رقم الفاتورة",
+            ),
             "Invoice identifier",
         ),
         FieldSpec(
             "date",
             "date",
-            ("invoice date", "date of issue", "issue date", "issued on", "issued", "date"),
+            (
+                "invoice date",
+                "date of issue",
+                "issue date",
+                "issued on",
+                "issued",
+                "letter dated",
+                "letters dated",
+                "date",
+                "تاريخ الفاتورة",
+                "تاريخ الإصدار",
+                "رسالة مؤرخة",
+                "التاريخ",
+            ),  # fmt: skip
             "Document or invoice date",
         ),
-        FieldSpec("due_date", "date", ("payment due", "due date", "due by", "due on"), "Payment due date"),
         FieldSpec(
-            "vendor", "text", ("vendor", "supplier", "seller", "billed by", "from", "company"), "Issuer of the document"
+            "due_date", "date", ("payment due", "due date", "due by", "due on", "تاريخ الاستحقاق"), "Payment due date"
+        ),
+        FieldSpec(
+            "vendor",
+            "text",
+            ("vendor", "supplier", "seller", "billed by", "from", "company", "البائع", "المورد"),
+            "Issuer of the document",
         ),
         FieldSpec(
             "customer",
             "text",
-            ("customer name", "bill to", "billed to", "customer", "client", "sold to", "ship to", "name"),
+            (
+                "customer name",
+                "bill to",
+                "billed to",
+                "customer",
+                "client",
+                "sold to",
+                "ship to",
+                "name",
+                "المشتري",
+                "العميل",
+            ),
             "Customer or recipient",
         ),
         FieldSpec(
             "subtotal",
             "money",
-            ("subtotal", "sub-total", "sub total", "net amount", "net worth", "net total"),
+            (
+                "subtotal",
+                "sub-total",
+                "sub total",
+                "net amount",
+                "net worth",
+                "net total",
+                "المجموع قبل الضريبة",
+                "المجموع الفرعي",
+            ),
             "Amount before tax",
         ),
         FieldSpec(
@@ -86,6 +134,8 @@ CATALOG: dict[str, FieldSpec] = {
                 "pb1",
                 "p.rest",
                 "p. rest",
+                "ضريبة القيمة المضافة",
+                "الضريبة",
             ),
             "Tax amount",
         ),
@@ -102,6 +152,10 @@ CATALOG: dict[str, FieldSpec] = {
                 "gross worth",
                 "gross amount",
                 "total",
+                "المبلغ الإجمالي",
+                "الإجمالي",
+                "الاجمالي",
+                "المجموع",
             ),
             "Total amount",
         ),
@@ -194,6 +248,8 @@ ALIASES: dict[str, str] = {
 
 _SEP = r"\s*(?:[:#=]|no\.?|number)?\s*[:#]?\s*"
 _TEXT_GAP = 6.0  # a name further right than this many line heights belongs to another column
+_TABLE_TEXT_GAP = 25.0  # ... unless the row holds only the "label:" and that one value
+_TITLE_DATE = re.compile(r"letters? dated|رسالة مؤرخة", re.IGNORECASE)  # a document's own date only in its title
 
 
 def resolve_field(word: str) -> FieldSpec:
@@ -340,7 +396,7 @@ def _label_regex(specs: list[FieldSpec]) -> list[tuple[re.Pattern[str], FieldSpe
 
 
 def _find_candidates(
-    lines: list[_Line], specs: list[FieldSpec], day_first: bool = False
+    lines: list[_Line], specs: list[FieldSpec], day_first: bool = False, doc_type: str | None = None
 ) -> dict[str, list[_Candidate]]:
     # Claim labels of the whole catalog too, so "Due Date" is never read as "Date"
     # even when only "date" was requested; only requested fields are recorded.
@@ -375,6 +431,17 @@ def _find_candidates(
             if spec.name not in wanted:
                 continue
             stop = claimed[k + 1][0] if k + 1 < len(claimed) else len(line.text)
+            if spec.name in ("total", "subtotal") and PAYMENT.search(line.text[_start:stop]):
+                continue  # "Total Tendered 210.00", "Total paid by card": money handed over, not the cost
+            title_date = _TITLE_DATE.search(line.text[_start:stop])
+            if (
+                spec.name == "date"
+                and title_date
+                and (doc_type != "letter" or line.page != 1 or i > 15 or line.text[:_start].strip())
+            ):
+                # A letter's own "Letter dated …" starts its title line. In a report ("has received a letter
+                # dated 13 February"), or anywhere else, it dates another document.
+                continue
             tail = line.text[end:stop]
             parsed = parse_typed(spec.type, tail, day_first)
             quality = 1.0 if line.text[:end].rstrip().endswith((":", "#")) else 0.9
@@ -411,9 +478,12 @@ def _value_elsewhere(
             return []
         parsed = parse_typed(spec.type, nxt.text, day_first)
         return [(spec.name, _Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))] if parsed else []
-    row = [j for j in layout.row_right(lines, i) if not is_label(lines[j].text)]
+    row = [j for j in layout.row_after(lines, i) if not is_label(lines[j].text)]
     if spec.type == "text":  # a name belongs to its label only when it sits close by
-        row = [j for j in row if layout.gap(line.bbox, lines[j].bbox) <= _TEXT_GAP][:1]  # type: ignore[arg-type]
+        rtl = layout.rtl(line.text)
+        # A two-cell row ("label: | value") pairs its cells at any distance; with more cells, only a close one.
+        limit = _TABLE_TEXT_GAP if len(row) == 1 and line.text.rstrip().endswith(":") else _TEXT_GAP
+        row = [j for j in row if layout.gap_after(line.bbox, lines[j].bbox, rtl) <= limit][:1]  # type: ignore[arg-type]
     hits = [(j, p) for j, text in _row_cells(lines, row) if (p := _cell_value(spec.type, text, day_first)) is not None]
     if len(hits) == 1:
         j, (value, raw) = hits[0]
@@ -561,7 +631,7 @@ def extract_record(
         return full.model_copy(update={"fields": {k: v for k, v in full.fields.items() if k in names}})
     lines = _lines(pages)
     doc_currency = _document_currency(lines)
-    candidates = _find_candidates(lines, specs, day_first)
+    candidates = _find_candidates(lines, specs, day_first, doc.doc_type)
     values: dict[str, ExtractedValue] = {}
     raw_values: dict[str, Any] = {}
     for spec in specs:

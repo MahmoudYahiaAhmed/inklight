@@ -51,6 +51,35 @@ def row_right(lines: Sequence[Placed], i: int) -> list[int]:
     return sorted(out, key=lambda j: lines[j].bbox[0])  # type: ignore[index]
 
 
+def rtl(text: str) -> bool:
+    """A right-to-left label (mostly Arabic letters): its value sits to its left."""
+    letters = [c for c in text if c.isalpha()]
+    return bool(letters) and sum("؀" <= c <= "ۿ" for c in letters) / len(letters) >= 0.5
+
+
+def row_after(lines: Sequence[Placed], i: int) -> list[int]:
+    """Lines after line ``i`` on its row in reading direction: to the right for a left-to-right label, to the
+    left for a right-to-left one. Nearest first."""
+    me = lines[i]
+    if me.bbox is None or not rtl(me.text):
+        return row_right(lines, i)
+    out = [
+        j
+        for j, ln in enumerate(lines)
+        if j != i
+        and ln.page == me.page
+        and ln.bbox is not None
+        and ln.bbox[2] <= me.bbox[0] + 4
+        and same_row(me.bbox, ln.bbox)
+    ]
+    return sorted(out, key=lambda j: -lines[j].bbox[2])  # type: ignore[index]
+
+
+def gap_after(a: BBox, b: BBox, right_to_left: bool) -> float:
+    """Gap from ``a`` to ``b`` in reading direction, in heights of ``a``."""
+    return (a[0] - b[2]) / _height(a) if right_to_left else gap(a, b)
+
+
 def below(lines: Sequence[Placed], i: int, max_gap_lines: float = 3.0) -> int | None:
     """The nearest line under line ``i`` in the same column, within a few line heights."""
     me = lines[i]
