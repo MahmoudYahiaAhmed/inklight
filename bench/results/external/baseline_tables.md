@@ -3,8 +3,8 @@
 
 | Build | Version | Commit | Wheel sha256 | Installed from | `inklight.__file__` |
 |---|---|---|---|---|---|
-| PyPI 0.1.0 | 0.1.0 | PyPI release 0.1.0 (built from 914d321) | `4922dc132df4743e…` | pip from package index (PyPI) | `…atchpad\evalenv\venvA\Lib\site-packages\inklight\__init__.py` |
-| before fixes | 0.1.1.dev0 | d0fac3d1a48c0a0031ffdb00fba248daf5b2fa6a | `cd8494905e32673b…` | pip, local wheel inklight-0.1.1.dev0-py3-none-any.whl | `…atchpad\evalenv\venvB\Lib\site-packages\inklight\__init__.py` |
+| PyPI 0.1.0 | 0.1.0 | PyPI release 0.1.0 (built from 914d321) | `4922dc132df4743eâ€¦` | pip from package index (PyPI) | `â€¦atchpad\evalenv\venvA\Lib\site-packages\inklight\__init__.py` |
+| before fixes | 0.1.1.dev0 | d0fac3d1a48c0a0031ffdb00fba248daf5b2fa6a | `cd8494905e32673bâ€¦` | pip, local wheel inklight-0.1.1.dev0-py3-none-any.whl | `â€¦atchpad\evalenv\venvB\Lib\site-packages\inklight\__init__.py` |
 
 ### Field extraction
 

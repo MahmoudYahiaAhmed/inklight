@@ -9,7 +9,15 @@ import argparse
 import json
 from pathlib import Path
 
-ENV_NAMES = {"A": "PyPI 0.1.0", "B": "before fixes", "C": "fix 1", "D": "fix 2", "E": "pre-final", "F": "final"}
+ENV_NAMES = {
+    "A": "PyPI 0.1.0",
+    "B": "before fixes",
+    "C": "fix 1",
+    "D": "fix 2",
+    "E": "pre-final",
+    "F": "final",
+    "G": "digit-loss check",
+}
 
 
 def pct(x: float | None) -> str:

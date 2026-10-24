@@ -60,6 +60,10 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   (thousands-grouped amounts without cents, IDR), an amount OCR split into `177` `870`, and a label followed
   by a rate ("Tax 10%"). A money cell must account for every digit in it.
 - Cash tendered and change are never the inferred total.
+- **Amounts OCR may have shortened are flagged.** In a document whose amounts have no cents (IDR), an
+  amount with two decimals (`63.00` for `63.000`) or a total under half its subtotal now carries a warning,
+  half confidence and `verified = false`. The value itself is kept. Silent errors on held-out receipts went
+  from 2 to 1; the check was found on, and so is not independently validated by, that holdout.
 - Indonesian tax labels (`pajak`, `ppn`, `pb1`, `p.rest`), plus `net worth` and `gross worth`.
 - **Possessive requests**: "Show acme's invoices", curly apostrophes, the name first ("Acme's invoices above
   $5,000"), and coordinated owners. A possessive owner stops at a preposition ("terms on Acme's" → Acme) unless

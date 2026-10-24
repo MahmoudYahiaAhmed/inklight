@@ -10,6 +10,7 @@ Produced by `bench/external.py` and summarised by `bench/summarize_external.py`.
 | `final-*` | holdout run once at the end (A, B, F) plus the final build on dev (F = `05206d7`) |
 | `prefinal-E-*` | build `2f07058`, identical results to F; superseded because F added a request-planning fix |
 | `unplanned-D-*` | an intermediate build's holdout run started by mistake and not read before the final run |
+| `digitloss-G-*` | build `e61a8d6` (digit-loss check): dev first, then the holdout once |
 | `diagnostic-reftext-*` | the dataset's own flattened text instead of OCR: a diagnostic, not the pipeline |
 | `final_tables.md`, `baseline_tables.md` | generated tables |
 

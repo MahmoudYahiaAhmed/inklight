@@ -49,8 +49,8 @@ something looks off, and a trace of every step the agent took.
 - **Measured on documents it was not written against.** These are held-out splits, run once, with real OCR
   on the original images ([details](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)):
   - Synthetic invoices (Voxel51): 99.7% of 360 field values correct, 0.3% silently wrong.
-  - Genuine Indonesian receipts (CORD): 68.5% of 124 values correct, 1.6% silently wrong, and the rest
-    left empty or flagged.
+  - Genuine Indonesian receipts (CORD): 68.5% of 124 values correct, 1.6% silently wrong (0.8% with a
+    later digit-loss check), and the rest left empty or flagged.
   - Request forms: 13 of 13 supported ones exact, and 4 of 4 unsupported ones reported rather than guessed.
 
   Real-world *invoices* are not yet measured, and handwriting and non-Latin scripts are not measured at all.

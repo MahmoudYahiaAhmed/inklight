@@ -96,10 +96,8 @@ The three silent errors on the holdout:
   7,641.32, which is the document's *net* amount (7,641.32 × 1.10 VAT = 8,405.45). We believe the
   annotation is wrong; the same happens once on dev (`batch1-0487`). It is still scored as an error.
 - **CORD `015` and `032`, total.** OCR dropped a digit: `63.000` was read as `63.00`, so the total came out
-  as 63 instead of 63,000. A cross-check would catch both (a two-decimal amount on a receipt whose other
-  amounts use thousands groups, or a total 1,000× below its subtotal). It was found on the holdout and
-  is **not** fixed here, so that the holdout stays a clean measurement. It is the first item for the next
-  round.
+  as 63 instead of 63,000. This was found on the holdout and is not fixed in the build above. A check
+  added afterwards flags one of the two; see [Follow-up: digit-loss check](#follow-up-digit-loss-check).
 
 Per field (final build, rules, holdout): Voxel51 vendor, customer, invoice_number, date and tax are 60/60;
 total is 59/60. On CORD, subtotal is 77.5% correct (22.5% abstained), tax 48.0% (48.0% abstained) and total
@@ -163,6 +161,36 @@ Root causes found by reading the failing images:
 
 **Dev → holdout gap.** Voxel51: 99.4% → 99.7%. CORD: 78.3% → 68.5%. Part of the CORD dev gain came from fitting
 vocabulary to what dev contained. The holdout figure is the one to quote.
+
+### Follow-up: digit-loss check
+
+The two silent CORD errors above came from OCR dropping a digit (`63.000` → `63.00`). Build `e61a8d6`
+adds a general check. In a document whose amounts are thousands groups without cents, an amount with two
+decimals is flagged, and so is a total under half its subtotal. The value is kept as read. Its confidence
+is halved and it is marked not verified.
+
+**Read this result with care.** The problem was *found on the holdout*, so the holdout is no longer
+independent evidence for this one change. The check was designed from the error type, not from those two
+documents' text. It was measured on dev first and then run on the holdout once, with no change afterwards.
+
+| Split | Values | Flagged by the check | Wrong values it flagged | Correct values it flagged (false flags) | Silent wrong, before → after |
+|---|---|---|---|---|---|
+| Voxel51 dev + holdout | 720 | 0 | 0 | 0 | unchanged (0.3%, annotation case) |
+| CORD dev | 120 | 0 | 0 | 0 | 0.0% → 0.0% |
+| CORD holdout | 124 | 4 | 2 | **2** | **1.6% → 0.8%** (2 → 1) |
+
+Correct values are unchanged on every split (CORD holdout 68.5% rules, 69.4% auto). Dev has no digit-loss
+case, so on dev the check could only show that it does not fire on good documents. Its hit rate there rests
+on unit tests (`tests/test_layout_extraction.py`).
+
+- Caught: `032`, total read as 24 against a subtotal of 24,000 (the magnitude rule).
+- Also flagged: `042`, whose total was already wrong and flagged. The 2 false flags are the correct subtotals
+  of these two receipts, because the magnitude rule cannot tell which of the pair was misread.
+- Missed: `015`. OCR also put spaces inside the other amounts (`25. 000`, `70. 000`), leaving 2 clean
+  thousands-grouped amounts. The check needs 3, so it did not fire. Checking the line items against the
+  total (25,000 + 38,000 = 63,000) would catch it. That is not done here, to avoid tuning on the holdout.
+
+Results: `bench/results/external/digitloss-*.json` and `digitloss_tables.md`.
 
 ### Diagnostic: the dataset's own reference text (not the OCR pipeline)
 
@@ -292,6 +320,7 @@ python bench/run.py && python bench/memory.py
 
 ## Change log of this document
 
+- 2026-10-24: added the digit-loss check follow-up (dev first, then the holdout once; caveat stated).
 - 2026-10-24 (third review): added the external datasets, with provenance, model-call proof, four-way
   scoring, a dev baseline, the fixes, and the holdout run once. Re-measured the generated-document section
   on the final code.
