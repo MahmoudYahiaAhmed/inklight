@@ -13,8 +13,9 @@ Kinds and what is checked:
                  failure is not a refusal.
 
 Outcomes: correct · flagged (wrong or incomplete, and the result says so) · silent_wrong (wrong, reported as
-complete success) · unnecessary_flag (right, but reported as partial) · useful_abstention · failed_refusal ·
-crash · timeout.
+complete success) · overstated (a sum or average that left documents out but reported succeeded, even with a
+warning) · unnecessary_flag (right, but reported as partial) · useful_abstention · failed_refusal · crash ·
+timeout.
 """
 
 from __future__ import annotations
@@ -238,12 +239,12 @@ def run_case(agent: Any, case: dict[str, Any], ids: list[str], time_budget_s: fl
             **base,
             "result": result,
             "by_unit": (calc or {}).get("by_unit"),
-            "expected_unit": unit,
+            "unit": unit,
             "used": (calc or {}).get("count"),
             "missing": missing,
             "missing_disclosed": disclosed,
             "calculation_source": (calc or {}).get("source", "structured"),
-            "outcome": _grade(value_ok and unit_ok, complete and not missing),
+            "outcome": sum_outcome(state, missing, value_ok and unit_ok, complete),
         }
     if kind == "export":
         return {**base, **_check_export(res, case, complete)}
@@ -309,6 +310,21 @@ def _flagged_in_file(row: dict[str, str]) -> bool:
     except ValueError:
         low = True
     return low or "total:" in (row.get("warnings") or "")
+
+
+def sum_outcome(state: str, missing: int | None, right: bool, complete: bool) -> str:
+    """A sum that left documents out but still reports ``succeeded`` overstates its completeness, even when it
+    warns: that is its own outcome, never "flagged"."""
+    if state == "succeeded" and missing:
+        return "overstated"
+    return _grade(right, complete and not missing)
+
+
+def regrade(item: dict[str, Any]) -> dict[str, Any]:
+    """Apply the current rules to a stored task result (used by bench/rescore.py)."""
+    if item.get("kind") == "sum" and item.get("state") == "succeeded" and item.get("missing"):
+        return {**item, "outcome": "overstated"}
+    return item
 
 
 def _grade(right: bool, complete: bool) -> str:

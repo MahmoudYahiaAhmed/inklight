@@ -193,26 +193,32 @@ except where noted.
 | dev | CORD | F, H | 3 flagged | flagged | 2 flagged | flagged | 4 |
 | fresh | CORD | A | 3 silent | silent (0 vs 28) | 2 silent | silent | 3, 1 silent |
 | fresh | CORD | F, G | 3 flagged ‡ | flagged ‡ | 1 flagged, **1 silent** | flagged ‡ | 4 |
-| fresh | CORD | H | 3 flagged | flagged (27 vs 28) | 2 flagged | flagged (3 wrong values, all flagged in the file) | 4 |
+| fresh | CORD | H | 3 flagged | flagged (27 vs 28) | 1 flagged, **1 overstated** § | flagged (3 wrong values, all flagged in the file) | 4 |
 
 Notes on the table:
 - † The remaining silent result is the sum over all invoices: off by exactly the annotation disagreement
   (26.00 on dev, 8.66 on fresh).
 - ‡ In F and G, "Rp 39,000" in a request is not understood. It is reported, so the result is partial, not
   wrong.
+- § **Overstated:** the sum over all receipts reported `succeeded` while leaving out 5 receipts with no
+  readable total, and warned about it. An earlier version of this table counted it as "flagged", because
+  the harness did not separate a warned `succeeded` from an honest `partial`. The harness now has the
+  outcome `overstated` (`bench/tasks.py`), and the stored results were regraded without re-running.
+  This is the only overstated task in any run.
 - **F's two silent sums.** "What is the total of invoices above $X?" was planned as a list, not a sum. It
   returned the right invoices, reported success, and computed no total. The previous version of this page
   scored that request as correct because it only compared document sets. H fixes it, and the sum is now
   exposed as `AgentResult.calculation`.
 
-**Receipts, at task level, never complete without review.** Every CORD task in F and H is `partial` with
-reasons: low OCR confidence, values that could not be read, or amounts in several currencies (OCR reads
-some "Rp" as "¥" or "$", and Inklight refuses to add them).
+**Receipts, at task level, never complete correctly.** In F and H every CORD task except one is `partial`,
+with reasons: low OCR confidence, values that could not be read, or amounts in several currencies (OCR reads
+some "Rp" as "¥" or "$", and Inklight refuses to add them). The exception is the sum over all receipts on
+fresh:
+- In F it reports `succeeded` with a wrong total (silent).
+- In H it reports `succeeded` while leaving out 5 receipts with no readable total. It warns "5 document(s)
+  had no total and were left out", and `calculation.missing` is 5, but the state overstates completeness.
 
-One state is too optimistic. On fresh CORD, H's sum over *all* receipts reports `succeeded` while leaving
-out 5 receipts with no readable total. It warns "5 document(s) had no total and were left out", and
-`calculation.missing` is 5, but the state alone overstates completeness. Build I changes this (next
-section). The fresh results above remain build H's and were not re-run.
+Build I changes this state (next section). The fresh results above remain build H's and were not re-run.
 
 ### Follow-up: aggregates that leave documents out (build I, dev only)
 
@@ -222,6 +228,9 @@ section). The fresh results above remain build H's and were not re-run.
 - The answer says how many documents were left out, for example "(over 53 document(s); 5 document(s) with
   no total left out; …)", including when the currencies differ.
 - The value itself is unchanged, and `calculation.missing` still gives the count.
+
+**This changes the reported state, not any extracted value.** It does not improve extraction accuracy, and no
+accuracy figure on this page is attributed to it.
 
 **Measured on dev only.** The fresh split was not re-run, so the fresh table above is build H's and does not
 include this change.

@@ -16,6 +16,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import tasks  # noqa: E402
 from scoring import OUTCOMES, outcome, summarize  # noqa: E402
 
 BUILDS = {
@@ -33,12 +34,23 @@ TASK_OUTCOMES = (
     "correct",
     "unnecessary_flag",
     "flagged",
+    "overstated",
     "silent_wrong",
     "useful_abstention",
     "failed_refusal",
     "crash",
     "timeout",
 )
+
+
+def _regraded(task_block: dict | None) -> dict | None:
+    if not task_block:
+        return task_block
+    items = [tasks.regrade(t) for t in task_block["items"]]
+    outcomes: dict[str, int] = {}
+    for t in items:
+        outcomes[t["outcome"]] = outcomes.get(t["outcome"], 0) + 1
+    return {**task_block, "items": items, "outcomes": outcomes}
 
 
 def load_corrections(directory: Path) -> list[dict]:
@@ -80,7 +92,7 @@ def rescore(path: Path, corrections: list[dict] | None = None) -> dict:
             {k: r[k] for k in ("doc", "field", "want", "got", "method", "warning", "confidence", "outcome5")}
             for r in rows
         ],
-        "tasks": d.get("tasks"),  # schema 2 only; older files checked document sets, not results
+        "tasks": _regraded(d.get("tasks")),  # schema 2 only; older files checked document sets, not results
     }
 
 

@@ -130,3 +130,20 @@ def test_list_valued_annotations_are_not_concatenated():
     assert _money(["30.273 200", "3.027"]) is None
     assert _money("60.000") == 60000.0 and _money("12.50") == 12.5
     assert _money("10%") is None  # a VAT rate annotated in the tax field
+
+
+def test_succeeded_sum_with_documents_left_out_is_overstated():
+    case = {
+        "kind": "sum",
+        "form": "s",
+        "request": "r",
+        "expected_value": 300.0,
+        "expected_count": 2,
+        "expected_unit": "USD",
+    }
+    gap = {"op": "sum", "result": 100.0, "unit": "USD", "count": 1, "missing": 1}
+    out = tasks.run_case(_Agent(_result(state="succeeded", calculation=gap, warnings=["1 left out"])), case, [])
+    assert out["outcome"] == "overstated"  # a warning does not make a "succeeded" state honest
+    stored = {"kind": "sum", "state": "succeeded", "missing": 5, "outcome": "flagged"}
+    assert tasks.regrade(stored)["outcome"] == "overstated"
+    assert tasks.regrade({**stored, "state": "partial"})["outcome"] == "flagged"

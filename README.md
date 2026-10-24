@@ -58,7 +58,9 @@ something looks off, and a trace of every step the agent took.
     - On invoices, every document-set, count and export request is right, and every unsupported request is
       refused with the reason. 2 of 3 sums match; the third is off by exactly one annotation error in the
       dataset.
-    - On receipts, every task comes back `partial` with reasons.
+    - On receipts, no task completes correctly. All but one come back `partial` with reasons. The exception
+      is the sum over all receipts, which reported `succeeded` while leaving 5 receipts out. Since `69675a0`
+      such a sum reports `partial`; that was measured on development data only.
 
   Real-world *invoices* are not yet measured, and handwriting and non-Latin scripts are not measured at all.
 - **Small-model intelligence, measured.** Optional models are each under 200M parameters: a 66M reader that
