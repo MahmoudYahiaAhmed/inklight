@@ -196,6 +196,10 @@ def test_reserved_group_needs_a_reason(tmp_path):
 def test_reserved_access_with_a_reason_is_logged_and_writes_no_failures(tmp_path):
     config = tmp_path / "c.toml"
     config.write_text(f'home = "{(tmp_path / "home").as_posix()}"\n[models]\nbrain = "rules"\n', encoding="utf-8")
+    from inklight.store import Store
+
+    with Store(tmp_path / "home" / "library.db"):
+        pass  # an empty pilot library
     intake_file = tmp_path / "intake.json"
     intake_file.write_text(json.dumps({"documents": []}))
     out = tmp_path / "o"
@@ -217,4 +221,151 @@ def test_reserved_access_with_a_reason_is_logged_and_writes_no_failures(tmp_path
     assert result.returncode == 0, result.stderr
     log = [json.loads(line) for line in (tmp_path / "reserved_access.log").read_text().splitlines()]
     assert log[0]["reason"] == "evaluate build abc123 after the date fix" and log[0]["cohort"] == "genuine-invoice"
-    assert (out / "genuine-invoice-reserved.json").exists() and not list(out.glob("*failures*"))
+    assert (out / "genuine-invoice-reserved-frozen.json").exists() and not list(out.glob("*failures*"))
+
+
+# ---------------------------------------------------------------- reprediction: selection, isolation, provenance
+
+import argparse  # noqa: E402
+import hashlib  # noqa: E402
+
+from inklight import DocumentAgent  # noqa: E402
+
+from .conftest import make_settings  # noqa: E402
+
+GROUPS = {"dev": ["Acme Supplies Ltd", "Globex Corporation"], "reserved": ["Initech LLC", "Umbrella GmbH"]}
+
+
+@pytest.fixture
+def workspace(tmp_path):
+    """A pilot with approved reviews in both groups; its library ingested from the intake copies."""
+    data = tmp_path / "data"
+    entries = []
+    for split, vendors in GROUPS.items():
+        for i, vendor in enumerate(vendors):
+            body = f"INVOICE #INV-{split}-{i}\nVendor: {vendor}\nTotal: USD {100 + i}.00\n"
+            path = data / "genuine-invoice" / split / f"{split}{i}.txt"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(body, encoding="utf-8")
+            entries.append(
+                {
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    "stored_as": path.relative_to(data).as_posix(),
+                    "cohort": "genuine-invoice",
+                    "split": split,
+                    "vendor_group": vendor.lower(),
+                    "layout": None,
+                }
+            )
+    (data / "intake.json").write_text(json.dumps({"salt": "t", "documents": entries}), encoding="utf-8")
+    home = tmp_path / "pilot-home"
+    ocr_models = tmp_path / "ocr-models"
+    ocr_models.mkdir()
+    (ocr_models / "det.onnx").write_bytes(b"pinned model bytes")
+    config = tmp_path / "pilot-config.toml"
+    config.write_text(
+        f'home = "{home.as_posix()}"\n[models]\nbrain = "rules"\n[ocr]\nmodel_dir = "{ocr_models.as_posix()}"\n',
+        encoding="utf-8",
+    )
+    with DocumentAgent(make_settings(home)) as agent:
+        agent.add([data / "genuine-invoice"])
+        for doc in agent.library.documents():
+            r = agent.open_review(doc.id, ["vendor", "total"], reviewer="ana", baseline="b1")
+            for f in r.fields:
+                agent.reviews.decide(r.id, f.field, reviewer="ana", action="accepted")
+            agent.reviews.approve(r.id, reviewer="ana")
+    shas = {split: {e["sha256"] for e in entries if e["split"] == split} for split in GROUPS}
+    return {"data": data, "config": config, "home": home, "shas": shas, "tmp": tmp_path}
+
+
+@pytest.fixture
+def spy(monkeypatch):
+    """Every document the agent extracts, and whether the reserved log existed at that moment."""
+    calls = []
+    original = DocumentAgent.extract
+
+    def extract(self, files, *a, **kw):
+        paths = [Path(f) for f in (files if isinstance(files, list) else [files])]
+        log = paths[0].parents[2] / "reserved_access.log" if paths else None
+        calls.append(
+            {"sha": hashlib.sha256(paths[0].read_bytes()).hexdigest(), "log_existed": bool(log and log.exists())}
+        )
+        return original(self, files, *a, **kw)
+
+    monkeypatch.setattr(DocumentAgent, "extract", extract)
+    return calls
+
+
+def _args(ws, **kw):
+    base = {
+        "config": ws["config"],
+        "intake": ws["data"] / "intake.json",
+        "cohort": "genuine-invoice",
+        "split": "dev",
+        "reason": None,
+        "predictions": "frozen",
+        "candidate_config": None,
+        "work": ws["tmp"] / f"work-{kw.get('predictions', 'frozen')}-{kw.get('split', 'dev')}",
+        "allow_mixed_baselines": False,
+        "out": ws["tmp"] / "out",
+    }
+    return argparse.Namespace(**{**base, **kw})
+
+
+def _sha_file(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+@pytest.mark.parametrize("mode", ["cached", "full"])
+def test_dev_reprediction_never_runs_inference_on_reserved_documents(workspace, spy, mode):
+    metrics = evaluate.run(_args(workspace, predictions=mode))
+    predicted = {c["sha"] for c in spy}
+    assert predicted == workspace["shas"]["dev"]  # every dev document, no reserved one
+    assert not predicted & workspace["shas"]["reserved"]
+    assert metrics["provenance"]["inference"]["documents_predicted"] == len(workspace["shas"]["dev"])
+    assert metrics["documents_reviewed"] == len(workspace["shas"]["dev"])
+
+
+def test_reserved_reprediction_needs_a_reason_before_anything_is_read(workspace, spy):
+    with pytest.raises(SystemExit):
+        evaluate.run(_args(workspace, split="reserved", predictions="cached"))
+    assert spy == [] and not (workspace["data"] / "reserved_access.log").exists()
+    assert not (workspace["tmp"] / "work-cached-reserved").exists()  # no snapshot either
+
+
+def test_reserved_access_is_logged_before_the_first_prediction(workspace, spy):
+    evaluate.run(_args(workspace, split="reserved", predictions="cached", reason="evaluate build x after fix y"))
+    assert {c["sha"] for c in spy} == workspace["shas"]["reserved"]
+    assert all(c["log_existed"] for c in spy)
+
+
+def test_full_pipeline_uses_an_isolated_library_and_records_provenance(workspace, spy):
+    pilot_db = workspace["home"] / "library.db"
+    before = _sha_file(pilot_db)
+    metrics = evaluate.run(_args(workspace, predictions="full"))
+    assert _sha_file(pilot_db) == before  # the pilot library, and its ground truth, are untouched
+    isolated = workspace["tmp"] / "work-full-dev" / "full-home" / "library.db"
+    with DocumentAgent(make_settings(isolated.parent)) as fresh:
+        assert {d.sha256 for d in fresh.library.documents()} == workspace["shas"]["dev"]  # only what was asked
+    prov = metrics["provenance"]
+    assert prov["predictions"] == "full" and prov["package_digest"] and prov["settings"]["models"]["brain"] == "rules"
+    assert prov["ocr_model_files"]["sha256"] == {"det.onnx": hashlib.sha256(b"pinned model bytes").hexdigest()}
+    assert "onnxruntime_calls_total" in prov["inference"] and "second_readings" in prov["inference"]
+    truth = json.loads((workspace["tmp"] / "out" / "genuine-invoice-dev-full-ground-truth.json").read_text())
+    assert {t["doc_sha256"] for t in truth} == workspace["shas"]["dev"] and all(
+        t["approved_by"] == "ana" for t in truth
+    )
+
+
+def test_cached_mode_does_not_write_to_the_pilot_library(workspace, spy):
+    pilot_db = workspace["home"] / "library.db"
+    before = _sha_file(pilot_db)
+    evaluate.run(_args(workspace, predictions="cached"))
+    assert _sha_file(pilot_db) == before
+
+
+def test_cached_mode_refuses_a_document_changed_since_review(workspace, spy):
+    changed = workspace["data"] / "genuine-invoice" / "dev" / "dev0.txt"
+    changed.write_text(changed.read_text() + "Note: edited\n", encoding="utf-8")
+    with pytest.raises(SystemExit, match="changed or moved"):
+        evaluate.run(_args(workspace, predictions="cached"))

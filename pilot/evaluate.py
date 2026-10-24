@@ -37,6 +37,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 OUTCOMES = ("correct_unflagged", "correct_flagged", "wrong_unflagged", "wrong_flagged", "missing")
 MONEY = {"subtotal", "tax", "total", "contract_value"}
 
@@ -184,54 +186,6 @@ def evaluate(reviews: list[dict], intake: dict, cohort: str, split: str) -> tupl
     return metrics, failures
 
 
-def repredict(reviews: list[dict], config: Path) -> tuple[list[dict], dict]:
-    """Predict every reviewed document again with the *installed* build; keep the approved final values.
-
-    This is how a later improvement is evaluated: same documents, same human ground truth, new predictions.
-    """
-    import inklight
-    from inklight import DocumentAgent
-    from inklight.config import load_settings
-    from inklight.review import is_flagged
-
-    settings = load_settings(config)
-    out = []
-    with DocumentAgent(settings) as agent:
-        by_sha = {d.sha256: d for d in agent.library.documents()}
-        for r in reviews:
-            doc = by_sha.get(r["doc_sha256"])
-            if doc is None:
-                raise SystemExit(f"document of review {r['id']} is no longer in the pilot library")
-            names = [f["field"] for f in r["fields"]]
-            record = agent.extract([doc.path], fields=names)[0]
-            fields = []
-            for f in r["fields"]:
-                v = record.fields.get(f["field"])
-                fields.append(
-                    {
-                        **f,
-                        "predicted": None if v is None else v.value,
-                        "raw": None if v is None else v.raw,
-                        "confidence": None if v is None else v.confidence,
-                        "method": None if v is None else v.method,
-                        "warning": None if v is None else v.warning,
-                        "flagged": bool(v is not None and v.value is not None and is_flagged(v)),
-                    }
-                )
-            out.append({**r, "fields": fields, "baseline": f"re-predicted with {inklight.__version__}"})
-    return out, {"inklight_version": inklight.__version__, "inklight_file": inklight.__file__}
-
-
-def load_reviews(config: Path) -> list[dict]:
-    from inklight.config import load_settings
-    from inklight.review import ReviewStore
-    from inklight.store import Store
-
-    settings = load_settings(config)
-    with Store(settings.db_path) as store:
-        return [r.model_dump(mode="json") for r in ReviewStore(store).find(status="approved")]
-
-
 def markdown(m: dict) -> str:
     f = m["fields"]
 
@@ -270,61 +224,296 @@ def markdown(m: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--config", required=True, type=Path)
-    ap.add_argument("--intake", required=True, type=Path)
-    ap.add_argument("--cohort", default="genuine-invoice", choices=["genuine-invoice", "synthetic-invoice", "receipt"])
-    ap.add_argument("--split", default="dev", choices=["dev", "reserved"])
-    ap.add_argument("--reason", default=None, help="Required for --split reserved; recorded in the access log.")
-    ap.add_argument("--allow-mixed-baselines", action="store_true")
-    ap.add_argument("--out", required=True, type=Path)
-    ap.add_argument(
-        "--repredict",
-        action="store_true",
-        help="Score the installed build's new predictions against the approved values (later improvements).",
-    )
-    args = ap.parse_args()
+def select(reviews: list[dict], intake: dict, cohort: str, split: str) -> list[tuple[dict, dict]]:
+    """(review, intake entry) for the requested cohort and split only. Runs before any prediction."""
+    by_sha = {d["sha256"]: d for d in intake["documents"]}
+    out = []
+    for r in reviews:
+        doc = by_sha.get(r["doc_sha256"])
+        if doc is not None and doc["cohort"] == cohort and doc["split"] == split:
+            out.append((r, doc))
+    return out
+
+
+def _backup(source: Path, target: Path) -> None:
+    """Copy a SQLite database consistently (the source is opened read-only); both connections are closed."""
+    import sqlite3
+    from contextlib import closing
+
+    with (
+        closing(sqlite3.connect(f"file:{source.as_posix()}?mode=ro", uri=True)) as src,
+        closing(sqlite3.connect(target)) as dst,
+    ):
+        src.backup(dst)
+
+
+def snapshot_reviews(config: Path, work: Path) -> list[dict]:
+    """Approved reviews, read from a copy of the pilot database: evaluation never writes to the original."""
+
+    from inklight.config import load_settings
+    from inklight.review import ReviewStore
+    from inklight.store import Store
+
+    source = load_settings(config).db_path
+    if not source.exists():
+        sys.exit(f"no pilot library at {source}")
+    work.mkdir(parents=True, exist_ok=True)
+    copy = work / "reviews-snapshot.db"
+    _backup(source, copy)
+    with Store(copy) as store:
+        return [r.model_dump(mode="json") for r in ReviewStore(store).find(status="approved")]
+
+
+def ground_truth(selected: list[tuple[dict, dict]]) -> list[dict]:
+    return [
+        {
+            "review_id": r["id"],
+            "doc_sha256": r["doc_sha256"],
+            "mode": r["mode"],
+            "field": f["field"],
+            "final": f["final"],
+            "entered_input": f.get("entered"),
+            "action": f["action"],
+            "approved_by": r["approved_by"],
+            "approved_at": r["approved_at"],
+            "predictions_baseline": r["baseline"],
+        }
+        for r, _ in selected
+        for f in r["fields"]
+    ]
+
+
+class Instrument:
+    """Counts what actually ran: every ONNX Runtime inference per model file, and every crop re-read."""
+
+    def __init__(self) -> None:
+        import onnxruntime as ort
+
+        from inklight.ocr.indra import IndraEngine
+
+        self.calls: Counter = Counter()
+        self.rereads = 0
+        self.predicted_docs: list[str] = []
+        calls, me = self.calls, self
+        init, run, reread = ort.InferenceSession.__init__, ort.InferenceSession.run, IndraEngine.reread
+
+        def _init(session, path_or_bytes, *a, **kw):  # type: ignore[no-untyped-def]
+            p = Path(str(path_or_bytes))
+            session._pilot_name = f"{p.parent.name}/{p.name}" if p.suffix == ".onnx" else "in-memory model"
+            return init(session, path_or_bytes, *a, **kw)
+
+        def _run(session, *a, **kw):  # type: ignore[no-untyped-def]
+            calls[getattr(session, "_pilot_name", "unknown")] += 1
+            return run(session, *a, **kw)
+
+        def _reread(engine, *a, **kw):  # type: ignore[no-untyped-def]
+            me.rereads += 1
+            return reread(engine, *a, **kw)
+
+        self._restore = (ort.InferenceSession, init, run, IndraEngine, reread)
+        ort.InferenceSession.__init__ = _init  # type: ignore[method-assign]
+        ort.InferenceSession.run = _run  # type: ignore[method-assign]
+        IndraEngine.reread = _reread  # type: ignore[method-assign]
+
+    def close(self) -> None:
+        session, init, run, engine, reread = self._restore
+        session.__init__ = init  # type: ignore[method-assign]
+        session.run = run  # type: ignore[method-assign]
+        engine.reread = reread  # type: ignore[method-assign]
+
+    def report(self) -> dict[str, Any]:
+        return {
+            "onnxruntime_calls_by_model": dict(self.calls),
+            "onnxruntime_calls_total": sum(self.calls.values()),
+            "second_readings": self.rereads,
+            "documents_predicted": len(self.predicted_docs),
+        }
+
+
+def _new_predictions(review: dict, record: Any) -> dict:
+    from inklight.review import is_flagged
+
+    fields = []
+    for f in review["fields"]:
+        v = record.fields.get(f["field"])
+        fields.append(
+            {
+                **f,
+                "predicted": None if v is None else v.value,
+                "raw": None if v is None else v.raw,
+                "confidence": None if v is None else v.confidence,
+                "method": None if v is None else v.method,
+                "warning": None if v is None else v.warning,
+                "flagged": bool(v is not None and v.value is not None and is_flagged(v)),
+            }
+        )
+    return {**review, "fields": fields}
+
+
+def predict(
+    selected: list[tuple[dict, dict]],
+    *,
+    mode: str,
+    config: Path,
+    work: Path,
+    data: Path,
+    instrument: Instrument,
+) -> list[tuple[dict, dict]]:
+    """New predictions for the selected documents only.
+
+    cached: re-extract from the OCR stored in a *copy* of the pilot library; the documents are not OCR'd again
+            (a changed or missing file stops the run), though a second reading may OCR a crop.
+    full:   ingest the original files into an isolated, empty database with the candidate settings, then extract:
+            the whole pipeline, OCR included.
+    """
+    from inklight import DocumentAgent
+    from inklight.config import load_settings
+
+    home = work / f"{mode}-home"
+    if home.exists() and any(home.iterdir()):
+        sys.exit(f"{home} is not empty: every run needs its own isolated library")
+    home.mkdir(parents=True, exist_ok=True)
+    if mode == "cached":
+        _backup(load_settings(config).db_path, home / "library.db")
+    settings = load_settings(config, home=str(home))
+    out = []
+    with DocumentAgent(settings) as agent:
+        by_sha = {d.sha256: d for d in agent.library.documents()}
+        for review, entry in selected:
+            if mode == "full":
+                path = data / entry["stored_as"]
+                report = agent.add([path])
+                if report.failed:
+                    sys.exit(f"could not ingest {entry['stored_as']}: {report.failed[0][1]}")
+            else:
+                doc = by_sha.get(review["doc_sha256"])
+                if doc is None:
+                    sys.exit(f"the document of review {review['id']} is not in the pilot library")
+                path = Path(doc.path)
+                report = agent.library.add([path])
+                if report.added:  # a new or changed file would be OCR'd again: not a cached comparison
+                    sys.exit(f"{path.name} changed or moved since review; use --predictions full")
+            instrument.predicted_docs.append(review["doc_sha256"])
+            record = agent.extract([path], fields=[f["field"] for f in review["fields"]])[0]
+            out.append((_new_predictions(review, record), entry))
+    return out
+
+
+def provenance(config: Path, mode: str) -> dict[str, Any]:
+    """Exact code, settings and model files behind the predictions."""
+    import platform
+
+    from freeze import git, package_digest, tree_files
+
+    import inklight
+    from inklight.config import load_settings
+
+    settings = load_settings(config)
+    digest, n_files = package_digest()
+    out: dict[str, Any] = {
+        "predictions": mode,
+        "inklight_version": inklight.__version__,
+        "inklight_file": inklight.__file__,
+        "package_digest": digest,
+        "package_files": n_files,
+        "harness_commit": git("rev-parse", "HEAD"),
+        "python": platform.python_version(),
+        "settings": {k: v for k, v in settings.model_dump(mode="json").items() if k not in ("home", "output_dir")},
+    }
+    if mode != "frozen":
+        import indra_ocr
+
+        ocr_dir = Path(settings.ocr.model_dir) if settings.ocr.model_dir else Path(indra_ocr.model_dir())
+        out["ocr_model_files"] = {"folder": ocr_dir.as_posix(), "sha256": tree_files(ocr_dir)}
+        if settings.models.brain != "rules" and settings.model_cache:
+            out["small_model_files"] = {
+                repo: tree_files(settings.model_cache / repo.replace("/", "--"))
+                for repo in (settings.models.reader, settings.models.embedder)
+                if (settings.model_cache / repo.replace("/", "--")).exists()
+            }
+    return out
+
+
+def log_reserved_access(intake_path: Path, cohort: str, reason: str | None, mode: str) -> None:
+    if not reason or len(reason.strip()) < 10:
+        sys.exit("--split reserved needs --reason: which finished build is being evaluated, and why now")
+    log = intake_path.parent / "reserved_access.log"
+    entry = {
+        "at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "by": getpass.getuser(),
+        "cohort": cohort,
+        "predictions": mode,
+        "reason": reason,
+    }
+    with log.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(entry) + "\n")
+    print(f"Reserved access recorded in {log} before any document was read. Only aggregate results are written.")
+
+
+def run(args: argparse.Namespace) -> dict:
     intake = json.loads(args.intake.read_text(encoding="utf-8"))
     if args.split == "reserved":
-        if not args.reason or len(args.reason.strip()) < 10:
-            sys.exit("--split reserved needs --reason: which finished build is being evaluated, and why now")
-        log = args.intake.parent / "reserved_access.log"
-        with log.open("a", encoding="utf-8") as fh:
-            fh.write(
-                json.dumps(
-                    {
-                        "at": datetime.now(UTC).isoformat(timespec="seconds"),
-                        "by": getpass.getuser(),
-                        "cohort": args.cohort,
-                        "reason": args.reason,
-                    }
-                )
-                + "\n"
+        log_reserved_access(args.intake, args.cohort, args.reason, args.predictions)
+    work = args.work or args.out / "work"
+    instrument = Instrument() if args.predictions != "frozen" else None
+    reviews = snapshot_reviews(args.config, work)
+    selected = select(reviews, intake, args.cohort, args.split)  # before any prediction
+    truth = ground_truth(selected)
+    candidate = args.candidate_config or args.config
+    if instrument is not None:
+        try:
+            selected = predict(
+                selected,
+                mode=args.predictions,
+                config=candidate if args.predictions == "full" else args.config,
+                work=work,
+                data=args.intake.parent,
+                instrument=instrument,
             )
-        print(f"Reserved access recorded in {log}. Only aggregate results are written.")
-    reviews = load_reviews(args.config)
-    predicted_by = "predictions frozen when each review opened"
-    if args.repredict:
-        reviews, build = repredict(reviews, args.config)
-        predicted_by = f"re-predicted by the installed build {build}"
-    metrics, failures = evaluate(reviews, intake, args.cohort, args.split)
-    metrics["predictions"] = predicted_by
-    if args.repredict:  # review timings belong to the original predictions, not to the new ones
-        metrics.pop("review_burden", None)
+        finally:
+            instrument.close()
+    metrics, failures = evaluate([r for r, _ in selected], intake, args.cohort, args.split)
+    metrics["provenance"] = provenance(candidate if args.predictions == "full" else args.config, args.predictions)
+    if instrument is not None:
+        metrics["provenance"]["inference"] = instrument.report()
+        metrics["baselines"] = [f"{args.predictions} re-prediction"]
+        metrics.pop("review_burden", None)  # review timings belong to the original predictions
         metrics.pop("time_ratio_review_vs_manual", None)
-    if len(metrics["baselines"]) > 1 and not args.allow_mixed_baselines:
+    elif len(metrics["baselines"]) > 1 and not args.allow_mixed_baselines:
         sys.exit(f"reviews come from several baselines {metrics['baselines']}: evaluate one baseline at a time")
     args.out.mkdir(parents=True, exist_ok=True)
-    stem = f"{args.cohort}-{args.split}"
-    (args.out / f"{stem}.json").write_text(json.dumps(metrics, indent=1), encoding="utf-8")
+    stem = f"{args.cohort}-{args.split}-{args.predictions}"
+    (args.out / f"{stem}.json").write_text(json.dumps(metrics, indent=1, default=str), encoding="utf-8")
     (args.out / f"{stem}.md").write_text(markdown(metrics), encoding="utf-8")
+    (args.out / f"{stem}-ground-truth.json").write_text(json.dumps(truth, indent=1, default=str), encoding="utf-8")
     if args.split == "dev":
         with (args.out / f"{stem}-failures.csv").open("w", encoding="utf-8", newline="") as fh:
             writer = csv.DictWriter(fh, fieldnames=list(failures[0]) if failures else ["outcome"])
             writer.writeheader()
             writer.writerows(failures)
-    print(markdown(metrics))
+    return metrics
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--config", required=True, type=Path, help="The pilot config: its library holds the reviews.")
+    ap.add_argument("--intake", required=True, type=Path)
+    ap.add_argument("--cohort", default="genuine-invoice", choices=["genuine-invoice", "synthetic-invoice", "receipt"])
+    ap.add_argument("--split", default="dev", choices=["dev", "reserved"])
+    ap.add_argument("--reason", default=None, help="Required for --split reserved; logged before any document is read.")
+    ap.add_argument(
+        "--predictions",
+        default="frozen",
+        choices=["frozen", "cached", "full"],
+        help="frozen: as captured when each review opened. cached: re-extract with the installed build from the "
+        "OCR stored in a copy of the pilot library. full: ingest the original files into an isolated empty "
+        "library with --candidate-config and run the whole pipeline.",
+    )
+    ap.add_argument("--candidate-config", type=Path, default=None, help="Settings of the build under test (full).")
+    ap.add_argument("--work", type=Path, default=None, help="Folder for the snapshot and isolated libraries.")
+    ap.add_argument("--allow-mixed-baselines", action="store_true")
+    ap.add_argument("--out", required=True, type=Path)
+    print(markdown(run(ap.parse_args())))
 
 
 if __name__ == "__main__":
