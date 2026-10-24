@@ -24,9 +24,9 @@ The pilot runs one exact build. `pilot/baseline.json` and `pilot/requirements-lo
 
 | | |
 |---|---|
-| Code | `inklight 0.1.1.dev0` at `0479e68` (src tree `b936f68`) — **baseline 3**, frozen after the fixes in section 6 |
-| Installed package digest | `50452031b184…`, 51 files (sha256 over every file of the installed package) |
-| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl` built at `0479e68`, sha256 `08ba1b13a268183f…` |
+| Code | `inklight 0.1.1.dev0` at `f4ebb5a` (src tree `43deea8`) — **baseline 4**, frozen after the fixes in section 6 |
+| Installed package digest | `e83af7ce1974…`, 51 files (sha256 over every file of the installed package) |
+| Wheel | `inklight-0.1.1.dev0-py3-none-any.whl` built at `f4ebb5a`, sha256 `501efc786d291971…` |
 | Python and packages | 3.12.10; 42 packages pinned in `requirements-lock.txt` |
 | OCR | `indra-ocr 1.1.2` with its pinned model snapshot; 12 files copied and hashed |
 | Small models | reader `Xenova/distilbert-base-cased-distilled-squad` @ `bdbb0a5`, embedder `Xenova/bge-small-en-v1.5` @ `ea104da`; copied and hashed (not used by the `rules` brain the pilot runs with) |
@@ -43,8 +43,8 @@ It recomputes the package digest, the installed versions, every model hash and t
 non-zero on any difference. It was tested to fail on a changed model byte, on `second_reading = false`, and
 in a different environment.
 
-Baselines 1 (`aaa8c31`, digest `cbb355dc978c…`) and 2 (`c49d506`, digest `3c8c98722bd9…`) were replaced before
-any scored review, because of the fixes in section 6; it remains in the git history of `pilot/baseline.json`. A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
+Baselines 1 (`aaa8c31`, digest `cbb355dc978c…`), 2 (`c49d506`, digest `3c8c98722bd9…`) and 3 (`0479e68`, digest
+`50452031b184…`) were replaced before any scored review, because of the fixes in section 6; each remains in the git history of `pilot/baseline.json`. A new build (after fixes) gets a **new** frozen baseline. Reviews record which baseline produced their
 predictions, and `evaluate.py` refuses to mix baselines.
 
 ## 2. Permissions and intake
@@ -80,7 +80,7 @@ Ingest the documents into the pilot library, then start the workspace:
 
 ```bash
 inklight process <data>/genuine-invoice -c <models dir>/pilot-config.toml
-set INKLIGHT_PILOT_BASELINE=aaa8c31     # recorded on every review; use export on macOS and Linux
+set INKLIGHT_PILOT_BASELINE=f4ebb5a     # recorded on every review; use export on macOS and Linux
 inklight serve -c <models dir>/pilot-config.toml
 ```
 
@@ -197,8 +197,8 @@ again on the pilot's own dev invoices: how often it triggers depends on the docu
 
 ## 6. Fixes made before any scored review
 
-Five problems were found and fixed before any scored review (baselines 1 and 2 were replaced; baseline 3 is current). No scored
-review used baseline 1.
+Six problems were found and fixed before any scored review (baselines 1–3 were replaced; baseline 4 is current). No scored
+review used any of them.
 
 | Problem (reproduced) | Fix | Evidence |
 |---|---|---|
@@ -207,13 +207,15 @@ review used baseline 1.
 | "Re-predict" mixed the cached OCR with the full pipeline, and wrote nothing about what ran | `--predictions frozen\|cached\|full`. Full ingests the original files into an isolated empty library with the candidate config. The pilot library is read through a snapshot only; ground truth is written separately; provenance records code, settings, model hashes and ONNX calls | Tests show the pilot database bytes unchanged after cached and full runs. A real full run on 60 invoices made 1,245 ONNX calls and 2 second readings, predicted 60 documents, and gave the same metrics |
 | The Review tab had no Reopen action and approved reviews left its queue, so rehearsal step 9 was impossible (found reading the runbook against the UI) | Approved reviews are listed; Reopen requires a reason | Automated browser walkthrough (not a human rehearsal): reopen blocked without a reason, then reopen, change, re-approve; history shows the reason |
 | Different Arabic vendor names compared equal ([^a-z0-9] removed every letter), in scoring, the pilot evaluator, vendor grouping and the product's inconsistency check | `inklight.textnorm.fold`: every script kept; Unicode digits → ASCII; only tatweel and optional harakat dropped | `tests/test_textnorm.py`: Arabic, Devanagari, CJK and Greek names. Rescoring all 21,632 saved predictions changed no outcome |
+| The review form refused dates typed the way the invoice prints them ("JAN04/00"), so reviewers had to retype them; input with extra words ("01/31/82 approx") kept the first date (found in an AI-performed run on genuine archive invoices, not a human rehearsal) | `inklight.entered.parse_entered_date`: month-name dates with a 2- or 4-digit year and the numeric forms; the whole input must be one real date | `tests/test_entered.py`: 19 accepted forms and 13 refused inputs; `tests/test_review.py` through the review store |
 
 ## 7. Remaining limitations
 
 1. **No genuine invoice has been measured, and no person has used the workflow yet.** The 5–10 invoice human
    rehearsal ([REHEARSAL.md](REHEARSAL.md)) and the collection, permission and review of the pilot invoices are
-   still to do. The workflow was exercised only on synthetic invoices with a scripted reviewer, whose timings
-   mean nothing.
+   still to do. The workflow was exercised on synthetic invoices with a scripted reviewer, and on 8 public
+   archive invoices (INV-CDIP / UCSF) with reviews performed by an AI. Neither is a human measurement, and
+   their timings mean nothing.
 2. **Ground truth is a person.** Reviewers can anchor on predictions. The 25% manual-entry subset measures
    agreement, but does not remove the bias. A single reviewer per document is not double annotation.
 3. **Small samples.** With 50–100 invoices, and a reserved group of perhaps 20–40, confidence intervals are

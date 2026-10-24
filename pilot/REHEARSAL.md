@@ -1,7 +1,9 @@
 # Human rehearsal (5–10 invoices) — before the pilot expands
 
 **Status: not run yet.** An automated walkthrough of the same steps in the browser (no people, no timing)
-passed on synthetic invoices; it checks the mechanics only and does not count as the rehearsal. It needs two people and 5–10 permissioned genuine invoices. A script cannot stand in
+passed on synthetic invoices, and an AI-performed run through the review API passed on 8 genuine archive
+invoices; both check the mechanics only and do not count as the rehearsal. The AI run found one problem
+(typed dates such as "JAN04/00" were refused), fixed in baseline 4. It needs two people and 5–10 permissioned genuine invoices. A script cannot stand in
 for it: `check_rehearsal.py` refuses to count scripted reviews, and no timing in this repository comes from
 a person yet.
 
@@ -16,7 +18,7 @@ Its documents and reviews stay out of the scored pilot.
 | Invoices | 5–10 genuine invoices with permission recorded, from at least 3 vendors and 2 layouts. Include at least one scan or photo. If the pilot will contain Arabic invoices, include one. |
 | People | Reviewer A (reviews every invoice) and reviewer B (types 2 invoices by hand, before A sees them) |
 | Screen | at least 1100 px wide, so the page and the fields sit side by side |
-| Build | the frozen pilot baseline (baseline 3, `0479e68`, installed in `C:/Users/pc/inklight-pilot-b3`) |
+| Build | the frozen pilot baseline (baseline 4, `f4ebb5a`, installed in `C:/Users/pc/inklight-pilot-b4`) |
 | A stopwatch | a phone is fine: it is the independent check on the recorded times |
 
 ## Setup (coordinator)
@@ -28,7 +30,7 @@ python -I pilot/freeze.py verify --models <models dir> --config <models dir>/pil
 # copy pilot-config.toml to rehearsal-config.toml and point `home` at a new, empty folder
 python -I pilot/intake.py --manifest rehearsal-manifest.csv --data <rehearsal data dir>
 inklight process <rehearsal data dir>/genuine-invoice -c rehearsal-config.toml
-set INKLIGHT_PILOT_BASELINE=0479e68       # use export on macOS and Linux
+set INKLIGHT_PILOT_BASELINE=f4ebb5a       # use export on macOS and Linux
 inklight serve -c rehearsal-config.toml
 ```
 
@@ -47,7 +49,7 @@ start the review, and work through it. Across the session, make sure each of the
 |---|---|---|
 | 1 | Click a prediction | The page scrolls to it and outlines its box |
 | 2 | Accept a correct value | ✓ accepted |
-| 3 | Correct a wrong value; type an amount the way the invoice writes it (e.g. `1.234,56`, `Rp 63.000`) | The parsed value is shown next to what you typed |
+| 3 | Correct a wrong value; type an amount or a date the way the invoice writes it (e.g. `1.234,56`, `Rp 63.000`, `JAN04/00`) | The parsed value is shown next to what you typed |
 | 4 | Type `100 + 20`, then `1e3` | Each is refused with a reason; nothing is saved until a plain amount is typed |
 | 5 | Type a negative as `(45.00)` | Stored as −45.00 |
 | 6 | Mark a field that the invoice does not have as absent | ✓ absent |
