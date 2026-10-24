@@ -59,9 +59,7 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
     cols = plan.fields
     if plan.blocked:
         s.confidence = 0.0
-        return _with_interpretation(
-            plan, "Nothing was run, to avoid guessing what you meant:\n" + "\n".join(f"- {b}" for b in plan.blocked)
-        )
+        return _with_interpretation(plan, "Nothing was run:\n" + "\n".join(f"- {b}" for b in plan.blocked))
     if state == TaskState.FAILED and not s.answer and not s.records:
         return "The task could not be completed. " + (s.warnings[-1] if s.warnings else "")
     if state == TaskState.CANCELLED and not s.answer:

@@ -120,3 +120,17 @@ def test_comparing_named_fields_compares_those_fields():
     plan = rule_plan("Compare the letter dates of these documents")
     assert plan.intent == Intent.COMPARE
     assert "date" in plan.fields
+
+
+def test_an_unsupported_action_says_why_without_blaming_the_wording(tmp_path):
+    from inklight import DocumentAgent
+
+    from .conftest import make_settings
+
+    path = tmp_path / "letter.txt"
+    path.write_text("Letter dated 6 February 2023 addressed to the Secretary-General.", encoding="utf-8")
+    with DocumentAgent(make_settings(tmp_path / "home")) as agent:
+        res = agent.ask("Translate this letter into French", files=[path])
+    assert res.state.value == "unsupported"
+    assert "translation is not something Inklight does" in res.answer
+    assert "guessing" not in res.answer
