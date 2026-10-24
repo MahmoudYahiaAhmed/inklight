@@ -41,6 +41,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 OUTCOMES = ("correct_unflagged", "correct_flagged", "wrong_unflagged", "wrong_flagged", "missing")
 MONEY = {"subtotal", "tax", "total", "contract_value"}
+PREDICTION_MODES = {
+    "frozen": "as captured when each review opened",
+    "cached": "re-extracted by the installed build from the OCR stored at review time",
+    "full": "whole pipeline re-run by the candidate build in an isolated library",
+}
 
 
 def same(field: str, a: Any, b: Any) -> bool:
@@ -203,7 +208,8 @@ def markdown(m: dict) -> str:
         f"Documents reviewed: {m['documents_reviewed']} · manual entry: {m['documents_manual_entry']} · "
         f"baselines: {', '.join(m['baselines'])}",
         "",
-        f"Predictions: {m.get('predictions', 'frozen when each review opened')}",
+        f"Predictions: {(m.get('provenance') or {}).get('predictions', 'frozen')} "
+        f"({PREDICTION_MODES[(m.get('provenance') or {}).get('predictions', 'frozen')]})",
         "",
         "| Metric | Value |",
         "|---|---|",
@@ -377,9 +383,15 @@ def predict(
         _backup(load_settings(config).db_path, home / "library.db")
     settings = load_settings(config, home=str(home))
     out = []
+    done: dict[tuple[str, tuple[str, ...]], Any] = {}  # one prediction per document (and field set)
     with DocumentAgent(settings) as agent:
         by_sha = {d.sha256: d for d in agent.library.documents()}
         for review, entry in selected:
+            names = tuple(f["field"] for f in review["fields"])
+            key = (review["doc_sha256"], names)
+            if key in done:  # the same document reviewed twice (review + manual entry)
+                out.append((_new_predictions(review, done[key]), entry))
+                continue
             if mode == "full":
                 path = data / entry["stored_as"]
                 report = agent.add([path])
@@ -394,8 +406,8 @@ def predict(
                 if report.added:  # a new or changed file would be OCR'd again: not a cached comparison
                     sys.exit(f"{path.name} changed or moved since review; use --predictions full")
             instrument.predicted_docs.append(review["doc_sha256"])
-            record = agent.extract([path], fields=[f["field"] for f in review["fields"]])[0]
-            out.append((_new_predictions(review, record), entry))
+            done[key] = agent.extract([path], fields=list(names))[0]
+            out.append((_new_predictions(review, done[key]), entry))
     return out
 
 

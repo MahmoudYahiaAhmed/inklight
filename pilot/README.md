@@ -121,13 +121,36 @@ reported 0 s, so compare it with wall time before trusting it.
 python -I pilot/evaluate.py --config <models dir>/pilot-config.toml --intake <data>/intake.json \
     --cohort genuine-invoice --split dev --out results/
 
-# a finished improvement (new frozen baseline installed): new predictions, same approved values
-python -I pilot/evaluate.py ... --split dev --repredict --out results-new/
+# a finished improvement, extraction only: re-extract from the OCR stored at review time
+python -I pilot/evaluate.py ... --split dev --predictions cached --work <empty dir> --out results-cached/
 
-# the reserved group: only for a finished build; needs a reason, and every access is logged
-python -I pilot/evaluate.py ... --split reserved --repredict \
+# a finished improvement, the whole pipeline: ingest the original files into an isolated empty library
+python -I pilot/evaluate.py ... --split dev --predictions full \
+    --candidate-config <candidate build's config.toml> --work <empty dir> --out results-full/
+
+# the reserved group: only for a finished build; needs a reason, logged before any document is read
+python -I pilot/evaluate.py ... --split reserved --predictions full --candidate-config <...> --work <empty dir> \
     --reason "evaluate build <commit> after fixes A, B" --out results-reserved/
 ```
+
+**Which predictions are scored** (`--predictions`):
+
+| Mode | What runs | When to use |
+|---|---|---|
+| `frozen` (default) | nothing; the predictions captured when each review opened | the baseline's own accuracy |
+| `cached` | extraction by the installed build, from the OCR stored in a **copy** of the pilot library. No document is OCR'd again; a changed or moved file stops the run. The second reading can still OCR a crop. | changes to extraction only |
+| `full` | the whole pipeline. The original files are ingested into an **isolated, empty** library with `--candidate-config`, OCR included, then extracted. | anything that touches OCR, models or settings |
+
+Every mode works the same way:
+- The requested cohort and split are selected **before** anything is predicted. A dev run never runs
+  inference on a reserved document; this is tested with both groups present.
+- For `--split reserved`, the reason is required and logged before any document is read.
+- The pilot library is only ever read, through a consistent snapshot. The approved values used as ground
+  truth are written to `*-ground-truth.json` next to the results.
+- Each result records its provenance: the installed version and package digest, the harness commit and
+  the full settings. Re-predictions also record the sha256 of every OCR model file used (and the small
+  models' files when they are enabled), every ONNX Runtime inference call per model file, the number of
+  second readings, and how many documents were predicted.
 
 Ground truth is the approved final value. Metrics are reported with 95% Wilson intervals; with 50–100
 invoices they are wide, so read them:
@@ -150,7 +173,8 @@ annotations.
 - The run completed: intake 60/60, 75 approved reviews (15 entered both ways), 450 exported rows.
 - The evaluator gives the same accuracy and silent-error rate as the benchmark harness on the same
   predictions: 99.4% and 0.3%.
-- `--repredict` with the same build reproduces the frozen-prediction numbers exactly.
+- Re-predicting with the same build (then `--repredict`, now `--predictions cached`) reproduced the frozen-prediction
+  numbers exactly.
 - The failure list names 2 values. One is the known case where the dataset annotates the net amount as the
   total, so a human reviewer looking at the page would approve Inklight's value instead.
 - Timings are 0 s and agreement is perfect by construction. Neither means anything for real reviewers.

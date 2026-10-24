@@ -369,3 +369,17 @@ def test_cached_mode_refuses_a_document_changed_since_review(workspace, spy):
     changed.write_text(changed.read_text() + "Note: edited\n", encoding="utf-8")
     with pytest.raises(SystemExit, match="changed or moved"):
         evaluate.run(_args(workspace, predictions="cached"))
+
+
+def test_a_document_reviewed_twice_is_predicted_once(workspace, spy):
+    with DocumentAgent(make_settings(workspace["home"])) as agent:
+        doc = next(d for d in agent.library.documents() if d.sha256 in workspace["shas"]["dev"])
+        r = agent.open_review(doc.id, ["vendor", "total"], reviewer="ben", mode="manual", baseline="b1")
+        for f in r.fields:
+            agent.reviews.decide(r.id, f.field, reviewer="ben", action="absent")
+        agent.reviews.approve(r.id, reviewer="ben")
+    before = len(spy)  # opening the manual review above extracted once too
+    metrics = evaluate.run(_args(workspace, predictions="cached"))
+    during = spy[before:]
+    assert len(during) == len(workspace["shas"]["dev"]) == metrics["provenance"]["inference"]["documents_predicted"]
+    assert "cached (re-extracted" in evaluate.markdown(metrics)
