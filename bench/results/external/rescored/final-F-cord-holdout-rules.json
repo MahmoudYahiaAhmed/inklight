@@ -1,0 +1,1334 @@
+{
+ "source_file": "final-F-cord-holdout-rules.json",
+ "source_sha256": "a2dafc0469b2d97081c406b3f7c5024b959e5ac084e47ece37bcf5988460ff99",
+ "build": "F",
+ "dataset": "cord",
+ "genuine": true,
+ "split": "holdout",
+ "brain_mode": "rules",
+ "input": "original files via OCR",
+ "provenance": {
+  "inklight_version": "0.1.1.dev0",
+  "dist_version": "0.1.1.dev0",
+  "inklight_file": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\evalenv\\venvF\\Lib\\site-packages\\inklight\\__init__.py",
+  "install_method": "pip from file:///C:/Users/pc/AppData/Local/Temp/claude/C--Users-pc/b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f/scratchpad/evalenv/distF/inklight-0.1.1.dev0-py3-none-any.whl",
+  "wheel_sha256": "1a751494d703cd017d272bb78d09bf516878118a943e0b5adeb2c78119f76d04",
+  "git_commit": "05206d7349caf7e8f81ba4b64b1a9d4405cfba27",
+  "python": "3.12.10",
+  "executable": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\evalenv\\venvF\\Scripts\\python.exe",
+  "platform": "Windows AMD64",
+  "date": "2026-10-24"
+ },
+ "extraction": {
+  "overall": {
+   "n": 124,
+   "counts": {
+    "correct_unflagged": 63,
+    "correct_flagged": 22,
+    "wrong_unflagged": 2,
+    "wrong_flagged": 13,
+    "missing": 24
+   },
+   "value_accuracy": 0.685,
+   "coverage_without_review": 0.508,
+   "precision_unflagged": 0.969,
+   "silent_error_rate": 0.016,
+   "review_rate": 0.282,
+   "missing_rate": 0.194
+  },
+  "fields": {
+   "subtotal": {
+    "n": 40,
+    "counts": {
+     "correct_unflagged": 26,
+     "correct_flagged": 5,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 9
+    },
+    "value_accuracy": 0.775,
+    "coverage_without_review": 0.65,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.125,
+    "missing_rate": 0.225
+   },
+   "tax": {
+    "n": 25,
+    "counts": {
+     "correct_unflagged": 7,
+     "correct_flagged": 5,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 1,
+     "missing": 12
+    },
+    "value_accuracy": 0.48,
+    "coverage_without_review": 0.28,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.24,
+    "missing_rate": 0.48
+   },
+   "total": {
+    "n": 59,
+    "counts": {
+     "correct_unflagged": 30,
+     "correct_flagged": 12,
+     "wrong_unflagged": 2,
+     "wrong_flagged": 12,
+     "missing": 3
+    },
+    "value_accuracy": 0.712,
+    "coverage_without_review": 0.508,
+    "precision_unflagged": 0.938,
+    "silent_error_rate": 0.034,
+    "review_rate": 0.407,
+    "missing_rate": 0.051
+   }
+  }
+ },
+ "truth_corrections_applied": [],
+ "rows": [
+  {
+   "doc": "cord_holdout_084.png",
+   "field": "total",
+   "want": 39600.0,
+   "got": 39600.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_084.png",
+   "field": "subtotal",
+   "want": 36000.0,
+   "got": 36000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_084.png",
+   "field": "tax",
+   "want": 3600.0,
+   "got": 3600.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_088.png",
+   "field": "total",
+   "want": 47000.0,
+   "got": 47000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_088.png",
+   "field": "subtotal",
+   "want": 47000.0,
+   "got": 47000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_015.png",
+   "field": "total",
+   "want": 63000.0,
+   "got": 63.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.883,
+   "outcome5": "wrong_unflagged"
+  },
+  {
+   "doc": "cord_holdout_024.png",
+   "field": "total",
+   "want": 118000.0,
+   "got": 118000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.849,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_044.png",
+   "field": "total",
+   "want": 30000.0,
+   "got": 30.0,
+   "method": "label-row",
+   "warning": "low OCR confidence (0.78)",
+   "confidence": 0.705,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_051.png",
+   "field": "total",
+   "want": 334000.0,
+   "got": 334000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_051.png",
+   "field": "subtotal",
+   "want": 303646.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_051.png",
+   "field": "tax",
+   "want": 30365.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_041.png",
+   "field": "total",
+   "want": 365000.0,
+   "got": 365000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.379,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_041.png",
+   "field": "subtotal",
+   "want": 316017.0,
+   "got": 316017.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.894,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_075.png",
+   "field": "total",
+   "want": 282000.0,
+   "got": 256363.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.398,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_075.png",
+   "field": "subtotal",
+   "want": 256363.0,
+   "got": 256363.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.895,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_075.png",
+   "field": "tax",
+   "want": 25637.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_021.png",
+   "field": "total",
+   "want": 38000.0,
+   "got": 38000.0,
+   "method": "label-row",
+   "warning": "low OCR confidence (0.84)",
+   "confidence": 0.759,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_025.png",
+   "field": "total",
+   "want": 43000.0,
+   "got": 43000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_043.png",
+   "field": "total",
+   "want": 165000.0,
+   "got": 165000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.64425,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_043.png",
+   "field": "subtotal",
+   "want": 165000.0,
+   "got": 165000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.6187499999999999,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_043.png",
+   "field": "tax",
+   "want": 15000.0,
+   "got": 15000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.6525,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_085.png",
+   "field": "total",
+   "want": 197450.0,
+   "got": 179500.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.376,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_085.png",
+   "field": "subtotal",
+   "want": 179500.0,
+   "got": 179500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.845,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_085.png",
+   "field": "tax",
+   "want": 17950.0,
+   "got": 17850.0,
+   "method": "label-row",
+   "warning": "2 values on the 'Pajak Rest 102' row and no column title; took the last",
+   "confidence": 0.468,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_020.png",
+   "field": "total",
+   "want": 377859.0,
+   "got": 325600.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.397,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_020.png",
+   "field": "subtotal",
+   "want": 325600.0,
+   "got": 325600.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.894,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_020.png",
+   "field": "tax",
+   "want": 34351.0,
+   "got": 34351.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_082.png",
+   "field": "total",
+   "want": 385000.0,
+   "got": 385000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_082.png",
+   "field": "subtotal",
+   "want": 385000.0,
+   "got": 385000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_062.png",
+   "field": "total",
+   "want": 48000.0,
+   "got": 48000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.847,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_010.png",
+   "field": "total",
+   "want": 17000.0,
+   "got": 20000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.399,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_010.png",
+   "field": "subtotal",
+   "want": 17000.0,
+   "got": 17000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_040.png",
+   "field": "total",
+   "want": 68000.0,
+   "got": 7000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.396,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_090.png",
+   "field": "total",
+   "want": 29500.0,
+   "got": 29500.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.6735,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_090.png",
+   "field": "subtotal",
+   "want": 26818.0,
+   "got": 26818.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_090.png",
+   "field": "tax",
+   "want": 2681.0,
+   "got": 2681.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_080.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": 25000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.397,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_080.png",
+   "field": "subtotal",
+   "want": 25000.0,
+   "got": 25000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.877,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_035.png",
+   "field": "total",
+   "want": 54000.0,
+   "got": 18000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.4,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_014.png",
+   "field": "total",
+   "want": 281435.0,
+   "got": 281435.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.898,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_014.png",
+   "field": "subtotal",
+   "want": 238000.0,
+   "got": 238000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_014.png",
+   "field": "tax",
+   "want": 25585.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_032.png",
+   "field": "total",
+   "want": 24000.0,
+   "got": 24.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.867,
+   "outcome5": "wrong_unflagged"
+  },
+  {
+   "doc": "cord_holdout_032.png",
+   "field": "subtotal",
+   "want": 24000.0,
+   "got": 24000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_060.png",
+   "field": "total",
+   "want": 26250.0,
+   "got": 26250.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.867,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_060.png",
+   "field": "subtotal",
+   "want": 26250.0,
+   "got": 26250.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.865,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_000.png",
+   "field": "total",
+   "want": 60000.0,
+   "got": 3810.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found; low OCR confidence (0.67)",
+   "confidence": 0.268,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_000.png",
+   "field": "subtotal",
+   "want": 60000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_000.png",
+   "field": "tax",
+   "want": 5455.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_030.png",
+   "field": "total",
+   "want": 31500.0,
+   "got": 31500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.895,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_030.png",
+   "field": "subtotal",
+   "want": 28636.0,
+   "got": 28636.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.881,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_030.png",
+   "field": "tax",
+   "want": 2864.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_005.png",
+   "field": "total",
+   "want": 31000.0,
+   "got": 31000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.898,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_005.png",
+   "field": "subtotal",
+   "want": 28182.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_005.png",
+   "field": "tax",
+   "want": 2818.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_026.png",
+   "field": "total",
+   "want": 138000.0,
+   "got": 138000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.828,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_026.png",
+   "field": "subtotal",
+   "want": 138000.0,
+   "got": 138000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.847,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_055.png",
+   "field": "total",
+   "want": 54000.0,
+   "got": 54000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.838,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_022.png",
+   "field": "total",
+   "want": 40000.0,
+   "got": 40000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_001.png",
+   "field": "total",
+   "want": 91000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_027.png",
+   "field": "total",
+   "want": 61600.0,
+   "got": 61600.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_027.png",
+   "field": "subtotal",
+   "want": 56000.0,
+   "got": 56000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_027.png",
+   "field": "tax",
+   "want": 5600.0,
+   "got": 5600.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_094.png",
+   "field": "total",
+   "want": 140063.0,
+   "got": 140063.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_094.png",
+   "field": "subtotal",
+   "want": 119000.0,
+   "got": 119000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.67425,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_094.png",
+   "field": "tax",
+   "want": 12733.0,
+   "got": 12733.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_061.png",
+   "field": "total",
+   "want": 24500.0,
+   "got": 24500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.898,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_061.png",
+   "field": "subtotal",
+   "want": 24500.0,
+   "got": 24500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_028.png",
+   "field": "total",
+   "want": 426195.0,
+   "got": 426195.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_028.png",
+   "field": "subtotal",
+   "want": 369000.0,
+   "got": 369000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.675,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_028.png",
+   "field": "tax",
+   "want": 38745.0,
+   "got": 38745.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.67425,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_017.png",
+   "field": "total",
+   "want": 91000.0,
+   "got": 91000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.877,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_017.png",
+   "field": "subtotal",
+   "want": 91000.0,
+   "got": 91000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_073.png",
+   "field": "total",
+   "want": 22000.0,
+   "got": 22000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.397,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_063.png",
+   "field": "total",
+   "want": 57000.0,
+   "got": 57000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.89,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_063.png",
+   "field": "subtotal",
+   "want": 57000.0,
+   "got": 57000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.896,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_058.png",
+   "field": "total",
+   "want": 60500.0,
+   "got": 60500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.786,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_058.png",
+   "field": "subtotal",
+   "want": 55000.0,
+   "got": 55000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.892,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_058.png",
+   "field": "tax",
+   "want": 5500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_047.png",
+   "field": "total",
+   "want": 63000.0,
+   "got": 0.0,
+   "method": "label-row",
+   "warning": "2 different values found; chose the strongest label match",
+   "confidence": 0.718,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_077.png",
+   "field": "total",
+   "want": 17000.0,
+   "got": 17000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_077.png",
+   "field": "subtotal",
+   "want": 17000.0,
+   "got": 17000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_004.png",
+   "field": "total",
+   "want": 174600.0,
+   "got": 200000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.381,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_004.png",
+   "field": "subtotal",
+   "want": 194000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_012.png",
+   "field": "total",
+   "want": 120000.0,
+   "got": 120000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.875,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_019.png",
+   "field": "total",
+   "want": 176000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_019.png",
+   "field": "subtotal",
+   "want": 160000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_019.png",
+   "field": "tax",
+   "want": 16000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_064.png",
+   "field": "total",
+   "want": 16000.0,
+   "got": 16000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.892,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_036.png",
+   "field": "total",
+   "want": 40000.0,
+   "got": 40000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.898,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_036.png",
+   "field": "subtotal",
+   "want": 40000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_042.png",
+   "field": "total",
+   "want": 16500.0,
+   "got": 6000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.42824999999999996,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_holdout_042.png",
+   "field": "subtotal",
+   "want": 15000.0,
+   "got": 15000.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.67275,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_042.png",
+   "field": "tax",
+   "want": 1500.0,
+   "got": 1500.0,
+   "method": "label-row",
+   "warning": "subtotal + tax does not equal total (shipping or discounts may explain it); please check",
+   "confidence": 0.67275,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_087.png",
+   "field": "total",
+   "want": 40150.0,
+   "got": 40150.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.889,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_087.png",
+   "field": "subtotal",
+   "want": 36500.0,
+   "got": 36500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.897,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_087.png",
+   "field": "tax",
+   "want": 3650.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_069.png",
+   "field": "total",
+   "want": 74000.0,
+   "got": 74000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_089.png",
+   "field": "total",
+   "want": 40000.0,
+   "got": 40000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.391,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_089.png",
+   "field": "subtotal",
+   "want": 40000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_066.png",
+   "field": "total",
+   "want": 40000.0,
+   "got": 40000.0,
+   "method": "label-row",
+   "warning": "low OCR confidence (0.84)",
+   "confidence": 0.752,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_066.png",
+   "field": "subtotal",
+   "want": 36364.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_066.png",
+   "field": "tax",
+   "want": 3636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_059.png",
+   "field": "total",
+   "want": 680500.0,
+   "got": 680500.0,
+   "method": "label-row",
+   "warning": "2 different values found; chose the strongest label match",
+   "confidence": 0.668,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_059.png",
+   "field": "subtotal",
+   "want": 618490.0,
+   "got": 618490.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.873,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_059.png",
+   "field": "tax",
+   "want": 61849.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_034.png",
+   "field": "total",
+   "want": 93500.0,
+   "got": 93500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_034.png",
+   "field": "subtotal",
+   "want": 85000.0,
+   "got": 85000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_034.png",
+   "field": "tax",
+   "want": 8500.0,
+   "got": 8500.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_008.png",
+   "field": "total",
+   "want": 50000.0,
+   "got": 50000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_008.png",
+   "field": "subtotal",
+   "want": 45455.0,
+   "got": 45455.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_008.png",
+   "field": "tax",
+   "want": 4545.0,
+   "got": 4545.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_011.png",
+   "field": "total",
+   "want": 230000.0,
+   "got": 230000.0,
+   "method": "label-row",
+   "warning": "2 values on the 'TOTAL' row and no column title; took the last",
+   "confidence": 0.437,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_holdout_016.png",
+   "field": "total",
+   "want": 70000.0,
+   "got": 70000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_016.png",
+   "field": "subtotal",
+   "want": 63636.0,
+   "got": 63636.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_016.png",
+   "field": "tax",
+   "want": 6364.0,
+   "got": 6364.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_048.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": 25000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_048.png",
+   "field": "subtotal",
+   "want": 22728.0,
+   "got": 22728.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_048.png",
+   "field": "tax",
+   "want": 2272.0,
+   "got": 2272.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_072.png",
+   "field": "total",
+   "want": 17500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_072.png",
+   "field": "subtotal",
+   "want": 15909.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_072.png",
+   "field": "tax",
+   "want": 1591.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_holdout_097.png",
+   "field": "total",
+   "want": 55000.0,
+   "got": 55000.0,
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.897,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_holdout_091.png",
+   "field": "total",
+   "want": 21000.0,
+   "got": 15000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.367,
+   "outcome5": "wrong_flagged"
+  }
+ ],
+ "tasks": null
+}

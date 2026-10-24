@@ -46,18 +46,25 @@ something looks off, and a trace of every step the agent took.
   exported. Ambiguous `and`/`or` mixes are reported instead of guessed. A citation proves where a value came
   from, not that it answers your question. The two confidence scores, *understood* and *evidence*, are
   heuristics, not probabilities. Amounts in different currencies are never added or compared.
-- **Measured on documents it was not written against.** These are held-out splits, run once, with real OCR
-  on the original images ([details](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)):
-  - Synthetic invoices (Voxel51): 99.7% of 360 field values correct, 0.3% silently wrong.
-  - Genuine Indonesian receipts (CORD): 68.5% of 124 values correct, 1.6% silently wrong (0.8% with a
-    later digit-loss check), and the rest left empty or flagged.
-  - Request forms: 13 of 13 supported ones exact, and 4 of 4 unsupported ones reported rather than guessed.
+- **Measured on documents it was not written against.** These are public datasets, with real OCR on the
+  original images, on a split that guided no development
+  ([details and history](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)).
+  *Coverage without review* means values that match and are not flagged:
+  - Synthetic invoices (Voxel51, 359 values): 99.4% match, and 91.6% need no review. About 1 in 300
+    unflagged values is wrong.
+  - Genuine Indonesian receipts (CORD, 127 values): 61.4% match, and 47.2% need no review. 3.1% are wrong
+    without a flag, while about a quarter are flagged and a quarter missing.
+  - Requests, checked by their result (counts, sums, exports, refusals):
+    - On invoices, every document-set, count and export request is right, and every unsupported request is
+      refused with the reason. 2 of 3 sums match; the third is off by exactly one annotation error in the
+      dataset.
+    - On receipts, every task comes back `partial` with reasons.
 
   Real-world *invoices* are not yet measured, and handwriting and non-Latin scripts are not measured at all.
 - **Small-model intelligence, measured.** Optional models are each under 200M parameters: a 66M reader that
   can only point at text in your document, a 33M embedder for search, and an optional 135M writer whose output
   must be grounded. Calculations and filters are exact Python, not model guesses. On the external sets above,
-  the gains came from layout handling in deterministic code. The reader added one correct value out of 124.
+  the gains came from layout handling in deterministic code; the reader changed coverage without review by zero.
 - **Local and private by default.** No API key needed. Nothing leaves your machine unless you configure a remote model.
 - **Safe with untrusted documents.** "Ignore previous instructions" inside a PDF is treated as data and flagged.
   The agent has no shell, no code execution, and writes files only where you allow. See [SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md).

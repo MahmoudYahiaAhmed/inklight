@@ -55,8 +55,10 @@ Types: `text`, `money`, `number`, `date`, `email`, `phone`, `id`.
 - Labels must be in English, apart from a few Indonesian receipt tax labels (`pajak`, `ppn`, `pb1`,
   `p.rest`). Values in other languages are read when Indra recognises the script.
 - A summary row with several amounts and no column titles takes the last amount and is flagged.
-- OCR digit loss (`63.000` read as `63.00`) is flagged, not corrected. The check needs at least 3 other
-  thousands-grouped amounts in the document, so it misses short receipts whose other amounts OCR also broke
-  up. It caught 1 of 2 such cases in 124 held-out receipt values (docs/BENCHMARKS.md).
+- A suspected OCR misread of an amount (`63.000` read as `63.00`) is flagged, never corrected. The flag
+  needs agreeing evidence: number format plus magnitude, OCR confidence or a disagreeing second reading of
+  the image region. A second reading needs an image document at rotation 0, not a PDF.
+- Digit *misreads* that keep the format (`12.000` for 12,600) and signs read from a nearby line are not
+  detected. They are the remaining silent receipt errors in docs/BENCHMARKS.md.
 - Values that appear only inside complex tables (merged cells, no ruling) may be missed. Indra itself
   documents complex tables as a limitation.

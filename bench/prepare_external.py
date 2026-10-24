@@ -40,8 +40,8 @@ def _money(raw: str | list | None) -> float | None:
         values = {_money(item) for item in raw}
         return values.pop() if len(values) == 1 else None
     s = str(raw).strip().replace(" ", "")
-    if not s:
-        return None
+    if not s or s.endswith("%"):
+        return None  # "10%" is a rate, not an amount
     digits = "".join(ch for ch in s if ch.isdigit() or ch in ".,")
     if not digits:
         return None

@@ -1,0 +1,1294 @@
+{
+ "source_file": "base-A-cord-dev-rules.json",
+ "source_sha256": "8896648568d5d7747cbdb113554e6052941d40b23731e170e34b9d1f23d61f5f",
+ "build": "A",
+ "dataset": "cord",
+ "genuine": true,
+ "split": "dev",
+ "brain_mode": "rules",
+ "input": "original files via OCR",
+ "provenance": {
+  "inklight_version": "0.1.0",
+  "dist_version": "0.1.0",
+  "inklight_file": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\evalenv\\venvA\\Lib\\site-packages\\inklight\\__init__.py",
+  "install_method": "pip from package index (PyPI)",
+  "wheel_sha256": "4922dc132df4743e4bf6b29ad34e35bcf2717f0eefa45acda7921801e68f4b14",
+  "git_commit": "PyPI release 0.1.0 (built from 914d321)",
+  "python": "3.12.10",
+  "executable": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\evalenv\\venvA\\Scripts\\python.exe",
+  "platform": "Windows AMD64",
+  "date": "2026-10-24"
+ },
+ "extraction": {
+  "overall": {
+   "n": 120,
+   "counts": {
+    "correct_unflagged": 2,
+    "correct_flagged": 1,
+    "wrong_unflagged": 0,
+    "wrong_flagged": 4,
+    "missing": 113
+   },
+   "value_accuracy": 0.025,
+   "coverage_without_review": 0.017,
+   "precision_unflagged": 1.0,
+   "silent_error_rate": 0.0,
+   "review_rate": 0.042,
+   "missing_rate": 0.942
+  },
+  "fields": {
+   "subtotal": {
+    "n": 37,
+    "counts": {
+     "correct_unflagged": 1,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 36
+    },
+    "value_accuracy": 0.027,
+    "coverage_without_review": 0.027,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.0,
+    "missing_rate": 0.973
+   },
+   "tax": {
+    "n": 25,
+    "counts": {
+     "correct_unflagged": 0,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 25
+    },
+    "value_accuracy": 0.0,
+    "coverage_without_review": 0.0,
+    "precision_unflagged": null,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.0,
+    "missing_rate": 1.0
+   },
+   "total": {
+    "n": 58,
+    "counts": {
+     "correct_unflagged": 1,
+     "correct_flagged": 1,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 4,
+     "missing": 52
+    },
+    "value_accuracy": 0.034,
+    "coverage_without_review": 0.017,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.086,
+    "missing_rate": 0.897
+   }
+  }
+ },
+ "truth_corrections_applied": [],
+ "rows": [
+  {
+   "doc": "cord_dev_058.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": 25.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.38,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_dev_058.png",
+   "field": "subtotal",
+   "want": 25000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_044.png",
+   "field": "total",
+   "want": 17999.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_044.png",
+   "field": "subtotal",
+   "want": 16363.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_044.png",
+   "field": "tax",
+   "want": 1636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_066.png",
+   "field": "total",
+   "want": 7000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_099.png",
+   "field": "total",
+   "want": 39000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_099.png",
+   "field": "subtotal",
+   "want": 39000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_048.png",
+   "field": "total",
+   "want": 61500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_048.png",
+   "field": "subtotal",
+   "want": 55908.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_048.png",
+   "field": "tax",
+   "want": 5592.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_021.png",
+   "field": "total",
+   "want": 224908.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_021.png",
+   "field": "subtotal",
+   "want": 194726.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_021.png",
+   "field": "tax",
+   "want": 20446.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_010.png",
+   "field": "total",
+   "want": 60000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_075.png",
+   "field": "total",
+   "want": 66500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_075.png",
+   "field": "subtotal",
+   "want": 60454.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_075.png",
+   "field": "tax",
+   "want": 6046.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_038.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": 20000.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.352,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "cord_dev_056.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_056.png",
+   "field": "subtotal",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_046.png",
+   "field": "total",
+   "want": 22000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_068.png",
+   "field": "total",
+   "want": 26000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_032.png",
+   "field": "total",
+   "want": 6000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_032.png",
+   "field": "subtotal",
+   "want": 6000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_076.png",
+   "field": "total",
+   "want": 99000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_033.png",
+   "field": "total",
+   "want": 57500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_070.png",
+   "field": "total",
+   "want": 121798.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_070.png",
+   "field": "subtotal",
+   "want": 103000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_070.png",
+   "field": "tax",
+   "want": 11073.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_029.png",
+   "field": "subtotal",
+   "want": 30000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_019.png",
+   "field": "total",
+   "want": 42500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_018.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_071.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_071.png",
+   "field": "subtotal",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_095.png",
+   "field": "total",
+   "want": 30000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_095.png",
+   "field": "subtotal",
+   "want": 27272.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_095.png",
+   "field": "tax",
+   "want": 2700.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_017.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_017.png",
+   "field": "subtotal",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_012.png",
+   "field": "total",
+   "want": 72000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_016.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_031.png",
+   "field": "total",
+   "want": 24000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_024.png",
+   "field": "total",
+   "want": 80500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_082.png",
+   "field": "total",
+   "want": 35000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_082.png",
+   "field": "subtotal",
+   "want": 35000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_009.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_037.png",
+   "field": "total",
+   "want": 70000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_037.png",
+   "field": "subtotal",
+   "want": 63636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_037.png",
+   "field": "tax",
+   "want": 6364.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_054.png",
+   "field": "total",
+   "want": 40000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_036.png",
+   "field": "total",
+   "want": 18999.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_036.png",
+   "field": "subtotal",
+   "want": 17272.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_036.png",
+   "field": "tax",
+   "want": 1727.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_078.png",
+   "field": "total",
+   "want": 177870.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_078.png",
+   "field": "subtotal",
+   "want": 154000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_078.png",
+   "field": "tax",
+   "want": 16170.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_072.png",
+   "field": "total",
+   "want": 36000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_072.png",
+   "field": "subtotal",
+   "want": 36000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_011.png",
+   "field": "total",
+   "want": 89100.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_011.png",
+   "field": "subtotal",
+   "want": 81000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_011.png",
+   "field": "tax",
+   "want": 8100.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_074.png",
+   "field": "total",
+   "want": 20000.0,
+   "got": 20.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found; low OCR confidence (0.67)",
+   "confidence": 0.266,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_dev_074.png",
+   "field": "subtotal",
+   "want": 20000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_050.png",
+   "field": "total",
+   "want": 26000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_059.png",
+   "field": "total",
+   "want": 664329.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_059.png",
+   "field": "subtotal",
+   "want": 561800.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_059.png",
+   "field": "tax",
+   "want": 60394.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_077.png",
+   "field": "total",
+   "want": 58000.0,
+   "got": 58000.0,
+   "method": "label-next-line",
+   "warning": null,
+   "confidence": 0.736,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_dev_077.png",
+   "field": "subtotal",
+   "want": 58000.0,
+   "got": 58000.0,
+   "method": "label-next-line",
+   "warning": null,
+   "confidence": 0.772,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "cord_dev_077.png",
+   "field": "tax",
+   "want": 5272.73,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_022.png",
+   "field": "total",
+   "want": 308000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_022.png",
+   "field": "subtotal",
+   "want": 280000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_022.png",
+   "field": "tax",
+   "want": 28000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_003.png",
+   "field": "total",
+   "want": 28000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_003.png",
+   "field": "subtotal",
+   "want": 28000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_003.png",
+   "field": "tax",
+   "want": 0.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_026.png",
+   "field": "total",
+   "want": 35000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_069.png",
+   "field": "total",
+   "want": 174983.0,
+   "got": 174.98,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.39,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_dev_069.png",
+   "field": "subtotal",
+   "want": 151500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_069.png",
+   "field": "tax",
+   "want": 15908.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_093.png",
+   "field": "total",
+   "want": 172000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_093.png",
+   "field": "subtotal",
+   "want": 156364.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_093.png",
+   "field": "tax",
+   "want": 15636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_096.png",
+   "field": "total",
+   "want": 12750.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_096.png",
+   "field": "subtotal",
+   "want": 13636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_096.png",
+   "field": "tax",
+   "want": 1159.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_080.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_043.png",
+   "field": "total",
+   "want": 278000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_088.png",
+   "field": "total",
+   "want": 170000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_088.png",
+   "field": "subtotal",
+   "want": 154545.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_088.png",
+   "field": "tax",
+   "want": 15455.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_091.png",
+   "field": "total",
+   "want": 44000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_091.png",
+   "field": "subtotal",
+   "want": 40000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_091.png",
+   "field": "tax",
+   "want": 4000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_013.png",
+   "field": "total",
+   "want": 45500.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_013.png",
+   "field": "subtotal",
+   "want": 41364.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_013.png",
+   "field": "tax",
+   "want": 4136.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_097.png",
+   "field": "total",
+   "want": 25000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_028.png",
+   "field": "total",
+   "want": 22000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_053.png",
+   "field": "total",
+   "want": 31000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_027.png",
+   "field": "total",
+   "want": 17999.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_027.png",
+   "field": "subtotal",
+   "want": 16363.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_027.png",
+   "field": "tax",
+   "want": 1636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_049.png",
+   "field": "subtotal",
+   "want": 74000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_049.png",
+   "field": "tax",
+   "want": 7400.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_062.png",
+   "field": "total",
+   "want": 62000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_062.png",
+   "field": "subtotal",
+   "want": 56364.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_062.png",
+   "field": "tax",
+   "want": 5636.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_084.png",
+   "field": "total",
+   "want": 52000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_084.png",
+   "field": "subtotal",
+   "want": 52000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_008.png",
+   "field": "total",
+   "want": 11700.0,
+   "got": 4.0,
+   "method": "largest-amount",
+   "warning": "inferred (largest-amount); no label found",
+   "confidence": 0.392,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "cord_dev_008.png",
+   "field": "subtotal",
+   "want": 11700.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_025.png",
+   "field": "total",
+   "want": 207900.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_025.png",
+   "field": "subtotal",
+   "want": 180000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_025.png",
+   "field": "tax",
+   "want": 18900.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_014.png",
+   "field": "total",
+   "want": 39600.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_014.png",
+   "field": "subtotal",
+   "want": 36000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_014.png",
+   "field": "tax",
+   "want": 3600.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  },
+  {
+   "doc": "cord_dev_006.png",
+   "field": "total",
+   "want": 123000.0,
+   "got": null,
+   "method": "none",
+   "warning": null,
+   "confidence": 0.0,
+   "outcome5": "missing"
+  }
+ ],
+ "tasks": null
+}

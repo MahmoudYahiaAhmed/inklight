@@ -129,3 +129,4 @@ def test_list_valued_annotations_are_not_concatenated():
     assert _money(["55,834", "55,800"]) is None  # disagreeing values: unknown, not guessed
     assert _money(["30.273 200", "3.027"]) is None
     assert _money("60.000") == 60000.0 and _money("12.50") == 12.5
+    assert _money("10%") is None  # a VAT rate annotated in the tax field

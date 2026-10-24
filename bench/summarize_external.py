@@ -65,8 +65,8 @@ def provenance_table(runs: list[dict]) -> str:
     for d in runs:
         seen.setdefault(d["_env"], d["provenance"])
     rows = [
-        "| Build | Version | Commit | Wheel sha256 | Installed from | `inklight.__file__` |",
-        "|---|---|---|---|---|---|",
+        "| Build | Version | Commit | Harness commit | Wheel sha256 | Installed from | `inklight.__file__` |",
+        "|---|---|---|---|---|---|---|",
     ]
     for env, p in seen.items():
         rows.append(

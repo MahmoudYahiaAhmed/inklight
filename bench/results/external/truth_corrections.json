@@ -1,0 +1,17 @@
+{
+  "about": "Corrections for errors in bench/prepare_external.py's parsing of the dataset annotations (not for disagreements with the annotations themselves). A corrected value of null removes the value from scoring: the annotation does not determine it. Applied by bench/rescore.py; the original result files are not modified.",
+  "corrections": [
+    {
+      "dataset": "voxel51", "split": "fresh", "doc": "batch1-0561.jpg", "field": "tax", "from": 10.0, "to": null,
+      "why": "the annotation's tax is the VAT rate '10%'; the parser read it as the amount 10.00"
+    },
+    {
+      "dataset": "cord", "split": "fresh", "doc": "cord_fresh_191.png", "field": "tax", "from": 302732003027.0, "to": null,
+      "why": "the annotation lists two taxes ['30.273 200', '3.027']; the parser concatenated the list into one number"
+    },
+    {
+      "dataset": "cord", "split": "fresh", "doc": "cord_fresh_135.png", "field": "total", "from": 5583455800.0, "to": null,
+      "why": "the annotation lists two totals ['55,834', '55,800'] (before and after rounding); the parser concatenated them"
+    }
+  ]
+}

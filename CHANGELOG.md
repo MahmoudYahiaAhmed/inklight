@@ -60,10 +60,21 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   (thousands-grouped amounts without cents, IDR), an amount OCR split into `177` `870`, and a label followed
   by a rate ("Tax 10%"). A money cell must account for every digit in it.
 - Cash tendered and change are never the inferred total.
-- **Amounts OCR may have shortened are flagged.** In a document whose amounts have no cents (IDR), an
-  amount with two decimals (`63.00` for `63.000`) or a total under half its subtotal now carries a warning,
-  half confidence and `verified = false`. The value itself is kept. Silent errors on held-out receipts went
-  from 2 to 1; the check was found on, and so is not independently validated by, that holdout.
+- **Amounts OCR may have misread are flagged, on agreeing evidence only.**
+  - *When:* an amount is flagged only when independent signals agree. The signals are: the document's
+    number format (no cents, or a zero-decimal currency) against an amount with cents; an
+    order-of-magnitude break against other non-payment amounts; low OCR confidence; and a second OCR
+    reading of the enlarged image region that disagrees.
+  - *What a flag does:* the value and its OCR text are kept. The warning gives the reasons, the second
+    reading and the source box. Confidence is halved, and the value is no longer marked verified.
+  - *Result:* on a fresh, de-duplicated split, silent receipt errors went from 6 to 4 of 127, with 0 correct
+    values flagged out of 887 across dev and fresh.
+  - *What it replaces:* an interim rule (`e61a8d6`) that flagged any total under half its subtotal, which a
+    discount or deposit trips.
+- **"The total of invoices above $X" computes a sum.** It used to return the matching invoices, report
+  success and compute no total. `AgentResult.calculation` now exposes the sum: op, result, unit, values used
+  and values left out.
+- Rupiah amounts in requests ("above Rp 50.000", "50,000 IDR").
 - Indonesian tax labels (`pajak`, `ppn`, `pb1`, `p.rest`), plus `net worth` and `gross worth`.
 - **Possessive requests**: "Show acme's invoices", curly apostrophes, the name first ("Acme's invoices above
   $5,000"), and coordinated owners. A possessive owner stops at a preposition ("terms on Acme's" → Acme) unless

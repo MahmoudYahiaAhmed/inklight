@@ -40,13 +40,29 @@ TASK_OUTCOMES = (
 )
 
 
-def rescore(path: Path) -> dict:
+def load_corrections(directory: Path) -> list[dict]:
+    path = directory / "truth_corrections.json"
+    return json.loads(path.read_text(encoding="utf-8"))["corrections"] if path.exists() else []
+
+
+def rescore(path: Path, corrections: list[dict] | None = None) -> dict:
     raw = path.read_bytes()
     d = json.loads(raw)
-    rows = [
-        {**r, "outcome5": outcome(r["field"], r["got"], r["want"], r.get("warning"), r.get("confidence"))}
-        for r in d["rows"]
-    ]
+    fixes = {
+        (c["doc"], c["field"]): c
+        for c in corrections or []
+        if c["dataset"] == d["dataset"] and c["split"] == d["split"]
+    }
+    applied = []
+    rows = []
+    for r in d["rows"]:
+        fix = fixes.get((r["doc"], r["field"]))
+        if fix is not None and r["want"] == fix["from"]:
+            applied.append(fix)
+            if fix["to"] is None:
+                continue  # the annotation does not determine this value
+            r = {**r, "want": fix["to"]}
+        rows.append({**r, "outcome5": outcome(r["field"], r["got"], r["want"], r.get("warning"), r.get("confidence"))})
     return {
         "source_file": path.name,
         "source_sha256": hashlib.sha256(raw).hexdigest(),
@@ -58,6 +74,7 @@ def rescore(path: Path) -> dict:
         "input": d["input"],
         "provenance": d["provenance"],
         "extraction": summarize(rows),
+        "truth_corrections_applied": applied,
         "rows": [
             {k: r[k] for k in ("doc", "field", "want", "got", "method", "warning", "confidence", "outcome5")}
             for r in rows
@@ -112,8 +129,9 @@ def main() -> None:
     out = args.directory / "rescored"
     out.mkdir(exist_ok=True)
     items = []
-    for path in sorted(args.directory.glob("*.json")):
-        s = rescore(path)
+    corrections = load_corrections(args.directory)
+    for path in sorted(p for p in args.directory.glob("*.json") if p.name != "truth_corrections.json"):
+        s = rescore(path, corrections)
         (out / path.name).write_text(json.dumps(s, indent=1, default=str), encoding="utf-8")
         items.append(s)
     (out / "tables.md").write_text(
