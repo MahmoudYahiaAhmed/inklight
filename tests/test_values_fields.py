@@ -237,7 +237,7 @@ def test_single_char_invoice_id():
 
 
 def test_issue_date_far_in_the_future_is_flagged():
-    # Archive OCR read "08-OCT-85" as "08-OCT-35" (INV-CDIP tngn0205): keep the value, flag the year.
+    # OCR read "08-OCT-85" as "08-OCT-35" (INV-CDIP tngn0205): keep the value, flag the year.
     page = _page(["INVOICE", "Date of Inv: 08-OCT-35", "Due Date: 08-OCT-36"])
     rec = extract_record(_doc(), [page], [resolve_field("date"), resolve_field("due date")])
     assert rec.fields["date"].value == "2035-10-08"

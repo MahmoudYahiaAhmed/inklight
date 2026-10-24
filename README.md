@@ -65,9 +65,10 @@ something looks off, and a trace of every step the agent took.
   Real-world *invoices* are not yet measured, and handwriting is not measured at all.
 - **Arabic is not ready yet, and the gaps are measured.** A small diagnostic on original English, Arabic and
   mixed documents (contracts, letters, reports, forms, invoices) shows:
-  - Arabic questions are answered correctly 2 of 15 times.
+  - Arabic questions are answered correctly 2 of 18 times.
   - Arabic summary requests are not recognised.
-  - Arabic digital PDFs need OCR because their text layers can be broken.
+  - Arabic search now ignores optional marks and letter variants, and Arabic PDFs with a broken text layer
+    are OCR'd automatically.
   - English answers are reliable only on clean invoices.
 
   See the [capability matrix](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md).

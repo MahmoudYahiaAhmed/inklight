@@ -124,7 +124,7 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   changed on any of the 180 Voxel51 and CORD documents, so earlier benchmark results stand. A year followed
   by ".5" or ":30" is not read as a year ("QTY 2 MAY 15.00"). Measured with `bench/compare_dates.py`.
 - An issue date more than a year in the future is flagged ("check the year"); due, expiry and end dates are
-  not. Archive OCR had read "08-OCT-85" as "08-OCT-35".
+  not. OCR had read "08-OCT-85" on a 1985 invoice scan as "08-OCT-35".
 - The document viewer can be closed on narrow screens; below 1100 px it used to cover the tabs.
 - **A sum or average that leaves documents out is `partial`, not `succeeded`.** Documents without a value
   were left out with only a warning. The answer now also says how many were left out.

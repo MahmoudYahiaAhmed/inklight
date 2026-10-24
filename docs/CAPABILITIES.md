@@ -36,7 +36,7 @@ page has none). Counts are k/n.
 
 | Capability | English digital | English scanned or photographed | Arabic digital | Arabic scanned | Mixed Arabic/English (photos) |
 |---|---|---|---|---|---|
-| **Text (OCR)** | **Works.** Word recall 0.99–1.00 against the PDF's own text layer (5 docs) | **Partial.** Printed forms: word recall 0.96 (FUNSD, 2). In `auto`, archive scans keep the archive's old OCR layer and its errors ("44149" for 44/49, "O1 /31 /92") | **Fails in `auto`** (the default): the UN text layers decode to broken Arabic, so key strings are found 0/3 and 1/3. **Works in `ocr`**: key strings 3/3 and 3/3 | **Partial.** Typewritten 1974–1990 scans: key strings 1/3, 2/3, 1/3 | **Partial.** Key strings 11/12, but some Arabic words come out as Latin letters ("53gili sia Tedata") |
+| **Text (OCR)** | **Works.** Word recall 0.99–1.00 against the PDF's own text layer (5 docs) | **Partial.** Printed forms: word recall 0.96 (FUNSD, 2). Indra ignores the old invisible OCR layers of archive scans and OCRs them itself; its own misreads remain ("O1 /31 /92" for 01/31/82, "191" for 019114) | **Fails in `auto`** (the default): the UN text layers decode to broken Arabic, so key strings are found 0/3 and 1/3. **Works in `ocr`**: key strings 3/3 and 3/3 | **Partial.** Typewritten 1974–1990 scans: key strings 1/3, 2/3, 1/3 | **Partial.** Key strings 11/12, but some Arabic words come out as Latin letters ("53gili sia Tedata") |
 | **Search** (document ranked first, 25-doc library) | **Works** on these easy queries: 5/5 | **Works**: 11/11 (9 scans and photos, 2 synthetic) | **Partial**: 3/4 at rank 1, 4/4 in the top 3. Text with harakat is not found by the same word without them (probe: 0 hits) | **Partial**: 2/5 at rank 1, 4/5 in the top 3 | **Partial**: 3/5 at rank 1, 5/5 in the top 3 |
 | **Question answering with sources** (answer line correct; source check separate) | **Partial**: 7/15 (contracts 3/6, letter 2/3, report 1/3, form 1/3) | **Partial**: synthetic invoices 6/6; scans and photos 5/27 (invoice scans 2/6, receipts 2/6, forms 1/6, letter, report and agreement scans 0/9) | **Fails**: 2/6 | **Fails**: 0/9 | **Partial**: 4/12 |
 | **Summarisation** (extractive) | **Implemented, quality unmeasured.** Produced for 5/5, in English, quoting the document; no reference summaries | Same: produced 11/11 | **Fails**: "لخص هذه الوثيقة" is not recognised as a summary request (0/2); the answer is a fragment such as "23-01144" | **Fails**: 0/3 | Produced 4/4 with an English request, quoting Arabic lines |
@@ -86,8 +86,10 @@ The Humans in the Loop Arabic documents set is CC0 but needs a request form; it 
    - "Who are the parties?" → "their agents, employees, experts, and attorneys"
    - "When was the agreement signed?" → "one month"
    - "Who is the fax addressed to?" → "Attorney General"
-6. **Old archive OCR layers are trusted.** In `auto`, scans that already carry a 1980s–90s OCR layer keep its
-   errors. The invoice number came out as "191" for 019114 (unflagged) and the resolution as "44149" for 44/49.
+6. **OCR misreads on old scans.** The invoice number came out as "191" for 019114 (unflagged) and the date as
+   "O1 /31 /92". *Correction (2026-10-25):* an earlier version of this page blamed the archives' own OCR
+   layers. Indra does not use those: it marks them "invisible text (OCR layer)" and OCRs the page. These are
+   Indra's misreads. The archive layer's "44149" never reached Inklight, whose text has "44/49".
 7. **Arabic month names are not dates.** "18 كانون الثاني/يناير 2023" and "22 أيلول/سبتمبر 1983" are not
    parsed (`values.py`: English month names only). Date fields on Arabic documents succeed only when an English
    header date is present.
@@ -153,8 +155,8 @@ None needs a human study.
 
 | # | Change | Why first | Size | Measured by |
 |---|---|---|---|---|
-| P0 | **Check PDF text layers before trusting them.** Per page, detect broken text (Arabic presentation forms, split lam-alef, isolated letters, a high share of 1–2 letter tokens, or disagreement with a sampled OCR line), and OCR that page | Fixes failure 1, the default path for every Arabic digital PDF; also catches old archive OCR layers (failure 6) | S | Arabic digital key strings (0/3 → expected 3/3); English word recall unchanged |
-| P0 | **Arabic text normalisation at index and query** (FTS5 `remove_diacritics 2`, alef and ya variants, tatweel), and fix the query splitting at harakat | Fixes failure 3 | S | Diacritic probe; Arabic search rows |
+| P0 ✓ | **Check PDF text layers before trusting them.** Per page, detect broken text (Arabic presentation forms, split lam-alef, isolated letters, a high share of 1–2 letter tokens, or disagreement with a sampled OCR line), and OCR that page | Fixes failure 1, the default path for every Arabic digital PDF (Indra already OCRs invisible OCR layers) | S | Arabic digital key strings (0/3 → expected 3/3); English word recall unchanged |
+| P0 ✓ | **Arabic text normalisation at index and query** (FTS5 `remove_diacritics 2`, alef and ya variants, tatweel), and fix the query splitting at harakat | Fixes failure 3 | S | Diacritic probe; Arabic search rows |
 | P1 | **Arabic request handling in the planner**: lexicon for summarise, extract, count, find and compare; Unicode word splitting in rule QA (`answer.py:136`) | Fixes failure 2; Arabic summaries 0/5 today | S–M | Arabic summary intent and QA rows |
 | P1 | **Stop routing questions into invoice tools** ("which/who/what" questions stay `ask`; default fields from the profile, not invoice fields) | Fixes failure 4 across all English non-invoice types | M | English letters, reports and forms QA rows |
 | P1 | **Arabic dates and amounts in extraction**: Arabic month names, ٫ ٬ ر.س ج.م, reusing the strict review parsers where possible | Fixes failures 7 and 8 in part | S–M | Arabic date fields; mixed receipt totals |
@@ -163,6 +165,64 @@ None needs a human study.
 | P3 | **Multilingual embedder and reader options**, measured before any default change | Arabic QA 0/9 on scans needs more than rules | M | Arabic QA and search rows, with ONNX call counts |
 | P3 | **Arabic OCR on photos and typewritten scans** (Indra script routing; report upstream with examples) | Failures 9 and the 1/3 key strings on typewritten Arabic | depends on Indra | Arabic scan key strings |
 | — | **Data**: request the CC0 Humans in the Loop Arabic set; add Arabic contracts, forms and certificates | Fills the gaps listed above | — | — |
+
+## P0 results (after baseline 4)
+
+Both P0 items are done. The diagnostic was re-run on the same corpus plus one control, giving 26 documents.
+The control is the Arabic Wikipedia article "مصر" (CC BY-SA), whose text layer is sound. Each build ran in
+both modes with the same models, so the two columns compare like with like. Results:
+`bench/results/capability-diag26-baseline4.json` and `capability-diag26-p0.json`.
+
+**1. Broken Arabic text layers are OCR'd.** Indra rejects a broken font map or a layer in visual order, but
+accepts the UN layers, whose codes are Arabic letters, just the wrong ones. `inklight.ocr.textcheck` checks
+each text-layer page for two signatures:
+- a split lam-alef ("األمم" for "الأمم")
+- an alef run ("امرساااااا")
+
+A page is read by OCR instead when at least 1.5% of its Arabic words show one, judged on 20 or more Arabic
+words. The page and the document say so.
+
+| Default mode `auto` | Baseline 4 | P0 |
+|---|---|---|
+| Arabic digital letter: key phrases found | 0/3 | 3/3 |
+| Arabic digital report: key phrases found | 1/3 | 3/3 |
+| QA on those two documents | 0/6 | 2/6 |
+| Pages OCR'd again | – | 18 (3 + 15) |
+| Ingest time for all 26 documents | 55.7 s | 60.2 s |
+| Indra ONNX calls | 1,833 | 2,108 |
+| Any English or mixed document changed | – | no (one more FUNSD date, from the date change) |
+
+*False positives:* none on 124 pages of correct Arabic. That is 65 pages of OCR output, including noisy scans,
+and 59 Wikipedia text-layer pages. The control itself could not exercise the new path, because Indra OCRs
+it for visual-order text. So did a PDF printed by Edge, and one made by PyMuPDF. **Untested:** a trusted,
+correctly encoded Arabic text layer going through the check inside the engine. No such PDF was found.
+
+**2. Arabic search normalisation.** The index and every query use `textnorm.search_form`:
+- harakat and tatweel removed
+- أ إ آ ٱ → ا, ى → ي, ة → ه
+- Unicode digits → ASCII
+
+Queries are no longer split at a vowel mark. The library schema goes to version 2, and older libraries are
+re-indexed when opened (tested).
+
+| Arabic test queries (one document with harakat, shadda, ta marbuta, Arabic-Indic digits) | Baseline 4 | P0 |
+|---|---|---|
+| Document found | 4/10 | 10/10 |
+
+In the 26-document diagnostic, Arabic search ranks moved both ways, with too few queries to call:
+- the digital letter went from ranks 3 and 2 to 1 and 3
+- two scans dropped one or two places
+
+With keyword search alone the letter scan ranks first. The shuffling comes from fusing keyword ranks with
+the English-only embedder, which is the P3 item.
+
+**Still failing after P0**, unchanged:
+- Arabic QA: 2/9 on digital documents (the control 0/3) and 0/9 on scans
+- Arabic summaries: not recognised as requests
+- Arabic month names
+- classification
+
+These are P1–P3.
 
 ## Separate improvement: dates such as JAN04/00 in extraction
 
@@ -183,7 +243,7 @@ models and fresh libraries. Labels are parsed by the script's own date parser, i
 | This diagnostic's 25 documents | 25 | 31 date fields | +1 (FUNSD fax "Dec 10 '98") | | | 1 |
 
 Of the 6 changed INV-CDIP values, 5 are now right: JAN04/00, JAN24/00, FEB12/03, FEB14/02 and MAR06/02, all
-missing before. One is wrong: "08-OCT-85" was read as 2035-10-08, because the archive's OCR layer says
+missing before. One is wrong: "08-OCT-85" was read as 2035-10-08, because Indra's OCR reads the scan as
 "08-OCT-35". That value is now flagged ("more than a year in the future"), so it is a flagged error, not a
 silent one. 2 labels could not be parsed by the script and are not scored. Earlier benchmark results are
 unaffected: no Voxel51 or CORD value changed.

@@ -214,6 +214,14 @@
           {"q": "What was the total amount?", "accept": ["330.00", "330"]}],
    "search": ["Abu Auf Coffee Brazilian Light receipt"],
    "fields": [{"name": "total", "type": "money", "accept": ["330"]}, {"name": "date", "type": "date", "accept": ["2023-11-02"]}],
-   "keys": ["482204", "330.00", "شركة صفقة"]}
+   "keys": ["482204", "330.00", "شركة صفقة"]},
+  {"id": "ar-article-digital", "file": "ar-article-digital.pdf", "lang": "ar", "modality": "digital", "type": "report",
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/مصر (Arabic Wikipedia article 'مصر', PDF export, 2026-10-25); a control with a sound Arabic text layer", "licence": "CC BY-SA 4.0", "gold_from": "AI reading of the original",
+   "qa": [{"q": "ما عاصمة مصر؟", "accept": ["القاهرة"]},
+          {"q": "من رئيس مصر؟", "accept": ["عبد الفتاح السيسي", "السيسي"]},
+          {"q": "من رئيس الوزراء؟", "accept": ["مصطفى مدبولي", "مدبولي"]}],
+   "search": ["عاصمة مصر القاهرة", "الرئيس عبد الفتاح السيسي"],
+   "fields": [{"name": "capital", "type": "text", "labels": ["العاصمة"], "accept": ["القاهرة"]}],
+   "keys": ["القاهرة", "عبد الفتاح السيسي", "مصطفى مدبولي"]}
  ]
 }
