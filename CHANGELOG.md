@@ -109,6 +109,15 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   - If OCR of such a page fails or reads nothing, the layer is kept and the page says so. One page never
     ends the document.
   - Mode `text` still uses the layer as it is.
+- **Arabic search no longer depends on optional marks or letter variants.** The full-text index and every
+  query use `textnorm.search_form`:
+  - harakat and tatweel removed
+  - alef forms → ا, ى → ي, ة → ه
+  - Unicode digits → ASCII
+
+  "المستحق" now finds "المُستحق", "القاهره" finds "القاهرة", and "2023" finds "٢٠٢٣": 4/10 → 10/10 test
+  queries. Queries are no longer split at a vowel mark. Excerpts still show the original text. Library
+  schema version 2: a version 1 library is re-indexed when it is opened.
 - **Extraction reads month-name dates as invoices print them**: "JAN04/00", "04-JAN-00", "19Jun'22",
   "Sept 30, 82". Before, only 4-digit years with spaces were read. On 80 INV-CDIP invoices and 60 Voxel51
   invoices with date labels, correct dates went from 131 to 136 of 151 and missing from 13 to 7. No value

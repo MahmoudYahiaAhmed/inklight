@@ -21,8 +21,9 @@ import numpy as np
 from .chunking import Chunk
 from .errors import StoreClosed
 from .schemas import AgentResult, Block, DocStatus, DocumentContent, DocumentInfo, PageContent, Source, TextLine
+from .textnorm import search_form
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2  # 2: the full-text index holds search_form(text), not the raw text
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
@@ -45,18 +46,12 @@ CREATE TABLE IF NOT EXISTS blocks (
 CREATE TABLE IF NOT EXISTS chunks (
     id INTEGER PRIMARY KEY, doc_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     page INTEGER, block_start INTEGER, block_end INTEGER, text TEXT, bbox TEXT, conf REAL,
-    flagged INTEGER DEFAULT 0
+    flagged INTEGER DEFAULT 0, search_text TEXT
 );
 CREATE INDEX IF NOT EXISTS chunks_doc ON chunks(doc_id);
 CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(
-    text, content='chunks', content_rowid='id', tokenize='porter unicode61'
+    search_text, content='chunks', content_rowid='id', tokenize='porter unicode61'
 );
-CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
-    INSERT INTO chunks_fts(rowid, text) VALUES (new.id, new.text);
-END;
-CREATE TRIGGER IF NOT EXISTS chunks_ad AFTER DELETE ON chunks BEGIN
-    INSERT INTO chunks_fts(chunks_fts, rowid, text) VALUES ('delete', old.id, old.text);
-END;
 CREATE TABLE IF NOT EXISTS embeddings (
     chunk_id INTEGER PRIMARY KEY REFERENCES chunks(id) ON DELETE CASCADE,
     model TEXT NOT NULL, dim INTEGER NOT NULL, vec BLOB NOT NULL
@@ -67,12 +62,21 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 """
 
+_FTS_TRIGGERS = """
+CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
+    INSERT INTO chunks_fts(rowid, search_text) VALUES (new.id, new.search_text);
+END;
+CREATE TRIGGER IF NOT EXISTS chunks_ad AFTER DELETE ON chunks BEGIN
+    INSERT INTO chunks_fts(chunks_fts, rowid, search_text) VALUES ('delete', old.id, old.search_text);
+END;
+"""
+
 _WORD = re.compile(r"[\w$€£%.-]+", re.UNICODE)
 
 
 def fts_query(text: str) -> str:
     """Turn free text into a safe FTS5 OR-query of quoted terms."""
-    terms = [t.strip(".-") for t in _WORD.findall(text.lower())]
+    terms = [t.strip(".-") for t in _WORD.findall(search_form(text).lower())]
     terms = [t for t in terms if len(t) > 1 or t.isdigit()]
     return " OR ".join(f'"{t.replace(chr(34), "")}"' for t in dict.fromkeys(terms))
 
@@ -97,9 +101,48 @@ class Store:
         self._db.execute("PRAGMA foreign_keys = ON")
         self._db.execute("PRAGMA journal_mode = WAL")
         self._db.executescript(_SCHEMA)
+        self._migrate_search_index()
+        self._db.executescript(_FTS_TRIGGERS)
         self._db.execute("INSERT OR IGNORE INTO meta VALUES ('schema_version', ?)", (str(SCHEMA_VERSION),))
 
         self._closed = False
+
+    def _migrate_search_index(self) -> None:
+        """Version 1 indexed the raw chunk text: add search_text, fill it, and rebuild the index from it.
+
+        Runs under the write lock and re-checks inside it, so two processes opening the same old library at
+        once migrate it once."""
+        db = self._db
+        if self._search_index_current():
+            return
+        db.execute("BEGIN IMMEDIATE")
+        try:
+            if self._search_index_current():  # another process finished first
+                db.execute("COMMIT")
+                return
+            if "search_text" not in {row[1] for row in db.execute("PRAGMA table_info(chunks)")}:
+                db.execute("ALTER TABLE chunks ADD COLUMN search_text TEXT")
+            db.execute("DROP TRIGGER IF EXISTS chunks_ai")
+            db.execute("DROP TRIGGER IF EXISTS chunks_ad")
+            db.execute("DROP TABLE IF EXISTS chunks_fts")
+            rows = db.execute("SELECT id, text FROM chunks").fetchall()
+            db.executemany(
+                "UPDATE chunks SET search_text = ? WHERE id = ?", [(search_form(t or ""), i) for i, t in rows]
+            )
+            db.execute(
+                "CREATE VIRTUAL TABLE chunks_fts USING fts5(search_text, content='chunks', content_rowid='id', "
+                "tokenize='porter unicode61')"
+            )
+            db.execute("INSERT INTO chunks_fts(chunks_fts) VALUES ('rebuild')")
+            db.execute("UPDATE meta SET value = ? WHERE key = 'schema_version'", (str(SCHEMA_VERSION),))
+            db.execute("COMMIT")
+        except BaseException:
+            db.execute("ROLLBACK")
+            raise
+
+    def _search_index_current(self) -> bool:
+        row = self._db.execute("SELECT sql FROM sqlite_master WHERE name = 'chunks_fts'").fetchone()
+        return row is not None and "search_text" in row[0]
 
     @property
     def closed(self) -> bool:
@@ -229,10 +272,20 @@ class Store:
                     ],
                 )
             db.executemany(
-                "INSERT INTO chunks (doc_id, page, block_start, block_end, text, bbox, conf, flagged) "
-                "VALUES (?,?,?,?,?,?,?,?)",
+                "INSERT INTO chunks (doc_id, page, block_start, block_end, text, bbox, conf, flagged, search_text) "
+                "VALUES (?,?,?,?,?,?,?,?,?)",
                 [
-                    (doc_id, c.page, c.block_start, c.block_end, c.text, _j(c.bbox), c.conf, int(i in flagged))
+                    (
+                        doc_id,
+                        c.page,
+                        c.block_start,
+                        c.block_end,
+                        c.text,
+                        _j(c.bbox),
+                        c.conf,
+                        int(i in flagged),
+                        search_form(c.text),
+                    )
                     for i, c in enumerate(chunks)
                 ],
             )
@@ -252,8 +305,8 @@ class Store:
                 (target_id, source_id),
             )
             db.execute(
-                "INSERT INTO chunks (doc_id, page, block_start, block_end, text, bbox, conf, flagged) "
-                "SELECT ?, page, block_start, block_end, text, bbox, conf, flagged FROM chunks "
+                "INSERT INTO chunks (doc_id, page, block_start, block_end, text, bbox, conf, flagged, search_text) "
+                "SELECT ?, page, block_start, block_end, text, bbox, conf, flagged, search_text FROM chunks "
                 "WHERE doc_id = ? ORDER BY id",
                 (target_id, source_id),
             )
