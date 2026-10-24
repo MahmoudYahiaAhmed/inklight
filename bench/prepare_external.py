@@ -31,9 +31,14 @@ def _key(text: str) -> str:
     return hashlib.sha1(text.encode("utf-8")).hexdigest()
 
 
-def _money(raw: str | None) -> float | None:
+def _money(raw: str | list | None) -> float | None:
     if raw is None:
         return None
+    if isinstance(raw, list):
+        # CORD sometimes lists several values for one field (['55,834', '55,800']: before and after rounding).
+        # Agreeing entries give that value; disagreeing ones leave the truth unknown rather than guessed.
+        values = {_money(item) for item in raw}
+        return values.pop() if len(values) == 1 else None
     s = str(raw).strip().replace(" ", "")
     if not s:
         return None

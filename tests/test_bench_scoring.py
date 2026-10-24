@@ -120,3 +120,12 @@ def test_a_crash_is_never_a_refusal():
 def test_a_cancelled_run_is_a_timeout():
     case = {"kind": "unsupported", "form": "u", "request": "Find invoices paid late", "phrase": "paid late"}
     assert tasks.run_case(_Agent(_result(state="cancelled")), case, [])["outcome"] == "timeout"
+
+
+def test_list_valued_annotations_are_not_concatenated():
+    from bench.prepare_external import _money
+
+    assert _money(["46.636", "46.636"]) == 46636.0
+    assert _money(["55,834", "55,800"]) is None  # disagreeing values: unknown, not guessed
+    assert _money(["30.273 200", "3.027"]) is None
+    assert _money("60.000") == 60000.0 and _money("12.50") == 12.5

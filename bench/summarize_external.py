@@ -1,4 +1,7 @@
-"""Tables for docs/BENCHMARKS.md from bench/external.py result files.
+"""Provenance and model-execution tables from bench/external.py result files.
+
+Field and task results are tabulated by bench/rescore.py, which scores every file with the same
+five-outcome definitions (bench/scoring.py).
 
 python bench/summarize_external.py <results dir> [--prefix final]
 """
@@ -17,6 +20,7 @@ ENV_NAMES = {
     "E": "pre-final",
     "F": "final",
     "G": "digit-loss check",
+    "H": "amount check v2",
 }
 
 
@@ -31,62 +35,6 @@ def load(directory: Path, prefix: str) -> list[dict]:
         d["_env"] = f.stem.split("-")[1]
         out.append(d)
     return out
-
-
-def fields_table(runs: list[dict]) -> str:
-    rows = [
-        "| Build | Dataset | Split | Brain | Values | Correct (useful coverage) | Abstained | Wrong, flagged |"
-        " Wrong, silent | Precision when unflagged |",
-        "|---|---|---|---|---|---|---|---|---|---|",
-    ]
-    for d in runs:
-        o = d["extraction"]["overall"]
-        kind = "receipts, genuine" if d["genuine"] else "invoices, synthetic"
-        rows.append(
-            f"| {ENV_NAMES.get(d['_env'], d['_env'])} | {d['dataset']} ({kind}) | {d['split']} | {d['brain_mode']} "
-            f"| {o['n']} | {pct(o['correct'])} | {pct(o['abstained'])} | {pct(o['wrong_flagged'])} "
-            f"| {pct(o['wrong_silent'])} | {pct(o['precision_unflagged'])} |"
-        )
-    return "\n".join(rows)
-
-
-def per_field(runs: list[dict]) -> str:
-    rows = ["| Build | Dataset | Split | Field | n | Correct | Abstained | Wrong, flagged | Wrong, silent |"]
-    rows.append("|---|---|---|---|---|---|---|---|---|")
-    for d in runs:
-        if d["brain_mode"] != "rules":
-            continue
-        for name, f in d["extraction"]["fields"].items():
-            rows.append(
-                f"| {ENV_NAMES.get(d['_env'], d['_env'])} | {d['dataset']} | {d['split']} | {name} | {f['n']} "
-                f"| {pct(f['correct'])} | {pct(f['abstained'])} | {pct(f['wrong_flagged'])} "
-                f"| {pct(f['wrong_silent'])} |"
-            )
-    return "\n".join(rows)
-
-
-def requests_table(runs: list[dict]) -> str:
-    rows = [
-        "| Build | Split | Brain | Supported: correct | Supported: flagged | Supported: silent wrong |"
-        " Unsupported: useful abstention | Unsupported: silent wrong |",
-        "|---|---|---|---|---|---|---|---|",
-    ]
-    for d in runs:
-        items = d["requests"]["items"]
-        if not items:
-            continue
-        sup = [r for r in items if r.get("supported", True)]
-        uns = [r for r in items if not r.get("supported", True)]
-
-        def n(rs: list[dict], *outs: str) -> str:
-            return f"{sum(r['outcome'] in outs for r in rs)}/{len(rs)}"
-
-        rows.append(
-            f"| {ENV_NAMES.get(d['_env'], d['_env'])} | {d['split']} | {d['brain_mode']} | {n(sup, 'correct')} "
-            f"| {n(sup, 'unnecessary_abstention', 'flagged_wrong')} | {n(sup, 'silent_wrong')} "
-            f"| {n(uns, 'useful_abstention')} | {n(uns, 'silent_wrong')} |"
-        )
-    return "\n".join(rows)
 
 
 def execution_table(runs: list[dict]) -> str:
@@ -123,6 +71,7 @@ def provenance_table(runs: list[dict]) -> str:
     for env, p in seen.items():
         rows.append(
             f"| {ENV_NAMES.get(env, env)} | {p['inklight_version']} | {p['git_commit']} "
+            f"| {p.get('harness_commit') or '–'} "
             f"| `{(p['wheel_sha256'] or '')[:16]}…` "
             f"| {_install(p['install_method'])} | `…{p['inklight_file'][-60:]}` |"
         )
@@ -137,9 +86,6 @@ def main() -> None:
     runs = load(args.directory, args.prefix)
     for title, fn in (
         ("Provenance", provenance_table),
-        ("Field extraction", fields_table),
-        ("Per field (rules brain)", per_field),
-        ("Requests", requests_table),
         ("Model execution", execution_table),
     ):
         print(f"\n### {title}\n\n{fn(runs)}")
