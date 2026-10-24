@@ -137,7 +137,7 @@ def test_export_contains_only_approved_reviews_with_prediction_warning_and_decis
     store = agent.reviews
     approved = agent.open_review(_doc(agent, "acme").id, FIELDS, reviewer="ana")
     _decide_all(agent, approved.id)
-    store.decide(approved.id, "total", reviewer="ana", action="corrected", value="=1+1")
+    store.decide(approved.id, "total", reviewer="ana", action="corrected", value="1,520.00")
     store.approve(approved.id, reviewer="ben")
     agent.open_review(_doc(agent, "globex").id, FIELDS, reviewer="ana")  # left open: not exported
     rows = list(csv.DictReader(io.StringIO(store.export("csv", actor="ben"))))
@@ -230,7 +230,7 @@ def test_review_over_http(client, agent):
         json={"field": "total", "action": "corrected", "value": "x", "reviewer": "ana"},
         headers=H,
     )
-    assert bad.status_code == 400 and "not a valid amount" in bad.json()["detail"]
+    assert bad.status_code == 400 and "not a plain amount" in bad.json()["detail"]
     ok = client.post(f"/api/reviews/{rid}/approve", json={"reviewer": "ben", "active_seconds": 0}, headers=H)
     assert ok.json()["status"] == "approved"
     assert [e["kind"] for e in client.get(f"/api/reviews/{rid}").json()["events"]][-1] == "approved"

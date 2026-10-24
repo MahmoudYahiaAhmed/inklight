@@ -357,7 +357,7 @@ function predictionCell(f, r) {
 
 function decisionCell(f, r) {
   if (r.status !== "open") return h("td", {}, f.action === "absent" ? "absent" : fmt(f.final), h("div", { class: "muted" }, f.action || ""));
-  const input = h("input", { value: f.action && f.action !== "absent" ? String(f.final ?? "") : "", placeholder: r.mode === "manual" ? "type the value" : "correct value", "aria-label": `Value for ${f.field}` });
+  const input = h("input", { value: f.action && f.action !== "absent" ? String(f.entered ?? f.final ?? "") : "", placeholder: r.mode === "manual" ? "type the value" : "correct value", "aria-label": `Value for ${f.field}` });
   const save = () => decide(f.field, r.mode === "manual" ? "entered" : "corrected", input.value);
   input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); save(); } });
   return h("td", {}, input,
@@ -365,7 +365,7 @@ function decisionCell(f, r) {
       r.mode === "review" && f.predicted != null ? h("button", { class: "ghost small", type: "button", onclick: () => decide(f.field, "accepted") }, "Accept") : null,
       h("button", { class: "ghost small", type: "button", onclick: save }, r.mode === "manual" ? "Save" : "Save correction"),
       h("button", { class: "ghost small", type: "button", onclick: () => decide(f.field, "absent") }, "Absent")),
-    f.action ? h("div", { class: "muted" }, `✓ ${f.action}${f.action === "absent" ? "" : `: ${fmt(f.final)}`}`) : null);
+    f.action ? h("div", { class: "muted" }, `✓ ${f.action}${f.action === "absent" ? "" : `: ${fmt(f.final)}`}${f.entered && f.entered !== String(f.final) ? ` (typed “${f.entered}”)` : ""}`) : null);
 }
 
 function renderReview(error) {

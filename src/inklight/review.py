@@ -20,7 +20,6 @@ from __future__ import annotations
 import csv
 import io
 import json
-import re
 import uuid
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
@@ -29,9 +28,9 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from .entered import parse_entered_amount
 from .errors import InputRejected
 from .extract.fields import parse_typed, resolve_field
-from .extract.values import parse_number
 from .schemas import DocumentInfo, ExtractedValue, Record
 from .store import Store
 
@@ -49,7 +48,7 @@ CREATE INDEX IF NOT EXISTS reviews_doc ON reviews(doc_id);
 CREATE TABLE IF NOT EXISTS review_fields (
     review_id TEXT NOT NULL REFERENCES reviews(id), field TEXT NOT NULL, position INTEGER NOT NULL,
     predicted TEXT, raw TEXT, confidence REAL, method TEXT, warning TEXT, source TEXT, flagged INTEGER NOT NULL,
-    final TEXT, action TEXT, updated_by TEXT, updated_at TEXT, PRIMARY KEY (review_id, field)
+    final TEXT, entered TEXT, action TEXT, updated_by TEXT, updated_at TEXT, PRIMARY KEY (review_id, field)
 );
 CREATE TABLE IF NOT EXISTS review_events (
     id INTEGER PRIMARY KEY, review_id TEXT NOT NULL, at TEXT NOT NULL, actor TEXT, kind TEXT NOT NULL,
@@ -75,6 +74,7 @@ class ReviewField(BaseModel):
     source: dict[str, Any] | None = None
     flagged: bool = False
     final: Any = None
+    entered: str | None = None  # exactly what the reviewer typed, when they typed a value
     action: Action | None = None
     updated_by: str | None = None
     updated_at: str | None = None
@@ -130,7 +130,11 @@ class ReviewStore:
     def __init__(self, store: Store) -> None:
         self.store = store
         with store._lock:  # executescript commits on its own, so it runs outside a transaction
-            store._conn().executescript(SCHEMA)
+            db = store._conn()
+            db.executescript(SCHEMA)
+            columns = {row[1] for row in db.execute("PRAGMA table_info(review_fields)")}
+            if "entered" not in columns:  # libraries created by 0.1.1.dev0 before the column existed
+                db.execute("ALTER TABLE review_fields ADD COLUMN entered TEXT")
 
     @contextmanager
     def _tx(self) -> Iterator[Any]:
@@ -219,6 +223,7 @@ class ReviewStore:
                 source=_uj(f["source"]),
                 flagged=bool(f["flagged"]),
                 final=_uj(f["final"]),
+                entered=f["entered"],
                 action=f["action"],
                 updated_by=f["updated_by"],
                 updated_at=f["updated_at"],
@@ -258,6 +263,7 @@ class ReviewStore:
         current = next((f for f in review.fields if f.field == field), None)
         if current is None:
             raise InputRejected(f"Field {field!r} is not part of this review")
+        entered = None
         if action == "accepted":
             if review.mode == "manual":
                 raise InputRejected("Manual entry has no prediction to accept; enter the value")
@@ -268,13 +274,14 @@ class ReviewStore:
             final = None
         elif action in ("corrected", "entered"):
             final = typed_value(field, value)
+            entered = str(value)
         else:
             raise InputRejected(f"Unknown action {action!r}")
         with self._tx() as db:
             db.execute(
-                "UPDATE review_fields SET final = ?, action = ?, updated_by = ?, updated_at = ? "
+                "UPDATE review_fields SET final = ?, entered = ?, action = ?, updated_by = ?, updated_at = ? "
                 "WHERE review_id = ? AND field = ?",
-                (_j(final), action, reviewer, _now(), review_id, field),
+                (_j(final), entered, action, reviewer, _now(), review_id, field),
             )
             self._event(
                 db,
@@ -282,8 +289,8 @@ class ReviewStore:
                 reviewer,
                 "set",
                 field=field,
-                before={"final": current.final, "action": current.action},
-                after={"final": final, "action": action},
+                before={"final": current.final, "entered": current.entered, "action": current.action},
+                after={"final": final, "entered": entered, "action": action},
             )
         return self.get(review_id)
 
@@ -366,6 +373,7 @@ EXPORT_COLUMNS = (
     "warning",
     "flagged",
     "final",
+    "entered_input",
     "action",
     "decided_by",
     "approved_by",
@@ -389,6 +397,7 @@ def _export_row(r: Review, f: ReviewField) -> dict[str, Any]:
         "warning": f.warning,
         "flagged": f.flagged,
         "final": f.final,
+        "entered_input": f.entered,
         "action": f.action,
         "decided_by": f.updated_by,
         "approved_by": r.approved_by,
@@ -414,11 +423,9 @@ def typed_value(field: str, value: Any) -> Any:
     if spec.type in ("text", "id", "email", "phone"):
         return text
     if spec.type in ("money", "number"):
-        # A typed amount needs no currency or cents to count ("1234", "Rp 63.000", "-45.00").
-        number = parse_number(re.sub(r"[^\d.,-]", "", text))
-        if number is None:
-            raise InputRejected(f"{text!r} is not a valid amount for {field}")
-        return float(number)
+        # Strict: one well-formed amount, or a rejection saying why (see inklight.entered).
+        value, _currency = parse_entered_amount(text, money=spec.type == "money")
+        return float(value)
     parsed = parse_typed(spec.type, text)
     if parsed is None:
         raise InputRejected(f"{text!r} is not a valid {spec.type} for {field}")
