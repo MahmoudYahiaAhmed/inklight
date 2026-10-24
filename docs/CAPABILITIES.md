@@ -3,6 +3,28 @@
 Inklight is a general document tool for Arabic and English. This page says what works today, measured on
 original files. Invoices are one use case among several.
 
+## Current status (development build, `2709d33`)
+
+Measured in [EVALUATION.md](EVALUATION.md) on 75 original documents. The rest of this page is the earlier
+25-document diagnostic of baseline 4 and its plan, kept as history.
+
+| Capability | English | Arabic | Mixed |
+|---|---|---|---|
+| Text (OCR) | works; digital PDFs from their text layer | works on digital PDFs (broken layers are re-OCR'd); typewritten scans partial | partial on receipt photos |
+| Search | works; hybrid (keyword + English embedder) | keyword only (the embedder is English); diacritics, alef forms and the article are normalised | hybrid for English queries |
+| Questions with sources | partial: 30/42 right on reserved, 8 silently wrong | sentence answers, **always flagged for review**: 11/23 right, 0 silently wrong | partial: 5/15 |
+| Summaries | extractive, quoted verbatim | extractive, quoted verbatim; requests in Arabic recognised | as English |
+| Custom fields | partial; labelled dates, ids and amounts work best | works on clean RTL label/value layouts (synthetic); partial on genuine letters | partial |
+| Compare, filter, count, sum, export | filter works; comparing letter dates worked on dev and fresh, failed on reserved; counts and sums depend on classification and totals | — | receipt totals often wrong on photos |
+| Unsupported requests | refused with the reason | refused with the reason | — |
+| Review and export | any fields; presets by document type; Arabic values exported unchanged | right-to-left display in the workspace | — |
+
+Plan status: P0 (text layers, Arabic search) and P1 (Arabic requests; questions no longer routed into invoice
+tools; Arabic dates and amounts) are done. P2 is partly done: review presets by document type, and
+classification. P3 (multilingual models) is not started: the English models are bypassed on Arabic instead.
+
+## History: baseline 4 diagnostic
+
 **What this is.** A small, automated diagnostic of baseline 4 (`f4ebb5a`), run on 2026-10-25. It covers 25
 original files, 1–2 per cell, with real OCR (Indra) and the local models (reader, embedder). ONNX Runtime
 calls were counted independently: about 600 reader and embedder calls, and 1,400 (`auto`) to 2,200 (`ocr`) OCR model calls, per run. No person
@@ -196,6 +218,26 @@ words. The page and the document say so.
 and 59 Wikipedia text-layer pages. The control itself could not exercise the new path, because Indra OCRs
 it for visual-order text. So did a PDF printed by Edge, and one made by PyMuPDF. **Untested:** a trusted,
 correctly encoded Arabic text layer going through the check inside the engine. No such PDF was found.
+
+#### The text-layer detector is a heuristic
+
+It is a word-pattern rule, not a model, and it checks only the two failure patterns seen in the UN files.
+
+| | |
+|---|---|
+| Signals | a word starting alef + hamza-alef + lam ("األ", "اإل", "اآل": a lam-alef ligature written out in the wrong order), or two alefs in a row inside a word ("اا") |
+| Threshold | at least **1.5%** of the page's Arabic words carry a signal (`BROKEN_SHARE`) |
+| Minimum evidence | **20** Arabic words on the page (`MIN_ARABIC_WORDS`); shorter pages are never judged |
+| Scope | only pages Indra took from the text layer (`text` or `hybrid`), only in OCR mode `auto`; mode `text` keeps the layer |
+| Measured separation | broken UN pages: 0.025–0.132 (all 4 UN Arabic PDFs, every page); sound Wikipedia pages: 0.000 (59 pages) |
+| Tested cases | `tests/test_textlayer_check.py`: a real broken UN passage, a real sound Wikipedia passage, English text, too-short text; engine paths for a broken page, a sound page, mode `text`, an OCR failure and an empty OCR result |
+| When OCR fails | if the replacement OCR raises or reads nothing, the original page is kept, and its note and the document warnings say so |
+| Evidence and display | only the page's text source changes. Search matching uses a normalised copy (`search_text`); excerpts, citations and exports show the stored page text as read |
+
+**Limitations:**
+- Other kinds of broken layers are not detected. That includes wrong letters without these two patterns, or a broken Persian or Urdu layer.
+- Correct text with unusual spellings ("اا" in a transliterated name) counts toward the share. On one short page, that could trigger an unnecessary OCR. The cost is time, not correctness.
+- The threshold was set on 6 PDFs from two sources. It should be revisited when other Arabic PDF producers are tested.
 
 **2. Arabic search normalisation.** The index and every query use `textnorm.search_form`:
 - harakat and tatweel removed

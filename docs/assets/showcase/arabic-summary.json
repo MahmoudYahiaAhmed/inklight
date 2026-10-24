@@ -1,0 +1,85 @@
+{
+ "task_id": "42b27b065d90",
+ "request": "لخص هذه الوثيقة",
+ "intent": "summarize",
+ "state": "succeeded",
+ "answer": "Extractive summary (sentences quoted from the documents):\n\n**un90-ar.pdf** (unknown, 1 page)\n  - رسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن (un90-ar.pdf p.1)\n  - جلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023 (un90-ar.pdf p.1)\n  - (انظر S/PV.9253)، والتي اتهم فيها ممثل جمهورية العراق إيران بانتهاك سيادة العراق الوطنية وسلامته (un90-ar.pdf p.1)\n  - وفي الوقت نفسه، أشار الممثل الخاص للأمين العام للعراق وبعض الدول الأعضاء، خلال جلسة (un90-ar.pdf p.1)\n  - وأرجو ممتنا تعميم هذه الرسالة باعتبارها وثيقة من وثائق مجلس الأمن. (un90-ar.pdf p.1)",
+ "confidence": 0.7,
+ "interpretation_confidence": 0.8,
+ "evidence_confidence": 0.7,
+ "interpretation": [
+  "task: summarize"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 2 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.70 (labels, OCR confidence, arithmetic checks)"
+ ],
+ "sources": [
+  {
+   "doc_id": "ffb112cca4d180a7",
+   "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\un90-ar.pdf",
+   "name": "un90-ar.pdf",
+   "page": 1,
+   "block": 0,
+   "bbox": [
+    163.7,
+    120.4,
+    1369.8,
+    934.9
+   ],
+   "excerpt": "الأمم المتحدة\nمجلس الأمن\nS/2023/90\nDistr.: General\n6 February 2023\nArabic\nOriginal: English\nرسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن\nمن الممثل الدائم لجمهورية إيران الإسلامية لدى الأمم المتحدة\nعطفا على رسالتي المؤرخة 10 تشرين الأول/أكتوبر S/2022/748 2022)، وبالإشارة إلى آخر\nجلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023\n(انظر S/PV.9253)، والتي اتهم فيها ممثل جمهورية العراق إيران بانتهاك سيادة العراق الوطنية وسلامته\nالإقليمية، أود أن أوجه انتباه المجلس إلى النقاط التالية:",
+   "score": null,
+   "ocr_conf": 0.9528
+  },
+  {
+   "doc_id": "ffb112cca4d180a7",
+   "path": "C:\\Users\\pc\\AppData\\Local\\Temp\\claude\\C--Users-pc\\b4eeaf5e-7bb5-47fe-a4d2-52769de3e99f\\scratchpad\\showcase\\docs\\un90-ar.pdf",
+   "name": "un90-ar.pdf",
+   "page": 1,
+   "block": 0,
+   "bbox": [
+    163.7,
+    120.4,
+    1369.8,
+    934.9
+   ],
+   "excerpt": "الأمم المتحدة\nمجلس الأمن\nS/2023/90\nDistr.: General\n6 February 2023\nArabic\nOriginal: English\nرسالة مؤزّخة 6 شباط/فبراير 2023 موجّهة إلى الأمين العام ورئيس مجلس الأمن\nمن الممثل الدائم لجمهورية إيران الإسلامية لدى الأمم المتحدة\nعطفا على رسالتي المؤرخة 10 تشرين الأول/أكتوبر S/2022/748 2022)، وبالإشارة إلى آخر\nجلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023\n(انظر S/PV.9253)، والتي اتهم فيها ممثل جمهورية العراق إيران بانتهاك سيادة العراق الوطنية وسلامته\nالإقليمية، أود أن أوجه انتباه المجلس إلى النقاط التالية:",
+   "score": null,
+   "ocr_conf": 0.9528
+  }
+ ],
+ "records": [],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": null
+   },
+   "status": "ok",
+   "summary": "1 documents (1 unknown)",
+   "duration_ms": 0.4,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "summarize",
+   "args": {
+    "focus": "لخص هذه الوثيقة"
+   },
+   "status": "ok",
+   "summary": "1 documents summarized",
+   "duration_ms": 1.7,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "rules (planner: rules)",
+ "duration_ms": 2.7
+}

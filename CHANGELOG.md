@@ -97,6 +97,42 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   - `--predictions frozen|cached|full` separates re-extraction from stored OCR from a full pipeline run in an
     isolated library, and records the provenance of each.
   - `check_rehearsal.py` and `REHEARSAL.md` cover the 5–10 invoice human rehearsal, which has not run yet.
+- **The English-only models no longer touch Arabic.** Measured on identical documents and passages:
+  - The reader turned correct Arabic passages into wrong spans (Arabic answers 17/36 → 3/36).
+  - The embedder ranked the right Arabic document lower (top 3: 29/36 → 20/36).
+  - Both still help English (answers 16/53 → 20/53, top 3: 37/53 → 42/53).
+
+  Arabic queries now use keyword search, and the reader is not asked about Arabic. Each skip is stated in the
+  result's `checks`. OCR is unaffected by the models: stored text was identical with them on or off. See
+  [docs/EVALUATION.md](docs/EVALUATION.md).
+- **Arabic requests are understood:** summarise, compare, count, extract and find. On the reserved split, Arabic
+  summaries went from 0/9 recognised to 9/9, covering 17/27 key facts, every sentence quoted verbatim.
+- **Arabic questions** are answered from the best-matching sentence: words, light stems, sentences and question
+  types in Arabic. These answers are always flagged for review. On reserved: 11/23 right, 0 silently wrong (P0:
+  1/23).
+- **Requests Inklight cannot carry out** ("translate this", "email it", "sign it") are `unsupported` with the reason,
+  instead of `succeeded`.
+- **Questions about a document's content** stay questions: "Which city was hit…?" used to become an invoice filter.
+  Letters, reports and forms no longer get invoice fields. "Compare the letter dates" compares dates. "Export the
+  number, date and total of the invoices" is an export, not a sum.
+- **Extraction:**
+  - right-to-left label/value layouts
+  - Arabic labels in the invoice preset
+  - Arabic month names (Gregorian and Levantine)
+  - Egyptian, Saudi and UAE currency forms
+  - "Total Tendered" is not the total
+  - parentheses restating a written amount are not negative
+  - "Letter dated" dates a document only when it is a letter
+- **Classification:** English and Arabic cues for letters, reports, receipts, invoices, contracts and forms, plus a
+  certificate type (12 → 28 of 35 dev documents).
+- **Search:** the index also strips the Arabic article ("بالنزاع" finds "النزاع"); library schema 3, re-indexed on
+  open. A question about one or two documents with no keyword match reads their passages instead of answering
+  "nothing found".
+- **Review:** fields follow the document type unless given, the Review tab has a field box, and Arabic and mixed
+  text lays out right to left in the workspace.
+- **Evaluation:** `bench/usecases/` holds 75 documents in dev, reserved and fresh splits, expected results written
+  before running, logged reserved access, a full pipeline per run, the model ablations and synthetic Arabic
+  documents (labelled). Results are in `bench/results/usecases/`.
 - **Broken Arabic PDF text layers are OCR'd instead of indexed.** The UN's Arabic PDFs carry a text layer in
   Arabic letters, but the wrong ones ("األمم" for "الأمم", "امرساااااا" for "المرسلة"). Indra's own checks
   accept it, so the broken text was indexed, searched and quoted.

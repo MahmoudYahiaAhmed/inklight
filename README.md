@@ -4,180 +4,188 @@
 
 <h1 align="center">inklight</h1>
 
-<p align="center"><b>See documents. Understand meaning. Take action.</b><br>
-A local-first, OCR-powered document agent for Python — fast on a laptop CPU, and it shows its evidence.</p>
+<p align="center"><b>Local document intelligence for Arabic and English.</b><br>
+OCR, search, questions with sources, summaries, field extraction, review and export, on your own machine.</p>
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://pypi.org/project/inklight/"><img alt="pypi" src="https://img.shields.io/pypi/v/inklight?style=flat-square&labelColor=0B0F14&color=22D3EE"></a>
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
-  <img alt="ocr" src="https://img.shields.io/badge/OCR-Indra-22D3EE?style=flat-square&labelColor=0B0F14">
-  <img alt="local" src="https://img.shields.io/badge/runs-offline-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
 
-<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/workspace.jpg" width="860" alt="The Inklight workspace: an evidence-backed answer with the source line highlighted on the page"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/contract-question.png" width="900" alt="The Inklight workspace answering 'Which court has jurisdiction?' on a CUAD contract, with the cited clause highlighted on page 7"></p>
 
----
+Point Inklight at PDFs, scans or photos (letters, contracts, reports, forms, invoices, receipts) and ask in plain
+English or Arabic. Every answer comes with **the page and passage it came from**, warnings when the evidence is weak,
+and a trace of what ran. Nothing leaves your machine.
 
-Point Inklight at a folder of PDFs, scans or photos and ask for what you need, in plain language:
-
-```bash
-inklight ask ./invoices "Read all these invoices and create a CSV of vendor, date, tax, and total" --out ./out
-inklight ask ./contracts "Find every contract that expires within 90 days"
-inklight ask ./reports "Compare these reports and explain the differences"
-```
-
-You get an answer **plus the page, line and bounding box it came from**, a confidence score, warnings when
-something looks off, and a trace of every step the agent took.
-
-## Why Inklight
-
-- **Real OCR, on CPU.** Built on [Indra OCR](https://github.com/datalab-to/indra): about 45 ms per digital PDF page,
-  about 100 ms per scanned page on a laptop ([benchmarks](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md)). Digital PDFs use their text layer
-  first, and OCR runs only where needed.
-- **An agent, not a chatbot wrapper.** It works out the intent, then runs a minimal plan of typed tools
-  (search, extract, filter, calculate, compare, find inconsistencies, summarise, write). Every run has
-  step limits, time budgets, retries and cancellation.
-- **Shows its work, and its limits.** Every result says *how your request was understood*, for example
-  `(vendor contains "Acme" or vendor contains "Globex") and total > 5,000 USD`. That text is rendered from the
-  same typed expression the filter executes, and a plan that would not enforce it is refused before it runs.
-  Anything it could **not** apply is listed under *Not applied*: the result is then `partial`, and it is never
-  exported. Ambiguous `and`/`or` mixes are reported instead of guessed. A citation proves where a value came
-  from, not that it answers your question. The two confidence scores, *understood* and *evidence*, are
-  heuristics, not probabilities. Amounts in different currencies are never added or compared.
-- **Measured on documents it was not written against.** These are public datasets, with real OCR on the
-  original images, on a split that guided no development
-  ([details and history](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)).
-  *Coverage without review* means values that match and are not flagged:
-  - Synthetic invoices (Voxel51, 359 values): 99.4% match, and 91.6% need no review. About 1 in 300
-    unflagged values is wrong.
-  - Genuine Indonesian receipts (CORD, 127 values): 61.4% match, and 47.2% need no review. 3.1% are wrong
-    without a flag, while about a quarter are flagged and a quarter missing.
-  - Requests, checked by their result (counts, sums, exports, refusals):
-    - On invoices, every document-set, count and export request is right, and every unsupported request is
-      refused with the reason. 2 of 3 sums match; the third is off by exactly one annotation error in the
-      dataset.
-    - On receipts, no task completes correctly. All but one come back `partial` with reasons. The exception
-      is the sum over all receipts, which reported `succeeded` while leaving 5 receipts out. Since `69675a0`
-      such a sum reports `partial`; that was measured on development data only.
-
-  Real-world *invoices* are not yet measured, and handwriting is not measured at all.
-- **Arabic is not ready yet, and the gaps are measured.** A small diagnostic on original English, Arabic and
-  mixed documents (contracts, letters, reports, forms, invoices) shows:
-  - Arabic questions are answered correctly 2 of 18 times.
-  - Arabic summary requests are not recognised.
-  - Arabic search now ignores optional marks and letter variants, and Arabic PDFs with a broken text layer
-    are OCR'd automatically.
-  - English answers are reliable only on clean invoices.
-
-  See the [capability matrix](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md).
-- **Small-model intelligence, measured.** Optional models are each under 200M parameters: a 66M reader that
-  can only point at text in your document, a 33M embedder for search, and an optional 135M writer whose output
-  must be grounded. Calculations and filters are exact Python, not model guesses. On the external sets above,
-  the gains came from layout handling in deterministic code; the reader changed coverage without review by zero.
-- **Local and private by default.** No API key needed. Nothing leaves your machine unless you configure a remote model.
-- **Safe with untrusted documents.** "Ignore previous instructions" inside a PDF is treated as data and flagged.
-  The agent has no shell, no code execution, and writes files only where you allow. See [SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md).
+> **Where the work is.** The features below are in the **GitHub development build**. The
+> [PyPI release 0.1.0](https://pypi.org/project/inklight/) predates the Arabic and general-document work. It does
+> not include Arabic requests, Arabic search normalisation, broken-text-layer detection, the language routing or
+> the review presets. "General documents" is the direction. What works today is measured below, document type by
+> document type.
 
 ## Install
 
 ```bash
-pip install inklight            # Python 3.11+, Windows / Linux / macOS, CPU only
-inklight models pull            # optional: 66M reader + 33M embedder (~100 MB, once)
+# development build (what this page describes); Python 3.11+, Windows / Linux / macOS, CPU only
+pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight"
+inklight models pull        # optional: English reader + embedder, about 100 MB, once
 ```
 
-Indra's OCR models (~76 MB) download automatically on the first OCR run. After that, everything works offline.
-
-## 60-second tour
+`pip install inklight` installs the published 0.1.0 instead. Indra's OCR models (about 76 MB) download on the first OCR
+run. After that, everything works offline.
 
 ```bash
-inklight process ./documents/                                   # OCR, classify and index (incremental)
-inklight ask ./documents/ "Find all invoices above $5,000"
-inklight extract invoice.pdf --schema invoice.json --format csv
-inklight serve                                                  # web workspace on http://127.0.0.1:8765
-inklight watch ./inbox -r "extract vendor and total as csv" -o ./out   # automation
+inklight process ./documents                          # OCR, classify and index (incremental)
+inklight ask ./documents "Which court has jurisdiction?"
+inklight ask ./documents "لخص هذه الوثيقة"
+inklight serve                                        # web workspace on http://127.0.0.1:8765
 ```
+
+## See it work
+
+Each example below is real output from the development build (code `2709d33`). It was run on the original file,
+with `--json` output saved in [`docs/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/showcase/). The examples show successes; the failures are in
+[the evaluation](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md) and summarised under [Limits](#limits).
+
+| Document | Request | Output | Evidence |
+|---|---|---|---|
+| Contract, digital PDF ([CUAD](https://zenodo.org/records/4595826), Imperial Garden outsourcing agreement) | `Which court has jurisdiction?` | **Miaoli District Court of Taiwan** | p.7: "herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance" |
+| Letter, 1983 typewritten scan ([UN S/16000](https://documents.un.org/api/symbol/access?s=S/16000&l=en&t=pdf)) | `Which city was hit by artillery fire on 8 September?` | **Abadan** | p.1: "8 September, when the city of Abadan was barraged by Iragi long-range artillery" (OCR's "Iragi" kept as read) |
+| Receipt, phone photo (CORU, Egypt) | `What is the total amount?` | **The total is 50.00** | p.1: "EGP 50.00" |
+| Arabic letter, digital PDF ([UN S/2023/90](https://documents.un.org/api/symbol/access?s=S/2023/90&l=ar&t=pdf)) | `لخص هذه الوثيقة` | Extractive summary, 5 sentences quoted from page 1, for example "جلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023" | every sentence is the document's own text with its page |
+| Arabic tax invoice, **synthetic** ([generated](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/usecases/make_synthetic.py)) | `استخرج رقم الفاتورة والتاريخ والإجمالي` | INV-7731 · شركة الواحة للتجهيزات المكتبية · 2024-05-12 · 4,600.00 | each value cites its line on p.1 |
+| Any document | `Translate this letter into French` | `unsupported`: "translation is not something Inklight does" | nothing was run |
+
+<table>
+<tr>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/arabic-summary.png" alt="Arabic summary request on a UN letter, answered with quoted sentences laid out right to left"><br><sub>An Arabic request and an Arabic summary, laid out right to left.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/arabic-extract.png" alt="Arabic field extraction from a synthetic tax invoice, shown as a table"><br><sub>Fields from a <b>synthetic</b> Arabic invoice: each value comes from the label to its right.</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/scanned-letter.png" alt="Question on a 1983 typewritten scan, with the answering passage highlighted"><br><sub>A 1983 typewritten scan: the answer's passage is outlined on the page.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/contract-question.png" alt="Contract question with the cited clause highlighted"><br><sub>A contract question: the clause is outlined on page 7.</sub></td>
+</tr>
+</table>
+
+Screenshots were taken from the real workspace by [`bench/showcase.py`](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/showcase.py), which types each request
+into the app and saves the browser's picture with the result JSON next to it ([`docs/assets/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/assets/showcase/)).
+
+## Measured results
+
+Automated evaluation on **75 original documents** (letters, contracts, reports, forms, certificates, invoices,
+receipts). It covers English, Arabic and mixed language, digital and scanned. Expected answers were fixed before
+any run. The table shows the **reserved split** (30 documents, held out from development), from its first,
+logged run, with models on (the default).
+
+| Questions with a cited source | P0 (`6b4cc12`) | Development build | n |
+|---|---|---|---|
+| English: correct | 25 | **30** (29 unflagged) | 42 |
+| English: silently wrong | 8 | 8 | 42 |
+| Arabic: correct, flagged for review | 1 | **11** | 23 |
+| Arabic: silently wrong | 0 | 0 | 23 |
+| Mixed: correct | 5 | 5 | 15 |
+| Arabic summary requests recognised | 0 of 9 | **9 of 9** (17 of 27 key facts, every sentence quoted verbatim) | 9 |
+| "Translate / sign / email this" refused as unsupported | 0 of 2 | **2 of 2** | 2 |
+
+<details>
+<summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
+
+**External datasets** (fields; fresh split, build H `3788bf9`, rules; details in [BENCHMARKS.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)):
+
+| Set | Values | Correct | Correct without review | Silently wrong |
+|---|---|---|---|---|
+| Voxel51 invoices (**synthetic**) | 359 | 99.4% | 91.6% | 0.3% |
+| CORD receipts (genuine, Indonesia) | 127 | 61.4% | 47.2% | 3.1% |
+
+**Optional models.** They were measured on identical documents and passages. OCR is unaffected (its text is
+identical with models on or off).
+- The English reader turned correct Arabic passages into wrong spans (17 → 3 of 36 correct).
+- The English embedder ranked the right Arabic document lower.
+- Both help English (reader +4 of 53 answers; embedder top-3 retrieval 37 → 42 of 53).
+
+So Arabic queries use keyword search and skip the reader. The writer model is off by default and was never loaded.
+Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#do-the-optional-models-harm-arabic).
+
+**Not covered by these numbers:**
+- small samples: 9 to 42 questions per row
+- no human study
+- no handwriting
+- synthetic stand-ins for Arabic forms, certificates, invoices and contracts
+- unit tests (617) counted separately
+
+</details>
+
+## How it works
+
+```
+documents ─► OCR (Indra) ─► deterministic processing ─────────────────────────► answer + sources + checks
+             text layer      layout, labels, dates, amounts, currencies,             │
+             first, OCR      classification, search index (Arabic-normalised),       │
+             where needed    typed plan from your words, exact arithmetic            │
+                                        │                                            │
+                                        └── optional small models (English only): ───┘
+                                            reader for English answers, embedder for English search
+```
+
+- **OCR** is [Indra OCR](https://github.com/datalab-to/indra), on CPU, with a right-to-left recognizer for Arabic. Inklight
+  OCRs a PDF page itself when its Arabic text layer is broken (a [measured heuristic](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md#the-text-layer-detector-is-a-heuristic)).
+- **Deterministic processing** does most of the work: it reads labels and layout in both directions, parses dates
+  (including Arabic month names) and amounts, plans from your request, and computes sums exactly. It never sends
+  text anywhere.
+- **Optional models** are small and English-only. They are used where they measurably help, and skipped where they
+  harm. Each result's `checks` says which ran.
+
+## Limits
+
+- **Arabic questions are answered by sentence matching**, not by a model that reads Arabic. They are always flagged
+  for review: 11 of 23 right on the reserved split.
+- **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
+- Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
+- Typewritten Arabic scans OCR only partly.
+- Classification is keyword-based.
+- No handwriting. No genuine Arabic forms or invoices were available to test, so synthetic ones stand in.
+- Current status by capability and language: [docs/CAPABILITIES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md). Every case, including failures:
+  [docs/EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md).
+
+<details>
+<summary>Python API, configuration, security</summary>
 
 ```python
 from inklight import DocumentAgent
 
 agent = DocumentAgent()
-result = agent.ask("Extract the invoice number, date, and total", files=["invoice.pdf"])
-
-print(result.answer)        # human-readable answer
-print(result.table())       # [{'document': 'invoice.pdf', 'invoice_number': 'INV-2041', 'date': '2026-10-03', 'total': 5616.0}]
-print(result.sources[0])    # name='invoice.pdf' page=1 bbox=(200.4, 325.0, 667.6, 359.5) excerpt='INVOICE #INV-2041' ocr_conf=1.0
-print(result.warnings, result.confidence, result.trace)
+result = agent.ask("Which court has jurisdiction?", files=["contract.pdf"])
+print(result.answer, result.sources[0], result.warnings, result.checks)
+records = agent.extract(["invoice.pdf"], fields=["invoice_number", "date", "total"])
 ```
 
-More: typed extraction without natural language (`agent.extract(files, fields=[...])` or `schema=`), `ask_async`,
-library management (`agent.library.search/remove/reindex`), and the HTTP API at `/api/docs` when serving.
-See [docs/API.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/API.md).
+- **API**: [docs/API.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/API.md); the HTTP API is at `/api/docs` when serving.
+- **Configuration**: `~/.inklight/config.toml` (see [config.example.toml](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/config.example.toml)) or environment
+  variables such as `INKLIGHT_LIMITS__MAX_PAGES=50`.
+- **Model modes**: `brain = "auto"` (default: small models if installed), `"rules"` (none), `"local"` (require them).
+  An OpenAI-compatible remote model can be configured for low-confidence questions; it is off by default.
+- **Security**: text inside documents is treated as data, never as instructions. The agent has no shell and writes
+  files only where you allow. See [SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md).
+</details>
 
-## What it can do
+## License notice: read before commercial use
 
-| You say | Inklight does | Tools |
-|---|---|---|
-| "create a CSV of vendor, date, tax and total" | Typed extraction with provenance, then writes the CSV (with permission) | `extract_fields → write_output` |
-| "contracts that expire within 90 days" | Extracts expiry dates, filters by date window | `extract_fields → filter_records` |
-| "invoices above $5,000" | Exact numeric filter | `extract_fields → filter_records` |
-| "sum of all invoice totals" | Decimal arithmetic, reports missing values | `extract_fields → calculate` |
-| "compare these reports" | Field and line diffs, changed figures (`6% → 17%`) | `compare_documents` |
-| "flag inconsistent customer names" | Fuzzy grouping of variants, arithmetic and date checks | `extract_fields → find_inconsistencies` |
-| "find the paragraph about termination" | Retrieval, then the exact block with its box on the page | `search → cite` |
-| "what was revenue growth in Q2?" | Field shortcut, extractive reader, or best sentence, with citation | `search → answer` |
-| "summarize the reports" | Extractive summaries with page citations | `summarize` |
-
-## How it works
-
-```
-request ─► planner (typed plan, from your words only) ─► bounded runner ─► tools ─► cited answer + what it understood
-                                                                   │
-            library: SQLite + FTS5 (+ vectors) ◄── ingest ◄── Indra OCR (text layer first, OCR where needed)
-```
-
-Details in [docs/ARCHITECTURE.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/ARCHITECTURE.md). The short version of the "200M-parameter" story:
-we measured a 135M model as a planner and it was right 27.5% of the time, so the small models do what small
-models are good at (pointing at evidence, ranking passages) and deterministic code does the rest.
-
-## Configuration
-
-`~/.inklight/config.toml` (see [config.example.toml](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/config.example.toml)) or environment variables such as
-`INKLIGHT_LIMITS__MAX_PAGES=50`. Brain modes:
-- `rules`: no models.
-- `auto` (default): use the small models if they are installed.
-- `local`: require the small models.
-- `models.remote_*`: optional stronger model behind an OpenAI-compatible API, for low-confidence questions.
-
-## Limits, honestly
-
-- OCR quality is Indra's. It is weaker on handwriting, degraded scans, complex tables and some scripts
-  ([Indra's notes](https://github.com/datalab-to/indra)). Low OCR confidence is surfaced on every value.
-- Field labels are English. Ambiguous dates like `03/04/2026` are read month-first.
-- The rule planner covers common document tasks. Unusual phrasing falls back to question answering,
-  or to a remote model if you configured one.
-- Semantic search scans vectors in memory, which suits libraries up to tens of thousands of chunks.
-- A human-reviewed pilot on genuine invoices is prepared but **not yet run**: the review workflow, intake,
-  frozen baseline and evaluation are in [pilot/](pilot/README.md), and data collection is pending.
-
-## ⚠ License notice — read before commercial use
-
-Inklight's code is **Apache-2.0**. The **Indra OCR model weights** (downloaded by `indra-ocr`, not
-bundled) use a **modified OpenRAIL-M license**. It is free for research, personal use, and organisations
-under $20M revenue and under $20M funding. It restricts commercial use that **competes with Datalab**.
-A commercial document-AI product built on Inklight + Indra needs a license from
-[Datalab](https://www.datalab.to/pricing), or a different OCR engine (the OCR layer is pluggable).
-Full audit: [THIRD_PARTY_LICENSES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/THIRD_PARTY_LICENSES.md).
+Inklight's code is **Apache-2.0**. The **Indra OCR model weights** (downloaded by `indra-ocr`, not bundled) use a
+**modified OpenRAIL-M license**. They are free for research, personal use, and organisations under $20M revenue and
+under $20M funding. They restrict commercial use that **competes with Datalab**. A commercial document-AI product built
+on Inklight and Indra needs a license from [Datalab](https://www.datalab.to/pricing), or a different OCR engine (the
+OCR layer is pluggable). Full audit: [THIRD_PARTY_LICENSES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/THIRD_PARTY_LICENSES.md).
 
 ## Development
 
 ```bash
 pip install -e ".[dev]"
-pytest                      # 128 tests, about 1 minute on CPU (downloads Indra models on first run)
+pytest                                   # 617 tests
 ruff check src tests && mypy src
-python bench/run.py         # reproduces docs/BENCHMARKS.md
+python -I bench/usecases/evaluate.py --help     # the evaluation above (documents: bench/usecases/README.md)
 ```
 
-See [CONTRIBUTING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CONTRIBUTING.md), [CHANGELOG.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CHANGELOG.md), [CODE_OF_CONDUCT.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CODE_OF_CONDUCT.md)
-and, for maintainers, [docs/PUBLISHING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/PUBLISHING.md).
+See [CONTRIBUTING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CONTRIBUTING.md), [CHANGELOG.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CHANGELOG.md) and [CODE_OF_CONDUCT.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CODE_OF_CONDUCT.md).
