@@ -67,7 +67,11 @@ _LABEL_LINE = {
     ),
     "sender": re.compile(r"^\s*from\s*:\s*(?P<v>\S.{0,79})$|^\s*من\s*[:\-]\s*(?P<a>\S.{0,79})$", re.IGNORECASE),
 }
-_ANNEX = re.compile(r"^\s*(?:annex|enclosure|attachment|مرفق|المرفق)\b", re.IGNORECASE)
+# A heading line: "Annex", "ANNEX I", "Annex to the letter …", "مرفق الرسالة …"; not "annex)." in the body.
+_ANNEX = re.compile(
+    r"^\s*(?:annex|enclosure|attachment|مرفق|المرفق)(?:\s+(?:[IVX]+|\d+)|\s+(?:to|of|الرسال|ب)\S*.*)?\s*[:.]?\s*$",
+    re.IGNORECASE,
+)
 _SIGNED_AR = re.compile(r"[(（]\s*توقيع\s*[)）]")
 # "(Signed) X", OCR's "(Siqnedd X", "Signed: X", "/s/ X". Not "Signature of the applicant" or "Significant …".
 _SIGNED = re.compile(
@@ -134,18 +138,23 @@ def _find_role(ctx: ToolContext, doc_id: str, role: str) -> _Found | None:
     return None
 
 
+# Matched against search_form(line), so OCR's "أتشرِف" reads as "اتشرف".
 _BODY_START = re.compile(
     r"^(?:I have the honour|I have the honor|On instructions|Upon instructions|With reference|Further to|"
-    r"I wish to|I am writing|يشرفني|بناء|إشارة|اشارة|بالإشارة|أكتب)",
+    r"I wish to|I am writing|يشرفني|اتشرف|لي الشرف|بناء|اشاره|بالاشاره|اكتب)",
     re.IGNORECASE,
 )
+
+
+def _body_starts(line: str) -> bool:
+    return bool(_BODY_START.match(search_form(line)))
 
 
 def _title_from(lines: list[str]) -> str:
     """A heading's lines, up to the first line of the letter's body or a blank line."""
     kept: list[str] = []
     for ln in lines:
-        if not ln or (kept and _BODY_START.match(ln)):
+        if not ln or (kept and _body_starts(ln)):
             break
         kept.append(ln)
     return " ".join(kept)
@@ -329,7 +338,7 @@ def _units(excerpt: str) -> list[str]:
             continue
         prev = blocks[-1][-1] if blocks and blocks[-1] else ""
         wraps = len(prev) >= _WRAPS and not re.search(r"[.!?؟؛:]$", prev)
-        if wraps and not (_BODY_START.match(ln) or _TITLE_START.search(ln) or _TITLE_START.search(prev)):
+        if wraps and not (_body_starts(ln) or _TITLE_START.search(ln) or _TITLE_START.search(prev)):
             blocks[-1].append(ln)
         else:
             blocks.append([ln])
@@ -343,7 +352,9 @@ def _units(excerpt: str) -> list[str]:
 # "Total (incl Tax)", "prices include VAT": the word names what the amount contains, not what it is.
 _QUALIFIED_WORD = re.compile(
     r"\b(?:incl\.?|including|inclusive\s+of|include[sd]?|excl\.?|excluding|exclusive\s+of|w/o)\s*\(?\s*[^\W\d_]+"
-    r"|(?:شامل[ةه]?|غير\s+شامل[ةه]?|يشمل|تشمل)\s+[^\W\d_]+",
+    r"|(?:شامل[ةه]?|غير\s+شامل[ةه]?|يشمل|تشمل)\s+[^\W\d_]+"
+    # "VAT-Inclusive", "VAT inclusive 70.00": the qualifier written after the word
+    r"|[^\W\d_]+[\s-]*(?:inclusive|incl\.?|included|exclusive|excl\.?)(?![^\W\d_])(?!\s*\(?\s*[^\W\d_])",
     re.IGNORECASE,
 )
 
@@ -355,29 +366,42 @@ def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
     if kind not in _KIND_NAMES or not s.answer:
         return None
     anchors = _anchors(ctx, question)
-    pool = [(h.source, unit) for h in s.hits[:8] for unit in _units(h.source.excerpt)]
-    vocab = set().union(*(_keys(unit) for _, unit in pool)) if pool else set()
+    pool: list[tuple[Source, str, str]] = []  # (source, sentence, the sentence before it)
+    for h in s.hits[:8]:
+        units = _units(h.source.excerpt)
+        pool += [(h.source, u, units[k - 1] if k else "") for k, u in enumerate(units)]
+    vocab = set().union(*(_keys(unit) for _, unit, _ in pool)) if pool else set()
     present = anchors & vocab
     if not present:
         return None  # nothing specific to connect to ("What is the total?"): the answer is left as it is
 
-    def connected(unit: str) -> float:
-        """0 when the unit cannot answer; otherwise the share of the question's specific words it holds."""
+    def connected(unit: str, before: str = "") -> float:
+        """0 when the sentence cannot answer; otherwise the share of the question's specific words it holds, with
+        the sentence before it ("…a civilian bus. … 54 others were injured" answers "injured in the attack on the
+        bus"). The sentence itself must hold at least one of them, and a heading lends it none."""
         unit = _digits(unit)
         typed = _has_kind(kind, unit) or (kind == "money" and _number_after(unit, present))
         if not typed or (kind == "date" and _is_heading(unit)):
             return 0.0
-        share = len(present & _keys(_QUALIFIED_WORD.sub(" ", unit))) / len(present)
+        own = present & _keys(_QUALIFIED_WORD.sub(" ", unit))
+        if not own:
+            return 0.0
+        context = set() if not before or _is_heading(before) else _keys(_QUALIFIED_WORD.sub(" ", _digits(before)))
+        share = len(own | (present & context)) / len(present)
         return share if share >= 0.5 else 0.0
 
     head = s.answer.split("\n\nEvidence:")[0].strip()
     if head.startswith("The closest passage is:"):
         head = ""  # a whole passage is not a chosen value
-    needle = _flat(head)[:60]
-    if needle and _has_kind(kind, head) and any(needle in _flat(u) and connected(u) > 0 for _, u in pool):
+    needles = _needles(head)
+    if (
+        needles
+        and _has_kind(kind, head)
+        and any(n in _flat(u) and connected(u, b) > 0 for n in needles for _, u, b in pool)
+    ):
         return None
     ranked = sorted(
-        ((connected(u), -len(u), -i, src, u) for i, (src, u) in enumerate(pool) if connected(u) > 0),
+        ((connected(u, b), -len(u), -i, src, u) for i, (src, u, b) in enumerate(pool) if connected(u, b) > 0),
         key=lambda t: t[:3],
         reverse=True,
     )
@@ -395,6 +419,15 @@ def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
         f"({', '.join(sorted(present))}); nearby values were not used",
     )
     return "typed answer declined"
+
+
+def _needles(head: str) -> list[str]:
+    """How to find the chosen value in the passages: whole, and by its first line when the reader's span ran
+    across two OCR lines ("8.60" then "61.40")."""
+    if not head:
+        return []
+    lines = [ln.strip() for ln in head.splitlines() if ln.strip()]
+    return list(dict.fromkeys([_flat(head)[:60]] + ([_flat(lines[0])[:60]] if len(lines) > 1 else [])))
 
 
 def _as_written(question: str, keys: set[str]) -> list[str]:

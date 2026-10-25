@@ -230,3 +230,87 @@ def test_review_cases_do_not_misfire(tmp_path):
         assert not any("answer: the signer" in c for c in res.checks)  # no signer was read from that line
     finally:
         agent.close()
+
+
+# Regression cases from fresh3 (development data since its first run), as the documents read.
+FRESH3_CASES = {
+    # The question names the bus and the attack; the answer sentence, the next one, only says "injured".
+    "bus.txt": (
+        "On the morning of 23 April 2025, the Russian Federation launched a drone strike on the city of Marhanets,\n"
+        "directly targeting a civilian bus transporting workers of a local plant. At least nine civilians were\n"
+        "killed, and 54 others were injured, most of them women. Such attacks have become commonplace.\n"
+    ),
+    # Costa receipt: "VAT-Inclusive" qualifies the subtotal; the VAT amount is on its own line.
+    "costa.txt": (
+        "Baguette BBQ Chicken 70.00\nSubTotal (VAT-Inclusive)\n61.40\n14 % ضريبة القيمة المضافة VAT 8.60\n"
+        "Dine In Total\n70.00\nVISA L.E70.00\n"
+    ),
+    # A body line that wraps "(see annex)." is not the annex heading; the letter is signed before the annex.
+    "see-annex.txt": (
+        "Letter dated 23 April 2025 from the Chargé d'affaires a.i. of the Permanent Mission of Ukraine to the\n"
+        "United Nations addressed to the Secretary-General\n"
+        "I am writing to inform you of the ongoing attacks against civilians in Ukraine (see\n"
+        "annex).\n(Signed) Khrystyna Hayovyshyn\nAnnex to the letter dated 23 April 2025\n"
+    ),
+    # 1984 Arabic scan: the body starts with OCR's "أتشرِف", so the title ends before it.
+    "ar-scan.txt": (
+        "رسالة مؤرخة في ٢٣ نيسان /ابريل ١٩٨٤ وموجهة الى الأمين العام من الممثل\n"
+        "الدائم لتركيا لدى الأمم المتحدة\nأتشرِف بأن أرفق طيه رسالة مؤرخة في ٢٣ نيسان /ابريل ١٩٨٤\n"
+    ),
+}
+
+
+@pytest.fixture(scope="module")
+def fresh3_library(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("fresh3-cases")
+    for name, text in FRESH3_CASES.items():
+        (tmp / name).write_text(text, encoding="utf-8")
+    agent = DocumentAgent(make_settings(tmp / "home"))
+    agent.add([tmp / n for n in FRESH3_CASES])
+    ids = {d.name: d.id for d in agent.library.documents()}
+    yield agent, ids
+    agent.close()
+
+
+def test_context_named_in_the_previous_sentence_still_connects(fresh3_library):
+    res = _ask(fresh3_library, "bus.txt", "How many people were injured in the attack on the bus?")
+    assert "54" in _head(res), res.answer
+
+
+def test_a_qualifier_written_after_the_word_is_not_the_amount(fresh3_library):
+    res = _ask(fresh3_library, "costa.txt", "What is the VAT amount?")
+    assert "8.60" in _head(res), res.answer
+    assert "61.40" not in _head(res).split("\n")[0], res.answer
+
+
+def test_a_wrapped_see_annex_line_is_not_the_annex_heading(fresh3_library):
+    res = _ask(fresh3_library, "see-annex.txt", "Who signed the letter?")
+    assert "Hayovyshyn" in _head(res) and not res.answer.startswith("The letter's own signature"), res.answer
+    assert res.confidence >= 0.3
+
+
+def test_an_ocr_arabic_title_stops_at_the_body(fresh3_library):
+    res = _ask(fresh3_library, "ar-scan.txt", "من أرسل الرسالة؟")
+    head = _head(res)
+    assert "تركيا" in head and "أتشرِف" not in head, res.answer
+
+
+def test_qualifiers_before_or_after_the_word_do_not_count_as_the_subject():
+    from inklight.agent.binding import _QUALIFIED_WORD, _keys
+
+    for text in (
+        "SubTotal (VAT-Inclusive) 61.40",
+        "Total VAT inclusive 70.00",
+        "Total (incl. VAT) 70.00",
+        "Price incl tax 12.00",
+        "الإجمالي شامل الضريبة 70.00",
+    ):
+        assert not ({"vat", "tax"} & _keys(_QUALIFIED_WORD.sub(" ", text))), text
+    assert "vat" in _keys(_QUALIFIED_WORD.sub(" ", "14 % VAT 8.60"))
+
+
+def test_a_reader_span_that_crosses_lines_is_matched_by_its_first_line():
+    from inklight.agent.binding import _needles
+
+    assert _needles("8.60\n61.40") == ["8.60 61.40", "8.60"]
+    assert _needles("2 February\n2023") == ["2 February 2023", "2 February"]
