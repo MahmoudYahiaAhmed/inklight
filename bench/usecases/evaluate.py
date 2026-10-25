@@ -405,7 +405,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=Path(__file__).with_name("corpus.json"))
-    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2", "fresh3", "fresh4"], required=True)
+    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2", "fresh3", "fresh4", "fresh5"], required=True)
     ap.add_argument("--docs", type=Path, required=True)
     ap.add_argument("--models", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
@@ -420,7 +420,7 @@ def main() -> None:
     docs = [d for d in corpus["documents"] if d["split"] == args.split]  # select the split before any reading
     tasks = [t for t in corpus["library_tasks"] if t["split"] == args.split]
     args.out.mkdir(parents=True, exist_ok=True)
-    if args.split in ("reserved", "fresh", "fresh2", "fresh3", "fresh4"):
+    if args.split in ("reserved", "fresh", "fresh2", "fresh3", "fresh4", "fresh5"):
         with open(args.out.parent / "reserved-access.log", "a", encoding="utf-8") as log:
             log.write(
                 json.dumps({"at": datetime.now(UTC).isoformat(), "build": build_info(), "argv": sys.argv[1:]}) + "\n"

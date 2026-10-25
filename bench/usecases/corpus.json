@@ -1,5 +1,5 @@
 {
- "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files. A fifth split, 'fresh3' (11 genuine documents), was added on 2026-10-25 to evaluate whether answers are connected to what was asked (sender vs recipient, document date vs event date, subtotal vs total, tax mentioned vs tax amount). Answerable questions carry a 'category'. Expectations were written before any build was run on these files. A sixth split, 'fresh4' (12 genuine documents), was added on 2026-10-25 to evaluate layout-aware label/value pairing and whole reader spans; its expectations were committed before the frozen candidate ran on it.",
+ "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files. A fifth split, 'fresh3' (11 genuine documents), was added on 2026-10-25 to evaluate whether answers are connected to what was asked (sender vs recipient, document date vs event date, subtotal vs total, tax mentioned vs tax amount). Answerable questions carry a 'category'. Expectations were written before any build was run on these files. A sixth split, 'fresh4' (12 genuine documents), was added on 2026-10-25 to evaluate layout-aware label/value pairing and whole reader spans; its expectations were committed before the frozen candidate ran on it. A seventh split, 'fresh5' (10 genuine documents), was added on 2026-10-25 to evaluate the label/value answering frozen at 915be7b; its expectations were committed before that build ran on it.",
  "gaps": [
   "Genuine Arabic forms, certificates, invoices and contracts with an open licence: none found. Synthetic stand-ins are used and labelled.",
   "Handwriting: not covered.",
@@ -6991,6 +6991,757 @@
      "kind": "absent_subject"
     }
    ]
+  },
+  {
+   "id": "n5-l380-en",
+   "group": "n5-l380",
+   "split": "fresh5",
+   "file": "n5-l380-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/380 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Russian Federation"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom is the letter addressed?",
+     "accept": [
+      "President of the Security Council"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "12 June 2025",
+      "2025-06-12"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "When did the Security Council adopt the report?",
+     "accept": [
+      "30 May 2025",
+      "2025-05-30",
+      "30 May"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "On what date did the introduction pass the non-objection procedure?",
+     "accept": [
+      "10 February 2025",
+      "2025-02-10"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Vassily Nebenzia",
+      "Nebenzia"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "Russian Federation",
+    "report",
+    "introduction"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was the interactive dialogue organized?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-l380-ar",
+   "group": "n5-l380",
+   "split": "fresh5",
+   "file": "n5-l380-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/380 (Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من أرسل الرسالة؟",
+     "accept": [
+      "الاتحاد الروسي"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "إلى من وجهت الرسالة؟",
+     "accept": [
+      "رئيسة مجلس الأمن"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "2025-06-12",
+      "12 حزيران"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "متى اعتمد مجلس الأمن التقرير؟",
+     "accept": [
+      "30 أيار",
+      "2025-05-30"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "نيبينزيا"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "الاتحاد الروسي",
+    "التقرير",
+    "مجلس الأمن"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-l360-en",
+   "group": "n5-l360",
+   "split": "fresh5",
+   "file": "n5-l360-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/360 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Ukraine"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "3 June 2025",
+      "2025-06-03"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "How many emergency workers were injured in Zaporizhzhia?",
+     "accept": [
+      "12"
+     ],
+     "page": 1,
+     "category": "number"
+    },
+    {
+     "q": "How many civilians did the attack on Sumy kill?",
+     "accept": [
+      "4"
+     ],
+     "page": 1,
+     "category": "number"
+    }
+   ],
+   "summary_keys": [
+    "Ukraine",
+    "Sumy",
+    "drone"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was the strike on Sumy?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the monthly rent?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-wiki-luxor-en",
+   "group": "n5-wiki-luxor",
+   "split": "fresh5",
+   "file": "n5-wiki-luxor-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://en.wikipedia.org/api/rest_v1/page/pdf/Luxor (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the population of Luxor?",
+     "accept": [
+      "284,952"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the elevation of Luxor?",
+     "accept": [
+      "89 m"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the postal code of Luxor?",
+     "accept": [
+      "85511"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the area code of Luxor?",
+     "accept": [
+      "95"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the total area of Luxor?",
+     "accept": [
+      "416.0"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Luxor",
+    "Nile",
+    "Karnak"
+   ],
+   "fields": [
+    {
+     "name": "postal_code",
+     "type": "text",
+     "accept": [
+      "85511"
+     ],
+     "labels": [
+      "Postal code"
+     ]
+    },
+    {
+     "name": "elevation",
+     "type": "text",
+     "accept": [
+      "89 m"
+     ],
+     "labels": [
+      "Elevation"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT number?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-wiki-luxor-ar",
+   "group": "n5-wiki-luxor",
+   "split": "fresh5",
+   "file": "n5-wiki-luxor-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/الأقصر (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما الرمز البريدي للأقصر؟",
+     "accept": [
+      "85511"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "ما ارتفاع الأقصر؟",
+     "accept": [
+      "89"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "من محافظ الأقصر؟",
+     "accept": [
+      "ممدوح عمارة",
+      "عبد المطلب"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "ما الكثافة السكانية في الأقصر؟",
+     "accept": [
+      "486.1"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "الأقصر",
+    "طيبة",
+    "الكرنك"
+   ],
+   "fields": [
+    {
+     "name": "postal_code",
+     "type": "text",
+     "accept": [
+      "85511"
+     ],
+     "labels": [
+      "الرمز البريدي"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الإيصال؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-funsd-93106788",
+   "group": "n5-funsd-93106788",
+   "split": "fresh5",
+   "file": "n5-funsd-93106788.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 93106788 (magazine insertion order)",
+   "licence": "non-commercial research",
+   "gold_from": "FUNSD annotation, checked against the image",
+   "qa": [
+    {
+     "q": "Who is the advertiser?",
+     "accept": [
+      "LORILLARD"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the product?",
+     "accept": [
+      "NEWPORT"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the caption?",
+     "accept": [
+      "FOUNTAIN COUPLE"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the PO number?",
+     "accept": [
+      "7219"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "LORILLARD",
+    "NEWPORT",
+    "ESSENCE"
+   ],
+   "fields": [
+    {
+     "name": "advertiser",
+     "type": "text",
+     "accept": [
+      "LORILLARD"
+     ],
+     "labels": [
+      "ADVERTISER"
+     ]
+    },
+    {
+     "name": "product",
+     "type": "text",
+     "accept": [
+      "NEWPORT"
+     ],
+     "labels": [
+      "PRODUCT"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-funsd-82573104",
+   "group": "n5-funsd-82573104",
+   "split": "fresh5",
+   "file": "n5-funsd-82573104.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82573104 (fax cover sheet)",
+   "licence": "non-commercial research",
+   "gold_from": "FUNSD annotation, checked against the image",
+   "qa": [
+    {
+     "q": "Who is the fax to?",
+     "accept": [
+      "Haney H. Bell",
+      "Bell"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "Who is the fax from?",
+     "accept": [
+      "David H. Remes",
+      "Remes"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "What is the date of the fax?",
+     "accept": [
+      "December 9, 1999",
+      "1999-12-09"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "What is the room number?",
+     "accept": [
+      "803E"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Covington",
+    "Remes",
+    "Bell"
+   ],
+   "fields": [
+    {
+     "name": "date",
+     "type": "date",
+     "accept": [
+      "1999-12-09"
+     ],
+     "labels": [
+      "Date"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the message?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-coru-geant",
+   "group": "n5-coru-geant",
+   "split": "fresh5",
+   "file": "n5-coru-geant.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 027eaad4-3f76-4da8-ba91-2bbe10f1a747 (Géant Triumph; English with an Arabic logo; VAT table)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the total?",
+     "accept": [
+      "511.90"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "59.68"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the number of items?",
+     "accept": [
+      "6"
+     ],
+     "page": null,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the transaction number?",
+     "accept": [
+      "12816"
+     ],
+     "page": null,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Géant",
+    "511.90",
+    "SHAMPOO"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "511.90",
+      "511.9"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-coru-defacto",
+   "group": "n5-coru-defacto",
+   "split": "fresh5",
+   "file": "n5-coru-defacto.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "invoice",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 04783602-f4e3-442f-91bd-a187399f83e1 (DeFacto e-commerce invoice; English with an Arabic address)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the invoice number?",
+     "accept": [
+      "OCS47568328"
+     ],
+     "page": null,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "8,23",
+      "8.23"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the amount to be paid?",
+     "accept": [
+      "67,05",
+      "67.05"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the invoice date?",
+     "accept": [
+      "24.08.2023",
+      "2023-08-24"
+     ],
+     "page": null,
+     "category": "doc_date"
+    }
+   ],
+   "summary_keys": [
+    "DeFacto",
+    "67,05",
+    "Socks"
+   ],
+   "fields": [
+    {
+     "name": "invoice_number",
+     "type": "id",
+     "accept": [
+      "OCS47568328"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "8.23"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "67.05"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the customer's web site?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n5-coru-checkers",
+   "group": "n5-coru-checkers",
+   "split": "fresh5",
+   "file": "n5-coru-checkers.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0233db9f-628b-4916-8ecc-9569af7a0773 (Checkers Hyper, South Africa)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the total?",
+     "accept": [
+      "R33.44",
+      "33.44"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "How much cash was given?",
+     "accept": [
+      "R35.00",
+      "35.00"
+     ],
+     "page": null,
+     "category": "cash"
+    },
+    {
+     "q": "What is the change?",
+     "accept": [
+      "R1.60",
+      "1.60"
+     ],
+     "page": null,
+     "category": "change"
+    },
+    {
+     "q": "What is the VAT number?",
+     "accept": [
+      "442 01 06777"
+     ],
+     "page": null,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Checkers",
+    "33.44",
+    "BANANA"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "33.44"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
   }
  ],
  "library_tasks": [
@@ -7335,6 +8086,16 @@
    "expect_docs": [
     "n4-l300-en",
     "n4-l300-ar"
+   ]
+  },
+  {
+   "id": "fresh5-find-en",
+   "split": "fresh5",
+   "kind": "find",
+   "request": "Which document is about Luxor?",
+   "expect_docs": [
+    "n5-wiki-luxor-en",
+    "n5-wiki-luxor-ar"
    ]
   }
  ]
