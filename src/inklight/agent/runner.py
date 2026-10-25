@@ -228,6 +228,7 @@ def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
         out.append("result: only part of the job could be done (see warnings)")
     for note in dict.fromkeys(s.models_skipped):
         out.append(f"models: {note}")
+    out.extend(dict.fromkeys(s.notes))
     return tuple(out)
 
 

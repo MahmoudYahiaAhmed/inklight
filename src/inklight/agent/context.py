@@ -42,6 +42,7 @@ class Scratch:
     brain_used: set[str] = field(default_factory=set)
     models_skipped: list[str] = field(default_factory=list)  # optional models deliberately not used, and why
     partial: bool = False  # a tool could only do part of the job (e.g. mixed currencies)
+    notes: list[str] = field(default_factory=list)  # what a step concluded, stated in the result's checks
 
     def warn(self, message: str) -> None:
         if message not in self.warnings:

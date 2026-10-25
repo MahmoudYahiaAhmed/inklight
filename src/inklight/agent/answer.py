@@ -288,6 +288,12 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         return "no evidence"
     if _field_shortcut(ctx, question):
         return f"field shortcut ({s.confidence:.2f})"
+    from .unmentioned import say_not_found, unmentioned  # imports this module
+
+    absent = unmentioned(ctx, question)
+    if absent:
+        say_not_found(ctx, question, absent)
+        return "not mentioned"
     used = _reader_answer(ctx, question) or _rule_answer(ctx, question)
     _maybe_rephrase(ctx, question)
     _maybe_remote(ctx, question)

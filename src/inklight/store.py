@@ -389,6 +389,32 @@ class Store:
             return []
         return [(r["id"], self._source(r, round(-float(r["rank"]), 4))) for r in rows]
 
+    def mentions(self, forms: list[str], doc_ids: list[str] | None) -> bool:
+        """Whether any indexed passage in scope contains one of ``forms``: a word, a word prefix ending in "*"
+        ("govern*"), or a phrase. Forms are matched in index form, like search queries. ``doc_ids=None`` searches
+        every document; an empty list searches none, so the answer is False."""
+        terms = []
+        for form in forms:
+            prefix = form.endswith("*")
+            words = [w.strip(".-") for w in _WORD.findall(index_form(form.rstrip("*")).lower())]
+            words = [w.replace(chr(34), "") for w in words if w]
+            if words:
+                terms.append('"' + " ".join(words) + '"' + ("*" if prefix else ""))
+        if not terms or (doc_ids is not None and not doc_ids):
+            return False
+        sql = (
+            "SELECT 1 FROM chunks_fts JOIN chunks c ON c.id = chunks_fts.rowid JOIN documents d ON d.id = c.doc_id "
+            "WHERE chunks_fts MATCH ? AND d.status = 'ready'"
+        )
+        args: list[Any] = [" OR ".join(terms)]
+        if doc_ids is not None:
+            sql += f" AND c.doc_id IN ({','.join('?' * len(doc_ids))})"
+            args.extend(doc_ids)
+        try:
+            return bool(self._all(sql + " LIMIT 1", tuple(args)))
+        except sqlite3.OperationalError:
+            return True  # an unreadable query proves nothing is missing
+
     def clear_content(self, doc_id: str) -> None:
         with self.tx() as db:
             for table in ("pages", "blocks", "chunks"):
