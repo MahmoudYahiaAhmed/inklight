@@ -4,10 +4,14 @@ The first-access runs (`first-access-res-auto.json`, `first-access-res-rules.jso
 `first-access-fresh-auto.json`) were made from an uncommitted working tree. Their `build` field records the Git
 HEAD of that tree, `6b4cc12`, but the code that ran was not `6b4cc12`.
 
-## Recovered source
+## A behaviourally reproduced reconstruction
 
-The source was rebuilt from the session transcript. It holds every edit, with timestamps, made between the
-runs and the commits that followed. Apply a patch here to a checkout of `8c54921` to get the code a run used:
+This is a **reconstruction**, not a recovery of the original source bytes or environment. It was rebuilt from the
+session transcript, which holds every edit, with timestamps, made between the runs and the commits that followed.
+The check below shows it behaves identically on these documents, which is evidence that it matches the code that
+ran. It is not proof of byte-for-byte identity.
+
+Apply a patch here to a checkout of `8c54921` to get the reconstruction for a run:
 
 | Runs | Started (UTC, from `reserved-access.log`) | Source | Patch hash (`git hash-object`) |
 |---|---|---|---|
@@ -32,7 +36,7 @@ git -C ../first-access apply bench/results/usecases/provenance/first-access-rese
 
 The rebuilt trees were run again with the same documents, models and harness (`bench/usecases/evaluate.py`,
 unchanged since `bb38313`; the reserved run used it before the `fresh` split option was added, an argument-parsing
-change only). Ignoring timing and model-call counts, the outputs match the stored first-access files exactly:
+change only). Ignoring timing and model-call counts, the outputs match the stored first-access files:
 
 - **Ingestion.** Every document's text hash, type and pages match.
 - **Answers.** Every answer, state, confidence, outcome and cited page matches.
@@ -41,9 +45,11 @@ change only). Ignoring timing and model-call counts, the outputs match the store
 These re-runs are logged in `reserved-access.log` with `"purpose": "provenance check"`. They are not evaluations,
 and the documents were not used to change anything.
 
-## What cannot be recovered
+## What the reconstruction does not establish
 
 - **Python bytecode and the environment.** There is no record of either beyond what the run files hold. The
   editable install and model files were the same as for the `8c54921` runs.
 - **Formatting.** `ruff format` ran between the reserved run and the commit, so the reserved patch restores
   behaviour, not the exact original whitespace.
+- **Source bytes.** Editor and shell edits are replayed from the transcript in reverse. An edit the transcript does
+  not show, or code that never ran on these documents, would not be detected by the behavioural check.

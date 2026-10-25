@@ -105,7 +105,7 @@ def summaries(run: dict) -> dict[str, str]:
     return out
 
 
-_DECLINED = re.compile(r"^not found|could not find", re.IGNORECASE)
+_DECLINED = re.compile(r"^not found|could not find|couldn't find supporting evidence", re.IGNORECASE)
 
 
 def declined(row: dict) -> bool:

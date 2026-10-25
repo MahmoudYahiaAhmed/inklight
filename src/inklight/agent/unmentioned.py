@@ -2,7 +2,8 @@
 
 Without this check, "What is the IBAN?" over a letter is answered with the letter's best-matching sentence. The
 check looks up every specific word of the question in the full-text index of the documents in scope. If none of
-them occurs anywhere, the answer is "not found" instead of a guess.
+them occurs anywhere, the answer says no supporting evidence was found in the processed text, instead of a
+guess. It does not claim the fact is absent from the document itself: OCR can miss words.
 
 It is deliberately narrow, because declining a question the documents do answer is also an error:
 - Generic words ("number", "date", "total", "name") are not looked up: documents say "No." or "Dated". Nor is
@@ -131,17 +132,23 @@ def unmentioned(ctx: ToolContext, question: str) -> list[str] | None:
 
 
 def say_not_found(ctx: ToolContext, question: str, terms: list[str]) -> None:
-    """Answer that the documents in scope do not mention ``terms``, and say so in the result's checks."""
-    s = ctx.scratch
+    """Answer that no supporting evidence was found for ``terms``, and say why in the result's checks."""
     shown = [_as_asked(question, t) for t in terms[:4]]
-    where = "this document does" if len(s.doc_ids) == 1 else "these documents do"
-    quoted = " or ".join(f"“{t}”" for t in shown)
-    s.answer = f"Not found: {where} not mention {quoted}."
+    say_no_evidence(
+        ctx,
+        " or ".join(f"“{t}”" for t in shown),
+        "no indexed passage in scope contains " + ", ".join(shown) + " (or a known English/Arabic equivalent)",
+    )
+
+
+def say_no_evidence(ctx: ToolContext, what: str, why: str) -> None:
+    """The answer when nothing in the processed text supports one: it does not claim the fact is absent."""
+    s = ctx.scratch
+    where = "this document" if len(s.doc_ids) == 1 else "these documents"
+    s.answer = f"I couldn't find supporting evidence for {what} in the processed text of {where}."
     s.sources = []
     s.confidence = 0.6
-    s.notes.append(
-        "not found: no passage in scope contains " + ", ".join(shown) + " (or a known English/Arabic equivalent)"
-    )
+    s.notes.append(f"no supporting evidence: {why}")
 
 
 def _forms(word: str) -> list[str]:

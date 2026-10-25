@@ -1,4 +1,5 @@
-"""A question about something no document in scope mentions is answered "not found", not with a nearby sentence.
+"""A question about something no document in scope mentions gets "I couldn't find supporting evidence…", not a
+nearby sentence.
 
 Both directions are tested: questions the documents do answer must still be answered (paraphrased verbs,
 generic words such as "number" or "date", English questions over Arabic labels), so that fewer silent errors
@@ -37,7 +38,7 @@ def library(tmp_path):
 
 
 def _not_found(res) -> bool:  # noqa: ANN001
-    return res.answer.lower().startswith("not found")
+    return res.answer.startswith("I couldn't find supporting evidence")
 
 
 @pytest.mark.parametrize(
@@ -56,7 +57,7 @@ def test_a_question_about_something_never_mentioned_is_not_found(library, doc, q
     res = agent.ask(question, doc_ids=[ids[doc]], save=False)
     assert _not_found(res), res.answer
     assert absent in res.answer.lower()
-    assert any("not found" in c for c in res.checks)
+    assert any("no supporting evidence" in c for c in res.checks)
 
 
 @pytest.mark.parametrize(

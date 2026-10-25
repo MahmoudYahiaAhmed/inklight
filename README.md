@@ -80,7 +80,8 @@ receipts). It covers English, Arabic and mixed language, digital and scanned. Ex
 any run. The table shows the **reserved split** (30 documents, held out from development), with models on (the default).
 
 - **First access** is the one independent run of the development build. It ran from uncommitted source, now
-  [recovered and reproduced exactly](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/results/usecases/provenance/README.md).
+  [reconstructed, and its re-run reproduces the stored results](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/results/usecases/provenance/README.md)
+  (the same behaviour, not the original bytes).
 - **Rerun** is commit `8c54921`, after three fixes those same documents prompted. It is not independent.
 
 | Questions with a cited source | P0 (`6b4cc12`) | First access | Rerun (`8c54921`) | n |
@@ -99,7 +100,9 @@ The rerun fixed the two new mixed-language silent errors (both on one synthetic 
 comparison, because "Letter dated" now dates only a letter's own title line.
 
 **Questions the documents cannot answer** (`d012e07`, a separate split of 15 new genuine documents, first run). A
-question about something the documents never mention ("What is the IBAN?" over a letter) is answered **"Not found"**.
+question about something the documents never mention ("What is the IBAN?" over a letter) is declined. At `d012e07`
+the wording was "Not found: …"; it is now **"I couldn't find supporting evidence for “IBAN” in the processed text"**.
+OCR can miss words, so the answer no longer claims the fact is absent.
 
 | | Before (`6c1659c`) | After (`d012e07`) | n |
 |---|---|---|---|

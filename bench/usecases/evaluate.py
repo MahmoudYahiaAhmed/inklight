@@ -31,7 +31,7 @@ from capability_diag import answer_head, arabic_share, contains, norm  # noqa: E
 
 ORT: collections.Counter = collections.Counter()
 NOT_FOUND = re.compile(
-    r"could not find|no (?:relevant |matching )?(?:evidence|passage|document|value)"
+    r"could not find|couldn't find|no (?:relevant |matching )?(?:evidence|passage|document|value)"
     r"|not (?:found|available|stated|mentioned)"
     r"|لم (?:أجد|يتم|يرد|يذكر)|غير (?:موجود|متوفر|مذكور)",
     re.IGNORECASE,

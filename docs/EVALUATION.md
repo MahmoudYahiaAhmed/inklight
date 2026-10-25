@@ -8,7 +8,7 @@ anything, and no human timing exists.
 
 | | |
 |---|---|
-| Builds compared | **P0** = `6b4cc12` (frozen wheel `9318449b…`) · **first access** = uncommitted source, recovered as `8c54921` + a [patch](../bench/results/usecases/provenance/README.md) and reproduced exactly · **rerun** = `8c54921`; `2709d33` changes only the wording of unsupported-request answers |
+| Builds compared | **P0** = `6b4cc12` (frozen wheel `9318449b…`) · **first access** = uncommitted source, reconstructed as `8c54921` + a [patch](../bench/results/usecases/provenance/README.md) whose re-run reproduces the stored outputs (a behavioural reconstruction, not the original bytes) · **rerun** = `8c54921`; `2709d33` changes only the wording of unsupported-request answers |
 | OCR | Indra OCR 1.1.2, pinned model snapshot `bd02167f…` (same files for both builds) |
 | Optional models | reader `Xenova/distilbert-base-cased-distilled-squad` @ `bdbb0a5e…`, embedder `Xenova/bge-small-en-v1.5` @ `ea104dac…`, writer `HuggingFaceTB/SmolLM2-135M-Instruct` (not installed, `use_writer = false`) |
 | Modes | `auto` = optional models when installed (the default); `rules` = no models |
@@ -25,11 +25,13 @@ template in one split. Full list with sources and licences: [`bench/usecases/cor
 | dev | 35 | failures here were diagnosed and fixed | none: tuned on |
 | reserved | 30 | evaluated once, first access logged before reading | **independent for the first run only** (`first-access-res-*`). Three fixes it prompted were made afterwards (below), so the rerun on `8c54921` (`final-res-*`) is not independent |
 | fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run (`first-access-fresh-auto`); it prompted two more fixes, so its rerun (`final-fresh-*`) is not independent |
-| fresh2 | 15 | 15 new genuine documents (2025 UN letters and a 1984 scan in English and Arabic, two CUAD contracts, IRS W-8BEN, Arabic Wikipedia "الإسكندرية", three CORU receipts from new companies), with answerable and unanswerable questions; expectations committed (`6c1659c`) before any run | **independent for its first run** (`fresh2-first-access-*`): the build under test was frozen first (`d012e07`) |
+| fresh2 | 15 | 15 new genuine documents ([selection and exclusions](../bench/results/usecases/provenance/fresh2-selection.md)) (2025 UN letters and a 1984 scan in English and Arabic, two CUAD contracts, IRS W-8BEN, Arabic Wikipedia "الإسكندرية", three CORU receipts from new companies), with answerable and unanswerable questions; expectations committed (`6c1659c`) before any run | **independent for its first run** (`fresh2-first-access-*`): the build under test was frozen first (`d012e07`) |
 
 **Provenance.** The first-access runs record Git HEAD `6b4cc12`, but they ran from modified, uncommitted source.
-That source was rebuilt from the session transcript as `8c54921` plus a patch removing the later fixes. Re-running it
-reproduced every stored answer, confidence, outcome and ingestion hash exactly; only the export file path differs.
+That source was reconstructed from the session transcript as `8c54921` plus a patch removing the later fixes.
+Re-running the reconstruction reproduced every stored answer, confidence, outcome and ingestion hash; only the export
+file path differs. This shows the same behaviour on these documents; it does not recover the original source bytes
+or environment.
 Details: [`provenance/README.md`](../bench/results/usecases/provenance/README.md).
 
 | Kind | Genuine | Synthetic (**labelled**) |
@@ -153,7 +155,9 @@ that the document lacks the fact.
 ### Missing information: "not found" (`d012e07`)
 
 **What changed.** A question about a subject the documents in scope never mention now gets
-"Not found: this document does not mention “IBAN”." instead of a nearby sentence. Each specific word of the question
+"Not found: this document does not mention “IBAN”." instead of a nearby sentence. (Later builds say "I couldn't find
+supporting evidence for “IBAN” in the processed text of this document", because OCR can miss words; the decision
+is the same.) Each specific word of the question
 is looked up in the full-text index, with English synonyms and Arabic equivalents.
 
 **What it will not do.** It does not decline when:
