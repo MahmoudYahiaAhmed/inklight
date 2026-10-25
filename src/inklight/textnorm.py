@@ -33,7 +33,8 @@ def fold(text: object, keep: str = "") -> str:
     return "".join(out)
 
 
-_SEARCH_LETTERS = str.maketrans({"أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ة": "ه"})
+# The Persian yeh and keheh (ی ک) are how OCR often writes Arabic ي and ك ("مدیر" for "مدير").
+_SEARCH_LETTERS = str.maketrans({"أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا", "ى": "ي", "ة": "ه", "ی": "ي", "ک": "ك"})
 
 
 def search_form(text: str) -> str:
@@ -41,7 +42,8 @@ def search_form(text: str) -> str:
 
     Arabic is written with optional marks and interchangeable letter forms: "المُستحق" and "المستحق", "إلى" and
     "الى", "القاهرة" and "القاهره". Harakat and tatweel are removed, alef forms (أ إ آ ٱ) become ا, alef maqsura
-    becomes ي, ta marbuta becomes ه, and every Unicode digit becomes ASCII. Everything else, including spacing,
+    becomes ي, ta marbuta becomes ه, the Persian yeh and keheh become ي and ك, and every Unicode digit becomes
+    ASCII. Everything else, including spacing,
     punctuation and Latin text, is left for the tokenizer. Excerpts shown to users come from the original text.
     """
     out = []

@@ -131,6 +131,16 @@ DOC_TYPES: dict[str, dict[str, float]] = {
         "شهاده": 2,
         "يشهد": 2.5,
         "رقم الشهاده": 2,
+        # registration certificates and tax cards: a register's extract may cite the company's articles ("عقد
+        # التاسيس"), which alone made it a "contract"
+        "السجل التجاري": 2.5,
+        "مستخرج": 1.5,
+        "البطاقه الضريبيه": 2.5,
+        "رقم التسجيل الضريبي": 1.5,
+        "commercial regist": 2.5,
+        "certificate of registration": 2.5,
+        "tax card": 2.5,
+        "tax registration number": 1.5,
     },
     "resume": {"experience": 1.5, "education": 1.5, "skills": 1.5, "curriculum vitae": 3, "resume": 2},
 }

@@ -228,6 +228,33 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         pages = current().library.pages(doc_id)
         return {"document": info.model_dump(mode="json"), "pages": [p.model_dump(mode="json") for p in pages]}
 
+    @app.get("/api/documents/{doc_id}/structure")
+    def document_structure(doc_id: str, format: str = "json") -> Response:  # noqa: A002 - the query parameter name
+        """The document's Docling structure: format=json (DoclingDocument), md, html or meta (what ran)."""
+        _doc(doc_id)
+        stored = current().library.structure(doc_id)
+        if stored is None:
+            raise HTTPException(404, "No structure stored for this document")
+        meta, docling_doc = stored
+        if format == "meta":
+            return JSONResponse(meta)
+        if docling_doc is None:
+            raise HTTPException(409, "The structure's text is not stored, or docling-core is not installed")
+        if format == "json":
+            return JSONResponse(docling_doc.export_to_dict())
+        if format == "md":
+            return Response(
+                docling_doc.export_to_markdown(traverse_pictures=True), media_type="text/markdown; charset=utf-8"
+            )
+        if format == "html":
+            headers = (
+                {"X-Inklight-Note": "Docling's HTML export leaves out text inside pictures; md and json keep it"}
+                if any(pic.children for pic in docling_doc.pictures)
+                else {}
+            )
+            return Response(docling_doc.export_to_html(), media_type="text/html; charset=utf-8", headers=headers)
+        raise HTTPException(400, "format must be json, md, html or meta")
+
     @app.delete("/api/documents/{doc_id}")
     def delete(doc_id: str) -> dict[str, Any]:
         info = _doc(doc_id)

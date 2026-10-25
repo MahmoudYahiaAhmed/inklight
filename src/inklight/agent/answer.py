@@ -300,7 +300,11 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         guarded = check_label_scope(ctx, question)
         return guarded or f"field shortcut ({s.confidence:.2f})"
     from .labels import label_answer
+    from .table_answer import table_answer
 
+    tabled = table_answer(ctx, question)
+    if tabled:
+        return tabled
     labelled = label_answer(ctx, question)
     if labelled:
         return labelled

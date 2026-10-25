@@ -59,6 +59,7 @@ class ToolContext:
     deadline: float = float("inf")
     _pages: dict[str, list[PageContent]] = field(default_factory=dict)
     rows: dict[str, list[Source]] = field(default_factory=dict)  # visual rows per document, built once per task
+    _structures: dict[str, Any] = field(default_factory=dict)
 
     @property
     def brain(self) -> Any:
@@ -87,3 +88,10 @@ class ToolContext:
         if doc_id not in self._pages:
             self._pages[doc_id] = self.library.pages(doc_id)
         return self._pages[doc_id]
+
+    def structure(self, doc_id: str) -> Any | None:
+        """The document's stored DoclingDocument, or None (structure off, text not stored, docling-core missing)."""
+        if doc_id not in self._structures:
+            stored = self.library.structure(doc_id)
+            self._structures[doc_id] = stored[1] if stored else None
+        return self._structures[doc_id]

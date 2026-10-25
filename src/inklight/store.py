@@ -23,7 +23,7 @@ from .errors import StoreClosed
 from .schemas import AgentResult, Block, DocStatus, DocumentContent, DocumentInfo, PageContent, Source, TextLine
 from .textnorm import index_form
 
-SCHEMA_VERSION = 3  # 2: the full-text index holds normalised text; 3: plus a light Arabic prefix stem
+SCHEMA_VERSION = 4  # 2: the full-text index holds normalised text; 3: plus a light Arabic prefix stem; 4: Persian ی ک
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
@@ -41,7 +41,11 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 CREATE TABLE IF NOT EXISTS blocks (
     doc_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE, page INTEGER NOT NULL,
-    idx INTEGER NOT NULL, label TEXT, text TEXT, bbox TEXT, conf REAL, PRIMARY KEY (doc_id, page, idx)
+    idx INTEGER NOT NULL, label TEXT, text TEXT, bbox TEXT, conf REAL, ref TEXT, PRIMARY KEY (doc_id, page, idx)
+);
+CREATE TABLE IF NOT EXISTS structures (
+    doc_id TEXT PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE, engine TEXT NOT NULL, meta TEXT,
+    document TEXT
 );
 CREATE TABLE IF NOT EXISTS chunks (
     id INTEGER PRIMARY KEY, doc_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
@@ -102,6 +106,7 @@ class Store:
         self._db.execute("PRAGMA journal_mode = WAL")
         self._db.executescript(_SCHEMA)
         self._migrate_search_index()
+        self._add_block_refs()
         self._db.executescript(_FTS_TRIGGERS)
         self._db.execute("INSERT OR IGNORE INTO meta VALUES ('schema_version', ?)", (str(SCHEMA_VERSION),))
 
@@ -139,6 +144,16 @@ class Store:
         except BaseException:
             db.execute("ROLLBACK")
             raise
+
+    def _add_block_refs(self) -> None:
+        """Libraries from before structure support have no blocks.ref column: add it (NULL for old blocks)."""
+        with self._lock:
+            if "ref" not in {row[1] for row in self._db.execute("PRAGMA table_info(blocks)")}:
+                try:
+                    self._db.execute("ALTER TABLE blocks ADD COLUMN ref TEXT")
+                except sqlite3.OperationalError as exc:  # another process added it first
+                    if "duplicate column" not in str(exc).lower():
+                        raise
 
     def _search_index_current(self) -> bool:
         row = self._db.execute("SELECT sql FROM sqlite_master WHERE name = 'chunks_fts'").fetchone()
@@ -244,11 +259,23 @@ class Store:
     # -- content -----------------------------------------------------------
 
     def save_content(
-        self, doc_id: str, content: DocumentContent, chunks: list[Chunk], flagged: set[int], store_text: bool = True
+        self,
+        doc_id: str,
+        content: DocumentContent,
+        chunks: list[Chunk],
+        flagged: set[int],
+        store_text: bool = True,
+        structure: tuple[str, str, str] | None = None,
     ) -> None:
+        """Replace a document's pages, blocks and chunks; ``structure`` is (engine, meta JSON, document JSON)."""
         with self.tx() as db:
-            for table in ("pages", "blocks", "chunks"):
+            for table in ("pages", "blocks", "chunks", "structures"):
                 db.execute(f"DELETE FROM {table} WHERE doc_id = ?", (doc_id,))
+            if structure is not None:
+                engine, meta, document = structure
+                db.execute(
+                    "INSERT INTO structures VALUES (?,?,?,?)", (doc_id, engine, meta, document if store_text else None)
+                )
             for p in content.pages:
                 lines = [ln.model_dump() for ln in p.lines] if store_text else []
                 db.execute(
@@ -268,9 +295,9 @@ class Store:
                     ),
                 )
                 db.executemany(
-                    "INSERT INTO blocks VALUES (?,?,?,?,?,?,?)",
+                    "INSERT INTO blocks (doc_id, page, idx, label, text, bbox, conf, ref) VALUES (?,?,?,?,?,?,?,?)",
                     [
-                        (doc_id, p.number, b.index, b.label, b.text if store_text else "", _j(b.bbox), b.conf)
+                        (doc_id, p.number, b.index, b.label, b.text if store_text else "", _j(b.bbox), b.conf, b.ref)
                         for b in p.blocks
                     ],
                 )
@@ -296,15 +323,20 @@ class Store:
     def copy_content(self, source_id: str, target_id: str) -> None:
         """Reuse already-extracted content for an identical file (same SHA-256)."""
         with self.tx() as db:
-            for table in ("pages", "blocks", "chunks"):
+            for table in ("pages", "blocks", "chunks", "structures"):
                 db.execute(f"DELETE FROM {table} WHERE doc_id = ?", (target_id,))
+            db.execute(
+                "INSERT INTO structures SELECT ?, engine, meta, document FROM structures WHERE doc_id = ?",
+                (target_id, source_id),
+            )
             db.execute(
                 "INSERT INTO pages SELECT ?, number, width, height, source, markdown, lines, mean_conf, "
                 "rotation, note, ocr_ms FROM pages WHERE doc_id = ?",
                 (target_id, source_id),
             )
             db.execute(
-                "INSERT INTO blocks SELECT ?, page, idx, label, text, bbox, conf FROM blocks WHERE doc_id = ?",
+                "INSERT INTO blocks (doc_id, page, idx, label, text, bbox, conf, ref) "
+                "SELECT ?, page, idx, label, text, bbox, conf, ref FROM blocks WHERE doc_id = ?",
                 (target_id, source_id),
             )
             db.execute(
@@ -339,9 +371,26 @@ class Store:
     def get_blocks(self, doc_id: str) -> list[tuple[int, Block]]:
         rows = self._all("SELECT * FROM blocks WHERE doc_id = ? ORDER BY page, idx", (doc_id,))
         return [
-            (r["page"], Block(index=r["idx"], label=r["label"], text=r["text"], bbox=_bbox(r["bbox"]), conf=r["conf"]))
+            (
+                r["page"],
+                Block(
+                    index=r["idx"],
+                    label=r["label"],
+                    text=r["text"],
+                    bbox=_bbox(r["bbox"]),
+                    conf=r["conf"],
+                    ref=r["ref"],
+                ),
+            )
             for r in rows
         ]
+
+    def get_structure(self, doc_id: str) -> tuple[str, dict, str | None] | None:
+        """(engine, meta, document JSON) of a document's stored structure, or None when it has none."""
+        rows = self._all("SELECT engine, meta, document FROM structures WHERE doc_id = ?", (doc_id,))
+        if not rows:
+            return None
+        return rows[0]["engine"], json.loads(rows[0]["meta"] or "{}"), rows[0]["document"]
 
     def document_text(self, doc_id: str) -> str:
         rows = self._all("SELECT text FROM chunks WHERE doc_id = ? ORDER BY page, block_start", (doc_id,))
@@ -417,7 +466,7 @@ class Store:
 
     def clear_content(self, doc_id: str) -> None:
         with self.tx() as db:
-            for table in ("pages", "blocks", "chunks"):
+            for table in ("pages", "blocks", "chunks", "structures"):
                 db.execute(f"DELETE FROM {table} WHERE doc_id = ?", (doc_id,))
 
     def chunk_sources(self, chunk_ids: list[int]) -> dict[int, Source]:

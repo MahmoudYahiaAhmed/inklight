@@ -434,6 +434,49 @@ def tools() -> None:
 
 
 @app.command()
+def structure(
+    doc: str,
+    fmt: Annotated[str, typer.Option("--format", help="md | json | html | meta")] = "md",
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write to this file.")] = None,
+    config: ConfigOpt = None,
+) -> None:
+    """Export a document's structure from Docling: Markdown, the DoclingDocument JSON, HTML, or what ran (meta).
+
+    Needs the document to have been processed with [structure] engine = "docling"."""
+    agent = _agent(config)
+    info = agent.library.find(doc)
+    if info is None:
+        _fail(InklightError(f"No document matches {doc!r}"))
+    stored = agent.library.structure(info.id)
+    if stored is None:
+        _fail(InklightError(f'{info.name} has no stored structure: process it with [structure] engine = "docling"'))
+    meta, document = stored
+    if fmt == "meta":
+        text = json.dumps(meta, ensure_ascii=False, indent=2)
+    elif document is None:
+        _fail(
+            InklightError("The structure's text is not stored (privacy.store_text = false) or docling-core is missing")
+        )
+    elif fmt == "json":
+        text = json.dumps(document.export_to_dict(), ensure_ascii=False, indent=2)
+    elif fmt == "html":
+        text = document.export_to_html()
+        if any(pic.children for pic in document.pictures):
+            console.print(
+                Text("Note: Docling's HTML export leaves out text inside pictures; md and json keep it.", "warn")
+            )
+    elif fmt == "md":
+        text = document.export_to_markdown(traverse_pictures=True)  # text inside pictures included
+    else:
+        _fail(InklightError(f"Unknown format {fmt!r}: use md, json, html or meta"))
+    if out:
+        out.write_text(text, encoding="utf-8")
+        console.print(Text(f"Wrote {out}", "ok"))
+    else:
+        sys.stdout.write(text + "\n")
+
+
+@app.command()
 def doctor(config: ConfigOpt = None) -> None:
     """Check the installation, models and configuration."""
     import platform
@@ -454,6 +497,22 @@ def doctor(config: ConfigOpt = None) -> None:
         rows.append(("indra-ocr", version("indra-ocr"), True))
     except Exception as exc:  # report, don't crash
         rows.append(("indra-ocr", f"missing ({exc})", False))
+    from .structure.docling_run import available as docling_available
+    from .structure.docling_run import components
+
+    wanted = settings.structure.engine == "docling"
+    if docling_available():
+        rows.append(
+            ("structure", f"docling {components(settings.structure)['docling']} ({settings.structure.engine})", True)
+        )
+    else:
+        rows.append(
+            (
+                "structure",
+                "docling not installed" + (" — but [structure] engine = docling" if wanted else ""),
+                not wanted,
+            )
+        )
     from .brains import Brain
 
     for role, info in Brain(settings).status().items():

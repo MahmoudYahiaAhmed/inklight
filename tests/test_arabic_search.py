@@ -5,7 +5,7 @@ import sqlite3
 import pytest
 
 from inklight import DocumentAgent
-from inklight.store import Store, fts_query
+from inklight.store import SCHEMA_VERSION, Store, fts_query
 from inklight.textnorm import search_form
 
 from .conftest import make_settings
@@ -107,7 +107,7 @@ def test_a_version_1_library_is_reindexed(tmp_path):
         assert store.keyword_search("المستحق", None, 5)
         assert store.keyword_search("القاهره", None, 5)
         version = store._conn().execute("SELECT value FROM meta WHERE key = 'schema_version'").fetchone()[0]
-    assert version == "3"
+    assert version == str(SCHEMA_VERSION)
     with Store(db_path) as store:  # opening again does not migrate twice
         assert len(store.keyword_search("المستحق", None, 5)) == 1
 
@@ -135,3 +135,27 @@ def test_a_version_2_library_is_reindexed_with_the_prefix_stem(tmp_path):
     with Store(db_path) as store:
         assert store.keyword_search("نزاع", None, 5)
         assert store.keyword_search("النزاع", None, 5)
+
+
+def test_a_version_3_library_is_reindexed_with_persian_letter_forms_folded(tmp_path):
+    """OCR often writes the Persian yeh and keheh (ی ک) for Arabic ي and ك: "مدیر" must be found by "المدير"."""
+    db_path = tmp_path / "library.db"
+    with Store(db_path) as store:
+        db = store._conn()
+        db.execute(
+            "INSERT INTO documents (id, path, name, sha256, status) VALUES ('d1', '/x/a.txt', 'a.txt', '0', 'ready')"
+        )
+        db.execute(
+            "INSERT INTO chunks (doc_id, page, block_start, block_end, text, search_text) "
+            "VALUES ('d1', 1, 0, 0, 'الصفة مدیر', 'صفه مدیر')"
+        )
+        db.execute("UPDATE meta SET value = '3' WHERE key = 'schema_version'")
+        assert not store.keyword_search("المدير", None, 5)
+    with Store(db_path) as store:
+        hits = store.keyword_search("المدير", None, 5)
+        assert hits
+        assert store._conn().execute("SELECT text FROM chunks").fetchone()[0] == "الصفة مدیر"  # shown text unchanged
+
+
+def test_persian_letter_forms_fold_only_in_the_search_form():
+    assert search_form("مدیر کتاب") == search_form("مدير كتاب")

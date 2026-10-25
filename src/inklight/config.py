@@ -80,6 +80,25 @@ class ExtractionSettings(BaseModel):
     )
 
 
+class StructureSettings(BaseModel):
+    """Document structure from Docling (layout, reading order, tables), built on Indra's OCR text.
+
+    Off by default: Docling and its models (PyTorch, ~0.5 GB of weights) are an optional install,
+    ``pip install "inklight[structure]"``. See docs/STRUCTURE.md.
+    """
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    engine: Literal["none", "docling"] = Field(
+        "none", description="'docling': Docling's layout, reading order and table structure on Indra's text."
+    )
+    table_mode: Literal["accurate", "fast"] = Field("accurate", description="TableFormer mode.")
+    artifacts_path: str | None = Field(
+        None, description="A local copy of Docling's model weights (no download); default: Docling's own cache."
+    )
+    threads: int = Field(4, ge=1, le=64, description="CPU threads for the layout and table models.")
+
+
 class Privacy(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -97,6 +116,7 @@ class Settings(BaseModel):
     ocr: OCRSettings = OCRSettings()
     models: ModelSettings = ModelSettings()
     extraction: ExtractionSettings = ExtractionSettings()
+    structure: StructureSettings = StructureSettings()
     privacy: Privacy = Privacy()
 
     @property

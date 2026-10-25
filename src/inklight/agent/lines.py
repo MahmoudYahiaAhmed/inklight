@@ -35,6 +35,7 @@ class Label:
     inline: str  # what follows the label on its own line
     colon: bool
     score: float = 0.0
+    overlap: int = 0  # the question's words the label carries, generic ones included: breaks ties of score
     tied: bool = False  # another label line matched the question as well
     unscoped: str = ""  # why the label's section does not show it belongs to whom the question names
 
@@ -205,12 +206,13 @@ def value(label: Label, lines: list[TextLine]) -> tuple[str | None, list[TextLin
                 cells.append(o)
     if cells:
         return " ".join(o.text.strip() for o in cells[:3]), cells[:3], True
-    under = below(lines, label.index)
-    if under is not None:
+    for under in below_all(lines, label.index):  # the first line under it that reads as its value
         text = under.text.strip()
         short = label.colon or len(text) <= 40  # without a colon, only a short value line belongs to the label
         if short and not is_label(text) and value_like(text, label.colon):
             return text, [under], True
+        if is_label(text):
+            break  # a "Label:" under it starts another field
     return None, [], any(not is_label(o.text) for o in side)  # a "Label:" below or beside is another field
 
 
@@ -223,7 +225,14 @@ def value_mode(lab: Label, lines: list[TextLine], cells: list[TextLine]) -> str:
 
 
 def below(lines: list[TextLine], i: int) -> TextLine | None:
-    """The nearest line under line ``i`` in its column, within about one and a half line heights."""
+    """The line under line ``i`` in its column (see below_all), or None."""
+    found = below_all(lines, i)
+    return found[0] if found else None
+
+
+def below_all(lines: list[TextLine], i: int) -> list[TextLine]:
+    """The lines under line ``i`` in its column, within about one and a half line heights: the most squarely under
+    it first, then the nearest. In a table row the neighbouring column's value is as near, but not under it."""
     me = lines[i].bbox
     assert me is not None
     h = max(me[3] - me[1], 1.0)
@@ -232,7 +241,13 @@ def below(lines: list[TextLine], i: int) -> TextLine | None:
         for j, o in enumerate(lines)
         if j != i and o.bbox is not None and layout.same_column(me, o.bbox) and 0 <= o.bbox[1] - me[3] <= 1.5 * h
     ]
-    return min(under, key=lambda o: o.bbox[1], default=None)  # type: ignore[index]
+    return sorted(under, key=lambda o: (-_overlap_share(me, o.bbox), o.bbox[1]))  # type: ignore[arg-type,index]
+
+
+def _overlap_share(a: BBox, b: BBox) -> float:
+    """How much of the narrower of two boxes their horizontal overlap covers, rounded so near-equal ties fall to y."""
+    overlap = min(a[2], b[2]) - max(a[0], b[0])
+    return round(max(overlap, 0.0) / max(min(a[2] - a[0], b[2] - b[0]), 1.0), 1)
 
 
 def offset(a: BBox, b: BBox) -> float:

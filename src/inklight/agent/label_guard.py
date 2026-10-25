@@ -2,7 +2,8 @@
 
 Whatever path found an answer, it must not get around what a printed label says about it:
 
-- a bare label ("Invoice Date:") is not an answer;
+- a bare label ("Invoice Date:"), a passage that only repeats the question's words ("اسم الشركة" for "ما اسم
+  الشركة؟"), or a table's column heading is not an answer;
 - a value printed beside or under a label naming a different field ("Billing Address:" for the shipping address,
   "Invoice Date:" for the delivery date) is declined;
 - a value under a label that is repeated with different values, or outside the section of the person the question
@@ -43,6 +44,17 @@ def check_label_scope(ctx: ToolContext, question: str) -> str | None:
     if _bare_label(head):
         say_no_evidence(ctx, _phrase(question, fields), f"the passage found is only the label “{head}”")
         return "a bare label is not an answer"
+    if _restates(head, question):
+        say_no_evidence(
+            ctx, _phrase(question, fields), f"the passage found only repeats the question's words (“{head}”)"
+        )
+        return "a passage repeating the question is not an answer"
+    heading = _table_heading(ctx, src.doc_id, head)
+    if heading:
+        say_no_evidence(
+            ctx, _phrase(question, fields), f"the passage found is the table heading “{heading}”, not a value"
+        )
+        return "a table heading is not an answer"
     found = _governing(ctx, src, head)
     if found is None:
         return None
@@ -114,6 +126,39 @@ def _scope_doubt(page: ln.PageIndex, j: int, k: int, terms: sc.Terms) -> str:
         label = page.split(j)[0]
         return f"“{label}” is printed more than once with different values and the question does not say which"
     return ""
+
+
+def _restates(head: str, question: str) -> bool:
+    """The answer is the question's own words and nothing else ("Company name" for "What is the company name?")."""
+    text = head.strip().strip('“”"')
+    found = [w for w in words(text) if ln.WORD.fullmatch(w)]
+    if not found or len(found) > _MAX_BARE_WORDS or any(ch.isdigit() for ch in text):
+        return False
+    asked = {_key(w) for w in words(question)}
+    return {_key(w) for w in found} <= asked
+
+
+def _table_heading(ctx: ToolContext, doc_id: str, head: str) -> str | None:
+    """The table heading the answer is, when the document's structure has one with exactly that text."""
+    document = ctx.structure(doc_id)
+    if document is None or not head.strip():
+        return None
+    from ..structure.adapter import table_grid
+
+    first = _squash(head.splitlines()[0])
+    for table in document.tables:
+        grid = table_grid(table, document)
+        if grid.field_value():
+            continue  # its first row is a field and its value, not a heading
+        for r in grid.header_rows:
+            for text in grid.rows[r]:
+                if text.strip() and _squash(text) == first:
+                    return text
+    return None
+
+
+def _squash(text: str) -> str:
+    return "".join(text.split()).strip('“”"')
 
 
 def _bare_label(head: str) -> bool:

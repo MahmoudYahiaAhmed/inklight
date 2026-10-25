@@ -50,6 +50,7 @@ _HEADER_LABELS = set(
     words("distr original to from date subject cc attention ref reference page tel fax email www http")
 )
 _FORM_LIKE = 3
+_LOW_VALUE_CONF = 0.85  # a value line OCR read less surely than this is flagged (as in extract/fields.py)
 _DATE_KEYS = {_key(w) for w in words("date تاريخ")}
 _QUESTION_ONLY = {
     _key(w) for w in ("what", "which", "who", "whose", "how", "much", "many", "is", "the", "ما", "من", "كم")
@@ -117,7 +118,7 @@ def _answer(ctx, doc, doc_id: str, best: ln.Label, value: str, cells: list[TextL
             name=doc.name,
             page=best.page.number,
             bbox=ln.union([label_line.bbox, *[c.bbox for c in cells]]) if page.boxes else None,  # type: ignore[list-item]
-            excerpt=" ".join([label_line.text.strip(), *[c.text.strip() for c in cells]]),
+            excerpt="\n".join([label_line.text.strip(), *[c.text.strip() for c in cells]]),
             ocr_conf=min([x.conf for x in [label_line, *cells] if x.conf is not None], default=None),
         )
     ]
@@ -131,6 +132,8 @@ def _answer(ctx, doc, doc_id: str, best: ln.Label, value: str, cells: list[TextL
         if best.unscoped
         else "the value was read from the line under an unpunctuated label; check it"
         if below_only and not layout.rtl(label_line.text)
+        else f"the OCR read this value with low confidence ({low:.2f}); check it against the page"
+        if (low := min([c.conf for c in cells if c.conf is not None], default=1.0)) < _LOW_VALUE_CONF
         else ""
     )
     if doubt:
@@ -178,8 +181,9 @@ def _labels(ctx: ToolContext, doc_id: str, terms: sc.Terms) -> list[ln.Label]:
             if not shared or len(shared) < 0.5 * len(wanted) or conflicts(wanted, keys, own, terms.about):
                 continue
             score = len(shared) / len(wanted) - 0.15 * len(own - wanted)
-            found.append(ln.Label(page, i, label, inline if ln.value_like(inline, colon) else "", colon, score))
-    found.sort(key=lambda lab: -lab.score)
+            value = inline if ln.value_like(inline, colon) else ""
+            found.append(ln.Label(page, i, label, value, colon, score, overlap=len(terms.asked & keys)))
+    found.sort(key=lambda lab: (-lab.score, -lab.overlap))
     return found
 
 

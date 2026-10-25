@@ -29,21 +29,30 @@ def table_text(records: list[Record], limit: int = 25, columns: tuple[str, ...] 
 
 
 def verify_sources(ctx: ToolContext, sources: list[Source]) -> list[Source]:
-    """Keep only sources whose excerpt really occurs in the stored document text."""
+    """Keep only sources whose excerpt really occurs in the stored document text. An excerpt of several lines (a
+    label and its value, a table heading and its cell) is checked line by line: each line must occur on the cited
+    page, though not necessarily next to the others."""
     good = []
-    cache: dict[str, str] = {}
+    cache: dict[tuple[str, int | None], str] = {}
     for src in sources:
-        if src.doc_id not in cache:
-            cache[src.doc_id] = norm(
-                ctx.library.text(src.doc_id)
-                + "\n"
-                + "\n".join(ln.text for p in ctx.pages(src.doc_id) for ln in p.lines)
-            )
-        if norm(src.excerpt)[:200] in cache[src.doc_id]:
+        pieces = [norm(p)[:200] for p in src.excerpt.split("\n") if p.strip()] or [norm(src.excerpt)[:200]]
+        scope = src.page if len(pieces) > 1 else None  # separate lines must share the cited page
+        if (src.doc_id, scope) not in cache:
+            cache[(src.doc_id, scope)] = _text_of(ctx, src.doc_id, scope)
+        if all(p in cache[(src.doc_id, scope)] for p in pieces):
             good.append(src)
         else:
             ctx.scratch.warn(f"Dropped a citation to {src.cite()} that could not be verified")
     return good
+
+
+def _text_of(ctx: ToolContext, doc_id: str, page: int | None) -> str:
+    """The stored text of a document, or of one of its pages (its OCR lines and blocks)."""
+    pages = [p for p in ctx.pages(doc_id) if page is None or p.number == page]
+    parts = [ln.text for p in pages for ln in p.lines] + [b.text for p in pages for b in p.blocks]
+    if page is None:
+        parts.insert(0, ctx.library.text(doc_id))
+    return norm("\n".join(parts))
 
 
 def _record_sources(records: list[Record]) -> list[Source]:
@@ -125,12 +134,26 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
             text = s.answer
             if plan.where is not None and not docs:
                 text = f"No documents match {where}, so there was nothing to {plan.intent.value}."
+    cited = bool(s.sources)
     s.sources = verify_sources(ctx, s.sources)
+    if cited and not s.sources and plan.intent == Intent.ASK:
+        text = _unverified(ctx, text)
     _flag_injections(ctx)
     text = _with_interpretation(plan, text)
     if s.files:
         text += "\n\nSaved: " + ", ".join(s.files)
     return text.strip()
+
+
+def _unverified(ctx: ToolContext, text: str) -> str:
+    """An answer whose every citation failed verification is not presented as supported."""
+    if text.startswith(("I couldn't find", "I could not find", "No passage", "The documents do not")):
+        return text
+    s = ctx.scratch
+    s.confidence = min(s.confidence, 0.2)
+    s.warn("Low confidence: none of this answer's citations could be verified in the document text; it is unsupported.")
+    s.notes.append("evidence: no citation verified, answer marked unsupported")
+    return f"Unverified (no citation could be confirmed in the document text):\n{text}"
 
 
 def _left_out(calc: dict) -> str:

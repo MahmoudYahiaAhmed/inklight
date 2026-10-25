@@ -35,6 +35,7 @@ class Terms:
     names: frozenset[str]  # whose or which ("alice"): matched against the section above a label
     about: frozenset[str]  # field words the document's title or file name prints: a label need not carry them
     unprinted: frozenset[str]  # names the document prints nowhere
+    asked: frozenset[str] = frozenset()  # every word of the question, generic ones too ("type", "name")
 
 
 def question_terms(ctx: ToolContext, doc_id: str, wanted: set[str], question: str, doc_words: set[str]) -> Terms:
@@ -58,7 +59,8 @@ def question_terms(ctx: ToolContext, doc_id: str, wanted: set[str], question: st
     if not fields:  # a question that is all names: read them as field words
         fields, names = set(wanted), set()
     unprinted = ((owners | capitals) & wanted) - printed
-    return Terms(frozenset(fields), frozenset(names), frozenset(fields & subject), frozenset(unprinted))
+    asked = frozenset(_key(w) for w in words(question))
+    return Terms(frozenset(fields), frozenset(names), frozenset(fields & subject), frozenset(unprinted), asked)
 
 
 def _subject(ctx: ToolContext, doc_id: str, pages: list[ln.PageIndex], doc_words: set[str]) -> set[str]:
@@ -84,7 +86,7 @@ def section(lab: ln.Label) -> str:
 def pick(found: list[ln.Label], terms: Terms) -> ln.Label | None:
     """The label to answer from among the best-scoring ones, or None when copies with different values cannot be
     told apart (the caller reports them with ``say_ambiguous``)."""
-    top = [lab for lab in found if lab.score == found[0].score]
+    top = [lab for lab in found if (lab.score, lab.overlap) == (found[0].score, found[0].overlap)]
     same = [lab for lab in top if ln.keys(lab.text) == ln.keys(top[0].text)]
     tied = len({frozenset(ln.keys(lab.text)) for lab in top}) > 1
     names = set(terms.names)
@@ -148,7 +150,12 @@ def page_copies(page: PageContent, label_index: int) -> list[ln.Label]:
 def say_ambiguous(ctx: ToolContext, doc, doc_id: str, found: list[ln.Label], terms: Terms) -> None:  # type: ignore[no-untyped-def]
     """Report each copy of a repeated label with its value and the section it is under; pick none."""
     s = ctx.scratch
-    top = [lab for lab in found if lab.score == found[0].score and ln.keys(lab.text) == ln.keys(found[0].text)]
+    top = [
+        lab
+        for lab in found
+        if (lab.score, lab.overlap) == (found[0].score, found[0].overlap)
+        and ln.keys(lab.text) == ln.keys(found[0].text)
+    ]
     shown, sources = [], []
     for lab in top[:_SHOWN]:
         page = ln.index(lab.page)
@@ -163,7 +170,7 @@ def say_ambiguous(ctx: ToolContext, doc, doc_id: str, found: list[ln.Label], ter
                 name=doc.name,
                 page=lab.page.number,
                 bbox=ln.union([me.bbox, *[c.bbox for c in cells]]) if page.boxes else None,  # type: ignore[list-item]
-                excerpt=" ".join([me.text.strip(), *[c.text.strip() for c in cells]]),
+                excerpt="\n".join([me.text.strip(), *[c.text.strip() for c in cells]]),
                 ocr_conf=me.conf,
             )
         )

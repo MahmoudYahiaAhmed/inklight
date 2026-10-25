@@ -65,6 +65,16 @@ from inklight.extract.classify import classify
             "This Agreement is entered into by and between the parties. Governing law. The term shall terminate.",
             "contract",
         ),
+        # a register's certificate citing the company's articles ("عقد التأسيس") is not a contract
+        (
+            "شهادة قيد في السجل التجاري. تشهد إدارة السجل التجاري بأن الشركة مقيدة بموجب عقد التأسيس. "
+            "البطاقة الضريبية: رقم التسجيل الضريبي",
+            "certificate",
+        ),
+        (
+            "Certificate of Commercial Registration. Company name, company type. Tax card: tax registration number",
+            "certificate",
+        ),
     ],
 )
 def test_general_documents(text, doc_type):

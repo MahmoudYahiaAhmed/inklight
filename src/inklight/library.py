@@ -7,11 +7,13 @@ file at a new path reuses the stored extraction instead of running OCR again.
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from .brains import Brain
 from .chunking import chunk_page
@@ -21,12 +23,13 @@ from .extract import classify
 from .ocr import OCREngine, PlainTextEngine, create_engine
 from .retrieval import Retriever
 from .safety import check_file, discover, injection_signals
-from .schemas import BBox, DocStatus, DocumentInfo, PageContent, SearchHit
+from .schemas import BBox, DocStatus, DocumentContent, DocumentInfo, PageContent, SearchHit
 from .store import Store
 
 log = logging.getLogger(__name__)
 
 Progress = Callable[[str, str, dict], None]
+_STRUCTURE_CACHE = 8
 
 
 @dataclass
@@ -69,6 +72,7 @@ class Library:
         self._text_engine = PlainTextEngine()
         self.brain = brain or Brain(self.settings)
         self.retriever = Retriever(self.store, self.brain)
+        self._structures: dict[tuple[str, int], Any] = {}  # parsed DoclingDocuments, a few at a time
         self._closed = False
 
     @property
@@ -131,6 +135,8 @@ class Library:
         )
         self.store.upsert_document(base)
         twin = None if force else self.store.find_ready_by_hash(checked.sha256)
+        if twin and self.settings.structure.engine != "none" and self.store.get_structure(twin.id) is None:
+            twin = None  # read before structure was on: structure it now rather than copy it without
         if twin and twin.id != doc_id:
             self.store.copy_content(twin.id, doc_id)
             info = base.model_copy(
@@ -154,6 +160,7 @@ class Library:
             self.store.clear_content(doc_id)  # an old extraction of a changed file must not stay searchable
             self.store.upsert_document(base.model_copy(update={"status": DocStatus.FAILED, "error": str(exc)}))
             raise
+        content, structure = self._structure(checked.path, checked.kind, content, password)
         chunks = [c for page in content.pages for c in chunk_page(page)]
         flagged = {i for i, c in enumerate(chunks) if injection_signals(c.text)}
         text = "\n".join(c.text for c in chunks)
@@ -162,7 +169,9 @@ class Library:
         good_pages = [p for p in content.pages if p.source != "error"]
         status = DocStatus.READY if good_pages else DocStatus.FAILED
         error = None if good_pages else "; ".join(content.warnings) or "no readable pages"
-        self.store.save_content(doc_id, content, chunks, flagged, store_text=self.settings.privacy.store_text)
+        self.store.save_content(
+            doc_id, content, chunks, flagged, store_text=self.settings.privacy.store_text, structure=structure
+        )
         info = base.model_copy(
             update={
                 "pages": len(content.pages),
@@ -180,6 +189,42 @@ class Library:
         if not self.settings.privacy.log_document_text:
             log.info("indexed %s (%d pages, %d chunks)", info.name, info.pages, len(chunks))
         return info, True
+
+    def _structure(
+        self, path: Path, kind: str, content: DocumentContent, password: str | None = None
+    ) -> tuple[DocumentContent, tuple[str, str, str] | None]:
+        """Docling's structure on the OCR just read, when enabled. A failure keeps Indra's own layout and says so;
+        it never fails the document."""
+        settings = self.settings.structure
+        if settings.engine != "docling" or kind == "text":
+            return content, None
+        from .structure import ENGINE, structure_document
+
+        try:
+            done = structure_document(path, content, settings, password)
+        except Exception as exc:  # noqa: BLE001 - structure is an addition, never a reason to lose the document
+            log.warning("structure skipped for %s: %s", path.name, exc)
+            return content.model_copy(
+                update={"warnings": (*content.warnings, f"Document structure skipped: {type(exc).__name__}: {exc}")}
+            ), None
+        meta = json.dumps(done.meta, ensure_ascii=False)
+        return done.content, (ENGINE, meta, done.document_json)
+
+    def structure(self, doc_id: str) -> tuple[dict, Any] | None:
+        """(meta, DoclingDocument) stored for a document, or None. The document is None when text is not stored
+        (privacy.store_text = false) or docling-core is not installed."""
+        stored = self.store.get_structure(doc_id)
+        if stored is None:
+            return None
+        from .structure import load_document
+
+        _engine, meta, document = stored
+        key = (doc_id, hash(document))  # parsing a large structure costs more than hashing its JSON
+        if key not in self._structures:
+            if len(self._structures) >= _STRUCTURE_CACHE:
+                self._structures.pop(next(iter(self._structures)))
+            self._structures[key] = load_document(document)
+        return meta, self._structures[key]
 
     # -- queries -----------------------------------------------------------
 
