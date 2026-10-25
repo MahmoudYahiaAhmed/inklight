@@ -10,6 +10,8 @@
 *.html text eol=lf
 *.svg text eol=lf
 Dockerfile text eol=lf
+*.patch text eol=lf
+*.log text eol=lf
 
 # Binary fixtures and assets
 *.pdf binary

@@ -471,7 +471,7 @@ def main() -> None:
             row["qa"] = qa_cases(agent, doc, info.id, text)
             row["missing"] = missing_cases(agent, doc, info.id)
             row["summary"] = summary_case(agent, doc, info.id, text)
-            row["fields"] = field_cases(agent, doc, args.docs / doc["file"])
+            row["fields"] = field_cases(agent, doc, args.docs / doc["file"]) if doc["fields"] else []
             row["review"] = review_case(agent, doc, info.id)
             result["documents"][doc["id"]] = row
             print(f"[{args.split}/{args.brain}] {doc['id']}", flush=True)
