@@ -13,7 +13,7 @@ import re
 import sys
 from pathlib import Path
 
-QA_OUTCOMES = ["correct", "correct_flagged", "wrong_flagged", "silent_wrong", "unsupported", "failed"]
+QA_OUTCOMES = ["correct", "correct_flagged", "declined", "wrong_flagged", "silent_wrong", "unsupported", "failed"]
 FIELD_OUTCOMES = [
     "correct",
     "correct_flagged",
@@ -51,10 +51,12 @@ def fmt(c: collections.Counter, names: list[str]) -> str:
 
 
 def qa_table(runs: list[tuple[str, dict]]) -> str:
-    names = ["correct", "correct_flagged", "wrong_flagged", "silent_wrong"]
+    names = ["correct", "correct_flagged", "declined", "wrong_flagged", "silent_wrong"]
     lines = [
         "| lang | type | data | "
-        + " | ".join(f"{label}: correct / correct·flagged / wrong·flagged / silent wrong" for label, _ in runs)
+        + " | ".join(
+            f"{label}: correct / correct·flagged / declined / wrong·flagged / silent wrong" for label, _ in runs
+        )
         + " |",
         "|---|---|---|" + "---|" * len(runs),
     ]
@@ -134,6 +136,18 @@ def missing(run: dict) -> dict[str, str]:
     return out
 
 
+def by_category(run: dict) -> dict[str, str]:
+    """Answerable questions by what they test (sender, recipient, doc_date, event_date, tax, total, …)."""
+    out: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
+    for d in run["documents"].values():
+        for q in d.get("qa", []):
+            if q.get("category"):
+                out[f"{d['lang']} {q['category']}"][q["outcome"]] += 1
+                out[f"{d['lang']} {q['category']}"]["n"] += 1
+    names = ["correct", "correct_flagged", "declined", "wrong_flagged", "silent_wrong"]
+    return {k: fmt(v, names) for k, v in sorted(out.items())}
+
+
 def latency(run: dict) -> str:
     qa = [q["seconds"] for d in run["documents"].values() for q in d.get("qa", [])]
     qa.sort()
@@ -168,6 +182,8 @@ def rescore(run: dict, corpus: dict) -> None:
             q["outcome"] = (
                 ("correct_flagged" if flagged else "correct")
                 if good
+                else "declined"
+                if declined(q)  # an answerable question answered "no supporting evidence": an incorrect decline
                 else ("wrong_flagged" if flagged else "silent_wrong")
             )
             if good:
@@ -197,6 +213,11 @@ def main() -> None:
             print(f"- summaries, {lang}: {s}")
         for lang, s in missing(r).items():
             print(f"- missing information, {lang}: {s}")
+        cats = by_category(r)
+        if cats:
+            print("- by category (correct / correct·flagged / declined / wrong·flagged / silent wrong):")
+            for k, v in cats.items():
+                print(f"  - {k}: {v}")
         ft = tally(r, "fields", FIELD_OUTCOMES)
         print(
             "- fields (correct / correct·flagged / ambiguity not flagged / missing / wrong·flagged / silent wrong): "

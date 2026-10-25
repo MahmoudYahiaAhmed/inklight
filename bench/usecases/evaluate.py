@@ -36,6 +36,7 @@ NOT_FOUND = re.compile(
     r"|لم (?:أجد|يتم|يرد|يذكر)|غير (?:موجود|متوفر|مذكور)",
     re.IGNORECASE,
 )
+DECLINED = re.compile(r"\s*(?:I couldn't find supporting evidence|Not found:|I could not find)", re.IGNORECASE)
 SUMMARY_REQUEST = {"ar": "لخص هذه الوثيقة", "en": "Summarize this document", "mixed": "Summarize this document"}
 
 
@@ -169,9 +170,12 @@ def qa_cases(agent, doc: dict, doc_id: str, text: str) -> list[dict]:  # type: i
         passages = [s.excerpt for s in res.sources]
         retrieved = [h.source.excerpt for h in agent.library.search(item["q"], [doc_id], k=8)]
         o = outcome(correct, flagged_result(res), state)
+        if not correct and DECLINED.match(res.answer):
+            o = "declined"  # an answerable question answered "no supporting evidence": an incorrect decline
         rows.append(
             {
                 "q": item["q"],
+                "category": item.get("category"),
                 "answer": head.strip(),
                 "answer_full": res.answer,
                 "evidence": evidence(res),
@@ -396,7 +400,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=Path(__file__).with_name("corpus.json"))
-    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2"], required=True)
+    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2", "fresh3"], required=True)
     ap.add_argument("--docs", type=Path, required=True)
     ap.add_argument("--models", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
@@ -411,7 +415,7 @@ def main() -> None:
     docs = [d for d in corpus["documents"] if d["split"] == args.split]  # select the split before any reading
     tasks = [t for t in corpus["library_tasks"] if t["split"] == args.split]
     args.out.mkdir(parents=True, exist_ok=True)
-    if args.split in ("reserved", "fresh", "fresh2"):
+    if args.split in ("reserved", "fresh", "fresh2", "fresh3"):
         with open(args.out.parent / "reserved-access.log", "a", encoding="utf-8") as log:
             log.write(
                 json.dumps({"at": datetime.now(UTC).isoformat(), "build": build_info(), "argv": sys.argv[1:]}) + "\n"

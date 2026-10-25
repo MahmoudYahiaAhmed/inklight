@@ -1,5 +1,5 @@
 {
- "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files.",
+ "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files. A fifth split, 'fresh3' (11 genuine documents), was added on 2026-10-25 to evaluate whether answers are connected to what was asked (sender vs recipient, document date vs event date, subtotal vs total, tax mentioned vs tax amount). Answerable questions carry a 'category'. Expectations were written before any build was run on these files.",
  "gaps": [
   "Genuine Arabic forms, certificates, invoices and contracts with an open licence: none found. Synthetic stand-ins are used and labelled.",
   "Handwriting: not covered.",
@@ -5390,6 +5390,743 @@
      "kind": "present_subject"
     }
    ]
+  },
+  {
+   "id": "n3-l250-en",
+   "group": "un-S/2025/250",
+   "split": "fresh3",
+   "file": "n3-l250-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/250 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Permanent Mission of Ukraine",
+      "Ukraine"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom is the letter addressed?",
+     "accept": [
+      "Secretary-General"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "23 April 2025",
+      "2025-04-23"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "When was the drone strike on the bus in Marhanets launched?",
+     "accept": [
+      "23 April 2025",
+      "2025-04-23"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "How many people were injured in the attack on the bus?",
+     "accept": [
+      "54"
+     ],
+     "page": 1,
+     "category": "number"
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Khrystyna Hayovyshyn",
+      "Hayovyshyn"
+     ],
+     "page": 2,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "Ukraine",
+    "Marhanets",
+    "drone"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date were the attacks on Kupiansk carried out?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the VAT number?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-l250-ar",
+   "group": "un-S/2025/250",
+   "split": "fresh3",
+   "file": "n3-l250-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/250 (Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من أرسل الرسالة؟",
+     "accept": [
+      "أوكرانيا"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "إلى من وجهت الرسالة؟",
+     "accept": [
+      "الأمين العام"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "2025-04-23",
+      "23 نيسان"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "كم عدد الجرحى في الهجوم على الحافلة؟",
+     "accept": [
+      "54"
+     ],
+     "page": 1,
+     "category": "number"
+    }
+   ],
+   "summary_keys": [
+    "أوكرانيا",
+    "مارهانتس",
+    "مسيرة"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "متى نفذت الهجمات على كوبيانسك؟",
+     "kind": "present_subject"
+    },
+    {
+     "q": "ما رقم الفاتورة؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-l230-mx",
+   "group": "un-S/2025/230",
+   "split": "fresh3",
+   "file": "n3-l230-mx.pdf",
+   "lang": "mixed",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/230 (English letter with an Arabic annex; the Arabic text layer is broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letters?",
+     "accept": [
+      "Permanent Mission of Lebanon",
+      "Lebanon"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom are the letters addressed?",
+     "accept": [
+      "Secretary-General"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "Who signed the letters?",
+     "accept": [
+      "Hadi Hachem"
+     ],
+     "page": 1,
+     "category": "signer"
+    },
+    {
+     "q": "What is the date of the letters?",
+     "accept": [
+      "10 April 2025",
+      "2025-04-10"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "متى بدأت الأعمال العسكرية على الحدود الجنوبية؟",
+     "accept": [
+      "2023-10-08",
+      "8 تشرين",
+      "أكتوبر 2023"
+     ],
+     "page": 2,
+     "category": "event_date"
+    },
+    {
+     "q": "كم عدد الشهداء الذين سقطوا حتى تاريخ إعداد التقرير؟",
+     "accept": [
+      "3 200",
+      "3200",
+      "3,200"
+     ],
+     "page": 2,
+     "category": "number"
+    }
+   ],
+   "summary_keys": [
+    "Lebanon",
+    "لبنان",
+    "الانتهاكات"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was the report of the National Committee completed?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the monthly rent?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-s16500-en",
+   "group": "un-S/16500",
+   "split": "fresh3",
+   "file": "n3-s16500-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16500 (English, 1984 typewritten scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Turkey",
+      "TUrkey",
+      "urkey"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom is the letter addressed?",
+     "accept": [
+      "Secretary-General"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "23 April 1984",
+      "1984-04-23"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "KIRCA",
+      "Kirca"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "Turkey",
+    "Cyprus",
+    "Atalay"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was document A/38/800 issued?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the invoice total?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-s16500-ar",
+   "group": "un-S/16500",
+   "split": "fresh3",
+   "file": "n3-s16500-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16500 (Arabic, 1984 typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من أرسل الرسالة؟",
+     "accept": [
+      "تركيا"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "إلى من وجهت الرسالة؟",
+     "accept": [
+      "الأمين العام"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "كيرجا",
+      "جوشكون"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "تركيا",
+    "قبرص",
+    "أتالاي"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "ما رقم الإيصال؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-s16600-en",
+   "group": "un-S/16600",
+   "split": "fresh3",
+   "file": "n3-s16600-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16600 (English, 1984 typewritten scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Union of Soviet Socialist Republics",
+      "Soviet"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom is the letter addressed?",
+     "accept": [
+      "Secretary-General",
+      "secretary-Genera"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "1 June 1984",
+      "1984-06-01"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "TROYANOVSKY",
+      "Troyanovsky"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "Soviet",
+    "nuclear",
+    "Joint Declaration"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was the Joint Declaration issued?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-coru-costa",
+   "group": "n3-coru-costa",
+   "split": "fresh3",
+   "file": "n3-coru-costa.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 036be84f-b146-4c11-af6d-427fb94f63da (Costa Coffee Golden Square; English and Arabic)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "61.40"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "8.60"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "70.00"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "ما قيمة ضريبة القيمة المضافة؟",
+     "accept": [
+      "8.60"
+     ],
+     "page": null,
+     "category": "tax"
+    }
+   ],
+   "summary_keys": [
+    "Costa",
+    "70.00",
+    "Baguette"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "70.00"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the service charge?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-coru-tabali",
+   "group": "n3-coru-tabali",
+   "split": "fresh3",
+   "file": "n3-coru-tabali.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 024a07e4-c567-467c-87ec-f8590042a9a0 (Tabali Zamalek; shadow across the photo)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "177.75"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "27.87"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "226.96"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the service charge?",
+     "accept": [
+      "21.33"
+     ],
+     "page": null,
+     "category": "service"
+    }
+   ],
+   "summary_keys": [
+    "Tabali",
+    "226.96",
+    "Hawawshi"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "226.96"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the tip amount?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-coru-cilantro",
+   "group": "n3-coru-cilantro",
+   "split": "fresh3",
+   "file": "n3-coru-cilantro.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 08001506-8bc3-4cd8-8aa2-4ec3c68eb11e (Cilantro Mohandessin; crumpled)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "37.72"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "5.28"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the balance due?",
+     "accept": [
+      "43.00"
+     ],
+     "page": null,
+     "category": "total"
+    }
+   ],
+   "summary_keys": [
+    "Cilantro",
+    "43.00",
+    "Flat White"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "43.00"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT rate?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the service charge?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-coru-mensclub",
+   "group": "n3-coru-mensclub",
+   "split": "fresh3",
+   "file": "n3-coru-mensclub.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 051545ff-8612-4d31-9beb-28de49a1d327 (Men's Club, Shebeen El Koom 2; says prices include VAT, no VAT amount)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "620.00"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "310.00"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the total discount?",
+     "accept": [
+      "310.00"
+     ],
+     "page": null,
+     "category": "discount"
+    }
+   ],
+   "summary_keys": [
+    "Men's Club",
+    "310.00",
+    "Shebeen"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "310.00"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT amount?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "ما قيمة ضريبة القيمة المضافة؟",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n3-coru-ontherun",
+   "group": "n3-coru-ontherun",
+   "split": "fresh3",
+   "file": "n3-coru-ontherun.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0283b557-f0f1-4f0b-95d5-880497a3038d (On the Run, Manial)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the total amount?",
+     "accept": [
+      "49.00"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "How much cash was given?",
+     "accept": [
+      "100.00"
+     ],
+     "page": null,
+     "category": "cash"
+    },
+    {
+     "q": "What was the change?",
+     "accept": [
+      "51.00"
+     ],
+     "page": null,
+     "category": "change"
+    }
+   ],
+   "summary_keys": [
+    "On the Run",
+    "49.00",
+    "Merit"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "49.00"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
   }
  ],
  "library_tasks": [
@@ -5700,6 +6437,30 @@
    "request": "Email this letter to the Secretary-General",
    "scope": [
     "n-l180-en"
+   ]
+  },
+  {
+   "id": "fresh3-compare-letters",
+   "split": "fresh3",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "scope": [
+    "n3-l250-en",
+    "n3-s16600-en"
+   ],
+   "expect_values": {
+    "n3-l250-en": "2025-04-23",
+    "n3-s16600-en": "1984-06-01"
+   }
+  },
+  {
+   "id": "fresh3-find-en",
+   "split": "fresh3",
+   "kind": "find",
+   "request": "Which document is about the question of Cyprus?",
+   "expect_docs": [
+    "n3-s16500-en",
+    "n3-s16500-ar"
    ]
   }
  ]
