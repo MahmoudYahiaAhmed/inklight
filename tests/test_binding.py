@@ -314,3 +314,158 @@ def test_a_reader_span_that_crosses_lines_is_matched_by_its_first_line():
 
     assert _needles("8.60\n61.40") == ["8.60 61.40", "8.60"]
     assert _needles("2 February\n2023") == ["2 February 2023", "2 February"]
+
+
+# ---------------------------------------------------------------- multi-line reader spans
+
+
+class _SpanReader:
+    """A reader stand-in that returns a fixed span, as the extractive model would, and counts its calls."""
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+        self.calls = 0
+
+    def answer(self, question, passages, top=8, check=None):  # noqa: ANN001, ARG002
+        from types import SimpleNamespace
+
+        self.calls += 1
+        for k, p in enumerate(passages):
+            at = p.find(self.text)
+            if at >= 0:
+                return [SimpleNamespace(text=self.text, passage=k, start=at, end=at + len(self.text), score=0.9)]
+        return []
+
+
+def _ask_with_reader(tmp_path, monkeypatch, text: str, span: str, question: str):  # noqa: ANN001, ANN202
+    (tmp_path / "doc.txt").write_text(text, encoding="utf-8")
+    agent = DocumentAgent(make_settings(tmp_path / "home"))
+    try:
+        brain, reader = agent.library.brain, _SpanReader(span)
+        monkeypatch.setattr(type(brain), "reader", property(lambda self: reader))
+        monkeypatch.setattr(brain, "mode", "auto")
+        agent.add([tmp_path / "doc.txt"])
+        res = agent.ask(question, doc_ids=[agent.library.documents()[0].id], save=False)
+        assert reader.calls >= 1, "the reader was not asked: the test would not exercise its span"
+        return res
+    finally:
+        agent.close()
+
+
+# Labels outside the field catalog, so the question reaches the reader rather than a labelled field.
+SPAN_CASES = [
+    # the first line answers; the second is an unrelated date from the next row
+    (
+        "Receipt 2045\nDeposit 8.60\n12 March 2024 Lease start\n",
+        "8.60\n12 March 2024",
+        "What is the deposit amount?",
+        "8.60",
+        "12 March 2024",
+    ),
+    # the first line answers; the second is another amount, the cash handed over
+    (
+        "Delivery fee 70.00\n200.00 Cash Tendered\n",
+        "70.00\n200.00",
+        "How much was the delivery fee?",
+        "70.00",
+        "200.00",
+    ),
+    # the first line names the courier; the second is another person from the next line
+    (
+        "Courier: Ahmed Ali\nCashier: Mona Saleh\n",
+        "Ahmed Ali\nCashier: Mona Saleh",
+        "Who is the courier?",
+        "Ahmed Ali",
+        "Mona",
+    ),
+]
+
+
+@pytest.mark.parametrize(("text", "span", "question", "keep", "drop"), SPAN_CASES)
+def test_every_line_of_a_reader_span_must_be_supported(tmp_path, monkeypatch, text, span, question, keep, drop):
+    res = _ask_with_reader(tmp_path, monkeypatch, text, span, question)
+    head = _head(res)
+    assert keep in head and drop not in head, res.answer
+
+
+def test_a_span_that_wraps_inside_one_sentence_is_kept_whole(tmp_path, monkeypatch):
+    text = "The Security Council briefing on the situation concerning Iraq was held on 2 February\n2023 in New York.\n"
+    res = _ask_with_reader(
+        tmp_path, monkeypatch, text, "2 February\n2023", "When was the Security Council briefing held?"
+    )
+    assert "2 February" in _head(res) and "2023" in _head(res), res.answer
+
+
+@pytest.mark.parametrize(
+    ("text", "span", "question", "expect"),
+    [
+        # IRS W-9: wrapped prose; the next line adds no value of its own
+        (
+            "Give Form to the requester. Do not\nsend to the IRS.\n",
+            "Do not\nsend to the IRS",
+            "Should the form be sent to the IRS?",
+            "send to the IRS",
+        ),
+        # S/16600: a letter title wrapped over two lines
+        (
+            "Letter dated 1 June 1984 from the Permanent Representative of the Union\n"
+            "of Soviet Socialist Republics to the United Nations addressed to the\nSecretary-General\n"
+            "I have the honour to send you the text of a statement.\n",
+            "Permanent Representative of the Union\nof Soviet Socialist Republics",
+            "Which mission is it from?",
+            "Soviet Socialist Republics",
+        ),
+    ],
+)
+def test_a_span_continuing_the_same_text_is_kept(tmp_path, monkeypatch, text, span, question, expect):
+    res = _ask_with_reader(tmp_path, monkeypatch, text, span, question)
+    assert expect in _head(res), res.answer
+
+
+# From the second code review: label-then-value spans, competing rows, row values that are not amounts.
+# Labels outside the field catalog, so the question reaches the reader.
+@pytest.mark.parametrize(
+    ("text", "span", "question", "expect"),
+    [
+        (
+            "Lease terms\nSecurity deposit\n8.60\nNotes: none\n",
+            "Security deposit\n8.60",
+            "How much is the security deposit?",
+            "8.60",
+        ),
+        (
+            "Lease terms\nMove-in:\n12 March 2024\nNotes: none\n",
+            "Move-in:\n12 March 2024",
+            "When is the move-in?",
+            "12 March 2024",
+        ),
+    ],
+)
+def test_a_label_then_its_value_on_the_next_line_is_kept(tmp_path, monkeypatch, text, span, question, expect):
+    res = _ask_with_reader(tmp_path, monkeypatch, text, span, question)
+    assert expect in _head(res), res.answer
+
+
+def test_row_values_exclude_percentages_and_phone_numbers():
+    from inklight.agent.binding import _row_values
+
+    assert _row_values("money", "VAT 14% 8.60") == ["8.60"]
+    assert _row_values("money", "Hotline 0122 345 6789 Total 70.00") == ["70.00"]
+    assert _row_values("number", "Guests 2 Tel 01201200061") == ["2"]
+    assert _row_values("date", "Date 12/03/2024 Ref 555-12-1234") == ["12/03/2024"]
+
+
+def test_rows_are_disjoint_even_with_a_tall_line():
+    from inklight.agent.rows import _cluster
+    from inklight.schemas import TextLine
+
+    lines = [
+        TextLine(text="VAT", bbox=(0, 100, 50, 120)),
+        TextLine(text="8.60", bbox=(300, 100, 350, 120)),
+        TextLine(text="TALL STAMP", bbox=(150, 95, 250, 145)),
+        TextLine(text="Total", bbox=(0, 125, 50, 145)),
+        TextLine(text="70.00", bbox=(300, 125, 350, 145)),
+    ]
+    rows = [[c.text for c in r] for r in _cluster(lines)]
+    assert sum(len(r) for r in rows) == len(lines)  # every line in exactly one row
+    assert any({"VAT", "8.60"} <= set(r) for r in rows) and any({"Total", "70.00"} <= set(r) for r in rows)

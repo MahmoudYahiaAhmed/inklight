@@ -289,7 +289,7 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         s.answer = "I could not find anything in these documents that relates to the question."
         s.confidence = 0.0
         return "no evidence"
-    from .binding import check_typed_answer, role_answer  # these modules import this one
+    from .binding import check_reader_span, check_typed_answer, role_answer  # these modules import this one
     from .unmentioned import say_not_found, unmentioned
 
     if role_answer(ctx, question):
@@ -302,6 +302,10 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         say_not_found(ctx, question, absent)
         return "not mentioned"
     used = _reader_answer(ctx, question) or _rule_answer(ctx, question)
+    if used.startswith("reader span"):
+        cut = check_reader_span(ctx)
+        if cut:
+            s.notes.append(cut)
     note = check_typed_answer(ctx, question)
     if note:
         s.notes.append(note)

@@ -26,6 +26,7 @@ from ..schemas import Source
 from ..textnorm import search_form
 from .answer import _stem, expected_kind, narrow, words
 from .context import ToolContext
+from .rows import visual_rows
 from .unmentioned import _BY_WORD, _GENERIC, _own_types, say_no_evidence
 
 # ---------------------------------------------------------------- roles
@@ -324,11 +325,16 @@ def _flat(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+# A title is complete once it names its addressee: "addressed to Parliament", "… to the Secretary-General".
+_TITLE_DONE = re.compile(
+    r"addre\S*\s+(?:to|t[o0]|1[o0]|10)\s+(?:the\s+)?(?!the\b)\S{2,}|موجه\S*\s+(?:إلى|الى|إلي|الي)\s+\S{2,}",
+    re.IGNORECASE,
+)
 _SENTENCE_END = re.compile(r"(?<=[.!?؟؛])\s+(?=[\"'(A-Z0-9؀-ۿ])")
 _WRAPS = 35  # a line at least this long that does not end a sentence continues on the next line (wrapped prose)
 
 
-def _units(excerpt: str) -> list[str]:
+def _units(excerpt: str, pairs: bool = True) -> list[str]:
     """The passage as sentences. Prose wrapped over several PDF lines is joined back; short lines (receipts,
     forms: one fact per line) and headings stay on their own."""
     blocks: list[list[str]] = []
@@ -336,13 +342,22 @@ def _units(excerpt: str) -> list[str]:
         if not ln:
             blocks.append([])
             continue
-        prev = blocks[-1][-1] if blocks and blocks[-1] else ""
+        block = blocks[-1] if blocks else []
+        prev = block[-1] if block else ""
         wraps = len(prev) >= _WRAPS and not re.search(r"[.!?؟؛:]$", prev)
-        if wraps and not (_body_starts(ln) or _TITLE_START.search(ln) or _TITLE_START.search(prev)):
+        # A title continues until it names its addressee; the body after it is a sentence of its own.
+        in_title = bool(block) and bool(_TITLE_START.search(block[0])) and not _TITLE_DONE.search(" ".join(block))
+        if (
+            (wraps or in_title)
+            and not (_body_starts(ln) or _TITLE_START.search(ln))
+            and (in_title or not _TITLE_START.search(block[0] if block else ""))
+        ):
             blocks[-1].append(ln)
         else:
             blocks.append([ln])
     units = [u.strip() for b in blocks if b for u in _SENTENCE_END.split(" ".join(b))]
+    if not pairs:
+        return list(dict.fromkeys(u for u in units if u))
     # Receipts and forms put a label and its value on neighbouring short lines ("Cash Tendered" / "200.00").
     short = [b[0] for b in blocks if len(b) == 1 and len(b[0]) < _WRAPS]
     units += [f"{a} {b}" for a, b in zip(short, short[1:], strict=False)]
@@ -359,6 +374,64 @@ _QUALIFIED_WORD = re.compile(
 )
 
 
+def check_reader_span(ctx: ToolContext) -> str | None:
+    """Every line of a reader answer must come from one sentence or one visual row of the evidence.
+
+    The reader copies a span of the passage; across OCR lines it can run from the answer into the next row
+    ("8.60" then "12 March 2024"). Such a span is cut back to the longest leading part that one sentence or row
+    holds, and that sentence or row becomes the cited evidence."""
+    s = ctx.scratch
+    head = s.answer.split("\n\nEvidence:")[0].strip()
+    lines = [ln.strip() for ln in head.splitlines() if ln.strip()]
+    if len(lines) < 2:
+        return None
+    docs = list(dict.fromkeys(h.source.doc_id for h in s.hits[:8]))
+    # Only real sentences and rows that share a line on the page: neighbouring short lines paired by guess would
+    # let a span run from one row into the next unchecked.
+    units = [(h.source, u) for h in s.hits[:8] for u in _units(h.source.excerpt, pairs=False)]
+    units += [(r, r.excerpt) for r in visual_rows(ctx, docs)]
+    for k in range(len(lines), 0, -1):
+        part = _flat(" ".join(lines[:k]))
+        holder = next(((src, u) for src, u in units if part in _flat(u)), None)
+        if holder is None:
+            continue
+        if k == len(lines):
+            return None  # the whole span sits in one sentence ("2 February / 2023")
+        if _continues(head, lines[:k], lines[k:], s.hits[:8]):
+            return None  # "Do not / send to the IRS", "Total due / 8.60": the same text continuing on the next line
+        src, unit = holder
+        dropped = _flat(" ".join(lines[k:]))
+        s.answer = f"{' '.join(lines[:k])}\n\nEvidence: “{_flat(unit)}”"
+        s.sources = [src if src.bbox is not None and src.excerpt == unit else narrow(ctx, src, unit)]
+        s.confidence = min(s.confidence or 0.6, 0.6)
+        return f"reader span cut: “{dropped[:60]}” came from another line and does not belong to the answer's sentence"
+    s.confidence = min(s.confidence or 0.29, 0.29)  # found nowhere as written: kept as it is, flagged
+    s.warn("Low confidence: the answer's lines were not found together in one sentence of the evidence.")
+    return "reader span not found in one sentence: flagged"
+
+
+_LABELLED = re.compile(r"(?:^|\s)[^\W\d_][^:\n]{0,30}:\s*\S")
+
+
+def _continues(head: str, kept: list[str], rest: list[str], hits) -> bool:  # type: ignore[no-untyped-def]
+    """The span's later lines continue the same text (consecutive in the passage), and either add no value of
+    their own (no date, amount, number or new "Label:"), or are the one value of a label that holds none
+    ("Total due" / "8.60", "Date:" / "12 March 2024")."""
+    if not any(_flat(head) in _flat(h.source.excerpt) for h in hits):
+        return False
+    text = " ".join(rest)
+    if not (re.search(r"\d", text) or _DAY_MONTH.search(text) or _LABELLED.search(text)):
+        return True
+    label = " ".join(kept)
+    label_only = (label.endswith(":") or len(label) <= 25) and not re.search(r"\d", label)
+    return (
+        label_only
+        and len(rest) == 1
+        and not _LABELLED.search(text)
+        and len(_row_values("date", text) or _row_values("number", text)) == 1
+    )
+
+
 def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
     """Keep, replace or decline the chosen answer to a date / amount / count question. Returns a note or None."""
     kind = expected_kind(question)
@@ -370,6 +443,10 @@ def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
     for h in s.hits[:8]:
         units = _units(h.source.excerpt)
         pool += [(h.source, u, units[k - 1] if k else "") for k, u in enumerate(units)]
+    # Visual rows pair a label with a value OCR read in another column ("VAT" … "8.60").
+    rows = visual_rows(ctx, list(dict.fromkeys(h.source.doc_id for h in s.hits[:8])))
+    row_ids = {id(r) for r in rows}
+    pool += [(r, r.excerpt, "") for r in rows]
     vocab = set().union(*(_keys(unit) for _, unit, _ in pool)) if pool else set()
     present = anchors & vocab
     if not present:
@@ -407,6 +484,8 @@ def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
     )
     if ranked:
         _, _, _, src, unit = ranked[0]
+        if id(src) in row_ids:
+            return _answer_from_row(s, kind, src)
         s.answer = unit
         s.sources = [narrow(ctx, src, unit, question)]
         s.confidence = min(s.confidence or 0.6, 0.6)
@@ -419,6 +498,39 @@ def check_typed_answer(ctx: ToolContext, question: str) -> str | None:
         f"({', '.join(sorted(present))}); nearby values were not used",
     )
     return "typed answer declined"
+
+
+_PHONE = re.compile(r"\+?\d[\d\s-]{6,}\d")
+
+
+def _row_values(kind: str, text: str) -> list[str]:
+    """The values of ``kind`` a row holds, as written. Percentages ("14%") and phone-like numbers are not
+    amounts or counts; dates must parse."""
+    text = _digits(text)
+    if kind == "date":
+        found = [raw for _, raw, _ in parse_dates(text)]
+        return found or [m.group(0) for m in _DAY_MONTH.finditer(text)]
+    phones = [m.span() for m in _PHONE.finditer(text) if not re.search(r"[.,]\d{2}\b", m.group(0))]
+    numbers = re.finditer(r"(?<![\w.,%])[$€£¥]?\s?\d[\d,.]*(?![\w%])(?!\s*%)", text)
+    out = [m.group(0).strip() for m in numbers if not any(a <= m.start() < b for a, b in phones)]
+    if kind == "money":
+        out = [v for v in out if _AMOUNT.search(v)]
+    return out
+
+
+def _answer_from_row(s, kind: str, row: Source) -> str:  # type: ignore[no-untyped-def]
+    """Answer with the one value a visual row holds for the label, citing the row's box. A row with several
+    values of the kind ("Deposit 500.00 1,500.00"), or none that reads as one, is shown as it is, flagged."""
+    found = _row_values(kind, _QUALIFIED_WORD.sub(" ", row.excerpt))
+    s.sources = [row]
+    if len(found) == 1:
+        s.answer = f"{found[0]}\n\nEvidence: “{row.excerpt}”"
+        s.confidence = min(0.6, row.ocr_conf or 0.6)
+        return "answer from the label's row on the page"
+    s.answer = f"{row.excerpt}\n\nEvidence: “{row.excerpt}”"
+    s.confidence = 0.25
+    s.warn("Low confidence: several values sit on this row; check which one belongs to the label.")
+    return "answer from a row with several values (flagged)"
 
 
 def _needles(head: str) -> list[str]:

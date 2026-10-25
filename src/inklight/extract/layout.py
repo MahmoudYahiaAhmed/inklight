@@ -75,6 +75,26 @@ def row_after(lines: Sequence[Placed], i: int) -> list[int]:
     return sorted(out, key=lambda j: -lines[j].bbox[2])  # type: ignore[index]
 
 
+def row_before(lines: Sequence[Placed], i: int) -> list[int]:
+    """Lines on line ``i``'s row against its reading direction, nearest first. A label whose script and layout
+    disagree ("-VAT ضريبة القيمة المضافة" with its amount on the right) has its value on this side."""
+    me = lines[i]
+    if me.bbox is None:
+        return []
+    if rtl(me.text):
+        return row_right(lines, i)
+    out = [
+        j
+        for j, ln in enumerate(lines)
+        if j != i
+        and ln.page == me.page
+        and ln.bbox is not None
+        and ln.bbox[2] <= me.bbox[0] + 4
+        and same_row(me.bbox, ln.bbox)
+    ]
+    return sorted(out, key=lambda j: -lines[j].bbox[2])  # type: ignore[index]
+
+
 def gap_after(a: BBox, b: BBox, right_to_left: bool) -> float:
     """Gap from ``a`` to ``b`` in reading direction, in heights of ``a``."""
     return (a[0] - b[2]) / _height(a) if right_to_left else gap(a, b)

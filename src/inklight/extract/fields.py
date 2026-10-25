@@ -249,6 +249,7 @@ ALIASES: dict[str, str] = {
 _SEP = r"\s*(?:[:#=]|no\.?|number)?\s*[:#]?\s*"
 _TEXT_GAP = 6.0  # a name further right than this many line heights belongs to another column
 _TABLE_TEXT_GAP = 25.0  # ... unless the row holds only the "label:" and that one value
+_AMBIGUOUS = 0.25  # confidence of a value chosen among several on one row: below the review threshold (0.3)
 _TITLE_DATE = re.compile(r"letters? dated|رسالة مؤرخة", re.IGNORECASE)  # a document's own date only in its title
 # Words that make the next label a qualifier: "incl. Tax", "excluding VAT", "prices include VAT", "شاملة ضريبة".
 _QUALIFIER = re.compile(
@@ -512,9 +513,23 @@ def _value_elsewhere(
         ]
         if not any(name == spec.name for name, _ in out):
             j, (value, raw) = hits[-1]
-            note = f"{len(hits)} values on the {line.text.strip()!r} row and no column title; took the last"
-            out.append((spec.name, _Candidate(value, raw, lines[j], 0.5, "label-row", {"warning": note})))
+            note = f"{len(hits)} values on the {line.text.strip()!r} row and no column title; took the last, check it"
+            out.append((spec.name, _Candidate(value, raw, lines[j], _AMBIGUOUS, "label-row", {"warning": note})))
         return out
+    if spec.type in ("money", "date"):  # only a typed value is taken from the far side of a label
+        other = [
+            j
+            for j in layout.row_before(lines, i)
+            if not is_label(lines[j].text) and not re.fullmatch(r"\d{1,3}", lines[j].text.strip())  # not a row index
+        ]
+        found = [(j, p) for j, t in _row_cells(lines, other) if (p := _cell_value(spec.type, t, day_first)) is not None]
+        if len(found) == 1:  # "-VAT ضريبة القيمة المضافة 14 … 8.60": script says left, layout says right
+            j, (value, raw) = found[0]
+            return [(spec.name, _Candidate(value, raw, lines[j], 0.8, "label-row-opposite"))]
+        if len(found) > 1:
+            j, (value, raw) = found[0]
+            note = f"{len(found)} values beside {line.text.strip()!r}, on the side its script does not predict"
+            return [(spec.name, _Candidate(value, raw, lines[j], _AMBIGUOUS, "label-row-opposite", {"warning": note}))]
     under = layout.below(lines, i)
     if under is None or is_label(lines[under].text):
         return []

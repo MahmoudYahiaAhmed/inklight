@@ -58,6 +58,7 @@ class ToolContext:
     cancel: threading.Event = field(default_factory=threading.Event)
     deadline: float = float("inf")
     _pages: dict[str, list[PageContent]] = field(default_factory=dict)
+    rows: dict[str, list[Source]] = field(default_factory=dict)  # visual rows per document, built once per task
 
     @property
     def brain(self) -> Any:
