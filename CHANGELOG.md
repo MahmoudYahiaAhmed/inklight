@@ -110,6 +110,14 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
 - **Arabic questions** are answered from the best-matching sentence: words, light stems, sentences and question
   types in Arabic. These answers are always flagged for review. On reserved: 11/23 right, 0 silently wrong (P0:
   1/23).
+- **Answers must be connected to what was asked, not merely near it.** Sender, recipient and signer come from
+  the letter's title, From/To lines or the signature line (English and Arabic, OCR damage tolerated). A date,
+  amount or count must come from a sentence holding that value and the question's own words; a letter's heading
+  date does not answer a question about an event; "Total (incl Tax)" is not the tax; otherwise the answer says no
+  supporting evidence was found. On 11 new genuine documents, run once: correct 26 -> 30 of 44 answerable
+  questions, silent wrong 7 -> 6, one answerable question declined; unanswerable questions about a mentioned
+  subject answered silently 4 -> 1 of 8. One receipt answer regressed ("VAT-Inclusive" is not read as a
+  qualifier).
 - **Questions about something the documents never mention** ("What is the IBAN?" over a letter) are answered
   "I couldn't find supporting evidence for “IBAN” in the processed text of this document." instead of with the
   nearest sentence (it does not claim the fact is absent: OCR can miss words). On 15 new genuine

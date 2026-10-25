@@ -113,6 +113,20 @@ OCR can miss words, so the answer no longer claims the fact is absent.
 
 Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#missing-information-not-found-d012e07).
 
+**Answers connected to what was asked** (`9fc8da7`, 11 more new genuine documents, first run). The sender is not the
+addressee, a letter's own date is not an event's, and a total that includes tax is not the tax.
+
+| 44 answerable questions | Before (`2752a6d`) | After (`9fc8da7`) |
+|---|---|---|
+| Correct (flagged) | 26 (+4) | **30** (+3) |
+| Declined although answerable | 0 | 1 |
+| Wrong, flagged | 7 | 4 |
+| Wrong, not flagged | 7 | 6 |
+| Unanswerable (subject mentioned, value missing), answered without a flag | 4 of 8 | **1** of 8 |
+
+One correct receipt answer became a silent error ("VAT-Inclusive" was not recognised as a qualifier).
+Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#answers-connected-to-what-was-asked-9fc8da7).
+
 <details>
 <summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
 
@@ -167,8 +181,9 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 - **Arabic questions are answered by sentence matching**, not by a model that reads Arabic. They are always flagged
   for review: 11 of 23 right on the reserved split.
 - **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
-- **"Not found" covers only subjects a document never mentions.** If the subject is there but the value is not ("when
-  will the debate be held?"), a nearby sentence is still returned, often without a flag (6 of 11 on new documents).
+- **Missing facts.** A question whose subject the document mentions but whose value it does not ("when will the
+  debate be held?") is now usually declined. On new documents, 1 of 8 was still answered without a flag. The check
+  can also decline a fact that is there, when the question names context from a neighbouring sentence (1 of 44).
 - Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
 - Typewritten Arabic scans OCR only partly.
 - Classification is keyword-based.

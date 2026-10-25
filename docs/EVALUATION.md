@@ -204,6 +204,77 @@ is listed with its outcome in `fresh2-first-access-*.json`.
   cause was a document with no expected fields. The harness was fixed, nothing in Inklight changed, and the runs
   were repeated. All six accesses are in `reserved-access.log`.
 
+### Answers connected to what was asked (`9fc8da7`)
+
+**What changed.** An answer must be connected to the question, not merely near it:
+- **Roles.** Sender, recipient and signer are read from the letter's own title ("from X addressed to Y"; Arabic
+  "موجهة إلى Y من X"), from "From:"/"To:" lines, or from the signature line.
+- **Dates, amounts and counts.** The answer must come from a sentence that holds a value of that type and at least
+  half of the question's specific words. Sentences are rebuilt across wrapped PDF lines, and a label and its value
+  on neighbouring receipt lines count as one sentence.
+- **The document's own date** in its heading does not answer a question about an event.
+- **Tax.** "Total (incl Tax)" and "Prices include VAT" are not tax amounts.
+- **No connected answer.** The answer says "I couldn't find supporting evidence … in the processed text".
+
+**Development.** It was developed on failures from the dev, reserved, fresh and fresh2 splits, all used before and
+counted as development data here. Across them:
+- **Correct answers:** English 85 → 91 of 128, Arabic 6 → 11 of 84 (unflagged), mixed 8 → 10 of 33.
+- **Silent wrong:** English 33 → 28, Arabic 2 → 3, mixed 12 → 9.
+- **Lost:** no previously correct answer.
+
+The probes are logged in `reserved-access.log` as development runs.
+
+**fresh3, first access, models on** (`2752a6d` → `9fc8da7`; 11 new genuine documents, expectations committed in
+`21aa0cc` before any run). Outcomes are kept apart; "declined" is an incorrect decline of an answerable question.
+
+| Answerable | correct | correct·flagged | declined | wrong·flagged | silent wrong | n |
+|---|---|---|---|---|---|---|
+| English, before | 19 | 0 | 0 | 0 | 5 | 24 |
+| English, after | **20** | 1 | 1 | 0 | **2** | 24 |
+| Arabic, before | 0 | 2 | 0 | 4 | 1 | 7 |
+| Arabic, after | **3** | 1 | 0 | 1 | 2 | 7 |
+| Mixed, before | 7 | 2 | 0 | 3 | 1 | 13 |
+| Mixed, after | 7 | 1 | 0 | 3 | 2 | 13 |
+| **All, before** | 26 | 4 | 0 | 7 | 7 | 44 |
+| **All, after** | **30** | 3 | **1** | **4** | **6** | 44 |
+
+| Unanswerable | English | Arabic | Mixed |
+|---|---|---|---|
+| subject mentioned, value not given (`present_subject`): declined, before → after | 0 → **3** of 4 | 0 → **1** of 1 | 0 → **2** of 3 |
+| … answered silently, before → after | 3 → 1 | 0 → 0 | 1 → 0 |
+| subject never mentioned (`absent_subject`): declined, before → after | 4 → 4 of 6 | 2 → 2 of 2 | 0 → 0 of 2 |
+
+By what the question tests (after; before in brackets; "correct" includes flagged):
+- **Sender:** English 3 of 3 (1), Arabic 1 of 2 (0), mixed 1 of 1 (1).
+- **Recipient:** English 3 of 3 (3), Arabic 2 of 2 (1), mixed 0 of 1 (0; the request is read as partial).
+- **Signer:** English 3 of 3 (2), Arabic 0 of 1, mixed 0 of 1.
+- **Letter date:** English 2 of 3 (2; S/16600 is OCR'd as "l June 1984").
+- **Event date:** English 1 of 1, mixed 1 of 1, both unchanged.
+- **Subtotal and total:** 9 of 9, unchanged.
+- **Tax:** English 2 of 2 (2), mixed **0 of 2 (1)**.
+
+**What went wrong.** These were diagnosed after the run and are not fixed, because this split is the independent
+check:
+- **An incorrect decline.** The question was "How many people were injured in the attack on the bus?". The answer
+  sentence ("…and 54 others were injured") holds one of the three specific words; "bus" and "attack" are in the
+  sentence before. Requiring half the words within one sentence is too strict for context named nearby.
+- **A new silent error on a receipt.** For Costa's "What is the VAT amount?", the reader's span ran across two OCR
+  lines, so it matched no single sentence and was replaced by "SubTotal (VAT-Inclusive)". A qualifier written after
+  the word ("VAT-Inclusive") is not recognised; only "incl. VAT" and similar forms are.
+- **A flag on a correct answer.** The S/2025/250 signer is right but flagged as an annex signature. A wrapped body
+  line starting "annex)." ("…(see\nannex).") was taken for the annex heading.
+- **Scored wrong under the fixed expectations.** The Arabic S/16500 sender answer names the Permanent Representative
+  "لتركيا" ("of Turkey"), but the expected "تركيا" does not match with the attached prefix. The answer also runs
+  into the body, because the OCR's "أتشرِف" is not recognised as the body's first word.
+- **Unchanged failures.**
+  - Arabic count questions ("كم عدد …") are read as document counts.
+  - "Who signed / to whom are the letters" on S/2025/230 comes back partial.
+  - "How much cash was given?" is answered with the wrong line.
+  - A blank form's own fields are still answered from nearby text.
+
+**Rules only** (`9fc8da7`, no models): correct answers English 16 + 1 flagged of 24, Arabic 3 + 1 of 7, mixed 7 + 1
+of 13. The same unanswerable questions were declined.
+
 ### Fields, library tasks, export
 
 - **Library tasks**:
@@ -251,7 +322,8 @@ These were found on held-out documents, so those documents no longer confirm the
 ## What is not measured
 
 - handwriting
-- questions whose subject is mentioned but whose value is not (6 of 11 still answered silently on fresh2)
+- questions whose subject is mentioned but whose value is not: 6 of 11 were answered silently on fresh2 before
+  `9fc8da7`; on fresh3 after it, 1 of 8. Both samples are small.
 - genuine Arabic forms, certificates and invoices
 - documents longer than 36 pages (the longest tested)
 - tables beyond invoice line items
