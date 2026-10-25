@@ -1,0 +1,84 @@
+{
+ "task_id": "15ed7f0c2ee0",
+ "request": "من وقّع الرسالة؟",
+ "intent": "ask",
+ "state": "succeeded",
+ "answer": "فاسيلي نيبينزيا\n\nEvidence: “(توقيع) فاسيلي نيبينزيا”",
+ "confidence": 0.4,
+ "interpretation_confidence": 0.4,
+ "evidence_confidence": 0.8,
+ "interpretation": [
+  "task: ask"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 1 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.80 (labels, OCR confidence, arithmetic checks)",
+  "models: embedder not used: Arabic query (the embedder is an English model)",
+  "answer: the signer as the document states it (signature line)"
+ ],
+ "sources": [
+  {
+   "doc_id": "3dc1fb6ade3f171a",
+   "path": "<local>/S_2025_380-ar.pdf",
+   "name": "S_2025_380-ar.pdf",
+   "page": 1,
+   "block": 11,
+   "bbox": [
+    342.2,
+    1890.5,
+    568.8,
+    1929.8
+   ],
+   "excerpt": "(توقيع) فاسيلي نيبينزيا",
+   "score": null,
+   "ocr_conf": 0.9039
+  }
+ ],
+ "records": [],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": null
+   },
+   "status": "ok",
+   "summary": "1 documents (1 letter)",
+   "duration_ms": 0.9,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "search",
+   "args": {
+    "query": "من وقّع الرسالة؟",
+    "k": 8
+   },
+   "status": "ok",
+   "summary": "4 passages (keyword)",
+   "duration_ms": 0.9,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 2,
+   "tool": "answer",
+   "args": {
+    "question": "من وقّع الرسالة؟"
+   },
+   "status": "ok",
+   "summary": "role from the document's layout",
+   "duration_ms": 12.3,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "rules (planner: rules)",
+ "duration_ms": 14.8
+}

@@ -405,7 +405,8 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=Path(__file__).with_name("corpus.json"))
-    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2", "fresh3", "fresh4", "fresh5"], required=True)
+    splits = ["dev", "reserved", "fresh", "fresh2", "fresh3", "fresh4", "fresh5"]
+    ap.add_argument("--split", choices=splits, required=True)
     ap.add_argument("--docs", type=Path, required=True)
     ap.add_argument("--models", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)

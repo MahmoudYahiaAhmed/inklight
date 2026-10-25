@@ -1,0 +1,114 @@
+{
+ "task_id": "921f59e405fb",
+ "request": "When will the open debate be held?",
+ "intent": "ask",
+ "state": "succeeded",
+ "answer": "Tuesday, 20 May 2025\n\nEvidence: “The open debate will be held on Tuesday, 20 May 2025, at 10 a.m. and will be chaired”",
+ "confidence": 0.6,
+ "interpretation_confidence": 0.6,
+ "evidence_confidence": 0.95,
+ "interpretation": [
+  "task: ask"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 3 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.95 (labels, OCR confidence, arithmetic checks)"
+ ],
+ "sources": [
+  {
+   "doc_id": "287d61b6603bb942",
+   "path": "<local>/S_2025_300-en.pdf",
+   "name": "S_2025_300-en.pdf",
+   "page": 1,
+   "block": 4,
+   "bbox": [
+    339.8,
+    706,
+    1357.5,
+    898.1
+   ],
+   "excerpt": "I have the honour to inform you that, during the presidency of Greece, the\nSecurity Council plans to hold a high-level open debate on the theme “Strengthening\nmaritime security through international cooperation for global stability” in\nconnection with the item entitled “Maintenance of international peace and security”.\nThe open debate will be held on Tuesday, 20 May 2025, at 10 a.m. and will be chaired\nby the Prime Minister of Greece, Kyriakos Mitsotakis.",
+   "score": 0.03333,
+   "ocr_conf": 1
+  },
+  {
+   "doc_id": "287d61b6603bb942",
+   "path": "<local>/S_2025_300-en.pdf",
+   "name": "S_2025_300-en.pdf",
+   "page": 2,
+   "block": 0,
+   "bbox": [
+    165.1,
+    148.4,
+    1357.6,
+    661.9
+   ],
+   "excerpt": "S/2025/300\nAnnex to the letter dated 9 May 2025 from the Permanent\nRepresentative of Greece to the United Nations addressed to the\nSecretary-General\nConcept note for the Security Council high-level open debate on\nthe theme “Strengthening maritime security through international\ncooperation for global stability”, to be held on 20 May 2025\nAs the rotating President of the Security Council for May 2025, Greece intends\nto convene an open debate on 20 May 2025 on the theme “Strengthening maritime\nsecurity through international cooperation for global stability”, under the item\n“Maintenance of international peace and security”, which will be chaired by the Prime\nMinister of Greece, Kyriakos Mitsotakis.",
+   "score": 0.03279,
+   "ocr_conf": 1
+  },
+  {
+   "doc_id": "287d61b6603bb942",
+   "path": "<local>/S_2025_300-en.pdf",
+   "name": "S_2025_300-en.pdf",
+   "page": 4,
+   "block": 2,
+   "bbox": [
+    339.8,
+    531.4,
+    1357.4,
+    755.2
+   ],
+   "excerpt": "The meeting will take the form of a high-level open debate presided over by the\nPrime Minister of Greece, Kyriakos Mitsotakis. Member States are encouraged to\nsend senior officials to the event. The Secretary-General, António Guterres, will give\na briefing to the Council. Other briefers will include Melina N. Travlos, President,\nBoard of Directors, Union of Greek Shipowners, and Christian Bueger, Professor of\nInternational Relations at the University of Copenhagen and a research fellow at the\nUnited Nations Institute for Disarmament Research.",
+   "score": 0.03226,
+   "ocr_conf": 1
+  }
+ ],
+ "records": [],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": null
+   },
+   "status": "ok",
+   "summary": "1 documents (1 letter)",
+   "duration_ms": 0.6,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "search",
+   "args": {
+    "query": "When will the open debate be held?",
+    "k": 8
+   },
+   "status": "ok",
+   "summary": "8 passages (hybrid)",
+   "duration_ms": 250.2,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 2,
+   "tool": "answer",
+   "args": {
+    "question": "When will the open debate be held?"
+   },
+   "status": "ok",
+   "summary": "reader span (0.95)",
+   "duration_ms": 217.6,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "embedder+reader (planner: rules)",
+ "duration_ms": 469.8
+}

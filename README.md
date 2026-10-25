@@ -14,7 +14,15 @@ OCR, search, questions with sources, summaries, field extraction, review and exp
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
 
-<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/contract-question.png" width="900" alt="The Inklight workspace answering 'Which court has jurisdiction?' on a CUAD contract, with the cited clause highlighted on page 7"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/lead.png" width="900" alt="Two real screenshots of the Inklight workspace. Example 1: the Arabic question 'من وقّع الرسالة؟' on UN letter S/2025/380 is answered 'فاسيلي نيبينزيا', citing the signature line outlined on page 1. Example 2: 'What is the product?' on a scanned FUNSD insertion-order form is answered 'NEWPORT', citing 'PRODUCT: NEWPORT' outlined on the page."></p>
+
+<p align="center"><sub>Two separate examples, both genuine documents, captured from the running workspace at commit <code>915be7b</code>:
+<a href="https://documents.un.org/api/symbol/access?s=S/2025/380&l=ar&t=pdf">UN S/2025/380 (Arabic)</a> and
+<a href="https://guillaumejaume.github.io/FUNSD/">FUNSD</a> form 93106788.
+Requests, answers and evidence as the app returned them:
+<a href="https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/assets/showcase/arabic-letter-signer.json">example 1</a>,
+<a href="https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/assets/showcase/form-label-value.json">example 2</a>.
+The library lists the form as an "invoice": that is the classifier's real (wrong) label.</sub></p>
 
 Point Inklight at PDFs, scans or photos (letters, contracts, reports, forms, invoices, receipts) and ask in plain
 English or Arabic. Every answer comes with **the page and passage it came from**, warnings when the evidence is weak,
@@ -34,6 +42,9 @@ pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight"
 inklight models pull        # optional: English reader + embedder, about 100 MB, once
 ```
 
+The screenshots and the newest examples below were made with commit `915be7b`; to reproduce them exactly, install
+that commit: `pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight@915be7b"`.
+
 `pip install inklight` installs the published 0.1.0 instead. Indra's OCR models (about 76 MB) download on the first OCR
 run. After that, everything works offline.
 
@@ -46,12 +57,16 @@ inklight serve                                        # web workspace on http://
 
 ## See it work
 
-Each example below is real output from the development build (code `2709d33`). It was run on the original file,
-with `--json` output saved in [`docs/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/showcase/). The examples show successes; the failures are in
+Each example below is real output from the development build: the first four from commit `915be7b`, the rest from
+`2709d33`. Each was run on the original file, with `--json` output saved in [`docs/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/showcase/). The examples show successes; the failures are in
 [the evaluation](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md) and summarised under [Limits](#limits).
 
 | Document | Request | Output | Evidence |
 |---|---|---|---|
+| Letter, digital PDF ([UN S/2025/300](https://documents.un.org/api/symbol/access?s=S/2025/300&l=en&t=pdf)), dated 9 May 2025 | `When will the open debate be held?` | **Tuesday, 20 May 2025** | p.1: "The open debate will be held on Tuesday, 20 May 2025, at 10 a.m." (the event's date, not the letter's) |
+| Arabic letter, digital PDF ([UN S/2025/380](https://documents.un.org/api/symbol/access?s=S/2025/380&l=ar&t=pdf)) | `من وقّع الرسالة؟` | **فاسيلي نيبينزيا** | p.1, signature line: "(توقيع) فاسيلي نيبينزيا" |
+| Form, scan ([FUNSD](https://guillaumejaume.github.io/FUNSD/) 93106788, magazine insertion order) | `What is the product?` | **NEWPORT** | p.1: "PRODUCT: NEWPORT", label and value paired by their row on the page |
+| Receipt, phone photo, English and Arabic (CORU, Costa Coffee) | `ما قيمة ضريبة القيمة المضافة؟` | **The tax is 8.60** | p.1, the amount's box on the "VAT ضريبة القيمة المضافة" row, read as a separate column (a development example: this receipt guided the change) |
 | Contract, digital PDF ([CUAD](https://zenodo.org/records/4595826), Imperial Garden outsourcing agreement) | `Which court has jurisdiction?` | **Miaoli District Court of Taiwan** | p.7: "herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance" |
 | Letter, 1983 typewritten scan ([UN S/16000](https://documents.un.org/api/symbol/access?s=S/16000&l=en&t=pdf)) | `Which city was hit by artillery fire on 8 September?` | **Abadan** | p.1: "8 September, when the city of Abadan was barraged by Iragi long-range artillery" (OCR's "Iragi" kept as read) |
 | Receipt, phone photo (CORU, Egypt) | `What is the total amount?` | **The total is 50.00** | p.1: "EGP 50.00" |
@@ -65,13 +80,22 @@ with `--json` output saved in [`docs/showcase/`](https://github.com/MahmoudYahia
 <td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/arabic-extract.png" alt="Arabic field extraction from a synthetic tax invoice, shown as a table"><br><sub>Fields from a <b>synthetic</b> Arabic invoice: each value comes from the label to its right.</sub></td>
 </tr>
 <tr>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/scanned-letter.png" alt="Question on a 1983 typewritten scan, with the answering passage highlighted"><br><sub>A 1983 typewritten scan: the answer's passage is outlined on the page.</sub></td>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/contract-question.png" alt="Contract question with the cited clause highlighted"><br><sub>A contract question: the clause is outlined on page 7.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/letter-event-date.png" alt="Question on UN letter S/2025/300 answered 'Tuesday, 20 May 2025', with the sentence outlined on page 1"><br><sub>A letter dated 9 May: the open debate's date (20 May) comes from the sentence about it, outlined on page 1.</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/mixed-receipt-vat.png" alt="Arabic question on an English and Arabic receipt answered 'The tax is 8.60', with the amount outlined"><br><sub>An Arabic question on a mixed receipt: the VAT amount was read in a separate column and paired with its row (development example).</sub></td>
 </tr>
 </table>
 
 Screenshots were taken from the real workspace by [`bench/showcase.py`](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/showcase.py), which types each request
 into the app and saves the browser's picture with the result JSON next to it ([`docs/assets/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/assets/showcase/)).
+The top image stacks two of those screenshots unedited under caption bars
+([`bench/showcase_compose.py`](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/showcase_compose.py)). To reproduce the newest four:
+
+```bash
+inklight process -c config.toml ./showcase-docs        # the four documents named above, in one folder
+inklight serve -c config.toml --port 8777 --no-open
+python bench/showcase.py --url http://127.0.0.1:8777 --cases bench/showcase_cases_v2.json --out docs/assets/showcase --width 1440 --height 900
+python bench/showcase_compose.py --out docs/assets/showcase/lead.png "Example 1|Arabic letter, UN S/2025/380 (genuine): who signed it|docs/assets/showcase/arabic-letter-signer.png" "Example 2|English form, FUNSD 93106788 scan (genuine): the value beside its label|docs/assets/showcase/form-label-value.png"
+```
 
 ## Measured results
 
@@ -127,6 +151,20 @@ addressee, a letter's own date is not an event's, and a total that includes tax 
 One correct receipt answer became a silent error ("VAT-Inclusive" was not recognised as a qualifier).
 Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#answers-connected-to-what-was-asked-9fc8da7).
 
+**Labels and values on the page** (`915be7b`, a further 10 new genuine documents: letters, Wikipedia infoboxes in
+English and Arabic, scanned forms, receipts; first run). A question that names a printed label ("What is the
+product?", "ما الرمز البريدي للأقصر؟") is answered with the value beside it, with its page and box.
+
+| 44 answerable questions | Before (`21f1dac`) | After (`915be7b`) |
+|---|---|---|
+| Correct (flagged) | 25 (+2) | **30** (+2) |
+| Declined although answerable | 0 | 1 |
+| Wrong, flagged | 8 | 3 |
+| Wrong, not flagged | 9 | 8 |
+
+An earlier version that paired labels with values only for dates and amounts (`bcd4752`) made **no difference** on
+its own new documents or on these. Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#labels-and-values-on-the-page-915be7b).
+
 <details>
 <summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
 
@@ -178,13 +216,14 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 
 ## Limits
 
-- **Arabic questions are answered by sentence matching**, not by a model that reads Arabic. They are always flagged
-  for review: 11 of 23 right on the reserved split.
+- **Arabic questions are mostly answered by sentence matching**, not by a model that reads Arabic, and those
+  answers are flagged for review (11 of 23 right on the reserved split). A value printed beside a label, a letter's
+  sender, addressee or signer, and a labelled field are read from the page itself and are not flagged.
 - **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
 - **Missing facts.** A question whose subject the document mentions but whose value it does not ("when will the
   debate be held?") is now usually declined. On new documents, 1 of 8 was still answered without a flag. The check
-  can also decline a fact that is there, for example when OCR reads a receipt's labels and values as separate
-  columns.
+  can also decline a fact that is there: a table value printed under its column header ("CAPTION:") was declined as
+  a blank field.
 - Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
 - Typewritten Arabic scans OCR only partly.
 - Classification is keyword-based.

@@ -17,7 +17,7 @@ anything, and no human timing exists.
 
 ## The documents
 
-101 documents in five splits. Groups keep translations, one company's receipts, a contract and a synthetic
+123 documents in seven splits. Groups keep translations, one company's receipts, a contract and a synthetic
 template in one split. Full list with sources and licences: [`bench/usecases/corpus.json`](../bench/usecases/corpus.json).
 
 | Split | Docs | Role | Independence |
@@ -27,6 +27,8 @@ template in one split. Full list with sources and licences: [`bench/usecases/cor
 | fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run (`first-access-fresh-auto`); it prompted two more fixes, so its rerun (`final-fresh-*`) is not independent |
 | fresh2 | 15 | 15 new genuine documents ([selection and exclusions](../bench/results/usecases/provenance/fresh2-selection.md)) (2025 UN letters and a 1984 scan in English and Arabic, two CUAD contracts, IRS W-8BEN, Arabic Wikipedia "الإسكندرية", three CORU receipts from new companies), with answerable and unanswerable questions; expectations committed (`6c1659c`) before any run | **independent for its first run** (`fresh2-first-access-*`): the build under test was frozen first (`d012e07`) |
 | fresh3 | 11 | answer-connection check (below); development data since the fixes it prompted | independent for its first run (`fresh3-first-access-*`) only |
+| fresh4 | 12 | layout pairing check: UN letters (English, Arabic, 1984 scans), Wikipedia infoboxes, FUNSD forms, receipts | independent for its first run (`fresh4-first-access-*`) only; development data from `98d882f` |
+| fresh5 | 10 | label-value check: UN letters, Wikipedia infoboxes, FUNSD forms, receipts and an invoice | independent for its first run (`fresh5-first-access-*`) only |
 
 **Provenance.** The first-access runs record Git HEAD `6b4cc12`, but they ran from modified, uncommitted source.
 That source was reconstructed from the session transcript as `8c54921` plus a patch removing the later fixes.
@@ -276,6 +278,104 @@ check:
 **Rules only** (`9fc8da7`, no models): correct answers English 16 + 1 flagged of 24, Arabic 3 + 1 of 7, mixed 7 + 1
 of 13. The same unanswerable questions were declined.
 
+### Labels and values on the page (`915be7b`)
+
+**What changed, in two steps, each evaluated on documents it had not seen.**
+
+1. **`bcd4752`: row pairing.**
+   - **Extraction.** When a label's reading direction holds no value, the other side of its visual row is tried
+     ("-VAT ضريبة القيمة المضافة 14 … 8.60"). Several values on one row are flagged.
+   - **Answer check.** Visual rows (lines grouped by bounding box, across columns OCR read separately) join the
+     candidate sentences for date, amount and count questions.
+   - **Whole reader spans.** A multi-line reader span must sit in one sentence or one visual row. Otherwise it is
+     cut to the part one sentence holds, and that sentence is cited.
+2. **`915be7b`: label values.** A question that names a printed label is answered with the value beside or below
+   it, with page and box:
+   - **Where the value is read.** Inline, on the label's row in reading direction (Arabic: to the left), or on the
+     line below.
+   - **What counts as a label.** Titles, headings that name the document, and prose do not.
+   - **What is flagged.** Several candidate values, several matching labels, or a value read from under an
+     unpunctuated label.
+   - **Blank fields.** On a form page, a label with nothing beside it is declined as a blank field.
+
+**fresh4, first access** (12 new genuine documents, expectations committed in `bed2f42` before the run):
+`21f1dac` → `bcd4752`, models on.
+- Every outcome was **identical**: answers, unanswerable questions, and label/value pairing in extraction (8 of 12
+  paired field values correct, 2 of them flagged; page and box recorded for 12 of 12).
+- The causes were found afterwards, so fresh4 is development data from `98d882f` on:
+  - **The row check never ran on label questions.** Questions such as "What is the population / elevation / brand
+    name / manufacturer?" ask for no date or amount, so it did not apply.
+  - **OCR failures:** a photo rotated by 90 degrees, and white-on-black "Total Due".
+  - **Wording:** "Sub-Total" did not match "subtotal".
+  - **Geometry:** typed form values printed above the label's baseline missed the strict row test.
+
+**fresh5, first access** (10 new genuine documents, expectations committed in `bc0c7c5` before the run), models on.
+Earlier builds ran from their own checkouts. The `915be7b` code ran from the checkout at `bc0c7c5`, which adds
+only the corpus entries, so the result files record that commit:
+
+| Answerable | correct | correct·flagged | declined | wrong·flagged | silent wrong | n |
+|---|---|---|---|---|---|---|
+| `21f1dac` (before both steps) | 25 | 2 | 0 | 8 | 9 | 44 |
+| `bcd4752` (row pairing) | 25 | 2 | 0 | 8 | 9 | 44 |
+| `915be7b` (label values) | **30** | 2 | 1 | 3 | 8 | 44 |
+
+- **By language** (`21f1dac` → `915be7b`; correct includes flagged):
+  - English 17 → 20 of 27; silent wrong 7 → 6; 1 answerable question declined.
+  - Arabic 5 → 7 of 9; no silent errors.
+  - Mixed 5 → 5 of 8.
+- **Questions that name a label** ("pairing", 18):
+  - correct 6 → 9
+  - wrong·flagged 7 → 3
+  - silent wrong 5 → 5
+  - declined 0 → 1
+- **Label/value pairing in extraction:** 7 of 11 fields correct for all three builds (3 of them flagged), page and box
+  recorded for 11 of 11. The label work changed question answering, not field extraction.
+- **Unanswerable, subject mentioned but value not given:**
+  - English: silent answers 2 → 1, declines 1 → 2.
+  - Mixed: 1 silent answer → 1 declined.
+  - The two new declines are blank fields: a fax's empty "MESSAGE:" and an invoice's empty "Web Site:".
+- **Latency and model activity:**
+  - QA median 0.05 → 0.01 s; maximum 0.30 → 0.28 s.
+  - Reader inference calls during the run 206 → 157: label answers need no model.
+  - Embedder 89 → 89; the writer was never loaded.
+- **Rules only** (`915be7b`, no models): English 19 of 27, Arabic 7 of 9, mixed 5 of 8 correct.
+
+**What went wrong on fresh5** (diagnosed, not fixed; fresh5 is development data from here):
+- **An incorrect decline.** For "What is the caption?" on the insertion order, the value sits in a table row under
+  the "CAPTION:" column header. The blank-field rule declined it.
+- **Wrong-but-flagged became silent wrong.** "Who is the advertiser?" is paired with the right label, but OCR read
+  "LORILLAAD". Neither the exact score nor the entity score accepts a misread name.
+- **Unchanged failures:**
+  - Luxor's elevation and total area: the infobox values are read from the wrong lines.
+  - DeFacto's tax and amount to pay: a two-column summary table.
+  - The Checkers VAT number.
+  - The fax's recipient: a "To:" line inside a form whose sender is read correctly.
+  - "On what date was the strike on Sumy?": answered with the letter's date. The letter says "over the past day".
+
+### Arabic scoring: entity and exact transcription
+
+Every run is scored twice; no answer key was changed.
+- **Exact transcription:** `contains`, as before.
+- **Same entity:** `contains_entity`. An Arabic word may carry attached particles ("لتركيا" names "تركيا"). Particles
+  come off the answer's words only, and every letter of the word itself must match, so an OCR misreading
+  ("ريغيير" for "ريفيير", "LORILLAAD") stays wrong.
+- **Effect on stored runs:** the entity score differs from the exact one in exactly one case, the fresh3 Arabic
+  sender of S/16500 ("المثل الدائم لتركيا"). That moves `9fc8da7` Arabic on fresh3 from 4 to 5 of 7; every other run
+  scores the same both ways. The summary prints both, per language.
+
+### Reader spans
+
+- **The audit.** The first-line matching added in `bdd2040` validated only a span's first line; the rest was kept
+  unchecked. Since `bcd4752`, every line must be supported:
+  - The whole span must sit in one sentence or one visual row.
+  - A continuation that adds a value of its own ("8.60" then "12 March 2024", "70.00" then "200.00", "Ahmed Ali"
+    then "Cashier: Mona Saleh") is cut off, and the evidence is the sentence or row that holds the rest.
+  - A continuation of the same text with no new value ("Do not" / "send to the IRS") is kept, as is a label
+    followed by its one value ("Total due" / "8.60").
+- **Regression tests** in `tests/test_binding.py` use a stand-in reader and assert that it was called.
+- **Development effect:** one FUNSD answer that was already flagged stayed flagged but became wrong, because its
+  garbled span was cut to its first line.
+
 ### Fields, library tasks, export
 
 - **Library tasks**:
@@ -332,6 +432,8 @@ Costa VAT question); no other outcome changed. No new independent split has been
 ## What is not measured
 
 - handwriting
+- a table value printed under its column header (one such case was declined as a blank field on fresh5)
+- rotated receipt photos and white-on-black text (OCR reads them poorly; fresh4)
 - questions whose subject is mentioned but whose value is not: 6 of 11 were answered silently on fresh2 before
   `9fc8da7`; on fresh3 after it, 1 of 8. Both samples are small.
 - genuine Arabic forms, certificates and invoices

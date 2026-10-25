@@ -1,0 +1,83 @@
+{
+ "task_id": "fd0a51e39adf",
+ "request": "What is the product?",
+ "intent": "ask",
+ "state": "succeeded",
+ "answer": "NEWPORT\n\nEvidence: “PRODUCT: NEWPORT”",
+ "confidence": 0.6,
+ "interpretation_confidence": 0.6,
+ "evidence_confidence": 0.7,
+ "interpretation": [
+  "task: ask"
+ ],
+ "not_understood": [],
+ "checks": [
+  "provenance: 1 citation(s) were found in the stored document text (this shows where values came from, not that they answer the question)",
+  "interpretation: no conditions in the request",
+  "evidence: heuristic score 0.70 (labels, OCR confidence, arithmetic checks)",
+  "answer: the value beside the label “PRODUCT” on page 1"
+ ],
+ "sources": [
+  {
+   "doc_id": "280f86fab71a04eb",
+   "path": "<local>/funsd-93106788.png",
+   "name": "funsd-93106788.png",
+   "page": 1,
+   "block": null,
+   "bbox": [
+    475.6,
+    256.7,
+    586.4,
+    266.6
+   ],
+   "excerpt": "PRODUCT: NEWPORT",
+   "score": null,
+   "ocr_conf": 0.9972
+  }
+ ],
+ "records": [],
+ "calculation": null,
+ "files_written": [],
+ "warnings": [],
+ "trace": [
+  {
+   "index": 0,
+   "tool": "inspect_documents",
+   "args": {
+    "doc_type": null
+   },
+   "status": "ok",
+   "summary": "1 documents (1 invoice)",
+   "duration_ms": 0.8,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 1,
+   "tool": "search",
+   "args": {
+    "query": "What is the product?",
+    "k": 8
+   },
+   "status": "ok",
+   "summary": "8 passages (hybrid)",
+   "duration_ms": 4.7,
+   "attempts": 1,
+   "error": null
+  },
+  {
+   "index": 2,
+   "tool": "answer",
+   "args": {
+    "question": "What is the product?"
+   },
+   "status": "ok",
+   "summary": "value beside its label",
+   "duration_ms": 2.8,
+   "attempts": 1,
+   "error": null
+  }
+ ],
+ "brain": "embedder (planner: rules)",
+ "duration_ms": 8.8
+}

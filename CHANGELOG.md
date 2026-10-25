@@ -46,6 +46,32 @@ defects below.** Upgrade once 0.1.1 is published.
   are documented as heuristics, not calibrated probabilities.
 - The `TaskState` enum gained `unsupported`.
 
+### Layout-aware answers (`bcd4752`, `915be7b`)
+Measured in [docs/EVALUATION.md](docs/EVALUATION.md#labels-and-values-on-the-page-915be7b).
+- **Labels paired with values across OCR columns.** Visual rows group lines by bounding box, ordered by the
+  script's direction (Arabic right to left).
+  - *Extraction.* A money or date field whose label has no value in reading direction tries the other side
+    of its row. Several values on one row are flagged.
+  - *Answers.* Date, amount and count answers can be supported by a row as well as a sentence. Answers keep
+    their page and box.
+- **Questions that name a printed label** ("What is the product?", "ما هي الكثافة؟") are answered with the
+  value beside or below that label, with page and box, and without a model call.
+  - Titles, document-noun headings and prose are not labels.
+  - Several candidate values, or several matching labels, are flagged.
+  - A label left blank on a form is declined.
+- **Every line of a reader answer is checked.** A multi-line span must sit in one sentence or one visual row.
+  A continuation that adds its own date, amount or "Label:" is cut, and the sentence that holds the rest is
+  cited.
+- **Evaluation**:
+  - Each answer is also scored for the same entity, allowing Arabic particles such as "لتركيا" for "تركيا";
+    exact transcription is still reported.
+  - Pairing accuracy, page and box are reported per field.
+  - New splits fresh4 (12 documents) and fresh5 (10), each with expectations written before first access.
+    - fresh4: no change.
+    - fresh5: answerable questions correct 27 → 32 of 44, silent wrong 9 → 8, one incorrect decline.
+- **README lead image**: real screenshots of the latest build, covering an English letter, an Arabic letter,
+  an English form and a mixed receipt (labelled as a development example).
+
 ### Fixed after evaluating on external documents (third review)
 Found by running real OCR on Voxel51 invoices and CORD receipts (dev splits; see
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:

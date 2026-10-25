@@ -1,0 +1,6 @@
+[
+ {"id": "letter-event-date", "documents": ["S_2025_300-en.pdf"], "request": "When will the open debate be held?"},
+ {"id": "arabic-letter-signer", "documents": ["S_2025_380-ar.pdf"], "request": "من وقّع الرسالة؟"},
+ {"id": "form-label-value", "documents": ["funsd-93106788.png"], "request": "What is the product?"},
+ {"id": "mixed-receipt-vat", "documents": ["coru-costa.jpg"], "request": "ما قيمة ضريبة القيمة المضافة؟"}
+]
