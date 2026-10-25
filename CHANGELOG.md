@@ -72,6 +72,38 @@ Measured in [docs/EVALUATION.md](docs/EVALUATION.md#labels-and-values-on-the-pag
 - **README lead image**: real screenshots of the latest build, covering an English letter, an Arabic letter,
   an English form and a mixed receipt (labelled as a development example).
 
+### Fixed: a label's qualifier and section
+Three answers reproduced on `2a628c1`, each returned without a warning:
+- the shipping address taken from "Billing Address:";
+- the delivery date taken from "Invoice Date:";
+- Alice's salary taken from the "Salary:" printed under Bob.
+
+The fixes:
+- **A label naming a different field is not used.** This holds when the label has a word the question lacks
+  ("billing") and the question has one the label lacks ("shipping"). Such a value is declined, as is a bare
+  label returned as an answer ("Invoice Date:"). A qualifying document word is kept, so "the invoice date" is
+  not answered from "Due Date:".
+- **Copies of a repeated label are told apart by the section above each.** A section runs from the label that
+  opens it ("Employee: Bob Turner") or from the person's heading.
+  - A question naming no one, or someone under none of the copies, gets each copy listed with its section. None
+    is picked.
+  - A single label outside the named section is flagged on a page divided into sections.
+  - Any answer to a question naming something the document never prints is flagged.
+- **The other answering paths are checked the same way.** This covers the field shortcut, the reader, the
+  rules, and plain-text documents (laid out as one column for the check). Only the first cited source is checked.
+- **What counts as a name.** A run of capitalised words is a name when the document prints any of it outside its
+  labels ("Bob Turner", "Security Council"). Otherwise it is the field asked for ("What's the Shipping
+  address?"). "The company's address" names no one; "globex’s invoice" names the vendor the document prints.
+- **Development data only.** On the dev, reserved and fresh–fresh4 splits (473 questions, models on), no answer
+  was lost.
+  - Five changed for the better: two Aswan infobox answers and a receipt number became correct, a flagged total
+    became unflagged, and an unanswerable bank-account question was declined.
+  - In rules mode, two more silent errors became declines.
+- **Not handled:**
+  - "What is the date?" on a page with both an invoice and a delivery date gives the invoice date.
+  - Arabic names are not detected, so Arabic copies of a label are listed, not chosen between.
+  - In plain text, a value cited beside another field's label is flagged, not corrected.
+
 ### Fixed after evaluating on external documents (third review)
 Found by running real OCR on Voxel51 invoices and CORD receipts (dev splits; see
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:

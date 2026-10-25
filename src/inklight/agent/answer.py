@@ -294,8 +294,11 @@ def answer_question(ctx: ToolContext, question: str) -> str:
 
     if role_answer(ctx, question):
         return "role from the document's layout"
+    from .label_guard import check_label_scope
+
     if _field_shortcut(ctx, question):
-        return f"field shortcut ({s.confidence:.2f})"
+        guarded = check_label_scope(ctx, question)
+        return guarded or f"field shortcut ({s.confidence:.2f})"
     from .labels import label_answer
 
     labelled = label_answer(ctx, question)
@@ -317,8 +320,20 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         used = note
         if s.answer.startswith("I couldn't find supporting evidence"):
             return used
+    guarded = check_label_scope(ctx, question)  # no path gets around what a printed label says
+    if guarded:
+        s.notes.append(guarded)
+        used = guarded
+        if s.answer.startswith("I couldn't find supporting evidence"):
+            return used
+    before = s.answer
     _maybe_rephrase(ctx, question)
     _maybe_remote(ctx, question)
+    if s.answer != before:
+        again = check_label_scope(ctx, question)
+        if again:
+            s.notes.append(again)
+            used = again
     if s.confidence < 0.3:
         s.warn("Low confidence: the evidence only weakly supports this answer. Check the cited passage.")
     return used
