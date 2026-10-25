@@ -42,6 +42,18 @@ How Inklight handles this:
 SQuAD (the reader's training data) is CC BY-SA 4.0. That governs the dataset; the model card
 licenses the weights as Apache-2.0.
 
+## Document structure (optional `structure` extra: `pip install "inklight[structure]"`)
+
+Docling is used as a dependency through its public API (an OCR engine registered in its OCR factory, its standard
+PDF pipeline and its document model); no Docling code is copied into Inklight.
+
+| Component | License | Notes |
+|---|---|---|
+| docling, docling-core, docling-ibm-models, docling-parse | MIT | docling-core alone (light) reads stored structure |
+| Layout model `docling-project/docling-layout-heron` | Apache-2.0 (model card) | downloaded by Docling on first use |
+| TableFormer weights `docling-project/docling-models` | CDLA-Permissive-2.0 (model card) | downloaded by Docling on first use |
+| PyTorch (via docling) | BSD-3-Clause | |
+
 ## Python dependencies (installed from PyPI, not vendored)
 
 | Package | License |

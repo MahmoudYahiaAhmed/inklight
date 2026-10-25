@@ -48,6 +48,10 @@ that commit: `pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/i
 `pip install inklight` installs the published 0.1.0 instead. Indra's OCR models (about 76 MB) download on the first OCR
 run. After that, everything works offline.
 
+Optional: `pip install "inklight[structure]"` adds [Docling](https://github.com/docling-project/docling)'s layout,
+reading-order and table models on top of Indra's text (PyTorch, about 0.5 GB of weights; off until `[structure]
+engine = "docling"`). See [docs/STRUCTURE.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/STRUCTURE.md).
+
 ```bash
 inklight process ./documents                          # OCR, classify and index (incremental)
 inklight ask ./documents "Which court has jurisdiction?"
@@ -211,6 +215,9 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 - **Deterministic processing** does most of the work: it reads labels and layout in both directions, parses dates
   (including Arabic month names) and amounts, plans from your request, and computes sums exactly. It never sends
   text anywhere.
+- **Document structure (optional)** comes from Docling's existing layout, reading-order and TableFormer models, run on
+  Indra's stored lines with no second OCR. Table answers then come from the cell under the right heading, in the row
+  of the person or item asked about ([how, and what it costs](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/STRUCTURE.md)).
 - **Optional models** are small and English-only. They are used where they measurably help, and skipped where they
   harm. Each result's `checks` says which ran.
 

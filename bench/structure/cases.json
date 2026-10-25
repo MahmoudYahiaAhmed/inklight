@@ -1,0 +1,53 @@
+{
+  "note": "SYNTHETIC documents from bench/structure/make_synthetic.py (fictional companies and people). Expected answers were written from the generator's source text before any run; 'accept' lists the printed value in each script it may be written in.",
+  "documents": [
+    {
+      "files": ["regcard-ar-scan.pdf", "regcard-ar.pdf"],
+      "lang": "ar",
+      "qa": [
+        {"q": "ما اسم الشركة؟", "accept": ["شركة النخيل الذهبي للتجارة"], "category": "header-value"},
+        {"q": "ما نوع الشركة؟", "accept": ["شركة ذات مسئولية محدودة"], "category": "header-value"},
+        {"q": "ما رقم القيد؟", "accept": ["٤٧٣١٩", "47319"], "category": "header-value identifier"},
+        {"q": "ما تاريخ القيد؟", "accept": ["١٢/٠٣/٢٠٢٤", "12/03/2024"], "category": "header-value date"},
+        {"q": "ما رقم التسجيل الضريبي؟", "accept": ["٥٢٠-٨٨١-٣٠٦", "520-881-306"], "category": "header-value identifier"},
+        {"q": "ما المأمورية؟", "accept": ["مأمورية ضرائب الدقي"], "category": "header-value"},
+        {"q": "من المدير؟", "accept": ["سامي عبد الرحيم"], "category": "entity row"},
+        {"q": "ما نسبة مشاركة ليلى منصور؟", "accept": ["٤٠٪", "40%", "40"], "category": "entity row"},
+        {"q": "ما صفة سامي عبد الرحيم؟", "accept": ["مدير", "مدیر"], "category": "entity row", "note": "مدیر is the same printed word with the Persian yeh, as Indra writes it"}
+      ],
+      "missing": [
+        {"q": "ما رأس مال الشركة؟", "category": "not printed"}
+      ]
+    },
+    {
+      "files": ["regcard-en-scan.pdf", "regcard-en.pdf"],
+      "lang": "en",
+      "qa": [
+        {"q": "What is the company name?", "accept": ["Golden Palm Trading Co"], "category": "header-value"},
+        {"q": "What is the company type?", "accept": ["Limited liability company"], "category": "header-value"},
+        {"q": "What is the registration number?", "accept": ["47319"], "category": "header-value identifier"},
+        {"q": "What is the registration date?", "accept": ["12/03/2024"], "category": "header-value date"},
+        {"q": "What is the tax registration number?", "accept": ["520-881-306"], "category": "header-value identifier"},
+        {"q": "What is the tax office?", "accept": ["Dokki Tax Office"], "category": "header-value"},
+        {"q": "Who is the manager?", "accept": ["Samuel Reed"], "category": "entity row"},
+        {"q": "What is Laila Mansour's share?", "accept": ["40%"], "category": "entity row"},
+        {"q": "What is Samuel Reed's role?", "accept": ["Manager"], "category": "entity row"}
+      ],
+      "missing": [
+        {"q": "What is the company's capital?", "category": "not printed"}
+      ]
+    },
+    {
+      "files": ["regcard-mixed-scan.pdf", "regcard-mixed.pdf"],
+      "lang": "mixed",
+      "qa": [
+        {"q": "What is the company name?", "accept": ["Golden Palm Trading Co"], "category": "row label"},
+        {"q": "ما اسم الشركة؟", "accept": ["شركة النخيل الذهبي للتجارة", "Golden Palm Trading Co"], "category": "row label"},
+        {"q": "ما رقم القيد؟", "accept": ["47319"], "category": "row label identifier"},
+        {"q": "What is the registration number?", "accept": ["47319"], "category": "row label identifier"},
+        {"q": "What is the company type?", "accept": ["Limited liability company"], "category": "row label"}
+      ],
+      "missing": []
+    }
+  ]
+}

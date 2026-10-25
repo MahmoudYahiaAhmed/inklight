@@ -104,6 +104,51 @@ The fixes:
   - Arabic names are not detected, so Arabic copies of a label are listed, not chosen between.
   - In plain text, a value cited beside another field's label is flagged, not corrected.
 
+### Added: document structure from Docling on Indra's OCR (optional)
+- **`[structure] engine = "docling"`** (extra: `pip install "inklight[structure]"`) runs Docling's existing components
+  on each document Indra has read: the Heron layout model, reading order and TableFormer, through Docling's
+  supported OCR-engine extension point. The engine hands Docling Indra's stored lines; Docling does no OCR of its own
+  (`OcrMode.FULL_PAGE`, and PDFs passed as page images). Details: [docs/STRUCTURE.md](docs/STRUCTURE.md).
+  - Each document records cells delivered, foreign tokens (0) and orphan lines; lines no Docling item holds are
+    kept as blocks.
+  - The DoclingDocument is stored per document (new `structures` table, `blocks.ref`). It is exported by
+    `inklight structure DOC --format md|json|html|meta` and `GET /api/documents/{id}/structure`.
+  - Original OCR lines are unchanged. Tables are searched as rows of "header: value"; text inside pictures is
+    kept and searchable.
+- **Answers from table cells:**
+  - the value under the heading that names the field, never the heading;
+  - the row named by the question's other words; several rows with nothing to choose are listed;
+  - "who" lookups, and field/value tables;
+  - blank cells and unreadable dates are declined; cells OCR read with low confidence are flagged.
+- **Measured on synthetic registration cards** (Arabic, English, mixed; fixed Indra OCR; rules mode), correct
+  answers, `030dd41` → this build with Docling:
+  - Arabic 0 → 10 of 18 (the 6 wrong are flagged Indra misreads);
+  - English 2 → 18 of 18;
+  - mixed 6 → 10 of 10;
+  - silent wrong 17 → 0.
+
+  Cost: 1.1 GB peak memory, 2–3 s per page, and a one-time model load of 5.5 s (CPU, torch 2.14.1).
+
+### Fixed: headings and citations (with or without structure)
+- An answer that only repeats the question's words, or equals a table heading, is declined. "اسم الشركة" was
+  returned for "ما اسم الشركة؟", and "Company name" for "What is the company name?".
+- **Citations are verified line by line.** A label-and-value citation of two separate lines was being dropped.
+- **An answer whose every citation fails verification is marked "Unverified".** It is flagged and its confidence
+  capped at 0.2; it is no longer presented as supported.
+- **Choosing labels and values:**
+  - Generic question words break ties between labels ("company type" vs "company name").
+  - The value under a label is the line most squarely under it among value-like lines, not the neighbouring
+    column's.
+  - A label's value OCR read with confidence below 0.85 is flagged.
+- **Search folds the Persian yeh and keheh (ی ک) into Arabic ي and ك.** OCR writes "مدیر" for "مدير". Schema
+  version 4; existing libraries are re-indexed when opened, and the shown text is unchanged. After that, an
+  older Inklight version can still read the library, but cannot add documents to it (blocks gained a `ref`
+  column).
+- **Classification:** commercial-register certificates and tax cards are certificates, not contracts, even when
+  they cite the company's articles ("عقد التأسيس").
+- On the 473 development questions, `030dd41` → this build (structure off): no correct answer lost, and silent
+  errors became declined or flagged (3 silent errors with models on, 5 in rules mode).
+
 ### Fixed after evaluating on external documents (third review)
 Found by running real OCR on Voxel51 invoices and CORD receipts (dev splits; see
 [docs/BENCHMARKS.md](docs/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:

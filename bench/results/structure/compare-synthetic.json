@@ -1,0 +1,4638 @@
+{
+ "label": "STRUCTURE COMPARISON (synthetic documents, fixed Indra OCR)",
+ "modes": {
+  "A0": "unchanged Inklight 030dd41 (its src/ checkout)",
+  "A": "this build, structure off",
+  "B": "this build, Docling structure on Indra's lines"
+ },
+ "brain": "rules",
+ "python": "3.13.9",
+ "components": {
+  "docling": "2.142.1",
+  "docling_core": "2.104.0",
+  "layout": "docling default layout model (Heron)",
+  "tables": "TableFormer (accurate), cell matching on the given text cells",
+  "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+  "indra_ocr": "1.1.2"
+ },
+ "summary": {
+  "A0": {
+   "outcomes": {
+    "ar answerable": {
+     "wrong_flagged": 16,
+     "declined": 2
+    },
+    "ar missing": {
+     "flagged": 2
+    },
+    "en answerable": {
+     "silent_wrong": 13,
+     "wrong_flagged": 2,
+     "correct_flagged": 2,
+     "declined": 1
+    },
+    "en missing": {
+     "silent": 2
+    },
+    "mixed answerable": {
+     "silent_wrong": 4,
+     "correct_flagged": 2,
+     "correct": 4
+    }
+   },
+   "citation_holds_answer": "5/8",
+   "median_question_s": 0.004,
+   "ingest_s": 0.1,
+   "peak_mb": 55.65234375
+  },
+  "A": {
+   "outcomes": {
+    "ar answerable": {
+     "declined": 16,
+     "wrong_flagged": 2
+    },
+    "ar missing": {
+     "flagged": 2
+    },
+    "en answerable": {
+     "declined": 9,
+     "wrong_flagged": 2,
+     "silent_wrong": 5,
+     "correct_flagged": 2
+    },
+    "en missing": {
+     "silent": 2
+    },
+    "mixed answerable": {
+     "silent_wrong": 3,
+     "correct_flagged": 3,
+     "wrong_flagged": 1,
+     "correct": 3
+    }
+   },
+   "citation_holds_answer": "8/8",
+   "median_question_s": 0.004,
+   "ingest_s": 0.1,
+   "peak_mb": 55.85546875
+  },
+  "B": {
+   "outcomes": {
+    "ar answerable": {
+     "correct": 10,
+     "wrong_flagged": 6,
+     "declined": 2
+    },
+    "ar missing": {
+     "flagged": 2
+    },
+    "en answerable": {
+     "correct": 18
+    },
+    "en missing": {
+     "silent": 2
+    },
+    "mixed answerable": {
+     "correct": 7,
+     "correct_flagged": 3
+    }
+   },
+   "citation_holds_answer": "38/38",
+   "median_question_s": 0.005,
+   "ingest_s": 27.5,
+   "peak_mb": 1136.21875
+  }
+ },
+ "results": [
+  {
+   "mode": "A0",
+   "rows": [
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "wrong_flagged",
+     "answer": "اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        363.1,
+        1463.0,
+        476.4
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-V/8-18\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        511.6,
+        629.7,
+        1465.2,
+        817.9
+       ],
+       "excerpt": "نسبة المشاركة\nالصفة\nالاسم\n27.\nمدیر\nسامي عبد الرحيم\n72.\nشريك\nليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.039
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "wrong_flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        363.1,
+        1463.0,
+        476.4
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-V/8-18\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "14/-V/8-18\n\nEvidence: “تاريخ القيد: 14/-V/8-18”",
+     "warnings": [
+      "Low confidence: more than one line on the page matches this label; check the cited one.",
+      "Dropped a citation to regcard-ar-scan.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.25,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the date asked about (القيد) in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "typed answer declined"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "wrong_flagged",
+     "answer": "رقم التسجيل الضريبي",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        368.9,
+        967.3,
+        1463.7,
+        1084.4
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي\nرقم التسجيل الضريبي\n8.7-11-08."
+      },
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        363.1,
+        1463.0,
+        476.4
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-V/8-18\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "wrong_flagged",
+     "answer": "المأمورية",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        368.9,
+        967.3,
+        1463.7,
+        1084.4
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي\nرقم التسجيل الضريبي\n8.7-11-08."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "wrong_flagged",
+     "answer": "The closest passage is:\n“شهادة قيد في السجل التجاري\nتشهد إدارة السجل التجاري بأن البيانات التالية مقيدة بالسجل وفق أحكام القانون.”",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.15,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        528.2,
+        179.6,
+        1486.4,
+        307.6
+       ],
+       "excerpt": "شهادة قيد في السجل التجاري\nتشهد إدارة السجل التجاري بأن البيانات التالية مقيدة بالسجل وفق أحكام القانون."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "closest passage"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "wrong_flagged",
+     "answer": "نسبة المشاركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        511.6,
+        629.7,
+        1465.2,
+        817.9
+       ],
+       "excerpt": "نسبة المشاركة\nالصفة\nالاسم\n27.\nمدیر\nسامي عبد الرحيم\n72.\nشريك\nليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "wrong_flagged",
+     "answer": "سامي عبد الرحيم",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        511.6,
+        629.7,
+        1465.2,
+        817.9
+       ],
+       "excerpt": "نسبة المشاركة\nالصفة\nالاسم\n27.\nمدیر\nسامي عبد الرحيم\n72.\nشريك\nليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.281,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        363.1,
+        1463.0,
+        476.4
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-V/8-18\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.28)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "wrong_flagged",
+     "answer": "اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        362.9,
+        1463.1,
+        476.6
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-F/1.45\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        511.5,
+        533.5,
+        1480.9,
+        818.2
+       ],
+       "excerpt": "الشركاء\nنسبة المشاركة\nالصفة\nالاسم\n77.\nمدیر\nسامي عبد الرحيم\n72.\nشريك ليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "wrong_flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        362.9,
+        1463.1,
+        476.6
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-F/1.45\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "14/-F/1.45\n\nEvidence: “تاريخ القيد: 14/-F/1.45”",
+     "warnings": [
+      "Low confidence: more than one line on the page matches this label; check the cited one.",
+      "Dropped a citation to regcard-ar.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.25,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the date asked about (القيد) in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "typed answer declined"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "wrong_flagged",
+     "answer": "رقم التسجيل الضريبي",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        369.0,
+        967.3,
+        1463.8,
+        1084.7
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي\nرقم التسجيل الضريبي"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        362.9,
+        1463.1,
+        476.6
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-F/1.45\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "wrong_flagged",
+     "answer": "المأمورية",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        369.0,
+        967.3,
+        1463.8,
+        1084.7
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي\nرقم التسجيل الضريبي"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "wrong_flagged",
+     "answer": "The closest passage is:\n“شهادة قيد في السجل التجاري\nتشهد إدارة السجل التجاري بأن البيانات التالية مقيدة بالسجل وفق أحكام القانون.”",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.15,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        528.2,
+        180.2,
+        1486.5,
+        307.6
+       ],
+       "excerpt": "شهادة قيد في السجل التجاري\nتشهد إدارة السجل التجاري بأن البيانات التالية مقيدة بالسجل وفق أحكام القانون."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "closest passage"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "wrong_flagged",
+     "answer": "نسبة المشاركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        511.5,
+        533.5,
+        1480.9,
+        818.2
+       ],
+       "excerpt": "الشركاء\nنسبة المشاركة\nالصفة\nالاسم\n77.\nمدیر\nسامي عبد الرحيم\n72.\nشريك ليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "wrong_flagged",
+     "answer": "سامي عبد الرحيم",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        511.5,
+        533.5,
+        1480.9,
+        818.2
+       ],
+       "excerpt": "الشركاء\nنسبة المشاركة\nالصفة\nالاسم\n77.\nمدیر\nسامي عبد الرحيم\n72.\nشريك ليلى منصور"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.281,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        362.9,
+        1463.1,
+        476.6
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-F/1.45\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.28)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.59,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        168.6,
+        180.3,
+        1366.3,
+        343.0
+       ],
+       "excerpt": "Certificate of Commercial Registration\nThe Commercial Registry certifies that the following particulars are entered in the\nregister."
+      },
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        653.6,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Partners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartner\n40%\nTax card"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.59)"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "silent_wrong",
+     "answer": "Company type",
+     "warnings": [],
+     "confidence": 0.568,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        168.6,
+        180.3,
+        1366.3,
+        343.0
+       ],
+       "excerpt": "Certificate of Commercial Registration\nThe Commercial Registry certifies that the following particulars are entered in the\nregister."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.57)"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "wrong_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number 520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "silent_wrong",
+     "answer": "Certificate of Commercial Registration",
+     "warnings": [],
+     "confidence": 0.447,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        367.8,
+        180.3,
+        1281.4,
+        225.6
+       ],
+       "excerpt": "Certificate of Commercial Registration"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.45)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number 520-881-306"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.018
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "silent_wrong",
+     "answer": "Tax registration number 520-881-306",
+     "warnings": [],
+     "confidence": 0.584,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "answer replaced: the first answer was not connected to office, tax"
+     ],
+     "seconds": 0.01
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "silent_wrong",
+     "answer": "60%\n\nEvidence: “Manager: 60%”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1438.7,
+        856.7
+       ],
+       "excerpt": "Manager 60%"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "silent_wrong",
+     "answer": "Laila Mansour",
+     "warnings": [],
+     "confidence": 0.455,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        653.6,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Partners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartner\n40%\nTax card"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.46)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "silent_wrong",
+     "answer": "Samuel Reed",
+     "warnings": [],
+     "confidence": 0.466,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        653.6,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Partners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartner\n40%\nTax card"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.47)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.389,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.39)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.59,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        168.6,
+        180.8,
+        1366.3,
+        343.0
+       ],
+       "excerpt": "Certificate of Commercial Registration\nThe Commercial Registry certifies that the following particulars are entered in the\nregister."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.59)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "silent_wrong",
+     "answer": "Company type",
+     "warnings": [],
+     "confidence": 0.568,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        168.6,
+        180.8,
+        1366.3,
+        343.0
+       ],
+       "excerpt": "Certificate of Commercial Registration\nThe Commercial Registry certifies that the following particulars are entered in the\nregister."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "best sentence (0.57)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "wrong_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it.",
+      "Dropped a citation to regcard-en.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.25,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "silent_wrong",
+     "answer": "Certificate of Commercial Registration",
+     "warnings": [],
+     "confidence": 0.447,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        367.8,
+        180.8,
+        1285.9,
+        226.0
+       ],
+       "excerpt": "Certificate of Commercial Registration"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.3,
+        1282.8,
+        1191.8
+       ],
+       "excerpt": "Tax registration number\nTax office\n520-881-306\nDokki Tax Office"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.45)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it.",
+      "Dropped a citation to regcard-en.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.25,
+     "sources": [],
+     "citation_holds_answer": false,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the tax office in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "declined: the value belongs to “Tax registration number”"
+     ],
+     "seconds": 0.008
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "silent_wrong",
+     "answer": "60%\n\nEvidence: “Manager: 60%”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1438.6,
+        856.5
+       ],
+       "excerpt": "Manager 60%"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "silent_wrong",
+     "answer": "Laila Mansour",
+     "warnings": [],
+     "confidence": 0.419,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.42)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "silent_wrong",
+     "answer": "Samuel Reed",
+     "warnings": [],
+     "confidence": 0.427,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.43)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.389,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.39)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "25,11 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        290.7,
+        1448.9,
+        553.0
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        290.7,
+        1448.9,
+        553.0
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "silent_wrong",
+     "answer": "25,11 25 Limited liability company\n\nEvidence: “رقم القيد: 25,11 25 Limited liability company”",
+     "warnings": [
+      "Dropped a citation to regcard-mixed-scan.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.002
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319”",
+     "warnings": [
+      "Dropped a citation to regcard-mixed-scan.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": false,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.002
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "25,11 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        290.7,
+        1448.9,
+        553.0
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "25 211 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        290.8,
+        1449.0,
+        553.1
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        290.8,
+        1449.0,
+        553.1
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "silent_wrong",
+     "answer": "25 211 25 Limited liability company\n\nEvidence: “رقم القيد: 25 211 25 Limited liability company”",
+     "warnings": [
+      "Dropped a citation to regcard-mixed.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319”",
+     "warnings": [
+      "Dropped a citation to regcard-mixed.pdf p.1 that could not be verified"
+     ],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": false,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "25 211 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        290.8,
+        1449.0,
+        553.1
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.003
+    }
+   ],
+   "ingest": {
+    "regcard-ar-scan.pdf": {
+     "seconds": 0.02,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-ar.pdf": {
+     "seconds": 0.01,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-en-scan.pdf": {
+     "seconds": 0.02,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-en.pdf": {
+     "seconds": 0.01,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-mixed-scan.pdf": {
+     "seconds": 0.02,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-mixed.pdf": {
+     "seconds": 0.01,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    }
+   },
+   "peak_mb": 55.65234375,
+   "wall_s": 1.0
+  },
+  {
+   "mode": "A",
+   "rows": [
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the الشركه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.044
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the نوع الشركه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "EVY19\n\nEvidence: “رقم القيد: EVY19”",
+     "warnings": [
+      "Low confidence: the OCR read this value with low confidence (0.62); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1172.9,
+        363.1,
+        1326.0,
+        470.3
+       ],
+       "excerpt": "رقم القيد\nEVY19"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the date asked about (القيد) in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "typed answer declined"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the التسجيل الضريبي in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the الماموريه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the المدير in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the نسبه مشاركه ليلي منصور in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the صفه سامي عبد الرحيم in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.281,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        363.1,
+        1463.0,
+        476.4
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-V/8-18\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.28)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the الشركه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the نوع الشركه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "EVY19\n\nEvidence: “رقم القيد: EVY19”",
+     "warnings": [
+      "Low confidence: the OCR read this value with low confidence (0.71); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1172.8,
+        362.9,
+        1330.7,
+        471.0
+       ],
+       "excerpt": "رقم القيد\nEVY19"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the date asked about (القيد) in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "typed answer declined"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the التسجيل الضريبي in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the الماموريه in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the المدير in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the نسبه مشاركه ليلي منصور in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the صفه سامي عبد الرحيم in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "نوع الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.281,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        362.9,
+        1463.1,
+        476.6
+       ],
+       "excerpt": "تاريخ القيد\nرقم القيد\nنوع الشركة\nاسم الشركة\n14/-F/1.45\nEVY19\nشركة ذات مسئولية محدودة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.28)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "wrong_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "silent_wrong",
+     "answer": "Certificate of Commercial Registration",
+     "warnings": [],
+     "confidence": 0.447,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        367.8,
+        180.3,
+        1281.4,
+        225.6
+       ],
+       "excerpt": "Certificate of Commercial Registration"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.45)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.017
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "silent_wrong",
+     "answer": "Tax registration number 520-881-306",
+     "warnings": [],
+     "confidence": 0.584,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.4,
+        740.3,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "answer replaced: the first answer was not connected to office, tax"
+     ],
+     "seconds": 0.008
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "silent_wrong",
+     "answer": "60%\n\nEvidence: “Manager: 60%”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1438.7,
+        856.7
+       ],
+       "excerpt": "Manager\n60%"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the share in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the role in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.389,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        404.2,
+        1434.8,
+        593.1
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\nGolden Palm Trading\nLimited liability\n47319\n12/03/2024\nCo.\ncompany"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.39)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "wrong_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.3,
+        740.3,
+        1191.1
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "silent_wrong",
+     "answer": "Certificate of Commercial Registration",
+     "warnings": [],
+     "confidence": 0.447,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        367.8,
+        180.8,
+        1285.9,
+        226.0
+       ],
+       "excerpt": "Certificate of Commercial Registration"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      },
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.3,
+        1282.8,
+        1191.8
+       ],
+       "excerpt": "Tax registration number\nTax office\n520-881-306\nDokki Tax Office"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.45)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct_flagged",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306”",
+     "warnings": [
+      "Low confidence: the value was read from the line under an unpunctuated label; check it."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1089.3,
+        740.3,
+        1191.1
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the tax office in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "declined: the value belongs to “Tax registration number”"
+     ],
+     "seconds": 0.008
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "silent_wrong",
+     "answer": "60%\n\nEvidence: “Manager: 60%”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1438.6,
+        856.5
+       ],
+       "excerpt": "Manager\n60%"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the share in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for the role in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "a passage repeating the question is not an answer"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name",
+     "warnings": [],
+     "confidence": 0.389,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.4,
+        404.2,
+        1465.6,
+        1021.0
+       ],
+       "excerpt": "Company name\nCompany type\nRegistration\nRegistration\nnumber\ndate\n47319\n12/03/2024\nGolden Palm Trading\nLimited liability\nCo.\ncompany\nPartners\nName\nRole\nShare\nSamuel Reed\nManager\n60%\nLaila Mansour\nPartne"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.39)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "25,11 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        290.7,
+        1448.9,
+        553.0
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        290.7,
+        1448.9,
+        553.0
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "25,11 25 Limited liability company\n\nEvidence: “رقم القيد: 25,11 25 Limited liability company”",
+     "warnings": [
+      "Low confidence: the OCR read this value with low confidence (0.80); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        520.2,
+        444.0,
+        1069.7,
+        553.0
+       ],
+       "excerpt": "رقم القيد\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        442.2,
+        799.7,
+        475.6
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct_flagged",
+     "answer": "25,11 25 Limited liability company\n\nEvidence: “Company type: 25,11 25 Limited liability company”",
+     "warnings": [
+      "Low confidence: the OCR read this value with low confidence (0.80); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.7,
+        517.6,
+        1069.7,
+        553.0
+       ],
+       "excerpt": "Company type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.002
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "silent_wrong",
+     "answer": "25 211 25 Limited liability company",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        290.8,
+        1449.0,
+        553.1
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.69)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        290.8,
+        1449.0,
+        553.1
+       ],
+       "excerpt": "Field\nالبيان\nValue / žagall\nCompany name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nRegistration number\nرقم القيد\n47319\nCompany type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "silent_wrong",
+     "answer": "25 211 25 Limited liability company\n\nEvidence: “رقم القيد: 25 211 25 Limited liability company”",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        520.2,
+        443.7,
+        1069.7,
+        553.1
+       ],
+       "excerpt": "رقم القيد\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.4,
+        442.1,
+        799.7,
+        475.7
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.002
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "25 211 25 Limited liability company\n\nEvidence: “Company type: 25 211 25 Limited liability company”",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.7,
+        517.7,
+        1069.7,
+        553.1
+       ],
+       "excerpt": "Company type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "value beside its label"
+     ],
+     "seconds": 0.002
+    }
+   ],
+   "ingest": {
+    "regcard-ar-scan.pdf": {
+     "seconds": 0.02,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-ar.pdf": {
+     "seconds": 0.01,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-en-scan.pdf": {
+     "seconds": 0.01,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-en.pdf": {
+     "seconds": 0.01,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-mixed-scan.pdf": {
+     "seconds": 0.01,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    },
+    "regcard-mixed.pdf": {
+     "seconds": 0.0,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": null,
+     "export": null
+    }
+   },
+   "peak_mb": 55.85546875,
+   "wall_s": 0.9
+  },
+  {
+   "mode": "B",
+   "rows": [
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct",
+     "answer": "شركة النخيل الذهبي للتجارة\n\nEvidence: “اسم الشركة: شركة النخيل الذهبي للتجارة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.3,
+        440.7,
+        649.5,
+        476.4
+       ],
+       "excerpt": "اسم الشركة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.049
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "correct",
+     "answer": "شركة ذات مسئولية محدودة\n\nEvidence: “نوع الشركة: شركة ذات مسئولية محدودة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        790.0,
+        441.4,
+        1133.2,
+        473.7
+       ],
+       "excerpt": "نوع الشركة\nشركة ذات مسئولية محدودة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "EVY19\n\nEvidence: “رقم القيد: EVY19” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.62); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1219.9,
+        440.8,
+        1297.3,
+        470.3
+       ],
+       "excerpt": "رقم القيد\nEVY19"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for a value of “تاريخ القيد” in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell unreadable"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "wrong_flagged",
+     "answer": "8.7-11-08.\n\nEvidence: “رقم التسجيل الضريبي: 8.7-11-08.” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.75); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        673.2,
+        1051.8,
+        816.1,
+        1071.5
+       ],
+       "excerpt": "رقم التسجيل الضريبي\n8.7-11-08."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "correct",
+     "answer": "مأمورية ضرائب الدقي\n\nEvidence: “المأمورية: مأمورية ضرائب الدقي” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1195.1,
+        1041.8,
+        1463.7,
+        1084.4
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "correct",
+     "answer": "سامي عبد الرحيم\n\nEvidence: “الاسم: سامي عبد الرحيم” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        689.1,
+        707.1,
+        905.3,
+        742.5
+       ],
+       "excerpt": "الاسم\nسامي عبد الرحيم"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "wrong_flagged",
+     "answer": "72.\n\nEvidence: “نسبة المشاركة: 72.” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.63); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1422.0,
+        786.5,
+        1465.2,
+        808.4
+       ],
+       "excerpt": "نسبة المشاركة\n72."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "correct",
+     "answer": "مدیر\n\nEvidence: “الصفة: مدیر” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        941.2,
+        711.6,
+        1009.5,
+        741.5
+       ],
+       "excerpt": "الصفة\nمدیر"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar-scan.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "اسم الشركة | نوع الشركة | رقم القيد | تاريخ القيد",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        170.8,
+        336.6,
+        1481.3,
+        494.1
+       ],
+       "excerpt": "اسم الشركة | نوع الشركة | رقم القيد | تاريخ القيد\nشركة النخيل الذهبي للتجارة | شركة ذات مسئولية محدودة | EVY19 | 14/-V/8-18"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.007
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct",
+     "answer": "شركة النخيل الذهبي للتجارة\n\nEvidence: “اسم الشركة: شركة النخيل الذهبي للتجارة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        305.2,
+        440.6,
+        649.5,
+        476.6
+       ],
+       "excerpt": "اسم الشركة\nشركة النخيل الذهبي للتجارة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما نوع الشركة؟",
+     "outcome": "correct",
+     "answer": "شركة ذات مسئولية محدودة\n\nEvidence: “نوع الشركة: شركة ذات مسئولية محدودة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        790.0,
+        441.4,
+        1133.3,
+        473.9
+       ],
+       "excerpt": "نوع الشركة\nشركة ذات مسئولية محدودة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "wrong_flagged",
+     "answer": "EVY19\n\nEvidence: “رقم القيد: EVY19” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.71); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1219.7,
+        440.3,
+        1297.5,
+        471.0
+       ],
+       "excerpt": "رقم القيد\nEVY19"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "ما تاريخ القيد؟",
+     "outcome": "declined",
+     "answer": "I couldn't find supporting evidence for a value of “تاريخ القيد” in the processed text of this document.",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell unreadable"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "ما رقم التسجيل الضريبي؟",
+     "outcome": "wrong_flagged",
+     "answer": "8.7-11-08.\n\nEvidence: “رقم التسجيل الضريبي: 8.7-11-08.” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.73); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        673.1,
+        1051.7,
+        816.2,
+        1071.6
+       ],
+       "excerpt": "رقم التسجيل الضريبي\n8.7-11-08."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "ما المأمورية؟",
+     "outcome": "correct",
+     "answer": "مأمورية ضرائب الدقي\n\nEvidence: “المأمورية: مأمورية ضرائب الدقي” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1195.0,
+        1041.5,
+        1463.8,
+        1084.7
+       ],
+       "excerpt": "المأمورية\nمأمورية ضرائب الدقي"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "من المدير؟",
+     "outcome": "correct",
+     "answer": "سامي عبد الرحيم\n\nEvidence: “الاسم: سامي عبد الرحيم” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        689.0,
+        706.8,
+        905.4,
+        742.8
+       ],
+       "excerpt": "الاسم\nسامي عبد الرحيم"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما نسبة مشاركة ليلى منصور؟",
+     "outcome": "wrong_flagged",
+     "answer": "72.\n\nEvidence: “نسبة المشاركة: 72.” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.73); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1422.0,
+        786.5,
+        1465.2,
+        808.6
+       ],
+       "excerpt": "نسبة المشاركة\n72."
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "ما صفة سامي عبد الرحيم؟",
+     "outcome": "correct",
+     "answer": "مدیر\n\nEvidence: “الصفة: مدیر” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        941.1,
+        711.6,
+        1009.5,
+        741.6
+       ],
+       "excerpt": "الصفة\nمدیر"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-ar.pdf",
+     "lang": "ar",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "ما رأس مال الشركة؟",
+     "outcome": "flagged",
+     "answer": "اسم الشركة | نوع الشركة | رقم القيد | تاريخ القيد",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        171.2,
+        336.6,
+        1481.2,
+        494.2
+       ],
+       "excerpt": "اسم الشركة | نوع الشركة | رقم القيد | تاريخ القيد\nشركة النخيل الذهبي للتجارة | شركة ذات مسئولية محدودة | EVY19 | 14/-F/1.45"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.007
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "correct",
+     "answer": "Golden Palm Trading Co.\n\nEvidence: “Company name: Golden Palm Trading Co.” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.6,
+        519.6,
+        512.0,
+        586.0
+       ],
+       "excerpt": "Company name\nGolden Palm Trading Co."
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "Limited liability company\n\nEvidence: “Company type: Limited liability company” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        515.8,
+        520.0,
+        758.7,
+        593.1
+       ],
+       "excerpt": "Company type\nLimited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        882.6,
+        520.8,
+        976.7,
+        545.3
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "correct",
+     "answer": "12/03/2024\n\nEvidence: “Registration date: 12/03/2024” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1211.6,
+        520.8,
+        1378.7,
+        544.9
+       ],
+       "excerpt": "Registration date\n12/03/2024"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1168.0,
+        382.7,
+        1191.3
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.027
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "correct",
+     "answer": "Dokki Tax Office\n\nEvidence: “Tax office: Dokki Tax Office” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        946.6,
+        1167.5,
+        1191.4,
+        1191.8
+       ],
+       "excerpt": "Tax office\nDokki Tax Office"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.007
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "correct",
+     "answer": "Samuel Reed\n\nEvidence: “Name: Samuel Reed” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.1,
+        825.6,
+        392.1,
+        850.6
+       ],
+       "excerpt": "Name\nSamuel Reed"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "correct",
+     "answer": "40%\n\nEvidence: “Share: 40%” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1366.9,
+        902.8,
+        1438.1,
+        927.2
+       ],
+       "excerpt": "Share\n40%"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "correct",
+     "answer": "Manager\n\nEvidence: “Role: Manager” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1361.4,
+        856.7
+       ],
+       "excerpt": "Role\nManager"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en-scan.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name: Golden Palm Trading Co. | Company type: Limited liability company | Registration number: 47319 | Registration date: 12/03/2024",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        170.0,
+        377.9,
+        1480.7,
+        613.6
+       ],
+       "excerpt": "Company name: Golden Palm Trading Co. | Company type: Limited liability company | Registration number: 47319 | Registration date: 12/03/2024"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.70)"
+     ],
+     "seconds": 0.006
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company name?",
+     "outcome": "correct",
+     "answer": "Golden Palm Trading Co.\n\nEvidence: “Company name: Golden Palm Trading Co.” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        191.5,
+        519.6,
+        516.6,
+        585.9
+       ],
+       "excerpt": "Company name\nGolden Palm Trading Co."
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "Limited liability company\n\nEvidence: “Company type: Limited liability company” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        515.8,
+        520.0,
+        758.8,
+        593.2
+       ],
+       "excerpt": "Company type\nLimited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": false,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        882.5,
+        520.7,
+        976.8,
+        545.5
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value date",
+     "q": "What is the registration date?",
+     "outcome": "correct",
+     "answer": "12/03/2024\n\nEvidence: “Registration date: 12/03/2024” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1211.6,
+        520.8,
+        1378.7,
+        545.0
+       ],
+       "excerpt": "Registration date\n12/03/2024"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value identifier",
+     "q": "What is the tax registration number?",
+     "outcome": "correct",
+     "answer": "520-881-306\n\nEvidence: “Tax registration number: 520-881-306” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        188.4,
+        1167.8,
+        382.7,
+        1191.1
+       ],
+       "excerpt": "Tax registration number\n520-881-306"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.009
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "header-value",
+     "q": "What is the tax office?",
+     "outcome": "correct",
+     "answer": "Dokki Tax Office\n\nEvidence: “Tax office: Dokki Tax Office” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        946.6,
+        1167.5,
+        1191.4,
+        1191.8
+       ],
+       "excerpt": "Tax office\nDokki Tax Office"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.007
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "Who is the manager?",
+     "outcome": "correct",
+     "answer": "Samuel Reed\n\nEvidence: “Name: Samuel Reed” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        192.7,
+        825.5,
+        392.1,
+        850.5
+       ],
+       "excerpt": "Name\nSamuel Reed"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Laila Mansour's share?",
+     "outcome": "correct",
+     "answer": "40%\n\nEvidence: “Share: 40%” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1366.9,
+        902.9,
+        1438.1,
+        927.2
+       ],
+       "excerpt": "Share\n40%"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "answerable",
+     "category": "entity row",
+     "q": "What is Samuel Reed's role?",
+     "outcome": "correct",
+     "answer": "Manager\n\nEvidence: “Role: Manager” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        1196.9,
+        826.1,
+        1343.1,
+        856.5
+       ],
+       "excerpt": "Role\nManager"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-en.pdf",
+     "lang": "en",
+     "kind": "missing",
+     "category": "not printed",
+     "q": "What is the company's capital?",
+     "outcome": "silent",
+     "answer": "Company name: Golden Palm Trading Co. | Company type: Limited liability company | Registration number: 47319 | Registration date: 12/03/2024",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        170.4,
+        377.9,
+        1480.5,
+        613.0
+       ],
+       "excerpt": "Company name: Golden Palm Trading Co. | Company type: Limited liability company | Registration number: 47319 | Registration date: 12/03/2024"
+      }
+     ],
+     "citation_holds_answer": null,
+     "ocr_has_answer": null,
+     "path": [
+      "best sentence (0.70)"
+     ],
+     "seconds": 0.008
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "correct",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\n\nEvidence: “Company name: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        529.2,
+        365.1,
+        1448.9,
+        400.7
+       ],
+       "excerpt": "Company name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "Field: Company name | Value / žagall: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        169.5,
+        263.8,
+        1481.1,
+        573.0
+       ],
+       "excerpt": "Field: Company name | Value / žagall: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nField: Registration number | البيان: رقم القيد | Value / žagall: 47319\nField: Company type | Value"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “رقم القيد: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        698.8,
+        442.2,
+        799.7,
+        474.0
+       ],
+       "excerpt": "رقم القيد\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        698.8,
+        442.2,
+        799.7,
+        474.0
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed-scan.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct_flagged",
+     "answer": "25,11 25 Limited liability company\n\nEvidence: “Company type: 25,11 25 Limited liability company” (table, page 1)",
+     "warnings": [
+      "Low confidence: the OCR read this cell with low confidence (0.80); check it against the page."
+     ],
+     "confidence": 0.25,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        529.2,
+        517.6,
+        1069.7,
+        553.0
+       ],
+       "excerpt": "Company type\n25,11 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company name?",
+     "outcome": "correct",
+     "answer": "شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\n\nEvidence: “Company name: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        529.1,
+        364.9,
+        1449.0,
+        400.9
+       ],
+       "excerpt": "Company name\nشركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.004
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "ما اسم الشركة؟",
+     "outcome": "correct_flagged",
+     "answer": "Field: Company name | Value / žagall: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة",
+     "warnings": [
+      "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+     ],
+     "confidence": 0.29,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        170.0,
+        263.5,
+        1480.8,
+        573.5
+       ],
+       "excerpt": "Field: Company name | Value / žagall: شركة النخيل الذهبي للتجارة / .Golden Palm Trading Co اسم الشركة\nField: Registration number | البيان: رقم القيد | Value / žagall: 47319\nField: Company type | Value"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "best sentence (0.29)"
+     ],
+     "seconds": 0.005
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "ما رقم القيد؟",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “رقم القيد: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.4,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        698.7,
+        442.1,
+        799.7,
+        474.2
+       ],
+       "excerpt": "رقم القيد\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label identifier",
+     "q": "What is the registration number?",
+     "outcome": "correct",
+     "answer": "47319\n\nEvidence: “Registration number: 47319” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        698.7,
+        442.1,
+        799.7,
+        474.2
+       ],
+       "excerpt": "Registration number\n47319"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.003
+    },
+    {
+     "doc": "regcard-mixed.pdf",
+     "lang": "mixed",
+     "kind": "answerable",
+     "category": "row label",
+     "q": "What is the company type?",
+     "outcome": "correct",
+     "answer": "25 211 25 Limited liability company\n\nEvidence: “Company type: 25 211 25 Limited liability company” (table, page 1)",
+     "warnings": [],
+     "confidence": 0.6,
+     "sources": [
+      {
+       "page": 1,
+       "bbox": [
+        529.2,
+        517.7,
+        1069.7,
+        553.1
+       ],
+       "excerpt": "Company type\n25 211 25 Limited liability company"
+      }
+     ],
+     "citation_holds_answer": true,
+     "ocr_has_answer": true,
+     "path": [
+      "table cell"
+     ],
+     "seconds": 0.003
+    }
+   ],
+   "ingest": {
+    "regcard-ar-scan.pdf": {
+     "seconds": 14.77,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 8,
+      "tables": 3,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 8.86,
+      "load_seconds": 5.54,
+      "cells_delivered": 28
+     },
+     "export": {
+      "markdown_chars": 763,
+      "json_chars": 20073,
+      "ocr_lines": 28,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 3,
+      "pictures": 0
+     }
+    },
+    "regcard-ar.pdf": {
+     "seconds": 2.96,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 8,
+      "tables": 3,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.95,
+      "load_seconds": 0.0,
+      "cells_delivered": 27
+     },
+     "export": {
+      "markdown_chars": 763,
+      "json_chars": 19540,
+      "ocr_lines": 27,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 3,
+      "pictures": 0
+     }
+    },
+    "regcard-en-scan.pdf": {
+     "seconds": 3.01,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 8,
+      "tables": 3,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.99,
+      "load_seconds": 0.0,
+      "cells_delivered": 33
+     },
+     "export": {
+      "markdown_chars": 801,
+      "json_chars": 20167,
+      "ocr_lines": 33,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 3,
+      "pictures": 0
+     }
+    },
+    "regcard-en.pdf": {
+     "seconds": 2.96,
+     "doc_type": "certificate",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 8,
+      "tables": 3,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.95,
+      "load_seconds": 0.0,
+      "cells_delivered": 33
+     },
+     "export": {
+      "markdown_chars": 801,
+      "json_chars": 20148,
+      "ocr_lines": 33,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 3,
+      "pictures": 0
+     }
+    },
+    "regcard-mixed-scan.pdf": {
+     "seconds": 1.93,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 2,
+      "tables": 1,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.91,
+      "load_seconds": 0.0,
+      "cells_delivered": 11
+     },
+     "export": {
+      "markdown_chars": 544,
+      "json_chars": 9748,
+      "ocr_lines": 11,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 1,
+      "pictures": 0
+     }
+    },
+    "regcard-mixed.pdf": {
+     "seconds": 1.87,
+     "doc_type": "unknown",
+     "failed": [],
+     "warnings": [],
+     "structure_meta": {
+      "items": 2,
+      "tables": 1,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "docling default layout model (Heron)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.86,
+      "load_seconds": 0.0,
+      "cells_delivered": 11
+     },
+     "export": {
+      "markdown_chars": 544,
+      "json_chars": 9733,
+      "ocr_lines": 11,
+      "ocr_lines_missing_from_markdown": [],
+      "tables": 1,
+      "pictures": 0
+     }
+    }
+   },
+   "peak_mb": 1136.21875,
+   "wall_s": 29.5
+  }
+ ],
+ "ocr": "Indra 1.1.2 with the pilot models, read once per document and replayed to every arm",
+ "environment": "Windows, CPU, Python 3.13, torch 2.14.1+cpu"
+}
