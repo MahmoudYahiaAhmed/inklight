@@ -8,7 +8,7 @@ anything, and no human timing exists.
 
 | | |
 |---|---|
-| Builds compared | **P0** = `6b4cc12` (frozen wheel `9318449b…`) · **final** = `8c54921` code, measured; `2709d33` changes only the wording of unsupported-request answers |
+| Builds compared | **P0** = `6b4cc12` (frozen wheel `9318449b…`) · **first access** = uncommitted source, recovered as `8c54921` + a [patch](../bench/results/usecases/provenance/README.md) and reproduced exactly · **rerun** = `8c54921`; `2709d33` changes only the wording of unsupported-request answers |
 | OCR | Indra OCR 1.1.2, pinned model snapshot `bd02167f…` (same files for both builds) |
 | Optional models | reader `Xenova/distilbert-base-cased-distilled-squad` @ `bdbb0a5e…`, embedder `Xenova/bge-small-en-v1.5` @ `ea104dac…`, writer `HuggingFaceTB/SmolLM2-135M-Instruct` (not installed, `use_writer = false`) |
 | Modes | `auto` = optional models when installed (the default); `rules` = no models |
@@ -23,8 +23,13 @@ template in one split. Full list with sources and licences: [`bench/usecases/cor
 | Split | Docs | Role | Independence |
 |---|---|---|---|
 | dev | 35 | failures here were diagnosed and fixed | none: tuned on |
-| reserved | 30 | evaluated once, first access logged before reading | **independent for the first run** (`first-access-*`). Two fixes it prompted were made afterwards (below); later reserved runs are not independent for those |
-| fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run; it prompted two more fixes, confirmed only by regression tests |
+| reserved | 30 | evaluated once, first access logged before reading | **independent for the first run only** (`first-access-res-*`). Three fixes it prompted were made afterwards (below), so the rerun on `8c54921` (`final-res-*`) is not independent |
+| fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run (`first-access-fresh-auto`); it prompted two more fixes, so its rerun (`final-fresh-*`) is not independent |
+
+**Provenance.** The first-access runs record Git HEAD `6b4cc12`, but they ran from modified, uncommitted source.
+That source was rebuilt from the session transcript as `8c54921` plus a patch removing the later fixes. Re-running it
+reproduced every stored answer, confidence, outcome and ingestion hash exactly; only the export file path differs.
+Details: [`provenance/README.md`](../bench/results/usecases/provenance/README.md).
 
 | Kind | Genuine | Synthetic (**labelled**) |
 |---|---|---|
@@ -48,8 +53,10 @@ identical documents and settings (dev split, P0 build), with model calls counted
 | Writer | — | not loaded in any run (0 calls) | | |
 
 **Conclusion.**
-- OCR is not degraded by the models: they do not touch it.
-- The English-only models do degrade Arabic. The reader turned correct Arabic passages into wrong spans, and the embedder pushed the right Arabic document down 19 times while pulling it up 6.
+- OCR is not degraded by the models: they do not touch it, and the text is identical.
+- The English-only models degrade **two Arabic stages, retrieval and answering**:
+  - Retrieval: the embedder pushed the right Arabic document down 19 times while pulling it up 6.
+  - Answering: the reader turned correct Arabic passages into wrong spans.
 - Both models help English.
 
 The fix routes by language instead of removing the models:
@@ -57,7 +64,7 @@ The fix routes by language instead of removing the models:
 - **The reader is not asked about Arabic questions or Arabic evidence.**
 - Every skip is stated in the result's `checks`.
 
-Final build, dev split:
+`8c54921`, dev split (tuned on, not independent):
 
 | | models off | models on | models on, passages replayed |
 |---|---|---|---|
@@ -79,28 +86,34 @@ Outcomes are kept apart:
 
 "Flagged" means a low-confidence warning, a `partial` state, or a confidence under 0.3.
 
-### Questions with a cited source — reserved split, first access, models on
+### Questions with a cited source — reserved split, models on
 
-| Language | Build | correct | correct·flagged | wrong·flagged | silent wrong | n |
+The first-access run and P0 are the independent comparison. The rerun follows fixes prompted by these documents.
+
+| Language | Run | correct | correct·flagged | wrong·flagged | silent wrong | n |
 |---|---|---|---|---|---|---|
 | English | P0 | 24 | 1 | 9 | 8 | 42 |
-| English | final | **29** | 1 | 4 | 8 | 42 |
+| English | first access | **29** | 1 | 4 | 8 | 42 |
+| English | rerun `8c54921` | 29 | 1 | 4 | 8 | 42 |
 | Arabic | P0 | 0 | 1 | 22 | 0 | 23 |
-| Arabic | final | 0 | **11** | 12 | 0 | 23 |
+| Arabic | first access | 0 | **11** | 12 | 0 | 23 |
+| Arabic | rerun `8c54921` | 0 | 11 | 12 | 0 | 23 |
 | Mixed | P0 | 4 | 1 | 4 | 6 | 15 |
-| Mixed | final | 4 | 1 | 2 | 8 | 15 |
+| Mixed | first access | 4 | 1 | 2 | **8** | 15 |
+| Mixed | rerun `8c54921` | 4 | 1 | 4 | 6 | 15 |
 
 - **Arabic answers are never shown as reliable.** They are whole sentences chosen by shared words, and every one carries a "check the cited passage" flag. 11 of 23 were right and 0 were silently wrong.
-- **Mixed-language silent errors rose from 6 to 8.** Both new ones are on the synthetic salary letter.
+- **Mixed-language silent errors.** At first access they rose from 6 to 8, both new ones on the synthetic salary letter. The rerun flags those two (rule answers sharing under half the question's words), back to 6. That fix was prompted by these documents, so the 6 is not an independent result.
 - **Retrieval and answering are separate stages.** Retrieval had the answer for 40/42 English, 22/23 Arabic and 12/15 mixed questions; most wrong answers fail at the answering stage.
 - **Citations.** When the answer is right, the cited passage contains it 27/30 (English), 11/11 (Arabic) and 5/5 (mixed).
 
-Fresh split, first access (unseen; 10 documents): English 8/8 correct for both builds; Arabic 0/14 → 9/14 correct·flagged.
+Fresh split (10 documents, unseen at first access): English 8/8 correct for P0, first access and rerun. Arabic
+0/14 (P0) → 9/14 correct·flagged at first access, also 9/14 on the rerun.
 
-Dev split, models on, P0 → final: English 20/53 → 25/53, Arabic 4/36 → 17/36 (6 of them correct without a flag, all
+Dev split, models on, P0 → `8c54921`: English 20/53 → 25/53, Arabic 4/36 → 17/36 (6 of them correct without a flag, all
 from labelled fields on the synthetic invoice), mixed 5/12 → 5/12.
 
-### First stage where a wrong answer went wrong (reserved, final, models on)
+### First stage where a wrong answer went wrong (reserved, models on; identical for first access and rerun)
 
 | | ingestion/OCR | request parsing | retrieval | answering |
 |---|---|---|---|---|
@@ -112,32 +125,52 @@ The answering stage dominates. For Arabic it is a rule-based sentence choice wit
 
 ### Summaries (extractive)
 
-| Split | Language | Recognised as a summary (P0 → final) | Key facts covered | Quoted sentences found verbatim in the document |
+| Split | Language | Recognised as a summary (P0 → first access; rerun) | Key facts covered | Quoted sentences found verbatim in the document |
 |---|---|---|---|---|
-| reserved | English | 16/16 → 16/16 | 25/48 → 25/48 | 76/76 |
-| reserved | Arabic | 0/9 → **9/9** | 1/27 → **17/27** | 45/45 |
-| reserved | mixed | 5/5 → 5/5 | 7/15 → 7/15 | 22/22 |
+| reserved | English | 16/16 → 16/16; 16/16 | 25/48 → 25/48; 25/48 | 76/76 |
+| reserved | Arabic | 0/9 → **9/9**; 9/9 | 1/27 → **17/27**; 17/27 | 45/45 |
+| reserved | mixed | 5/5 → 5/5; 5/5 | 7/15 → 7/15; 7/15 | 22/22 |
+| fresh | Arabic | 0/6 → **6/6**; 6/6 | 1/18 → **11/18**; 11/18 | 30/30 |
 
 Summaries quote the document, so they cannot invent text; they can miss key facts. The quoted text is the stored OCR,
 misreadings included.
 
 ### Missing information (the document does not contain the answer)
 
-| Split | English | Arabic | Mixed |
+| Split, run | English | Arabic | Mixed |
 |---|---|---|---|
-| reserved, final | declined or flagged 8/16 | 9/9 | 2/5 |
-| dev, final | 14/19 | 12/12 | 4/4 |
+| reserved, P0 | declined or flagged 8/16 | 9/9 | 2/5 |
+| reserved, first access | 8/16 | 9/9 | 1/5 |
+| reserved, rerun `8c54921` | 8/16 | 9/9 | 2/5 |
+| fresh, first access and rerun | 4/4 | 6/6 | — |
+| dev, `8c54921` | 14/19 | 12/12 | 4/4 |
 
 Half of the English questions about facts a document lacks still get an unflagged sentence on the reserved split.
+None of these runs ever *declined*: every "declined or flagged" above is a low-confidence answer, not a statement
+that the document lacks the fact.
 
 ### Fields, library tasks, export
 
-- **Library tasks** (reserved, final):
-  - Pass: find the document (Arabic), filter, both unsupported refusals.
-  - Fail: find (English, "which document *reports*…" read as a document type), compare ("Identical letters dated" is not read as a letter date), count and sum of receipts (one receipt unclassified, totals misread on photos), export (one OCR-misread invoice number).
-  - Dev: 6/9 (P0 1/9). Fresh: 3/4 (P0 1/4).
+- **Library tasks**:
+
+  | Split | P0 | First access | Rerun `8c54921` |
+  |---|---|---|---|
+  | reserved | 2/9 | **5/9** | 4/9 |
+  | fresh | 1/4 | **4/4** | 3/4 |
+  | dev (tuned on) | 1/9 | — | 6/9 |
+
+  - Reserved at first access, pass: find the document (Arabic), compare letters, filter, both unsupported refusals.
+  - Reserved at first access, fail: find (English, "which document *reports*…" read as a document type), count and sum of receipts (one receipt unclassified, totals misread on photos), export (one OCR-misread invoice number).
+  - Lost on the rerun:
+    - Reserved, compare letters: "Identical letters dated…" is no longer read as a letter date, because "Letter dated" now dates only a letter's own title line.
+    - Fresh, find (English): the request comes back `partial` on both runs ("credentials", "representative" and "Brazil" are not applied). At first access the English report came first. On the rerun its Arabic translation came first, because the Arabic cue fix now classifies it as a report too.
 - **Unsupported requests** ("translate", "sign", "email"): P0 answered all with `succeeded`; final returns `unsupported` with the reason, 5/5.
-- **Fields**: on the synthetic Arabic invoice and certificate, 11/12 correct. On genuine Arabic UN letters, letter dates 2/4 (reserved). Full tables per language, type and genuine/synthetic: `python -I bench/usecases/summarize.py bench/results/usecases/final-res-auto.json`.
+- **Fields**:
+  - Synthetic Arabic invoice and certificate (dev, `8c54921`): 11/12 correct.
+  - Genuine Arabic UN letters, letter dates (reserved): 2/4 at first access and on the rerun.
+  - At first access, these were silently wrong; all are correct on the rerun (the Arabic report dates with a flag):
+    - Two synthetic Arabic leases: a parenthesised restatement of the rent read as negative (one reserved, one fresh).
+    - Two fresh Arabic reports: dated by a letter cited in their body. Full tables per language, type and genuine/synthetic: `python -I bench/usecases/summarize.py bench/results/usecases/final-res-auto.json`.
 - **Review export**: every custom field of every document was exported (51 rows reserved, 62 dev), with Arabic values unchanged.
 - **Regression check** on the earlier synthetic benchmark (`bench/run.py`): identical metrics for P0 and final (request fidelity 1.000, extraction 0.967, QA 0.917; that QA value is the same for both builds today).
 

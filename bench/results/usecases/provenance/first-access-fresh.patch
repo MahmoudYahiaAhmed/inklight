@@ -1,0 +1,56 @@
+diff --git a/src/inklight/extract/classify.py b/src/inklight/extract/classify.py
+index ca5d53b..623ace6 100644
+--- a/src/inklight/extract/classify.py
++++ b/src/inklight/extract/classify.py
+@@ -77,7 +77,6 @@ DOC_TYPES: dict[str, dict[str, float]] = {
+         "report of the secretary-general": 3,
+         "the present report": 2,
+         "تقرير": 2.5,
+-        "تقرير الامين العام": 3,  # = "report of the secretary-general"
+         "التقرير": 1.5,
+         "findings": 1.5,
+         "analysis": 1,
+diff --git a/src/inklight/extract/fields.py b/src/inklight/extract/fields.py
+index c08f92b..9378250 100644
+--- a/src/inklight/extract/fields.py
++++ b/src/inklight/extract/fields.py
+@@ -396,7 +396,7 @@ def _label_regex(specs: list[FieldSpec]) -> list[tuple[re.Pattern[str], FieldSpe
+ 
+ 
+ def _find_candidates(
+-    lines: list[_Line], specs: list[FieldSpec], day_first: bool = False, doc_type: str | None = None
++    lines: list[_Line], specs: list[FieldSpec], day_first: bool = False
+ ) -> dict[str, list[_Candidate]]:
+     # Claim labels of the whole catalog too, so "Due Date" is never read as "Date"
+     # even when only "date" was requested; only requested fields are recorded.
+@@ -437,7 +437,7 @@ def _find_candidates(
+             if (
+                 spec.name == "date"
+                 and title_date
+-                and (doc_type != "letter" or line.page != 1 or i > 15 or line.text[:_start].strip())
++                and (line.page != 1 or i > 15 or line.text[:_start].strip())
+             ):
+                 # A letter's own "Letter dated …" starts its title line. In a report ("has received a letter
+                 # dated 13 February"), or anywhere else, it dates another document.
+@@ -631,7 +631,7 @@ def extract_record(
+         return full.model_copy(update={"fields": {k: v for k, v in full.fields.items() if k in names}})
+     lines = _lines(pages)
+     doc_currency = _document_currency(lines)
+-    candidates = _find_candidates(lines, specs, day_first, doc.doc_type)
++    candidates = _find_candidates(lines, specs, day_first)
+     values: dict[str, ExtractedValue] = {}
+     raw_values: dict[str, Any] = {}
+     for spec in specs:
+diff --git a/src/inklight/extract/values.py b/src/inklight/extract/values.py
+index 5693ce5..800772a 100644
+--- a/src/inklight/extract/values.py
++++ b/src/inklight/extract/values.py
+@@ -15,7 +15,7 @@ _CURRENCY = (
+ # "ثمانية آلاف جنيه مصري (8,000 ج.م)", "twenty dollars ($20.00)": parentheses after a written-out amount restate
+ # it; they are not an accounting negative. Nor are parentheses after an Arabic word (prose, not a ledger).
+ _AMOUNT_WORDS_BEFORE = re.compile(
+-    rf"(?:{_CURRENCY}|dollars?|euros?|pounds?|riyals?|dirhams?|dinars?|دينار|[ء-ي]{{2,}})\s*$", re.IGNORECASE
++    rf"(?:{_CURRENCY}|dollars?|euros?|pounds?|riyals?|dirhams?|dinars?|دينار)\s*$", re.IGNORECASE
+ )
+ _CURRENCY_CODES = {
+     "$": "USD", "€": "EUR", "£": "GBP", "¥": "JPY", "₹": "INR", "E£": "EGP", "RP": "IDR",

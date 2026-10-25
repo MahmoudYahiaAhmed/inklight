@@ -77,18 +77,26 @@ into the app and saves the browser's picture with the result JSON next to it ([`
 
 Automated evaluation on **75 original documents** (letters, contracts, reports, forms, certificates, invoices,
 receipts). It covers English, Arabic and mixed language, digital and scanned. Expected answers were fixed before
-any run. The table shows the **reserved split** (30 documents, held out from development), from its first,
-logged run, with models on (the default).
+any run. The table shows the **reserved split** (30 documents, held out from development), with models on (the default).
 
-| Questions with a cited source | P0 (`6b4cc12`) | Development build | n |
-|---|---|---|---|
-| English: correct | 25 | **30** (29 unflagged) | 42 |
-| English: silently wrong | 8 | 8 | 42 |
-| Arabic: correct, flagged for review | 1 | **11** | 23 |
-| Arabic: silently wrong | 0 | 0 | 23 |
-| Mixed: correct | 5 | 5 | 15 |
-| Arabic summary requests recognised | 0 of 9 | **9 of 9** (17 of 27 key facts, every sentence quoted verbatim) | 9 |
-| "Translate / sign / email this" refused as unsupported | 0 of 2 | **2 of 2** | 2 |
+- **First access** is the one independent run of the development build. It ran from uncommitted source, now
+  [recovered and reproduced exactly](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/results/usecases/provenance/README.md).
+- **Rerun** is commit `8c54921`, after three fixes those same documents prompted. It is not independent.
+
+| Questions with a cited source | P0 (`6b4cc12`) | First access | Rerun (`8c54921`) | n |
+|---|---|---|---|---|
+| English: correct | 25 | **30** (29 unflagged) | 30 (29 unflagged) | 42 |
+| English: silently wrong | 8 | 8 | 8 | 42 |
+| Arabic: correct, flagged for review | 1 | **11** | 11 | 23 |
+| Arabic: silently wrong | 0 | 0 | 0 | 23 |
+| Mixed: correct | 5 | 5 | 5 | 15 |
+| Mixed: silently wrong | 6 | 8 | 6 | 15 |
+| Arabic summary requests recognised | 0 of 9 | **9 of 9** (17 of 27 key facts, every sentence quoted verbatim) | 9 of 9 | 9 |
+| Library tasks (find, compare, count, sum, filter, export, refuse) | 2 of 9 | **5 of 9** | 4 of 9 | 9 |
+| "Translate / sign / email this" refused as unsupported | 0 of 2 | **2 of 2** | 2 of 2 | 2 |
+
+The rerun fixed the two new mixed-language silent errors (both on one synthetic letter). It lost the letter
+comparison, because "Letter dated" now dates only a letter's own title line.
 
 <details>
 <summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
@@ -100,11 +108,12 @@ logged run, with models on (the default).
 | Voxel51 invoices (**synthetic**) | 359 | 99.4% | 91.6% | 0.3% |
 | CORD receipts (genuine, Indonesia) | 127 | 61.4% | 47.2% | 3.1% |
 
-**Optional models.** They were measured on identical documents and passages. OCR is unaffected (its text is
-identical with models on or off).
-- The English reader turned correct Arabic passages into wrong spans (17 → 3 of 36 correct).
-- The English embedder ranked the right Arabic document lower.
-- Both help English (reader +4 of 53 answers; embedder top-3 retrieval 37 → 42 of 53).
+**Optional models.** They were measured stage by stage on identical documents (dev split, P0 build). OCR text is
+unchanged, because the models do not touch it. The two English models degraded **both Arabic retrieval and Arabic
+answering**:
+- Retrieval: with the embedder, the right Arabic document was in the top 3 for 20 of 36 questions instead of 29.
+- Answering: the reader, given the same passages, turned correct Arabic answers into wrong spans (17 → 3 of 36 correct).
+- Both help English: reader 16 → 20 of 53 answers; embedder top-3 retrieval 37 → 42 of 53.
 
 So Arabic queries use keyword search and skip the reader. The writer model is off by default and was never loaded.
 Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#do-the-optional-models-harm-arabic).

@@ -15,7 +15,7 @@ Measured in [EVALUATION.md](EVALUATION.md) on 75 original documents. The rest of
 | Questions with sources | partial: 30/42 right on reserved, 8 silently wrong | sentence answers, **always flagged for review**: 11/23 right, 0 silently wrong | partial: 5/15 |
 | Summaries | extractive, quoted verbatim | extractive, quoted verbatim; requests in Arabic recognised | as English |
 | Custom fields | partial; labelled dates, ids and amounts work best | works on clean RTL label/value layouts (synthetic); partial on genuine letters | partial |
-| Compare, filter, count, sum, export | filter works; comparing letter dates worked on dev and fresh, failed on reserved; counts and sums depend on classification and totals | — | receipt totals often wrong on photos |
+| Compare, filter, count, sum, export | filter works; comparing letter dates worked on dev, on fresh, and on reserved at first access, then failed on the reserved rerun of `8c54921`; counts and sums depend on classification and totals | — | receipt totals often wrong on photos |
 | Unsupported requests | refused with the reason | refused with the reason | — |
 | Review and export | any fields; presets by document type; Arabic values exported unchanged | right-to-left display in the workspace | — |
 
