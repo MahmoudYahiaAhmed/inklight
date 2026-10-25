@@ -183,7 +183,8 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 - **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
 - **Missing facts.** A question whose subject the document mentions but whose value it does not ("when will the
   debate be held?") is now usually declined. On new documents, 1 of 8 was still answered without a flag. The check
-  can also decline a fact that is there, when the question names context from a neighbouring sentence (1 of 44).
+  can also decline a fact that is there, for example when OCR reads a receipt's labels and values as separate
+  columns.
 - Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
 - Typewritten Arabic scans OCR only partly.
 - Classification is keyword-based.

@@ -17,7 +17,7 @@ anything, and no human timing exists.
 
 ## The documents
 
-90 documents in four splits. Groups keep translations, one company's receipts, a contract and a synthetic
+101 documents in five splits. Groups keep translations, one company's receipts, a contract and a synthetic
 template in one split. Full list with sources and licences: [`bench/usecases/corpus.json`](../bench/usecases/corpus.json).
 
 | Split | Docs | Role | Independence |
@@ -26,6 +26,7 @@ template in one split. Full list with sources and licences: [`bench/usecases/cor
 | reserved | 30 | evaluated once, first access logged before reading | **independent for the first run only** (`first-access-res-*`). Three fixes it prompted were made afterwards (below), so the rerun on `8c54921` (`final-res-*`) is not independent |
 | fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run (`first-access-fresh-auto`); it prompted two more fixes, so its rerun (`final-fresh-*`) is not independent |
 | fresh2 | 15 | 15 new genuine documents ([selection and exclusions](../bench/results/usecases/provenance/fresh2-selection.md)) (2025 UN letters and a 1984 scan in English and Arabic, two CUAD contracts, IRS W-8BEN, Arabic Wikipedia "الإسكندرية", three CORU receipts from new companies), with answerable and unanswerable questions; expectations committed (`6c1659c`) before any run | **independent for its first run** (`fresh2-first-access-*`): the build under test was frozen first (`d012e07`) |
+| fresh3 | 11 | answer-connection check (below); development data since the fixes it prompted | independent for its first run (`fresh3-first-access-*`) only |
 
 **Provenance.** The first-access runs record Git HEAD `6b4cc12`, but they ran from modified, uncommitted source.
 That source was reconstructed from the session transcript as `8c54921` plus a patch removing the later fixes.
@@ -307,7 +308,7 @@ of 13. The same unanswerable questions were declined.
 - Ingestion with OCR: dev 69 s for 35 documents (2,300 OCR model calls), reserved 35 s for 30.
 - Model calls during reserved QA: reader 155, embedder 106, writer 0.
 
-## Fixes made after the reserved and fresh runs
+## Fixes made after the held-out runs
 
 These were found on held-out documents, so those documents no longer confirm them. Each fix has a regression test.
 
@@ -318,6 +319,15 @@ These were found on held-out documents, so those documents no longer confirm the
 | reserved | an English question about a missing fact answered by a weakly matching sentence, unflagged | rule answers sharing under half the question's words are flagged |
 | fresh | the Arabic credentials report classified as a letter | Arabic cue "تقرير الأمين العام", parity with "report of the Secretary-General" |
 | fresh | the scan of the second synthetic lease gave "−5,000" | as above |
+| fresh3 | "How many people were injured in the attack on the bus?" declined: the bus is named in the sentence before "54 others were injured" | the sentence must hold one of the question's words; the sentence before it may supply the rest (not a heading) |
+| fresh3 | Costa "What is the VAT amount?" answered "SubTotal (VAT-Inclusive)" | "VAT-Inclusive" is a qualifier; a reader span across two OCR lines is matched by its first line. Now declined: this receipt's labels and values were read as separate columns, which needs layout row pairing (not done) |
+| fresh3 | the S/2025/250 signer flagged as an annex signature because a wrapped "(see
+annex)." line looked like the annex heading | "Annex" counts only as a heading line |
+| fresh3 | the Arabic S/16500 sender ran into the body ("أتشرِف…") | body starts are matched in search form, so OCR's "أتشرِف" ends the title |
+
+fresh3 is development data since these fixes. On all five earlier splits together (`129817f` → this build): English
+answerable correct 111 → 113 of 152 and incorrect declines 4 → 2; mixed silent wrong 11 → 10 and declines 2 → 3 (the
+Costa VAT question); no other outcome changed. No new independent split has been run on these fixes.
 
 ## What is not measured
 
