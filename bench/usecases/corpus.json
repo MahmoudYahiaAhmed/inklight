@@ -1,5 +1,5 @@
 {
- "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files. A fifth split, 'fresh3' (11 genuine documents), was added on 2026-10-25 to evaluate whether answers are connected to what was asked (sender vs recipient, document date vs event date, subtotal vs total, tax mentioned vs tax amount). Answerable questions carry a 'category'. Expectations were written before any build was run on these files.",
+ "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files. A fifth split, 'fresh3' (11 genuine documents), was added on 2026-10-25 to evaluate whether answers are connected to what was asked (sender vs recipient, document date vs event date, subtotal vs total, tax mentioned vs tax amount). Answerable questions carry a 'category'. Expectations were written before any build was run on these files. A sixth split, 'fresh4' (12 genuine documents), was added on 2026-10-25 to evaluate layout-aware label/value pairing and whole reader spans; its expectations were committed before the frozen candidate ran on it.",
  "gaps": [
   "Genuine Arabic forms, certificates, invoices and contracts with an open licence: none found. Synthetic stand-ins are used and labelled.",
   "Handwriting: not covered.",
@@ -6127,6 +6127,870 @@
      "kind": "absent_subject"
     }
    ]
+  },
+  {
+   "id": "n4-l300-en",
+   "group": "n4-l300",
+   "split": "fresh4",
+   "file": "n4-l300-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/300 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who sent the letter?",
+     "accept": [
+      "Greece"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "To whom is the letter addressed?",
+     "accept": [
+      "Secretary-General"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "What is the date of the letter?",
+     "accept": [
+      "9 May 2025",
+      "2025-05-09"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "When will the open debate be held?",
+     "accept": [
+      "20 May 2025",
+      "2025-05-20"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Evangelos Sekeris",
+      "Sekeris"
+     ],
+     "page": 1,
+     "category": "signer"
+    },
+    {
+     "q": "Who will chair the open debate?",
+     "accept": [
+      "Kyriakos Mitsotakis",
+      "Mitsotakis"
+     ],
+     "page": 1,
+     "category": "other"
+    }
+   ],
+   "summary_keys": [
+    "Greece",
+    "maritime security",
+    "open debate"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date was the concept note circulated?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-l300-ar",
+   "group": "n4-l300",
+   "split": "fresh4",
+   "file": "n4-l300-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/300 (Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من أرسل الرسالة؟",
+     "accept": [
+      "اليونان"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "إلى من وجهت الرسالة؟",
+     "accept": [
+      "الأمين العام"
+     ],
+     "page": 1,
+     "category": "recipient"
+    },
+    {
+     "q": "ما تاريخ الرسالة؟",
+     "accept": [
+      "2025-05-09",
+      "9 أيار"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "متى ستعقد المناقشة المفتوحة؟",
+     "accept": [
+      "2025-05-20",
+      "20 أيار"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "سيكيريس"
+     ],
+     "page": 1,
+     "category": "signer"
+    }
+   ],
+   "summary_keys": [
+    "اليونان",
+    "الأمن البحري",
+    "مناقشة مفتوحة"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "متى عممت المذكرة المفاهيمية؟",
+     "kind": "present_subject"
+    },
+    {
+     "q": "ما رقم الإيصال؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-s16700-en",
+   "group": "n4-s16700",
+   "split": "fresh4",
+   "file": "n4-s16700-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/16700 (English, 1984 scan; draft resolution)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the date of the document?",
+     "accept": [
+      "17 August 1984",
+      "1984-08-17"
+     ],
+     "page": 1,
+     "category": "doc_date"
+    },
+    {
+     "q": "On what date was the new constitution endorsed?",
+     "accept": [
+      "2 November 1983",
+      "1983-11-02"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "Which Security Council resolution of 1980 is recalled?",
+     "accept": [
+      "473"
+     ],
+     "page": 1,
+     "category": "number"
+    }
+   ],
+   "summary_keys": [
+    "South Africa",
+    "apartheid",
+    "constitution"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "On what date will the elections be held?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-s16700-ar",
+   "group": "n4-s16700",
+   "split": "fresh4",
+   "file": "n4-s16700-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "report",
+   "genuine": true,
+   "source": "https://documents.un.org S/16700 (Arabic, 1984 typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "متى وافق جمهور الناخبين البيض على الدستور الجديد؟",
+     "accept": [
+      "1983-11-02",
+      "2 تشرين",
+      "٢ تشرين"
+     ],
+     "page": 1,
+     "category": "event_date"
+    },
+    {
+     "q": "ما رقم قرار مجلس الأمن المؤرخ في 13 حزيران/يونيه 1980؟",
+     "accept": [
+      "473",
+      "٤٧٣"
+     ],
+     "page": 1,
+     "category": "number"
+    }
+   ],
+   "summary_keys": [
+    "جنوب أفريقيا",
+    "الفصل العنصري",
+    "الدستور"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "ما قيمة الضريبة؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-wiki-aswan-en",
+   "group": "n4-wiki-aswan",
+   "split": "fresh4",
+   "file": "n4-wiki-aswan-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://en.wikipedia.org/api/rest_v1/page/pdf/Aswan (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "What is the population of Aswan?",
+     "accept": [
+      "370,000"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the elevation of Aswan?",
+     "accept": [
+      "99 m"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the area code of Aswan?",
+     "accept": [
+      "97"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the total area of Aswan?",
+     "accept": [
+      "375.39"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Aswan",
+    "Nile",
+    "Elephantine"
+   ],
+   "fields": [
+    {
+     "name": "elevation",
+     "type": "text",
+     "labels": [
+      "Elevation"
+     ],
+     "accept": [
+      "99 m"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT number?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-wiki-aswan-ar",
+   "group": "n4-wiki-aswan",
+   "split": "fresh4",
+   "file": "n4-wiki-aswan-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/أسوان (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "ما مساحة أسوان؟",
+     "accept": [
+      "375"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "ما الرمز الهاتفي لأسوان؟",
+     "accept": [
+      "97"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "ما الكثافة السكانية في أسوان؟",
+     "accept": [
+      "1071"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "أسوان",
+    "النيل",
+    "السد العالي"
+   ],
+   "fields": [
+    {
+     "name": "area",
+     "type": "text",
+     "labels": [
+      "المساحة"
+     ],
+     "accept": [
+      "375"
+     ]
+    },
+    {
+     "name": "phone_code",
+     "type": "text",
+     "labels": [
+      "الرمز الهاتفي"
+     ],
+     "accept": [
+      "97"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-funsd-82837252",
+   "group": "n4-funsd-82837252",
+   "split": "fresh4",
+   "file": "n4-funsd-82837252.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82837252 (new competitive products form)",
+   "licence": "non-commercial research",
+   "gold_from": "FUNSD annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the date on the form?",
+     "accept": [
+      "8/10/90",
+      "1990-08-10"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "Who is the manufacturer?",
+     "accept": [
+      "B & W",
+      "B&W"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "Who reported it?",
+     "accept": [
+      "BOBBY MILLS",
+      "Bobby Mills"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the brand name?",
+     "accept": [
+      "VICEROY"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "VICEROY",
+    "B & W",
+    "NOBLESVILLE"
+   ],
+   "fields": [
+    {
+     "name": "report_date",
+     "type": "date",
+     "labels": [
+      "DATE"
+     ],
+     "accept": [
+      "1990-08-10"
+     ]
+    },
+    {
+     "name": "manufacturer",
+     "type": "text",
+     "labels": [
+      "MANUFACTURER"
+     ],
+     "accept": [
+      "B & W",
+      "B&W"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the list price?",
+     "kind": "present_subject"
+    },
+    {
+     "q": "What is the size?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-funsd-82251504",
+   "group": "n4-funsd-82251504",
+   "split": "fresh4",
+   "file": "n4-funsd-82251504.png",
+   "lang": "en",
+   "modality": "scan",
+   "type": "form",
+   "genuine": true,
+   "source": "FUNSD testing_data 82251504 (retail program report)",
+   "licence": "non-commercial research",
+   "gold_from": "FUNSD annotation",
+   "qa": [
+    {
+     "q": "Who is the report from?",
+     "accept": [
+      "Kent B. Mills",
+      "Mills"
+     ],
+     "page": 1,
+     "category": "sender"
+    },
+    {
+     "q": "What is the region number?",
+     "accept": [
+      "17"
+     ],
+     "page": 1,
+     "category": "pairing"
+    },
+    {
+     "q": "What is the area number?",
+     "accept": [
+      "5"
+     ],
+     "page": 1,
+     "category": "pairing"
+    }
+   ],
+   "summary_keys": [
+    "Flex Payment",
+    "displays",
+    "Kent B. Mills"
+   ],
+   "fields": [
+    {
+     "name": "region",
+     "type": "text",
+     "labels": [
+      "Region"
+     ],
+     "accept": [
+      "17"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-coru-crave",
+   "group": "n4-coru-crave",
+   "split": "fresh4",
+   "file": "n4-coru-crave.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 051f08dd-4232-4fb5-9fd5-ec5ce703a8c4 (Crave, Cairo Festival City)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "555.92"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the service charge?",
+     "accept": [
+      "66.72"
+     ],
+     "page": null,
+     "category": "service"
+    },
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "87.17"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the total due?",
+     "accept": [
+      "709.81"
+     ],
+     "page": null,
+     "category": "total"
+    }
+   ],
+   "summary_keys": [
+    "Crave",
+    "709.81",
+    "Pasta"
+   ],
+   "fields": [
+    {
+     "name": "subtotal",
+     "type": "money",
+     "accept": [
+      "555.92"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "87.17"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "709.81"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-coru-cafe",
+   "group": "n4-coru-cafe",
+   "split": "fresh4",
+   "file": "n4-coru-cafe.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0349d507-f89b-4bd7-92e5-517fa9c8bd76 (café without a printed name; English with an Arabic item note)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "133"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "18.62"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the service charge?",
+     "accept": [
+      "15.96"
+     ],
+     "page": null,
+     "category": "service"
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "167.58"
+     ],
+     "page": null,
+     "category": "total"
+    }
+   ],
+   "summary_keys": [
+    "133",
+    "167.58",
+    "Turkish coffee"
+   ],
+   "fields": [
+    {
+     "name": "subtotal",
+     "type": "money",
+     "accept": [
+      "133"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "18.62"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "167.58"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-coru-breadfast",
+   "group": "n4-coru-breadfast",
+   "split": "fresh4",
+   "file": "n4-coru-breadfast.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 01a69648-f0d9-43a3-9a96-b4191d287be7 (Breadfast; photo rotated 90 degrees; VAT stated as included)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the subtotal?",
+     "accept": [
+      "37.00"
+     ],
+     "page": null,
+     "category": "subtotal"
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "37.75"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "1.66"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "What is the delivery fee?",
+     "accept": [
+      "10.00"
+     ],
+     "page": null,
+     "category": "service"
+    }
+   ],
+   "summary_keys": [
+    "Breadfast",
+    "37.75",
+    "Nutella"
+   ],
+   "fields": [
+    {
+     "name": "subtotal",
+     "type": "money",
+     "accept": [
+      "37.00",
+      "37"
+     ]
+    },
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "37.75"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "1.66"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the employer?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n4-coru-emarat",
+   "group": "n4-coru-emarat",
+   "split": "fresh4",
+   "file": "n4-coru-emarat.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 02faee42-7042-4924-9073-d98b2b5dd057 (Emarat Misr; Arabic and English; photo sideways)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the total?",
+     "accept": [
+      "11.00"
+     ],
+     "page": null,
+     "category": "total"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "accept": [
+      "0.00"
+     ],
+     "page": null,
+     "category": "tax"
+    },
+    {
+     "q": "How much cash was tendered?",
+     "accept": [
+      "11.00"
+     ],
+     "page": null,
+     "category": "cash"
+    }
+   ],
+   "summary_keys": [
+    "Emarat Misr",
+    "11.00",
+    "DANUP"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "11.00",
+      "11"
+     ]
+    },
+    {
+     "name": "tax",
+     "type": "money",
+     "accept": [
+      "0.00",
+      "0"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the service charge?",
+     "kind": "absent_subject"
+    }
+   ]
   }
  ],
  "library_tasks": [
@@ -6461,6 +7325,16 @@
    "expect_docs": [
     "n3-s16500-en",
     "n3-s16500-ar"
+   ]
+  },
+  {
+   "id": "fresh4-find-en",
+   "split": "fresh4",
+   "kind": "find",
+   "request": "Which document is about maritime security?",
+   "expect_docs": [
+    "n4-l300-en",
+    "n4-l300-ar"
    ]
   }
  ]
