@@ -84,8 +84,10 @@ def citation(run: dict) -> dict[str, str]:
     for lang in ("en", "ar", "mixed"):
         qs = [q for d in run["documents"].values() if d["lang"] == lang for q in d.get("qa", [])]
         ok = [q for q in qs if q["outcome"] in ("correct", "correct_flagged")]
+        entity = sum(bool(q.get("entity_correct", q in ok)) for q in qs)
         out[lang] = (
-            f"answers {len(ok)}/{len(qs)}; cited passage supports the answer "
+            f"answers {len(ok)}/{len(qs)} (same entity, Arabic particles tolerated: {entity}/{len(qs)});"
+            " cited passage supports the answer "
             f"{sum(q['cited_passage_supports'] for q in ok)}/{len(ok)};"
             f" retrieval had the answer {sum(q['retrieval_has_answer'] for q in qs)}/{len(qs)}"
         )
@@ -148,6 +150,19 @@ def by_category(run: dict) -> dict[str, str]:
     return {k: fmt(v, names) for k, v in sorted(out.items())}
 
 
+def pairing(run: dict) -> str:
+    """Label/value pairing: labelled fields whose value was found beside or below its label on the page."""
+    rows = [f for d in run["documents"].values() for f in d.get("fields", []) if f.get("method")]
+    paired = [f for f in rows if str(f["method"]).startswith("label")]
+    good = [f for f in paired if f["outcome"] in ("correct", "correct_flagged")]
+    flagged = [f for f in paired if f["outcome"] in ("correct_flagged", "wrong_flagged")]
+    boxed = [f for f in paired if f.get("bbox") and f.get("page")]
+    return (
+        f"{len(good)}/{len(paired)} paired values correct ({len(flagged)} flagged), {len(rows) - len(paired)} fields "
+        f"found without a label; page and box recorded for {len(boxed)}/{len(paired)}"
+    )
+
+
 def latency(run: dict) -> str:
     qa = [q["seconds"] for d in run["documents"].values() for q in d.get("qa", [])]
     qa.sort()
@@ -166,7 +181,7 @@ def rescore(run: dict, corpus: dict) -> None:
     each answer is kept; only correct versus wrong can change. Applied to every run alike. Runs that stored
     complete answers ("answer_full") are rescored both ways; older, truncated runs can only be upgraded."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from capability_diag import contains
+    from capability_diag import contains, contains_entity
 
     accepts = {(d["id"], q["q"]): q["accept"] for d in corpus["documents"] for q in d["qa"]}
     for doc_id, d in run["documents"].items():
@@ -188,6 +203,9 @@ def rescore(run: dict, corpus: dict) -> None:
             )
             if good:
                 q["first_failing_stage"] = None
+            # The same answer, scored for entity identity: an attached Arabic particle ("لتركيا") does not make it
+            # wrong; an OCR misreading still does. Kept beside the exact score, never in place of it.
+            q["entity_correct"] = good or contains_entity(q["answer"], accept)
 
 
 def main() -> None:
@@ -213,6 +231,8 @@ def main() -> None:
             print(f"- summaries, {lang}: {s}")
         for lang, s in missing(r).items():
             print(f"- missing information, {lang}: {s}")
+        if any(f.get("method") for d in r["documents"].values() for f in d.get("fields", [])):
+            print(f"- label/value pairing: {pairing(r)}")
         cats = by_category(r)
         if cats:
             print("- by category (correct / correct·flagged / declined / wrong·flagged / silent wrong):")

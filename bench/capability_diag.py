@@ -78,6 +78,39 @@ def contains(haystack: object, accepts: list[str]) -> bool:
     return any(f" {norm(a)} " in h or (len(norm(a)) > 6 and norm(a) in h) for a in accepts)
 
 
+# Arabic particles written attached to the next word: conjunctions, prepositions and the article, in norm() form.
+_PARTICLES = ("وال", "بال", "فال", "كال", "لل", "ال", "و", "ف", "ب", "ل", "ك")
+
+
+def _forms(token: str, depth: int = 2) -> set[str]:
+    """A token and what is left when up to two attached Arabic particles are removed ("وبالامين" -> "امين"),
+    keeping at least three letters. Latin and digit tokens are only themselves."""
+    out = {token}
+    if depth and token[:1] and "؀" <= token[0] <= "ۿ":
+        for p in _PARTICLES:
+            if token.startswith(p) and len(token) - len(p) >= 3:
+                out |= _forms(token[len(p) :], depth - 1)
+    return out
+
+
+def contains_entity(haystack: object, accepts: list[str]) -> bool:
+    """Like contains(), but an Arabic word may carry attached particles: "لتركيا" names "تركيا". Every letter of
+    the word itself must still match, so an OCR misreading is not forgiven. Used beside contains(), never
+    instead of it: the two scores answer different questions (entity identity, exact transcription)."""
+    if contains(haystack, accepts):
+        return True
+    words = norm(haystack).split()
+    forms = [_forms(w) for w in words]
+    for accept in accepts:
+        want = [{w} for w in norm(accept).split()]  # particles come off the answer's words, not the key's
+        if not want:
+            continue
+        for i in range(len(words) - len(want) + 1):
+            if all(forms[i + k] & want[k] for k in range(len(want))):
+                return True
+    return False
+
+
 def answer_head(answer: str) -> str:
     """The answer itself, without the quoted evidence or a PARTIAL banner's interpretation lines: a correct
     string that appears only inside the evidence quote does not make a wrong answer right."""

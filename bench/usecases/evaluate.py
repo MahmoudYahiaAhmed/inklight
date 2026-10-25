@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from capability_diag import answer_head, arabic_share, contains, norm  # noqa: E402
+from capability_diag import answer_head, arabic_share, contains, contains_entity, norm  # noqa: E402
 
 ORT: collections.Counter = collections.Counter()
 NOT_FOUND = re.compile(
@@ -176,6 +176,7 @@ def qa_cases(agent, doc: dict, doc_id: str, text: str) -> list[dict]:  # type: i
             {
                 "q": item["q"],
                 "category": item.get("category"),
+                "entity_correct": correct or contains_entity(head, item["accept"]),
                 "answer": head.strip(),
                 "answer_full": res.answer,
                 "evidence": evidence(res),
@@ -279,6 +280,10 @@ def field_cases(agent, doc: dict, path: Path) -> list[dict]:  # type: ignore[no-
                 "value": None if value is None else str(value),
                 "outcome": ok_label or o,
                 "warning": v.warning if v else None,
+                "confidence": v.confidence if v else None,
+                "method": v.method if v else None,  # label-row, label-row-opposite, label-below, inferred …
+                "page": v.source.page if v and v.source else None,
+                "bbox": list(v.source.bbox) if v and v.source and v.source.bbox else None,
             }
         )
     return rows
