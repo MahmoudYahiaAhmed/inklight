@@ -135,6 +135,11 @@ def outcome(correct: bool, flagged: bool, state: str) -> str:
     return "wrong_flagged" if flagged else "silent_wrong"
 
 
+def evidence(res) -> list[dict]:  # type: ignore[no-untyped-def]
+    """Every cited passage in full, so a run can be rescored or audited without running it again."""
+    return [{"doc": s.name, "page": s.page, "excerpt": s.excerpt} for s in res.sources]
+
+
 def flagged_result(res) -> bool:  # type: ignore[no-untyped-def]
     low = any("Low confidence" in w for w in res.warnings)
     return low or res.confidence < 0.3 or str(res.state.value) == "partial"
@@ -167,7 +172,10 @@ def qa_cases(agent, doc: dict, doc_id: str, text: str) -> list[dict]:  # type: i
         rows.append(
             {
                 "q": item["q"],
-                "answer": head.strip()[:300],
+                "answer": head.strip(),
+                "answer_full": res.answer,
+                "evidence": evidence(res),
+                "warnings": list(res.warnings),
                 "state": state,
                 "intent": str(res.intent),
                 "outcome": o,
@@ -198,8 +206,13 @@ def missing_cases(agent, doc: dict, doc_id: str) -> list[dict]:  # type: ignore[
         rows.append(
             {
                 "q": q,
-                "answer": answer_head(res.answer).strip()[:200],
+                "answer": answer_head(res.answer).strip(),
+                "answer_full": res.answer,
+                "evidence": evidence(res),
+                "warnings": list(res.warnings),
+                "confidence": res.confidence,
                 "state": state,
+                "declined": state in ("partial", "failed", "unsupported") or bool(NOT_FOUND.search(res.answer)),
                 "outcome": "abstained_or_flagged" if abstained else "silent_answer",
             }
         )
@@ -222,7 +235,8 @@ def summary_case(agent, doc: dict, doc_id: str, text: str) -> dict:  # type: ign
         "language_matches": (arabic_share(res.answer) > 0.5) == (doc["lang"] == "ar") if res.answer.strip() else False,
         "seconds": round(time.perf_counter() - t0, 2),
         "onnx": delta(before),
-        "answer": res.answer[:500],
+        "answer": res.answer,
+        "evidence": evidence(res),
     }
 
 
@@ -300,7 +314,8 @@ def library_case(agent, task: dict, ids: dict[str, str], names: dict[str, str], 
         "request": task["request"],
         "state": state,
         "intent": str(res.intent),
-        "answer": res.answer[:400],
+        "answer": res.answer,
+        "evidence": evidence(res),
         "seconds": round(time.perf_counter() - t0, 2),
     }
     by_id = {v: k for k, v in ids.items()}

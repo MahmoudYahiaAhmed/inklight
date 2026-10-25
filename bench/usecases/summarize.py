@@ -127,7 +127,8 @@ def latency(run: dict) -> str:
 
 def rescore(run: dict, corpus: dict) -> None:
     """Re-check stored answers against the corpus as it is now (e.g. ISO dates accepted). The flag status of
-    each answer is kept; only correct versus wrong can change. Applied to every run alike."""
+    each answer is kept; only correct versus wrong can change. Applied to every run alike. Runs that stored
+    complete answers ("answer_full") are rescored both ways; older, truncated runs can only be upgraded."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from capability_diag import contains
 
@@ -138,8 +139,10 @@ def rescore(run: dict, corpus: dict) -> None:
             if accept is None or q["outcome"] in ("unsupported", "failed"):
                 continue
             flagged = q["outcome"] in ("correct_flagged", "wrong_flagged")
-            # stored answers are cut at 300 characters: a match found on the full answer stands
-            good = q["outcome"] in ("correct", "correct_flagged") or contains(q["answer"], accept)
+            if "answer_full" in q:  # complete answers are stored: score them again in either direction
+                good = contains(q["answer"], accept)
+            else:  # older runs cut answers at 300 characters: a match found on the full answer stands
+                good = q["outcome"] in ("correct", "correct_flagged") or contains(q["answer"], accept)
             q["outcome"] = (
                 ("correct_flagged" if flagged else "correct")
                 if good
