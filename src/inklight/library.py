@@ -10,7 +10,9 @@ import hashlib
 import json
 import logging
 import time
+from collections import deque
 from collections.abc import Callable
+from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -30,6 +32,7 @@ log = logging.getLogger(__name__)
 
 Progress = Callable[[str, str, dict], None]
 _STRUCTURE_CACHE = 8
+_MAX_WAITING = 1  # documents read and waiting for their structure: one keeps OCR and structure both busy
 
 
 @dataclass
@@ -51,6 +54,18 @@ class IngestReport:
 
 def doc_id_for(path: Path) -> str:
     return hashlib.sha256(str(path.resolve()).lower().encode("utf-8")).hexdigest()[:16]
+
+
+@dataclass(frozen=True)
+class _Read:
+    """A file Indra has read, waiting to be structured and indexed."""
+
+    path: Path
+    kind: str
+    doc_id: str
+    base: DocumentInfo
+    content: DocumentContent
+    password: str | None
 
 
 class Library:
@@ -97,19 +112,34 @@ class Library:
             paths = [paths]
         files, skipped = discover(list(paths), self.settings.limits.max_files_per_task)
         report = IngestReport(warnings=skipped)
-        for i, path in enumerate(files):
-            if progress:
-                progress("start", str(path), {"index": i, "total": len(files)})
-            try:
-                info, fresh = self._ingest_one(path, password=password, force=force)
-            except InklightError as exc:
-                report.failed.append((str(path), str(exc)))
+        structured = self.settings.structure.engine == "docling"
+        if structured and files:
+            self._preload_structure()  # Docling's models load while Indra reads the first document
+        # With structure on, document i is structured on one worker while Indra reads document i+1.
+        worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="inklight-structure") if structured else None
+        waiting: deque[tuple[Path, Future[tuple[DocumentInfo, bool]]]] = deque()
+        try:
+            for i, path in enumerate(files):
                 if progress:
-                    progress("failed", str(path), {"error": str(exc)})
-                continue
-            (report.added if fresh else report.unchanged).append(info)
-            if progress:
-                progress("done", str(path), {"pages": info.pages, "fresh": fresh, "status": info.status.value})
+                    progress("start", str(path), {"index": i, "total": len(files)})
+                try:
+                    step = self._read_one(path, password=password, force=force)
+                except InklightError as exc:
+                    self._record(report, path, None, exc, progress)
+                    continue
+                if not isinstance(step, _Read):
+                    self._record(report, path, step, None, progress)
+                elif worker is None:
+                    self._record(report, path, *self._finish_safely(step), progress)
+                else:
+                    while len(waiting) >= _MAX_WAITING:  # bound the documents held in memory
+                        self._collect(report, waiting.popleft(), progress)
+                    waiting.append((path, worker.submit(self._finish, step)))
+            while waiting:
+                self._collect(report, waiting.popleft(), progress)
+        finally:
+            if worker is not None:
+                worker.shutdown(wait=True)
         if report.added:
             try:
                 self.retriever.index_embeddings()
@@ -118,7 +148,53 @@ class Library:
         report.seconds = time.perf_counter() - started
         return report
 
+    def _record(
+        self,
+        report: IngestReport,
+        path: Path,
+        done: tuple[DocumentInfo, bool] | None,
+        error: InklightError | None,
+        progress: Progress | None,
+    ) -> None:
+        if error is not None or done is None:
+            report.failed.append((str(path), str(error)))
+            if progress:
+                progress("failed", str(path), {"error": str(error)})
+            return
+        info, fresh = done
+        (report.added if fresh else report.unchanged).append(info)
+        if progress:
+            progress("done", str(path), {"pages": info.pages, "fresh": fresh, "status": info.status.value})
+
+    def _collect(
+        self, report: IngestReport, item: tuple[Path, Future[tuple[DocumentInfo, bool]]], progress: Progress | None
+    ) -> None:
+        path, future = item
+        try:
+            self._record(report, path, future.result(), None, progress)
+        except InklightError as exc:
+            self._record(report, path, None, exc, progress)
+
+    def _finish_safely(self, step: _Read) -> tuple[tuple[DocumentInfo, bool] | None, InklightError | None]:
+        try:
+            return self._finish(step), None
+        except InklightError as exc:
+            return None, exc
+
+    def _preload_structure(self) -> None:
+        """Start loading Docling's models in the background (once per process). A failure is reported later, by
+        the document whose structure could not be built."""
+        from .structure.docling_run import preload
+
+        preload(self.settings.structure)
+
     def _ingest_one(self, path: Path, *, password: str | None, force: bool) -> tuple[DocumentInfo, bool]:
+        """Read, structure and index one file (the steps ``add`` overlaps across files)."""
+        step = self._read_one(path, password=password, force=force)
+        return self._finish(step) if isinstance(step, _Read) else step
+
+    def _read_one(self, path: Path, *, password: str | None, force: bool) -> _Read | tuple[DocumentInfo, bool]:
+        """Check and OCR a file; an unchanged file or an identical copy is done here."""
         checked = check_file(path, self.settings.limits.max_file_mb)
         doc_id = doc_id_for(checked.path)
         existing = self.store.get_document(doc_id)
@@ -160,7 +236,12 @@ class Library:
             self.store.clear_content(doc_id)  # an old extraction of a changed file must not stay searchable
             self.store.upsert_document(base.model_copy(update={"status": DocStatus.FAILED, "error": str(exc)}))
             raise
-        content, structure = self._structure(checked.path, checked.kind, content, password)
+        return _Read(checked.path, checked.kind, doc_id, base, content, password)
+
+    def _finish(self, step: _Read) -> tuple[DocumentInfo, bool]:
+        """Structure (when on), chunk, classify and store a document Indra has read."""
+        doc_id, base = step.doc_id, step.base
+        content, structure = self._structure(step.path, step.kind, step.content, step.password)
         chunks = [c for page in content.pages for c in chunk_page(page)]
         flagged = {i for i, c in enumerate(chunks) if injection_signals(c.text)}
         text = "\n".join(c.text for c in chunks)
@@ -185,7 +266,7 @@ class Library:
         )
         self.store.upsert_document(info)
         if status == DocStatus.FAILED:
-            raise OCRError(f"{checked.path.name}: {error}")
+            raise OCRError(f"{step.path.name}: {error}")
         if not self.settings.privacy.log_document_text:
             log.info("indexed %s (%d pages, %d chunks)", info.name, info.pages, len(chunks))
         return info, True

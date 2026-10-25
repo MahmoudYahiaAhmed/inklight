@@ -30,6 +30,15 @@ PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4
 FIXTURES = {"card-ar.png": fx.arabic_card, "partners-en.png": fx.english_partners, "fields-mixed.png": fx.mixed_fields}
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _no_model_preload():
+    """These tests replace Docling's inference with fixed documents: its models need not load in the background."""
+    mp = pytest.MonkeyPatch()
+    mp.setattr("inklight.structure.docling_run.preload", lambda settings: None)
+    yield
+    mp.undo()
+
+
 def _page(fixture: fx.Page) -> PageContent:
     lines = tuple(TextLine(text=t, bbox=b, conf=c) for t, b, c in fixture.lines)
     blocks = tuple(Block(index=i, label="Text", text=ln.text, bbox=ln.bbox, conf=ln.conf) for i, ln in enumerate(lines))
@@ -461,3 +470,29 @@ def test_the_structure_endpoint(library, monkeypatch):
     assert html.status_code == 200 and "x-inklight-note" in html.headers  # the stamp's text is not in Docling's HTML
     assert client.get(f"/api/documents/{doc_id}/structure?format=pdf").status_code == 400
     assert client.get("/api/documents/nope/structure").status_code == 404
+
+
+# ---------------------------------------------------------------- only the pages with tables
+
+
+def test_only_pages_where_indra_found_a_table_are_chosen():
+    from inklight.config import StructureSettings
+    from inklight.structure.docling_run import chosen_pages
+
+    text_page = _page(fx.Page()).model_copy(update={"number": 1, "blocks": (Block(index=0, label="Text", text="x"),)})
+    table_page = _page(fx.arabic_card()).model_copy(
+        update={"number": 2, "blocks": (Block(index=0, label="Table", text="y"),)}
+    )
+    pages = [text_page, table_page]
+    assert [p.number for p in chosen_pages(pages, StructureSettings(pages="tables"))] == [2]
+    assert [p.number for p in chosen_pages(pages, StructureSettings(pages="all"))] == [1, 2]
+
+
+def test_docling_page_numbers_are_mapped_back_to_the_documents():
+    from inklight.structure.docling_run import _renumbered
+
+    document = fx.arabic_card().doc  # Docling numbered the one page it was given 1; it is the document's page 3
+    _renumbered(document, {1: 3})
+    assert list(document.pages) == [3] and document.pages[3].page_no == 3
+    assert all(p.page_no == 3 for t in document.tables for p in t.prov)
+    assert all(p.page_no == 3 for item, _ in document.iterate_items(traverse_pictures=True) for p in item.prov)

@@ -51,6 +51,7 @@ PDF pipeline and its document model); no Docling code is copied into Inklight.
 |---|---|---|
 | docling, docling-core, docling-ibm-models, docling-parse | MIT | docling-core alone (light) reads stored structure |
 | Layout model `docling-project/docling-layout-heron` | Apache-2.0 (model card) | downloaded by Docling on first use |
+| Its ONNX export `docling-project/docling-layout-heron-onnx` (the default runtime) | Apache-2.0 (model card) | run with ONNX Runtime |
 | TableFormer weights `docling-project/docling-models` | CDLA-Permissive-2.0 (model card) | downloaded by Docling on first use |
 | PyTorch (via docling) | BSD-3-Clause | |
 

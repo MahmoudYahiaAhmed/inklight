@@ -49,6 +49,7 @@ def structure_document(
         "seconds": round(result.seconds, 2),
         "load_seconds": round(result.load_seconds, 2),
         "cells_delivered": result.cells_delivered,
+        "pages_structured": result.pages,
     }
     return Structured(
         content=content.model_copy(update={"pages": tuple(adapted.pages)}),

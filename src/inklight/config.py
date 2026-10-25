@@ -92,11 +92,21 @@ class StructureSettings(BaseModel):
     engine: Literal["none", "docling"] = Field(
         "none", description="'docling': Docling's layout, reading order and table structure on Indra's text."
     )
-    table_mode: Literal["accurate", "fast"] = Field("accurate", description="TableFormer mode.")
+    table_model: Literal["tableformer", "tableformer_v2"] = Field(
+        "tableformer", description="Docling's table-structure model: TableFormer, or TableFormer V2."
+    )
+    table_mode: Literal["accurate", "fast"] = Field("accurate", description="TableFormer (V1) mode.")
+    layout_runtime: Literal["torch", "onnx"] = Field(
+        "onnx", description="Run the Heron layout model as its ONNX export with ONNX Runtime (faster), or with PyTorch."
+    )
+    pages: Literal["all", "tables"] = Field(
+        "all", description="'tables': only pages where Indra's layout found a table or form go to Docling."
+    )
     artifacts_path: str | None = Field(
         None, description="A local copy of Docling's model weights (no download); default: Docling's own cache."
     )
-    threads: int = Field(4, ge=1, le=64, description="CPU threads for the layout and table models.")
+    threads: int = Field(0, ge=0, le=64, description="CPU threads for the layout and table models; 0 = all cores.")
+    batch_size: int = Field(4, ge=1, le=64, description="Pages (layout) and tables (TableFormer) per model call.")
 
 
 class Privacy(BaseModel):

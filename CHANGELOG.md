@@ -127,7 +127,15 @@ The fixes:
   - mixed 6 → 10 of 10;
   - silent wrong 17 → 0.
 
-  Cost: 1.1 GB peak memory, 2–3 s per page, and a one-time model load of 5.5 s (CPU, torch 2.14.1).
+  Cost: about 1.1 GB peak memory and 1.4 s for a one-page card with three tables. A one-time model load of
+  4.6 s overlaps Indra's OCR.
+- **Faster structure, same answers:**
+  - All CPU cores are used; the Heron layout model runs as Docling's ONNX export.
+  - The models load during Indra's OCR, and documents are structured while the next one is read.
+  - Results: 3.0 s → 1.4 s for a one-page card; 15.5 s → 10.1 s for 9 pages.
+  - TableFormer remains most of the time.
+  - Faster options with a measured accuracy cost are off by default: `table_mode = "fast"`, `table_model =
+    "tableformer_v2"` and `pages = "tables"`. Details: [docs/STRUCTURE.md](docs/STRUCTURE.md#speed).
 
 ### Fixed: headings and citations (with or without structure)
 - An answer that only repeats the question's words, or equals a table heading, is declined. "اسم الشركة" was

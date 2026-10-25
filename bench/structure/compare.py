@@ -93,7 +93,9 @@ def run_mode(mode: str, docs: Path, cache: Path, home: Path, cases: dict, brain:
 
     StructureSettings = getattr(config, "StructureSettings", None)  # noqa: N806 (absent before structure support)
 
-    extra = {"structure": StructureSettings(engine="docling" if mode == "B" else "none")} if StructureSettings else {}
+    tuning = json.loads(os.environ.get("STRUCTURE_COMPARE_TUNING", "{}"))  # e.g. {"table_mode": "fast"}
+    engine = "docling" if mode == "B" else "none"
+    extra = {"structure": StructureSettings(engine=engine, **tuning)} if StructureSettings else {}
     settings = Settings(
         home=home,
         ocr=OCRSettings(model_dir=str(models / "indra")),
@@ -203,6 +205,7 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--cases", type=Path, default=Path(__file__).with_name("cases.json"))
     ap.add_argument("--brain", default="rules")
+    ap.add_argument("--tuning", default="{}", help='StructureSettings for B as JSON: {"table_mode": "fast"}')
     ap.add_argument("--baseline-src", type=Path, help="src/ of an unchanged checkout, run as A0")
     ap.add_argument("--mode", choices=["A0", "A", "B"], help=argparse.SUPPRESS)  # one side, in its own process
     ap.add_argument("--work", type=Path, help=argparse.SUPPRESS)
@@ -225,7 +228,7 @@ def main() -> None:
             shutil.rmtree(home)
         cmd = [sys.executable, __file__, *sys.argv[1:], "--mode", mode, "--work", str(work)]
         started = time.perf_counter()
-        env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+        env = {**os.environ, "PYTHONIOENCODING": "utf-8", "STRUCTURE_COMPARE_TUNING": args.tuning}
         if mode == "A0":
             env["STRUCTURE_COMPARE_SRC"] = str(args.baseline_src)
         subprocess.run(cmd, check=True, env=env)  # noqa: S603

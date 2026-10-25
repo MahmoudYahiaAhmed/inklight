@@ -102,3 +102,26 @@ def test_docling_runs_no_ocr_of_its_own(cards):
     assert words and all(w.startswith("MARK") for w in words), sorted(words)[:10]
     assert done.meta["foreign_tokens"] == 0
     assert done.meta["cells_delivered"] == sum(1 for p in marked.pages for ln in p.lines if ln.bbox)
+
+
+def test_only_pages_with_tables_go_to_docling(cards, tmp_path):
+    """A text page and a table page: with pages = "tables", Docling sees only the table page, and the answer from
+    its table cites the document's own page number."""
+    import pymupdf
+
+    _, _, out = cards
+    pdf = pymupdf.open()
+    page = pdf.new_page()
+    page.insert_text((72, 100), "Cover letter. Please find the registration certificate attached.", fontsize=12)
+    pdf.insert_pdf(pymupdf.open(out / "regcard-en-scan.pdf"))
+    two = tmp_path / "two-pages.pdf"
+    pdf.save(two)
+    settings = make_settings(tmp_path / "home", structure={"engine": "docling", "pages": "tables"})
+    with DocumentAgent(settings) as agent:
+        agent.add([two])
+        doc_id = agent.library.documents()[0].id
+        meta, _ = agent.library.structure(doc_id)
+        assert meta["pages_structured"] == [2], meta
+        res = agent.ask("What is the company name?", doc_ids=[doc_id], save=False)
+        assert "Golden Palm Trading Co" in _head(res) and res.sources[0].page == 2, res.answer
+        assert agent.library.pages(doc_id)[0].blocks[0].ref is None  # page 1 keeps Indra's layout

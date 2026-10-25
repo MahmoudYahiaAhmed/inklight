@@ -5,7 +5,12 @@ Optional. Off by default. Install it with `pip install "inklight[structure]"`, t
 ```toml
 [structure]
 engine = "docling"        # "none" (default) keeps Indra's own layout blocks
-table_mode = "accurate"   # TableFormer mode: "accurate" or "fast"
+# The defaults below are the measured best without losing answers; see "Speed".
+table_mode = "accurate"   # "fast": tables about 30% faster, one Arabic answer lost in the comparison
+table_model = "tableformer"   # "tableformer_v2": faster, but lost two low-confidence flags
+layout_runtime = "onnx"   # Heron as Docling's ONNX export; "torch" is the same model on PyTorch
+pages = "all"             # "tables": only pages Indra's layout marked as table or form (misses ~half)
+threads = 0               # 0 = every CPU core
 # artifacts_path = "..."  # a local copy of Docling's model weights, for machines without network access
 ```
 
@@ -135,16 +140,42 @@ All six are now flagged: their cells were read with confidence 0.63–0.82, agai
 **Unanswerable questions.** "What is the company's capital?" is answered silently in every arm; it is not printed.
 The Arabic one is flagged in every arm.
 
-**Cost** (CPU, Windows, Python 3.13, torch 2.14.1):
+**Cost**: see [Speed](#speed) for the current defaults. Questions cost the same with or without structure (4 ms
+median). With structure, peak memory is about 1.1–1.2 GB against 56 MB. The install adds PyTorch and Docling, and
+about 0.7 GB of weights: Heron 164 MB, its ONNX export 164 MB, TableFormer 342 MB.
 
-| | A | B |
+## Speed
+
+**Measured where the time goes** with Docling's own per-stage profiler (16-core CPU, Windows, torch 2.14.1; Indra's
+OCR excluded, stored and replayed).
+
+| | Before (`13cd9a4`) | Now |
 |---|---|---|
-| Ingest of 6 one-page documents, OCR excluded | 0.1 s | 27.5 s |
-| Of which: loading the layout and table models, once | | 5.5 s (21 s on the first run ever, with downloads) |
-| Per page after loading | | 2–3 s |
-| Peak memory of the process | 56 MB | 1.1 GB (1.4 GB with torch 2.12.1) |
-| Install | | PyTorch and Docling (several hundred MB); Heron 164 MB and TableFormer 342 MB of weights |
-| Median question time | 4 ms | 4 ms |
+| Registration card, 1 page, 3 tables | 3.0 s | **1.4 s** |
+| 9 pages, 21 tables | 15.5 s | **10.1 s** |
+| Loading the models, once per process | 5.5 s | 4.6 s, during Indra's OCR of the first document |
+| 7 files, 15 pages, end to end with OCR (fresh process) | 35.6 s | **28.9 s** |
+
+- **What changed:**
+  - All CPU cores are used: `threads = 0`, where it was 4.
+  - The Heron layout model runs as Docling's ONNX export.
+  - The models load in the background while Indra reads the first document.
+  - Docling structures one document while Indra reads the next.
+- **Answers are unchanged.** The comparison above gives the same result with these defaults.
+- **What is left is TableFormer**, about 0.45 s per table here; it is 95% of a table-heavy page. Indra's OCR of all
+  15 pages took 3 s.
+- **Faster options cost answers**, so they are off by default:
+
+| Option | 9 pages, 21 tables | Effect in the comparison |
+|---|---|---|
+| `table_mode = "fast"` | 7.3 s | One Arabic answer lost: a right-to-left table split wrongly |
+| `table_model = "tableformer_v2"` | 8.4 s | Two answers built on Indra's misreads lost their low-confidence flag |
+| `pages = "tables"` | only the pages Indra marked | On the 384 development pages, Indra's layout marked 43 of the 80 pages where Docling found tables |
+| `batch_size` 9 or 16 | 13.3–14.0 s | No gain |
+
+- **On mixed documents**, most pages have no table. Docling with these defaults took 1.15 s per page on the 384
+  development pages (442 s).
+- **The server keeps the models loaded.** Each CLI command loads them once.
 
 **Export.** Every Indra line of every document was found in Docling's Markdown export of its structure, with
 pictures traversed.
