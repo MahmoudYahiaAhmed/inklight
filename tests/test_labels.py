@@ -145,3 +145,57 @@ def test_prose_is_not_a_label(library):
     """A body sentence that mentions "population" does not answer as a label; the infobox row does."""
     res = _ask(library, "infobox.png", "What is the population of Aswan?")
     assert "1970" not in _head(res)
+
+
+# From the code review of the first version.
+REVIEW = {
+    # a dense receipt: the next row's price is closer in x than the label's own value
+    "dense.png": [
+        ((40, 100, 120, 118), "Total"),
+        ((400, 101, 470, 119), "70.00"),
+        ((40, 117, 160, 135), "Change"),
+        ((300, 114, 360, 132), "5.00"),
+    ],
+    # a letter header: "To:", "Cc:" and "Date:" do not make it a form, so "Cc:" alone is not a blank field
+    "letter.png": [
+        ((40, 40, 120, 60), "To:"),
+        ((130, 40, 400, 60), "Ministry of Finance"),
+        ((40, 70, 120, 90), "Cc:"),
+        ((40, 100, 120, 120), "Date:"),
+        ((130, 100, 300, 120), "3 March 2025"),
+    ],
+    # a bullet before an inline label and value
+    "bullet.png": [((40, 40, 300, 60), "• Elevation 99 m (325 ft)")],
+}
+
+
+@pytest.fixture(scope="module")
+def review_library(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("labels-review")
+    png = base64.b64decode(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC"
+    )
+    for k, name in enumerate(REVIEW):
+        (tmp / name).write_bytes(png + bytes(k + 10))
+    settings = make_settings(tmp / "home")
+    lib = Library(settings, engine=BoxEngine(REVIEW))
+    agent = DocumentAgent(settings, library=lib)
+    agent.add([tmp / n for n in REVIEW])
+    ids = {d.name: d.id for d in agent.library.documents()}
+    yield agent, ids
+    agent.close()
+    lib.close()
+
+
+def test_the_value_on_the_labels_own_row_beats_a_closer_cell_of_the_next_row(review_library):
+    res = _ask(review_library, "dense.png", "What is the total?")
+    assert "70.00" in _head(res) and "5.00" not in _head(res), res.answer
+
+
+def test_a_letter_header_label_alone_is_not_declined_as_a_blank_field(review_library):
+    res = _ask(review_library, "letter.png", "Who is copied?")
+    assert not res.answer.startswith("I couldn't find supporting evidence for a value"), res.answer
+
+
+def test_a_bullet_does_not_hide_an_inline_value(review_library):
+    assert "99 m" in _head(_ask(review_library, "bullet.png", "What is the elevation?"))
