@@ -1,5 +1,5 @@
 {
- "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes).",
+ "about": "Use-case evaluation corpus. Expected results were written BEFORE running any build on these documents, from dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), from the generator's data (synthetic documents), or by an AI reading the original files (UN documents, IRS forms, Wikipedia). Files are not in the repository; bench/usecases/README.md lists where each comes from. Groups keep translations and near-duplicates in the same split. Reserved documents are evaluated only with --split reserved, which is logged. A third split, 'fresh' (10 documents), was added after the reserved evaluation, to check on unseen documents the fixes the reserved run prompted; its expectations were written before any build was run on it. Date expectations accept the ISO form of the same date (added uniformly to every question after the first runs; it changes scoring, never outcomes). A fourth split, 'fresh2' (15 genuine documents), was added on 2026-10-25 for an independent check of missing-information handling. Its expectations, including unanswerable questions marked 'absent_subject' (the document never mentions what is asked) or 'present_subject' (it mentions the subject but not the asked value), were written before any build was run on these files.",
  "gaps": [
   "Genuine Arabic forms, certificates, invoices and contracts with an open licence: none found. Synthetic stand-ins are used and labelled.",
   "Handwriting: not covered.",
@@ -4498,6 +4498,898 @@
    "missing": [
     "ما رقم الفاتورة؟"
    ]
+  },
+  {
+   "id": "n-l100-en",
+   "group": "un-S/2025/100",
+   "split": "fresh2",
+   "file": "n-l100-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/100 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Khrystyna Hayovyshyn",
+      "Hayovyshyn"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which nuclear power plant was hit by the drone strike?",
+     "accept": [
+      "Chornobyl"
+     ],
+     "page": null
+    },
+    {
+     "q": "Which country's mission sent the letter?",
+     "accept": [
+      "Ukraine"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Ukraine",
+    "Chornobyl",
+    "drone"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2025-02-14"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the monthly rent?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "On what date will the IAEA Board of Governors meet?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-l100-ar",
+   "group": "un-S/2025/100",
+   "split": "fresh2",
+   "file": "n-l100-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/100 (Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "هايوفيشين"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما المحطة النووية التي استهدفتها الطائرة المسيرة؟",
+     "accept": [
+      "تشيرنوبيل"
+     ],
+     "page": null
+    }
+   ],
+   "summary_keys": [
+    "أوكرانيا",
+    "تشيرنوبيل",
+    "مسيرة"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2025-02-14"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الآيبان؟",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "ما قيمة الإيجار الشهري؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-l120-en",
+   "group": "un-S/2025/120",
+   "split": "fresh2",
+   "file": "n-l120-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/120 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Koussay Aldahhak",
+      "Aldahhak"
+     ],
+     "page": 2
+    },
+    {
+     "q": "Which agreement of 1974 does the letter mention?",
+     "accept": [
+      "Disengagement Agreement",
+      "Disengagement"
+     ],
+     "page": null
+    },
+    {
+     "q": "On what date did the Israeli Prime Minister make the statements?",
+     "accept": [
+      "23 February 2025",
+      "2025-02-23"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Syria",
+    "Golan",
+    "Disengagement"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2025-03-03"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the invoice total?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "Which towns were struck on 25 February 2025?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-l120-ar",
+   "group": "un-S/2025/120",
+   "split": "fresh2",
+   "file": "n-l120-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/120 (Arabic, original Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "قصي الضحاك",
+      "الضحاك"
+     ],
+     "page": 2
+    },
+    {
+     "q": "ما المحافظات التي طالب رئيس الوزراء الإسرائيلي بنزع سلاحها؟",
+     "accept": [
+      "القنيطرة",
+      "درعا",
+      "السويداء"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "سوريا",
+    "الجولان",
+    "فض الاشتباك"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2025-03-03"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما قيمة العقد؟",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "ما أسماء البلدات التي استهدفت في 25 شباط/فبراير؟",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-l180-en",
+   "group": "un-S/2025/180",
+   "split": "fresh2",
+   "file": "n-l180-en.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/180 (English)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who signed the letter?",
+     "accept": [
+      "Antje Leendertse",
+      "Leendertse"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which country requested the advice as President of the Security Council?",
+     "accept": [
+      "Denmark"
+     ],
+     "page": 2
+    },
+    {
+     "q": "Which resolution of 2023 is mentioned on partnerships with the African Union?",
+     "accept": [
+      "2719"
+     ],
+     "page": 3
+    }
+   ],
+   "summary_keys": [
+    "Peacebuilding Commission",
+    "peace operations",
+    "transition"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "2025-03-21"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the contract value?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "On what date will the open debate be held?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-l180-ar",
+   "group": "un-S/2025/180",
+   "split": "fresh2",
+   "file": "n-l180-ar.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/2025/180 (Arabic, text layer broken)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "ليندرتس"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما الهيئة التي قدمت المشورة إلى مجلس الأمن؟",
+     "accept": [
+      "لجنة بناء السلام"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "لجنة بناء السلام",
+    "عمليات السلام",
+    "مجلس الأمن"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "2025-03-21"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "متى ستعقد المناقشة المفتوحة؟",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-s16400-en",
+   "group": "un-S/16400",
+   "split": "fresh2",
+   "file": "n-s16400-en.pdf",
+   "lang": "en",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16400 (English, 1984 typewritten scan)",
+   "licence": "UN official document",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who is the Minister for Foreign Affairs of Iraq?",
+     "accept": [
+      "Tariq Aziz",
+      "Aziz"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which islands does the speech concern?",
+     "accept": [
+      "Majnoon"
+     ],
+     "page": 2
+    },
+    {
+     "q": "How many barrels is the oil reserve beneath the islands?",
+     "accept": [
+      "eight billion"
+     ],
+     "page": 2
+    }
+   ],
+   "summary_keys": [
+    "Iraq",
+    "Majnoon",
+    "Khamenei"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "Letter dated"
+     ],
+     "accept": [
+      "1984-03-08"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT number?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-s16400-ar",
+   "group": "un-S/16400",
+   "split": "fresh2",
+   "file": "n-s16400-ar.pdf",
+   "lang": "ar",
+   "modality": "scan",
+   "type": "letter",
+   "genuine": true,
+   "source": "https://documents.un.org S/16400 (Arabic, 1984 typewritten scan, no text layer)",
+   "licence": "UN official document",
+   "gold_from": "AI reading of the rendered page",
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "accept": [
+      "رياض القيسي",
+      "القيسي"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما الجزيرتان المذكورتان في خطاب خامنئي؟",
+     "accept": [
+      "مجنون"
+     ],
+     "page": 2
+    }
+   ],
+   "summary_keys": [
+    "العراق",
+    "مجنون",
+    "خامنئي"
+   ],
+   "fields": [
+    {
+     "name": "letter_date",
+     "type": "date",
+     "labels": [
+      "رسالة مؤرخة",
+      "مؤرخة"
+     ],
+     "accept": [
+      "1984-03-08"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الإيصال؟",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-cuad-cano",
+   "group": "cuad-cano",
+   "split": "fresh2",
+   "file": "n-cuad-cano.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 CANOPETROLEUM,INC_12_13_2007 EX-10.1 Sponsorship Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who is the sponsor?",
+     "accept": [
+      "Cano Petroleum"
+     ],
+     "page": 1
+    },
+    {
+     "q": "How many original episodes must the Company produce per year?",
+     "accept": [
+      "forty",
+      "40"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which state's laws govern the agreement?",
+     "accept": [
+      "Texas"
+     ],
+     "page": null
+    },
+    {
+     "q": "How much compensation is the Company entitled to?",
+     "accept": [
+      "150,000"
+     ],
+     "page": null
+    }
+   ],
+   "summary_keys": [
+    "Honey Hole",
+    "Cano",
+    "sponsor"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "What is the IBAN?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the renewal fee?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-cuad-netzee",
+   "group": "cuad-netzee",
+   "split": "fresh2",
+   "file": "n-cuad-netzee.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": true,
+   "source": "CUAD v1 NETZEEINC_11_14_2002 EX-10.3 Maintenance Agreement",
+   "licence": "CC BY 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "How much does Bankers Bank pay per month?",
+     "accept": [
+      "$40",
+      "40"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the commencement date for maintenance?",
+     "accept": [
+      "MARCH 1, 2001",
+      "March 1, 2001",
+      "2001-03-01"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who signed for Netzee?",
+     "accept": [
+      "Richard S. Eiswirth",
+      "Eiswirth"
+     ],
+     "page": null
+    }
+   ],
+   "summary_keys": [
+    "Netzee",
+    "Bankers Bank",
+    "maintenance"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "Who is the landlord?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the termination fee?",
+     "kind": "absent_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-irs-w8ben",
+   "group": "irs-w8ben",
+   "split": "fresh2",
+   "file": "n-irs-w8ben.pdf",
+   "lang": "en",
+   "modality": "digital",
+   "type": "form",
+   "genuine": true,
+   "source": "https://www.irs.gov/pub/irs-pdf/fw8ben.pdf (Form W-8BEN, Rev. October 2021)",
+   "licence": "US government work",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "Who should receive this form?",
+     "accept": [
+      "withholding agent or payer",
+      "withholding agent"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Which form should entities use instead?",
+     "accept": [
+      "W-8BEN-E"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the revision date of the form?",
+     "accept": [
+      "October 2021"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Foreign Status",
+    "Beneficial Owner",
+    "withholding"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "What is the monthly rent?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the beneficial owner's name?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-wiki-alex",
+   "group": "wiki-alex",
+   "split": "fresh2",
+   "file": "n-wiki-alex.pdf",
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "source": "https://ar.wikipedia.org/api/rest_v1/page/pdf/الإسكندرية (PDF export 2026-10-25)",
+   "licence": "CC BY-SA 4.0",
+   "gold_from": "AI reading",
+   "qa": [
+    {
+     "q": "من أسس الإسكندرية؟",
+     "accept": [
+      "الإسكندر الأكبر"
+     ],
+     "page": null
+    },
+    {
+     "q": "كم عدد سكان الإسكندرية حسب إحصاء 2024؟",
+     "accept": [
+      "5408311"
+     ],
+     "page": 1
+    },
+    {
+     "q": "ما الرمز البريدي للإسكندرية؟",
+     "accept": [
+      "21500"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "الإسكندرية",
+    "الإسكندر الأكبر",
+    "مصر"
+   ],
+   "fields": [],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "كم عدد طلاب جامعة الإسكندرية؟",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-coru-lulu",
+   "group": "n-coru-lulu",
+   "split": "fresh2",
+   "file": "n-coru-lulu.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 003fc209-3288-4eb5-8c32-3286851b4afb (Lulu Hypermarket, New Cairo; English with Arabic item names)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the fax number?",
+     "accept": [
+      "0225983556"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total?",
+     "accept": [
+      "182.15"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who served the customer?",
+     "accept": [
+      "Heba Mohamed"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Lulu",
+    "182.15",
+    "Egyptian Pasta"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "182.15"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the VAT amount?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-coru-mcd",
+   "group": "n-coru-mcd",
+   "split": "fresh2",
+   "file": "n-coru-mcd.jpg",
+   "lang": "mixed",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 0156e96a-aac8-4dce-95be-bd618f41d1de (McDonald's Sohag; crumpled photo)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the tax amount?",
+     "accept": [
+      "7.98"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the order number?",
+     "accept": [
+      "99"
+     ],
+     "page": 1
+    },
+    {
+     "q": "How much cash was tendered?",
+     "accept": [
+      "200.00"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "McDonald",
+    "65.00",
+    "Shake"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "65.00"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "Who is the employer?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the price of a large vanilla shake?",
+     "kind": "present_subject"
+    }
+   ]
+  },
+  {
+   "id": "n-coru-gourmet",
+   "group": "n-coru-gourmet",
+   "split": "fresh2",
+   "file": "n-coru-gourmet.jpg",
+   "lang": "en",
+   "modality": "photo",
+   "type": "receipt",
+   "genuine": true,
+   "source": "CORU / ReceiptSense QA test 000186ea-50d6-46bc-9253-b92612392abe (Gourmet Food Stores, Alexandria; photo rotated 90 degrees)",
+   "licence": "MIT",
+   "gold_from": "CORU QA annotation, checked against the image",
+   "qa": [
+    {
+     "q": "What is the transaction number?",
+     "accept": [
+      "214679"
+     ],
+     "page": 1
+    },
+    {
+     "q": "Who is the cashier?",
+     "accept": [
+      "Eslam M",
+      "Eslam"
+     ],
+     "page": 1
+    },
+    {
+     "q": "What is the total amount?",
+     "accept": [
+      "124.50"
+     ],
+     "page": 1
+    }
+   ],
+   "summary_keys": [
+    "Gourmet",
+    "124.50",
+    "InstaShop"
+   ],
+   "fields": [
+    {
+     "name": "total",
+     "type": "money",
+     "accept": [
+      "124.50"
+     ]
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT number?",
+     "kind": "absent_subject"
+    },
+    {
+     "q": "What is the customer's phone number?",
+     "kind": "present_subject"
+    }
+   ]
   }
  ],
  "library_tasks": [
@@ -4765,6 +5657,49 @@
    "request": "Translate this report into Spanish",
    "scope": [
     "f-r32-en"
+   ]
+  },
+  {
+   "id": "fresh2-find-en",
+   "split": "fresh2",
+   "kind": "find",
+   "request": "Which document is about a drone strike on the Chornobyl nuclear power plant?",
+   "expect_docs": [
+    "n-l100-en",
+    "n-l100-ar"
+   ]
+  },
+  {
+   "id": "fresh2-find-ar",
+   "split": "fresh2",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتحدث عن جزيرتي مجنون؟",
+   "expect_docs": [
+    "n-s16400-ar",
+    "n-s16400-en"
+   ]
+  },
+  {
+   "id": "fresh2-compare-letters",
+   "split": "fresh2",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "scope": [
+    "n-l100-en",
+    "n-l180-en"
+   ],
+   "expect_values": {
+    "n-l100-en": "2025-02-14",
+    "n-l180-en": "2025-03-21"
+   }
+  },
+  {
+   "id": "fresh2-unsupported",
+   "split": "fresh2",
+   "kind": "unsupported",
+   "request": "Email this letter to the Secretary-General",
+   "scope": [
+    "n-l180-en"
    ]
   }
  ]

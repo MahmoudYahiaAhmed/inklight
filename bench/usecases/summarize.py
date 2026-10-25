@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import collections
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -104,11 +105,32 @@ def summaries(run: dict) -> dict[str, str]:
     return out
 
 
+_DECLINED = re.compile(r"^not found|could not find", re.IGNORECASE)
+
+
+def declined(row: dict) -> bool:
+    """The answer says the documents do not contain it (older runs have no "declined" field)."""
+    return bool(row.get("declined")) or bool(_DECLINED.search(row.get("answer", "").strip()))
+
+
 def missing(run: dict) -> dict[str, str]:
+    """Unanswerable questions: declined (says "not found"), only flagged, or answered silently; by kind when the
+    corpus gives one. Answerable questions that were declined are reported beside them."""
     out = {}
     for lang in ("en", "ar", "mixed"):
-        ms = [m for d in run["documents"].values() if d["lang"] == lang for m in d.get("missing", [])]
-        out[lang] = f"abstained or flagged {sum(m['outcome'] == 'abstained_or_flagged' for m in ms)}/{len(ms)}"
+        docs = [d for d in run["documents"].values() if d["lang"] == lang]
+        ms = [m for d in docs for m in d.get("missing", [])]
+        if not ms:
+            continue
+        parts = []
+        for kind in sorted({m.get("kind", "all") for m in ms}):
+            k = [m for m in ms if m.get("kind", "all") == kind]
+            dec = sum(declined(m) for m in k)
+            flag = sum(m["outcome"] == "abstained_or_flagged" and not declined(m) for m in k)
+            parts.append(f"{kind}: declined {dec}, flagged {flag}, silent {len(k) - dec - flag} (n={len(k)})")
+        qa = [q for d in docs for q in d.get("qa", [])]
+        parts.append(f"answerable questions declined {sum(declined(q) for q in qa)}/{len(qa)}")
+        out[lang] = "; ".join(parts)
     return out
 
 

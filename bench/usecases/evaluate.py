@@ -197,7 +197,8 @@ def qa_cases(agent, doc: dict, doc_id: str, text: str) -> list[dict]:  # type: i
 
 def missing_cases(agent, doc: dict, doc_id: str) -> list[dict]:  # type: ignore[no-untyped-def]
     rows = []
-    for q in doc.get("missing", []):
+    for item in doc.get("missing", []):
+        q, kind = (item, None) if isinstance(item, str) else (item["q"], item.get("kind"))
         res = agent.ask(q, doc_ids=[doc_id], save=False)
         state = str(res.state.value)
         abstained = (
@@ -206,6 +207,7 @@ def missing_cases(agent, doc: dict, doc_id: str) -> list[dict]:  # type: ignore[
         rows.append(
             {
                 "q": q,
+                "kind": kind,
                 "answer": answer_head(res.answer).strip(),
                 "answer_full": res.answer,
                 "evidence": evidence(res),
@@ -394,7 +396,7 @@ def main() -> None:
     sys.stdout.reconfigure(encoding="utf-8")
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus", type=Path, default=Path(__file__).with_name("corpus.json"))
-    ap.add_argument("--split", choices=["dev", "reserved", "fresh"], required=True)
+    ap.add_argument("--split", choices=["dev", "reserved", "fresh", "fresh2"], required=True)
     ap.add_argument("--docs", type=Path, required=True)
     ap.add_argument("--models", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
@@ -409,7 +411,7 @@ def main() -> None:
     docs = [d for d in corpus["documents"] if d["split"] == args.split]  # select the split before any reading
     tasks = [t for t in corpus["library_tasks"] if t["split"] == args.split]
     args.out.mkdir(parents=True, exist_ok=True)
-    if args.split in ("reserved", "fresh"):
+    if args.split in ("reserved", "fresh", "fresh2"):
         with open(args.out.parent / "reserved-access.log", "a", encoding="utf-8") as log:
             log.write(
                 json.dumps({"at": datetime.now(UTC).isoformat(), "build": build_info(), "argv": sys.argv[1:]}) + "\n"
