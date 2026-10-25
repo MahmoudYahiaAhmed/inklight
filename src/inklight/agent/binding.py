@@ -19,6 +19,7 @@ restricted, so the check does not turn into declining.
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass
 
 from ..extract.values import parse_dates
@@ -259,9 +260,15 @@ _AMOUNT = re.compile(
 
 def _digits(text: str) -> str:
     """Arabic-Indic digits and separators as ASCII ("٥٬٠٠٠٫٥٠" -> "5,000.50"), for value checks only."""
-    return "".join(str(int(c)) if c.isdigit() and not c.isascii() else c for c in text).translate(
-        {ord("٫"): ".", ord("٬"): ","}
-    )
+    return "".join(_ascii_digit(c) for c in text).translate({ord("٫"): ".", ord("٬"): ","})
+
+
+def _ascii_digit(c: str) -> str:
+    """ "٥" -> "5"; a superscript or other non-decimal digit ("²") is kept as it is."""
+    if c.isascii() or not c.isdigit():
+        return c
+    value = unicodedata.decimal(c, None)
+    return c if value is None else str(value)
 
 
 def _number_after(unit: str, keys: set[str]) -> bool:

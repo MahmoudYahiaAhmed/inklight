@@ -296,6 +296,11 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         return "role from the document's layout"
     if _field_shortcut(ctx, question):
         return f"field shortcut ({s.confidence:.2f})"
+    from .labels import label_answer
+
+    labelled = label_answer(ctx, question)
+    if labelled:
+        return labelled
 
     absent = unmentioned(ctx, question)
     if absent:
