@@ -65,7 +65,9 @@ def test_arabic_question_skips_reader_and_embedder(spied):
 
 def test_english_question_still_uses_both_models(spied):
     agent, reader, embedder = spied
-    res = agent.ask("Who signed the letter?")
+    res = agent.ask(
+        "Which council is mentioned in the letter?"
+    )  # not a sender/signer question: those are read from layout
     assert reader.calls >= 1 and embedder.calls >= 1
     assert not any("not used" in c for c in res.checks)
 

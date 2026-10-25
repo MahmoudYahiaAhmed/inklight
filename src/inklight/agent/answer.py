@@ -16,6 +16,7 @@ import re
 from collections import Counter
 
 from ..extract import CATALOG, FieldSpec, extract_record
+from ..extract.amounts import PAYMENT
 from ..extract.fields import ALIASES
 from ..extract.values import all_money, parse_dates
 from ..safety import fence_untrusted
@@ -217,6 +218,8 @@ def field_in_question(question: str) -> FieldSpec | None:
         ]
     )
     skip = {"from", "name", "company", "number", "value", "date", "due", "invoice", "fee", "fees"}
+    if PAYMENT.search(q):  # "how much cash was tendered?" asks about money handed over, not the total
+        labels = [(label, name) for label, name in labels if label != "how much"]
     # The field named earliest is the question's focus ("total of the Globex invoice" -> total).
     found: list[tuple[int, int, str]] = []
     for label, name in labels:
@@ -286,15 +289,25 @@ def answer_question(ctx: ToolContext, question: str) -> str:
         s.answer = "I could not find anything in these documents that relates to the question."
         s.confidence = 0.0
         return "no evidence"
+    from .binding import check_typed_answer, role_answer  # these modules import this one
+    from .unmentioned import say_not_found, unmentioned
+
+    if role_answer(ctx, question):
+        return "role from the document's layout"
     if _field_shortcut(ctx, question):
         return f"field shortcut ({s.confidence:.2f})"
-    from .unmentioned import say_not_found, unmentioned  # imports this module
 
     absent = unmentioned(ctx, question)
     if absent:
         say_not_found(ctx, question, absent)
         return "not mentioned"
     used = _reader_answer(ctx, question) or _rule_answer(ctx, question)
+    note = check_typed_answer(ctx, question)
+    if note:
+        s.notes.append(note)
+        used = note
+        if s.answer.startswith("I couldn't find supporting evidence"):
+            return used
     _maybe_rephrase(ctx, question)
     _maybe_remote(ctx, question)
     if s.confidence < 0.3:

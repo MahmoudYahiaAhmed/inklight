@@ -250,6 +250,12 @@ _SEP = r"\s*(?:[:#=]|no\.?|number)?\s*[:#]?\s*"
 _TEXT_GAP = 6.0  # a name further right than this many line heights belongs to another column
 _TABLE_TEXT_GAP = 25.0  # ... unless the row holds only the "label:" and that one value
 _TITLE_DATE = re.compile(r"letters? dated|رسالة مؤرخة", re.IGNORECASE)  # a document's own date only in its title
+# Words that make the next label a qualifier: "incl. Tax", "excluding VAT", "prices include VAT", "شاملة ضريبة".
+_QUALIFIER = re.compile(
+    r"(?:\bincl\.?|\binc\.|\bincluding|\binclusive\s+of|\binclude[sd]?|\bexcl\.?|\bexcluding|\bexclusive\s+of"
+    r"|\bw/o|\bplus|شامل[ةه]?|شاملة\s+ل|غير\s+شامل[ةه]?|بدون|يشمل|تشمل)\s*\(?\s*$",
+    re.IGNORECASE,
+)
 
 
 def resolve_field(word: str) -> FieldSpec:
@@ -424,6 +430,9 @@ def _find_candidates(
                     continue
                 # A bare one-word label like "Invoice" only counts with an explicit ':' or '#'.
                 if _label == "invoice" and not re.search(r"[:#]", m.group(0)):
+                    continue
+                # "Total (incl Tax) 65.00", "Prices include VAT": a qualifier of another amount, not a label.
+                if _QUALIFIER.search(line.text[: m.start()]):
                     continue
                 claimed.append((m.start(), m.end(), spec))
         claimed.sort(key=lambda c: c[0])
