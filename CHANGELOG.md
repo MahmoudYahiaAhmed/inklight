@@ -110,6 +110,13 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
 - **Arabic questions** are answered from the best-matching sentence: words, light stems, sentences and question
   types in Arabic. These answers are always flagged for review. On reserved: 11/23 right, 0 silently wrong (P0:
   1/23).
+- **Questions about something the documents never mention** ("What is the IBAN?" over a letter) are answered
+  "Not found: this document does not mention “IBAN”." instead of with the nearest sentence. On 15 new genuine
+  documents, run once on the frozen build: 18 of 19 such questions declined (before: 0). Questions whose subject is
+  mentioned but whose value is not are not covered: 6 of 11 are still answered silently. No answerable question
+  was declined (0 of 42).
+- **Evaluation runs keep complete answers and cited passages**, so they can be rescored exactly. The first-access
+  source of the reserved and fresh runs is recovered and reproduced (`bench/results/usecases/provenance/`).
 - **Requests Inklight cannot carry out** ("translate this", "email it", "sign it") are `unsupported` with the reason,
   instead of `succeeded`.
 - **Questions about a document's content** stay questions: "Which city was hit…?" used to become an invoice filter.

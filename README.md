@@ -75,7 +75,7 @@ into the app and saves the browser's picture with the result JSON next to it ([`
 
 ## Measured results
 
-Automated evaluation on **75 original documents** (letters, contracts, reports, forms, certificates, invoices,
+Automated evaluation on **90 original documents** (letters, contracts, reports, forms, certificates, invoices,
 receipts). It covers English, Arabic and mixed language, digital and scanned. Expected answers were fixed before
 any run. The table shows the **reserved split** (30 documents, held out from development), with models on (the default).
 
@@ -97,6 +97,18 @@ any run. The table shows the **reserved split** (30 documents, held out from dev
 
 The rerun fixed the two new mixed-language silent errors (both on one synthetic letter). It lost the letter
 comparison, because "Letter dated" now dates only a letter's own title line.
+
+**Questions the documents cannot answer** (`d012e07`, a separate split of 15 new genuine documents, first run). A
+question about something the documents never mention ("What is the IBAN?" over a letter) is answered **"Not found"**.
+
+| | Before (`6c1659c`) | After (`d012e07`) | n |
+|---|---|---|---|
+| Unanswerable, subject never mentioned: declined | 0 | **18** | 19 |
+| Unanswerable, subject mentioned but value missing: declined | 0 | 1 | 11 |
+| Unanswerable, answered silently | 10 | 7 | 30 |
+| Answerable, declined | 0 | **0** | 42 |
+
+Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#missing-information-not-found-d012e07).
 
 <details>
 <summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
@@ -152,6 +164,8 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 - **Arabic questions are answered by sentence matching**, not by a model that reads Arabic. They are always flagged
   for review: 11 of 23 right on the reserved split.
 - **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
+- **"Not found" covers only subjects a document never mentions.** If the subject is there but the value is not ("when
+  will the debate be held?"), a nearby sentence is still returned, often without a flag (6 of 11 on new documents).
 - Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
 - Typewritten Arabic scans OCR only partly.
 - Classification is keyword-based.

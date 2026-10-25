@@ -17,7 +17,7 @@ anything, and no human timing exists.
 
 ## The documents
 
-75 documents in three splits. Groups keep translations, one company's receipts, a contract and a synthetic
+90 documents in four splits. Groups keep translations, one company's receipts, a contract and a synthetic
 template in one split. Full list with sources and licences: [`bench/usecases/corpus.json`](../bench/usecases/corpus.json).
 
 | Split | Docs | Role | Independence |
@@ -25,6 +25,7 @@ template in one split. Full list with sources and licences: [`bench/usecases/cor
 | dev | 35 | failures here were diagnosed and fixed | none: tuned on |
 | reserved | 30 | evaluated once, first access logged before reading | **independent for the first run only** (`first-access-res-*`). Three fixes it prompted were made afterwards (below), so the rerun on `8c54921` (`final-res-*`) is not independent |
 | fresh | 10 | added to check those fixes on unseen documents, expectations written first | independent for its first run (`first-access-fresh-auto`); it prompted two more fixes, so its rerun (`final-fresh-*`) is not independent |
+| fresh2 | 15 | 15 new genuine documents (2025 UN letters and a 1984 scan in English and Arabic, two CUAD contracts, IRS W-8BEN, Arabic Wikipedia "الإسكندرية", three CORU receipts from new companies), with answerable and unanswerable questions; expectations committed (`6c1659c`) before any run | **independent for its first run** (`fresh2-first-access-*`): the build under test was frozen first (`d012e07`) |
 
 **Provenance.** The first-access runs record Git HEAD `6b4cc12`, but they ran from modified, uncommitted source.
 That source was rebuilt from the session transcript as `8c54921` plus a patch removing the later fixes. Re-running it
@@ -149,6 +150,56 @@ Half of the English questions about facts a document lacks still get an unflagge
 None of these runs ever *declined*: every "declined or flagged" above is a low-confidence answer, not a statement
 that the document lacks the fact.
 
+### Missing information: "not found" (`d012e07`)
+
+**What changed.** A question about a subject the documents in scope never mention now gets
+"Not found: this document does not mention “IBAN”." instead of a nearby sentence. Each specific word of the question
+is looked up in the full-text index, with English synonyms and Arabic equivalents.
+
+**What it will not do.** It does not decline when:
+- the only missing words are generic ("number", "date") or verbs ("sent")
+- the missing word is the document's own type ("form")
+- the missing word is an everyday word with many paraphrases ("price", "due", "phone")
+- the documents may be in another language and the word has no known equivalent
+- a document in scope is not indexed yet
+
+Design and tuning used the dev split only. The fresh2 split was then run once, on the frozen build and on the
+build before it.
+
+**fresh2, first access, models on** (`6c1659c` → `d012e07`; 15 documents, all genuine). Every unanswerable question
+is listed with its outcome in `fresh2-first-access-*.json`.
+
+| Unanswerable question | English | Arabic | Mixed |
+|---|---|---|---|
+| subject never mentioned (`absent_subject`): declined "not found" | 0 → **10** of 11 | 0 → **6** of 6 | 0 → **2** of 2 |
+| … answered silently | 3 → 1 | 0 → 0 | 1 → 0 |
+| subject mentioned, value not given (`present_subject`): declined | 0 → 0 of 6 | 0 → 0 of 3 | 0 → 1 of 2 |
+| … answered silently | 4 → 4 | 1 → 1 | 1 → 1 |
+| **Answerable questions declined** | 0 → **0** of 25 | 0 → **0** of 11 | 0 → **0** of 6 |
+| Answerable questions correct | 23 → 23 of 25 | 2 → 2 of 11 | 3 → 3 of 6 |
+
+- **Silent answers to unanswerable questions: 10 → 7 of 30.** No answerable question changed outcome.
+- **Still silent where the subject is never mentioned:**
+  - "What is the termination fee?" over a maintenance agreement is answered "$40 per month". "Termination" is not a
+    listed subject, and "fee" is an everyday word.
+- **Not handled: the subject is mentioned but the value is not.** 6 of 11 such questions are still answered
+  silently, unchanged. Examples:
+  - "On what date will the open debate be held?" → the letter's own date.
+  - "Which towns were struck on 25 February?" → governorates named in another sentence.
+  - "What is the beneficial owner's name?" on a blank form → a line of the form.
+- **One decline was right for the wrong reason.**
+  - Question: "What is the VAT amount?" on the Lulu receipt (`present_subject`, so declining is correct).
+  - The answer says the receipt does not mention VAT. In fact its Arabic line about VAT was not read clearly by OCR.
+- **Request parsing.** "كم عدد طلاب جامعة الإسكندرية؟" ("how many students…") is read as a document count by both
+  builds. This is unrelated to this change.
+- **Rules only** (`d012e07`, no models): the same declines. Answerable English questions are correct 16 of 25,
+  against 23 of 25 with models.
+- **Dev split** (tuned on), `6c1659c` → `d012e07`, models on: declined English 0 → 13 of 19, Arabic 0 → 5 of 12,
+  mixed 0 → 4 of 4. Silent English answers 5 → 3. Answerable outcomes are identical, 0 of 101 declined.
+- **Harness note.** The first fresh2 attempt of each build crashed in the harness before writing any result. The
+  cause was a document with no expected fields. The harness was fixed, nothing in Inklight changed, and the runs
+  were repeated. All six accesses are in `reserved-access.log`.
+
 ### Fields, library tasks, export
 
 - **Library tasks**:
@@ -170,7 +221,8 @@ that the document lacks the fact.
   - Genuine Arabic UN letters, letter dates (reserved): 2/4 at first access and on the rerun.
   - At first access, these were silently wrong; all are correct on the rerun (the Arabic report dates with a flag):
     - Two synthetic Arabic leases: a parenthesised restatement of the rent read as negative (one reserved, one fresh).
-    - Two fresh Arabic reports: dated by a letter cited in their body. Full tables per language, type and genuine/synthetic: `python -I bench/usecases/summarize.py bench/results/usecases/final-res-auto.json`.
+    - Two fresh Arabic reports: dated by a letter cited in their body.
+  - Full tables per language, type and genuine/synthetic: `python -I bench/usecases/summarize.py bench/results/usecases/final-res-auto.json`.
 - **Review export**: every custom field of every document was exported (51 rows reserved, 62 dev), with Arabic values unchanged.
 - **Regression check** on the earlier synthetic benchmark (`bench/run.py`): identical metrics for P0 and final (request fidelity 1.000, extraction 0.967, QA 0.917; that QA value is the same for both builds today).
 
@@ -195,6 +247,7 @@ These were found on held-out documents, so those documents no longer confirm the
 ## What is not measured
 
 - handwriting
+- questions whose subject is mentioned but whose value is not (6 of 11 still answered silently on fresh2)
 - genuine Arabic forms, certificates and invoices
 - documents longer than 36 pages (the longest tested)
 - tables beyond invoice line items
