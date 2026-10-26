@@ -1,0 +1,99 @@
+{
+ "amendment": "AM-1",
+ "frozen_originals_untouched": true,
+ "note": "Public summary: the original and corrected reference texts (document values) stay in the private workspace.",
+ "items": [
+  {
+   "id": "REF-A2-05",
+   "kind": "reference",
+   "task": "A2-05",
+   "fields_changed": [
+    "committed_unpaid",
+    "paid_capital",
+    "paid_percentage"
+   ],
+   "evidence_pages": [
+    7
+   ],
+   "doc": "g07-02",
+   "reason": "founding capital (p2) used instead of the latest amendment: the issued capital is now fully paid",
+   "verified": "orchestrator on the page image; the judge(s) independently",
+   "cases": {
+    "A": "case-e7eef1",
+    "B": "case-0cae41"
+   }
+  },
+  {
+   "id": "REF-A1-06",
+   "kind": "reference",
+   "task": "A1-06",
+   "fields_changed": [
+    "issued_capital",
+    "paid_capital",
+    "paid_percentage",
+    "remaining_committed"
+   ],
+   "evidence_pages": [
+    5
+   ],
+   "doc": "g03-01",
+   "reason": "founding capital (p2) used instead of the latest amendment on p5: issued = paid",
+   "verified": "orchestrator on the page image; the judge(s) independently",
+   "cases": {
+    "A": "case-613ad6",
+    "B": "case-9d0d89"
+   }
+  },
+  {
+   "id": "REF-A2-07",
+   "kind": "reference",
+   "task": "A2-07",
+   "fields_changed": [
+    "name_1_entry",
+    "name_2_entry",
+    "name_3_entry"
+   ],
+   "evidence_pages": [
+    1
+   ],
+   "doc": "g09-02",
+   "reason": "each register entry was paired with the name above it; entries precede the change they record",
+   "verified": "orchestrator on the page image; the judge(s) independently",
+   "cases": {
+    "A": "case-07ae2d",
+    "B": "case-2bea94"
+   }
+  },
+  {
+   "id": "REF-A1-12",
+   "kind": "reference",
+   "task": "A1-12",
+   "fields_changed": [
+    "vice_chairman"
+   ],
+   "evidence_pages": [
+    5
+   ],
+   "doc": "g06-01",
+   "reason": "a family name not printed on the page was added to a name",
+   "verified": "orchestrator on the page image; the judge(s) independently",
+   "cases": {
+    "A": "case-e4a7db",
+    "B": "case-624d73"
+   }
+  },
+  {
+   "id": "JUDGE-case-613ad6",
+   "kind": "judgment",
+   "task": "A1-06",
+   "case": "case-613ad6",
+   "original": {
+    "outcome": "correct_complete"
+   },
+   "corrected": {
+    "outcome": "correct_after_manual_correction"
+   },
+   "reason": "the same tool behaviour on this task got two labels from two judges; the tool quoted the figures but did not compute what was asked, so the stricter label applies to both arms"
+  }
+ ]
+}
