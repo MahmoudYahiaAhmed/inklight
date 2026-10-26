@@ -187,7 +187,8 @@ def ask(
             if not ids:
                 _fail(InklightError("No readable documents: " + "; ".join(e for _, e in report.failed)))
             with console.status("Thinking…", spinner="dots", spinner_style=CYAN) if not as_json else _null():
-                result = agent.run_plan(agent.plan(request), ids, report=report, policy=policy)
+                # The files named on the command line are the person's choice of documents (explicit scope).
+                result = agent.run_plan(agent.plan(request), ids, report=report, policy=policy, explicit=True)
         else:
             with console.status("Thinking…", spinner="dots", spinner_style=CYAN) if not as_json else _null():
                 result = agent.ask(request, policy=policy)

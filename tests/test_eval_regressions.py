@@ -262,3 +262,32 @@ def test_an_explicit_restriction_still_narrows(library):
     res = _ask(library, ["contract.png", "register-en.png", "card-one.png"], "Summarize only the contracts")
     inspected = next(s for s in res.trace if s.tool == "inspect_documents")
     assert inspected.summary.startswith("1 documents"), inspected.summary
+
+
+def test_files_given_on_the_command_line_are_the_users_choice(tmp_path, monkeypatch):
+    """The CLI runs ``inklight ask FILE FILE "request"`` through run_plan, not ask: it must keep both files too."""
+    import json
+
+    from typer.testing import CliRunner
+
+    from inklight.cli import app as cli_app
+
+    monkeypatch.setenv("INKLIGHT_HOME", str(tmp_path / "home"))
+    monkeypatch.setenv("INKLIGHT_MODELS__BRAIN", "rules")
+    contract = tmp_path / "contract.txt"
+    contract.write_text(
+        "SERVICE AGREEMENT\nThis contract is made on 3 March 2024 between Cedar Logistics and Nile Foods.\n"
+        "The parties agree that this agreement is governed by the laws of Egypt.\nRegistration number: 760413\n",
+        encoding="utf-8",
+    )
+    register = tmp_path / "register.txt"
+    register.write_text(
+        "COMMERCIAL REGISTER EXTRACT\nRegistration number: 760413\nValid until: 3 April 2027\n", encoding="utf-8"
+    )
+    request = "Compare the registration number in the contract with the commercial register."
+    r = CliRunner().invoke(cli_app, ["ask", str(contract), str(register), request, "--json"])
+    assert r.exit_code == 0, r.output
+    data = json.loads(r.output[r.output.index("{") :])
+    inspected = next(s for s in data["trace"] if s["tool"] == "inspect_documents")
+    assert inspected["summary"].startswith("2 documents"), inspected
+    assert "at least two documents" not in data["answer"], data["answer"]
