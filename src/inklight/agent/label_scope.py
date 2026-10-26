@@ -16,7 +16,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, replace
 
-from ..schemas import PageContent, Source
+from ..schemas import Candidate, PageContent, Source
 from . import lines as ln
 from .answer import words
 from .binding import _digits, _key
@@ -203,6 +203,7 @@ def say_ambiguous(ctx: ToolContext, doc, doc_id: str, found: list[ln.Label], ter
         and ln.keys(lab.text) == ln.keys(found[0].text)
     ]
     shown, sources = [], []
+    s.candidates = []
     for lab in top[:_SHOWN]:
         page = ln.index(lab.page)
         value, cells, _ = page.value(lab)
@@ -220,6 +221,9 @@ def say_ambiguous(ctx: ToolContext, doc, doc_id: str, found: list[ln.Label], ter
                 ocr_conf=me.conf,
             )
         )
+        if value:
+            s.candidates.append(Candidate(value=value, source=sources[-1], context=f"under “{heading}”"))
+    s.outcome = "ambiguous"
     label = top[0].text
     more = f" (the first {_SHOWN} are listed)" if len(top) > _SHOWN else ""
     names = ", ".join(sorted(terms.names))

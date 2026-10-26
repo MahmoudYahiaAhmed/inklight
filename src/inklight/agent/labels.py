@@ -27,7 +27,7 @@ import re
 
 from ..extract import layout
 from ..extract.values import parse_dates
-from ..schemas import Source, TextLine
+from ..schemas import Candidate, Source, TextLine
 from . import label_scope as sc
 from . import lines as ln
 from .answer import expected_kind, words
@@ -142,6 +142,7 @@ def _say_several(ctx: ToolContext, answers: list[tuple]) -> None:
     """The field has a value in more than one document and the question does not say which: list each."""
     s = ctx.scratch
     shown, sources = [], []
+    s.candidates = []
     for doc, doc_id, best, value, cells, _ in answers:
         page = ln.index(best.page)
         line = page.lines[best.index]
@@ -154,6 +155,8 @@ def _say_several(ctx: ToolContext, answers: list[tuple]) -> None:
                 ocr_conf=min([x.conf for x in [line, *cells] if x.conf is not None], default=None),
             )
         )  # fmt: skip
+        s.candidates.append(Candidate(value=value, source=sources[-1], context=f"{doc.name}, page {best.page.number}"))
+    s.outcome = "ambiguous"
     label = answers[0][2].text
     s.answer = f"“{label}” has a different value in each of {len(answers)} documents:\n" + "\n".join(shown)
     s.sources = sources

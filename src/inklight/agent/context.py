@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from ..errors import TaskCancelled
-from ..schemas import DocumentInfo, PageContent, Record, SearchHit, Source
+from ..schemas import Candidate, DocumentInfo, PageContent, Record, SearchHit, Source
 
 if TYPE_CHECKING:
     from ..library import Library
@@ -44,6 +44,9 @@ class Scratch:
     models_skipped: list[str] = field(default_factory=list)  # optional models deliberately not used, and why
     partial: bool = False  # a tool could only do part of the job (e.g. mixed currencies)
     notes: list[str] = field(default_factory=list)  # what a step concluded, stated in the result's checks
+    outcome: str | None = None  # set by a step that knows what its result is (ambiguous, missing_evidence, ...)
+    candidates: list[Candidate] = field(default_factory=list)  # several matching values, for the person to choose
+    comparison: dict[str, Any] | None = None  # a field compared across documents
 
     def warn(self, message: str) -> None:
         if message not in self.warnings:

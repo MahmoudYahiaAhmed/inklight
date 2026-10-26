@@ -19,7 +19,7 @@ from ..errors import InklightError, InputRejected
 from ..extract import resolve_field
 from ..library import IngestReport, Library, Progress
 from ..review import Mode, Review, ReviewStore
-from ..schemas import AgentResult, Record, TaskState
+from ..schemas import AgentResult, ExtractedValue, Record, TaskState
 from .context import Policy, Scratch, ToolContext
 from .plan import Intent, Plan
 from .planner import make_plan, steps_for
@@ -205,9 +205,34 @@ class DocumentAgent:
             raise InputRejected(f"Unknown document {doc_id!r}")
         names = [resolve_field(f).name for f in fields]
         record = self.extract([doc.path], fields=names)[0]
+        record = self._fill_from_labels(doc_id, record, names)
         return self.reviews.open(
             doc, record, names, mode=mode, reviewer=reviewer, cohort=cohort, split=split, baseline=baseline
         )
+
+    def _fill_from_labels(self, doc_id: str, record: Record, names: list[str]) -> Record:
+        """A field the typed extractor left empty is proposed from the same place an answer would come from: the
+        value printed at a label of that name, or in the table cell under that heading. Only such supported values
+        are used (a passage is never proposed as a field's value); the reviewer still decides each one."""
+        filled = dict(record.fields)
+        for name in names:
+            current = filled.get(name)
+            if current is not None and current.value is not None:
+                continue
+            result = self.ask(f"What is the {name.replace('_', ' ')}?", doc_ids=[doc_id], save=False)
+            if result.outcome != "supported" or not result.sources:
+                continue
+            value = result.answer.split("\n\nEvidence:")[0].strip()
+            filled[name] = ExtractedValue(
+                field=name,
+                value=value,
+                raw=value,
+                confidence=result.evidence_confidence,
+                method="label or table cell",
+                warning=None,
+                source=result.sources[0],
+            )
+        return record.model_copy(update={"fields": filled})
 
     def extract(
         self,

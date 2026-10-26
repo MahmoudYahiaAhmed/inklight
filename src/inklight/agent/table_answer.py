@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ..extract import layout
-from ..schemas import PageContent, Source
+from ..schemas import Candidate, PageContent, Source
 from ..structure.adapter import Grid, same_frame, table_grid, to_inklight
 from . import lines as ln
 from .answer import expected_kind, words
@@ -95,6 +95,7 @@ def _say_candidates(ctx: ToolContext, found: list[tuple[str, Any, _Hit]]) -> str
     each is listed with its document and page, none is chosen."""
     s = ctx.scratch
     shown, sources = [], []
+    s.candidates = []
     for doc_id, document, hit in found[:_SHOWN]:
         doc = ctx.library.get(doc_id)
         page_no = hit.table.prov[0].page_no if hit.table.prov else 1
@@ -106,6 +107,8 @@ def _say_candidates(ctx: ToolContext, found: list[tuple[str, Any, _Hit]]) -> str
             shown.append(f"- {v}: table on {where}")
             if doc is not None:
                 sources.append(_source(doc, doc_id, document, page, hit, r, c, v))
+                s.candidates.append(Candidate(value=v, source=sources[-1], context=f"table on {where}"))
+    s.outcome = "ambiguous"
     header = found[0][2].header
     s.answer = f"“{header}” has a different value in each of {len(found)} tables:\n" + "\n".join(shown)
     s.sources = sources
@@ -278,6 +281,11 @@ def _answer(ctx: ToolContext, doc_id: str, document: Any, hit: _Hit, *, tied: bo
     if len(filled) > 1:
         listed = "\n".join(f"- {v}: row of “{_row_name(hit.grid, r, c)}”" for r, c, v in filled[:6])
         s.answer = f"The table on page {page_no} has {len(filled)} values under “{hit.header}”:\n{listed}"
+        s.candidates = [
+            Candidate(value=v, source=src, context=f"row of “{_row_name(hit.grid, r, c)}”")
+            for (r, c, v), src in zip(filled[:4], sources, strict=False)
+        ]
+        s.outcome = "ambiguous"
         s.warn(
             f"Low confidence: “{hit.header}” has a value in each of {len(filled)} rows and the question does not "
             "say which row is meant; name the person or item."

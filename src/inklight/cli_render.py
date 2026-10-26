@@ -94,11 +94,26 @@ def result_panel(result: AgentResult, show_trace: bool = False) -> None:
         body += [Text(parts[0] if parts else ""), Text(""), records_table(list(result.records))]
     else:
         body.append(Text("\n\n".join(parts)))
+    style = {"supported": "ok", "missing_evidence": "bad", "unsupported": "bad", "failed": "bad"}.get(
+        result.outcome, "warn"
+    )
+    outcome = Text.assemble((" Outcome: ", "muted"), (result.outcome_label, f"bold {style}"))
+    if result.outcome != "supported":
+        outcome.append("  (check the evidence before relying on it)", "muted")
+    console.print(outcome)
     console.print(Panel(Group(*body), title=title, title_align="left", border_style=CYAN, padding=(1, 2)))
+    for c in result.candidates:
+        console.print(
+            Text.assemble(
+                (" • ", "brand"),
+                (c.value, "bold"),
+                (f"  {c.context or c.source.name}" + ("" if "page" in c.context else f", p.{c.source.page}"), "muted"),
+            )
+        )
     if result.sources:
         console.print(Text("Evidence", "accent"))
         for i, s in enumerate(result.sources[:6], 1):
-            conf = f" · OCR {s.ocr_conf:.2f}" if s.ocr_conf is not None else ""
+            conf = f" · OCR estimate {s.ocr_conf:.2f}" if s.ocr_conf is not None else ""
             excerpt = s.excerpt.replace("\n", " ")
             console.print(
                 Text.assemble(

@@ -7,6 +7,7 @@ import difflib
 import io
 import json
 import re
+import unicodedata
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Any
@@ -269,6 +270,9 @@ def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
     docs = docs[:5]
     if len(ctx.docs()) > 5:
         ctx.scratch.warn("Compared the first 5 documents only")
+    named = _named_field(ctx.plan.query)
+    if named and not fields:
+        return _compare_field(ctx, docs, named)
     types = {d.doc_type for d in docs}
     if not fields:
         # Field-level comparison only where fields are meaningful; otherwise compare the text.
@@ -329,7 +333,264 @@ def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
             sources.extend(src for _, src in first)
     ctx.scratch.sources = sources[:10]
     ctx.scratch.confidence = 0.8
+    if not specs:
+        # A diff of the text is not a comparison of what the person asked about: say so, and show it as found.
+        ctx.scratch.answer = (
+            "Text comparison only — not a field comparison. To compare one value, name it (“compare the "
+            "registration number in these documents”).\n\n" + ctx.scratch.answer
+        )
+        ctx.scratch.outcome = "extracted"
     return f"compared {len(docs)} documents"
+
+
+# Words of a comparison request that are not the field compared.
+_COMPARE_WORDS = set(
+    [
+        "compare",
+        "comparison",
+        "compared",
+        "match",
+        "matches",
+        "matching",
+        "same",
+        "different",
+        "differ",
+        "differs",
+        "difference",
+        "between",
+        "and",
+        "with",
+        "against",
+        "versus",
+        "vs",
+        "these",
+        "those",
+        "this",
+        "that",
+        "two",
+        "both",
+        "each",
+        "all",
+        "the",
+        "a",
+        "an",
+        "in",
+        "of",
+        "on",
+        "from",
+        "for",
+        "to",
+        "is",
+        "are",
+        "do",
+        "does",
+        "whether",
+        "document",
+        "documents",
+        "file",
+        "files",
+        "paper",
+        "papers",
+        "record",
+        "records",
+        "check",
+        "verify",
+        "explain",
+        "show",
+        "list",
+        "tell",
+        "me",
+        "what",
+        "which",
+        "differences",
+        "any",
+        "changes",
+        "changed",
+        "please",
+        "قارن",
+        "قارني",
+        "مقارنه",
+        "مقارنة",
+        "بين",
+        "و",
+        "مع",
+        "هل",
+        "نفس",
+        "مطابق",
+        "يطابق",
+        "متطابق",
+        "تطابق",
+        "في",
+        "كل",
+        "من",
+        "على",
+        "المستندين",
+        "الوثيقتين",
+        "الملفين",
+        "المستندات",
+        "الوثائق",
+        "الملفات",
+        "المستند",
+        "الوثيقة",
+        "الملف",
+        "الورقتين",
+        "اتنين",
+        "اثنين",
+    ]
+)
+_DECLINED = ("I couldn't find", "I could not find")
+
+
+# Words that introduce the documents compared ("… in the contract and the register", "… في العقد").
+_DOC_BOUNDARY = set(
+    [
+        "in",
+        "within",
+        "across",
+        "with",
+        "against",
+        "versus",
+        "vs",
+        "between",
+        "on",
+        "from",
+        "for",
+        "في",
+        "مع",
+        "على",
+        "من",
+        "عبر",
+        "داخل",
+    ]
+)
+_DOC_TYPE_WORDS = set(
+    [
+        "contract",
+        "contracts",
+        "agreement",
+        "agreements",
+        "register",
+        "registers",
+        "registry",
+        "extract",
+        "extracts",
+        "certificate",
+        "certificates",
+        "card",
+        "cards",
+        "invoice",
+        "invoices",
+        "receipt",
+        "receipts",
+        "letter",
+        "letters",
+        "report",
+        "reports",
+        "form",
+        "forms",
+        "nda",
+        "commercial",
+        "العقد",
+        "العقود",
+        "عقد",
+        "الاتفاقيه",
+        "الاتفاقية",
+        "مستخرج",
+        "الشهاده",
+        "الشهادة",
+        "البطاقه",
+        "البطاقة",
+        "الفاتوره",
+        "الفاتورة",
+        "الخطاب",
+        "الرساله",
+        "الرسالة",
+        "التقرير",
+    ]
+)
+
+
+def _named_field(request: str) -> str:
+    """The field a comparison request names, or "" when it names none: the words before the ones that introduce
+    the documents ("compare the registration number | in the contract and the register" -> "registration number",
+    "قارن بين رقم السجل | في العقد ومستخرج السجل" -> "رقم السجل"). Words that only describe documents ("compare
+    these two contracts") name no field."""
+    kept: list[str] = []
+    for word in re.findall(r"[^\W\d_]+", request):
+        key = word.casefold()
+        if key in _DOC_BOUNDARY and kept:
+            break
+        if key not in _COMPARE_WORDS and len(word) > 1:
+            kept.append(word)
+    if not kept or all(w.casefold() in _DOC_TYPE_WORDS for w in kept):
+        return ""
+    return " ".join(kept) if len(kept) <= 6 else ""
+
+
+def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
+    """Read the named field in each document on its own (its printed label or table cell), show each value with its
+    evidence, then say whether they match. Any document without a single readable value: cannot determine."""
+    from .context import Scratch
+    from .labels import label_answer
+    from .table_answer import table_answer
+
+    question = f"ما {named}؟" if re.search(r"[؀-ۿ]", named) else f"What is the {named}?"
+    saved = ctx.scratch
+    values: list[dict[str, Any]] = []
+    try:
+        for doc in docs:
+            ctx.check()
+            ctx.scratch = Scratch(doc_ids=[doc.id], explicit=True)
+            used = table_answer(ctx, question) or label_answer(ctx, question)
+            sub = ctx.scratch
+            head = sub.answer.split("\n\nEvidence:")[0].strip()
+            entry: dict[str, Any] = {"doc_id": doc.id, "document": doc.name, "value": None, "source": None}
+            if used and sub.outcome == "ambiguous":
+                entry["status"] = "several candidates"
+                entry["candidates"] = [c.value for c in sub.candidates]
+            elif used and head and not head.startswith(_DECLINED) and sub.sources:
+                entry |= {"status": "found", "value": head, "source": sub.sources[0].model_dump(mode="json")}
+                entry["warnings"] = list(sub.warnings)
+            else:
+                entry["status"] = "not found"
+            values.append(entry)
+    finally:
+        ctx.scratch = saved
+    found = [v for v in values if v["status"] == "found"]
+    if len(found) == len(values):
+        keys = {_value_key(v["value"]) for v in found}
+        verdict = "matches" if len(keys) == 1 else "differs"
+    else:
+        verdict = "cannot determine"
+    s = ctx.scratch
+    lines = [f"Compared “{named}” in {len(values)} documents:"]
+    for v in values:
+        if v["status"] == "found":
+            lines.append(f"- {v['document']}: {v['value']} (page {v['source']['page']})")
+        elif v["status"] == "several candidates":
+            lines.append(f"- {v['document']}: several candidates ({', '.join(v['candidates'][:4])}) — choose one")
+        else:
+            lines.append(f"- {v['document']}: not found at a printed label or table cell")
+    why = {
+        "matches": "the values read are the same",
+        "differs": "the values read are different",
+        "cannot determine": "a value could not be read in every document; check the documents yourself",
+    }[verdict]
+    lines.append(f"Result: {verdict} — {why}. Check the cited places: OCR can misread a value.")
+    s.answer = "\n".join(lines)
+    s.sources = [Source.model_validate(v["source"]) for v in found]
+    s.comparison = {"field": named, "values": values, "verdict": verdict}
+    s.outcome = "partial" if verdict == "cannot determine" else "proposed"
+    s.confidence = 0.6 if verdict != "cannot determine" else 0.3
+    if verdict == "cannot determine":
+        s.partial = True
+    return f"field comparison: {verdict}"
+
+
+def _value_key(value: str) -> str:
+    """A value compared across documents: digits in Latin form, without spaces or punctuation, case folded."""
+    text = "".join(str(unicodedata.decimal(ch)) if ch.isdigit() else ch for ch in value)
+    return re.sub(r"[\W_]+", "", text).casefold()
 
 
 def _changed_numbers(only_a: list[str], only_b: list[str]) -> list[str]:

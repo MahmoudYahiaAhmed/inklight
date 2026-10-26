@@ -15,6 +15,8 @@ cited value is then found by its text.
 
 from __future__ import annotations
 
+import re
+
 from ..schemas import Source
 from . import label_scope as sc
 from . import lines as ln
@@ -44,6 +46,20 @@ def check_label_scope(ctx: ToolContext, question: str) -> str | None:
     if _bare_label(head):
         say_no_evidence(ctx, _phrase(question, fields), f"the passage found is only the label “{head}”")
         return "a bare label is not an answer"
+    merged = _merged_field_names(ctx, src, head)
+    if merged:
+        say_no_evidence(
+            ctx,
+            _phrase(question, fields),
+            f"the passage found is a run of field names printed on page {src.page} (“{merged[0]}”, “{merged[1]}”, "
+            "…), not a value",
+        )
+        s.answer = (
+            f"{s.answer[:-1]}: the passage found on page {src.page} is a run of field names (“{merged[0]}”, "
+            f"“{merged[1]}”, …), not a value. Check that place on the page."
+        )
+        s.sources = [src]  # the place, for review
+        return "a run of field names is not an answer"
     named = _field_name(ctx, src, head)
     if named:
         say_no_evidence(
@@ -166,6 +182,31 @@ def _table_heading(ctx: ToolContext, doc_id: str, head: str) -> str | None:
             for text in grid.rows[r]:
                 if text.strip() and _squash(text) == first:
                     return text
+    return None
+
+
+_SEGMENT = re.compile(r"\s+(?=\(\s*[^\W_]{1,2}\s*\)|[0-9٠-٩]{1,2}\s*[-–.)](?![0-9٠-٩]))|\n+")
+
+
+def _merged_field_names(ctx: ToolContext, src: Source, head: str) -> list[str] | None:
+    """The answer is several field names run together (Docling merges a register's stacked header cells into one
+    block): split at its list markers, two or more pieces, most of them field names printed on the cited page
+    (numbered field names or "Label:" lines). Returns the field names, or None."""
+    pieces = [ln.strip_markers(p).strip(" -–:") for p in _SEGMENT.split(head.strip().strip('“”"'))]
+    pieces = [p for p in pieces if len(_squash(p)) >= 4]
+    if len(pieces) < 2:
+        return None
+    page_content = next((p for p in ctx.pages(src.doc_id) if p.number == src.page), None) if src.page else None
+    if page_content is None:
+        return None
+    printed = [
+        _squash(ln.strip_markers(line.text)).rstrip(":")
+        for line in ln.index(page_content).lines
+        if ln.enumerated_label(line.text) or _bare_label(line.text.strip())
+    ]
+    matched = [p for p in pieces if any(_squash(p) in x or (len(x) >= 4 and x in _squash(p)) for x in printed)]
+    if len(matched) >= 2 and len(matched) >= 0.6 * len(pieces):
+        return matched
     return None
 
 

@@ -179,6 +179,37 @@ class TaskState(StrEnum):
     UNSUPPORTED = "unsupported"  # could not run without guessing what was meant
 
 
+# What a result is, so a person never mistakes one kind for another (the UI and API show it first):
+Outcome = Literal[
+    "extracted",  # text, search passages or extracted fields, shown as found: nothing was concluded
+    "proposed",  # an answer drawn from the documents that a person should check before relying on it
+    "supported",  # a value read beside its printed label or in its table cell, with that place cited
+    "partial",  # only part of the request was done; the answer says which part
+    "missing_evidence",  # the documents in scope did not show the value asked for
+    "ambiguous",  # several candidates match: choose one (``candidates``)
+    "unsupported",  # the operation is not available for this request
+    "failed",  # an error stopped the task
+]
+OUTCOME_LABELS: dict[str, str] = {
+    "extracted": "Extracted text / search results",
+    "proposed": "Proposed answer — review before use",
+    "supported": "Supported answer — value at its printed label, cited",
+    "partial": "Partial result",
+    "missing_evidence": "Missing evidence",
+    "ambiguous": "Several candidates — choose one",
+    "unsupported": "Unsupported operation",
+    "failed": "Failed",
+}
+
+
+class Candidate(Frozen):
+    """One of several values that match a question (two tables, two documents, two copies of a label)."""
+
+    value: str
+    source: Source
+    context: str = ""  # where it is: the section, table or document, in words
+
+
 class AgentResult(Frozen):
     task_id: str
     request: str
@@ -221,6 +252,21 @@ class AgentResult(Frozen):
     trace: tuple[TraceStep, ...] = ()
     brain: str = "rules"
     duration_ms: float = 0.0
+    outcome: Outcome = Field(
+        "proposed",
+        description="What kind of result this is (OUTCOME_LABELS). Even a supported answer rests on OCR, which can "
+        "misread: OCR confidence is the reader's own estimate, not a guarantee.",
+    )
+    candidates: tuple[Candidate, ...] = Field((), description="When outcome is ambiguous: the values to choose from.")
+    comparison: dict[str, Any] | None = Field(
+        None,
+        description="A field compared across documents: field, values (one per document, with source), and "
+        "verdict: matches | differs | cannot determine.",
+    )
+
+    @property
+    def outcome_label(self) -> str:
+        return OUTCOME_LABELS[self.outcome]
 
     @property
     def ok(self) -> bool:

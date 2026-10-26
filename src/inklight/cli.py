@@ -14,11 +14,11 @@ import typer
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 from rich.text import Text
 
-from . import __version__
+from . import __version__, build_commit
 from ._brand import CYAN, NAME, TAGLINE
 from .cli_render import banner, console, documents_table, err, hits_table, records_table, result_panel
 from .config import Settings, load_settings
-from .errors import InklightError
+from .errors import InklightError, InputRejected
 
 app = typer.Typer(
     name="inklight", help=f"{NAME} — {TAGLINE}", no_args_is_help=True, add_completion=False, rich_markup_mode="rich"
@@ -79,8 +79,10 @@ def _first_run_notice(agent) -> None:  # type: ignore[no-untyped-def]
         return
     try:
         from huggingface_hub import try_to_load_from_cache
+        from indra_ocr.models import HF_REPO, HF_REVISION
 
-        cached = isinstance(try_to_load_from_cache("datalab-to/indra-ocr", "config.json"), str)
+        # The detector is one of the files Indra always fetches (indra_ocr.models.FILES); the repo has no config.json.
+        cached = isinstance(try_to_load_from_cache(HF_REPO, "det.onnx", revision=HF_REVISION), str)
     except Exception:  # best effort only
         return
     if not cached:
@@ -119,7 +121,7 @@ def _root(
         level=logging.DEBUG if verbose else logging.WARNING, format="%(levelname)s %(name)s: %(message)s"
     )
     if version:
-        console.print(f"{NAME.lower()} {__version__}")
+        console.print(f"{NAME.lower()} {__version__} (commit {build_commit()})")
         raise typer.Exit()
 
 
@@ -182,6 +184,9 @@ def ask(
         if not as_json:
             banner()
         if paths:
+            missing = [p for p in paths if not Path(p).exists()]
+            if missing:
+                _fail(InputRejected("File not found: " + ", ".join(missing) + " (give the path of each document)"))
             report = _ingest_with_progress(agent, paths) if not as_json else agent.library.add(paths)
             ids = [d.id for d in report.documents]
             if not ids:

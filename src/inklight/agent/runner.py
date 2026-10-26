@@ -112,6 +112,9 @@ class Runner:
             trace=tuple(trace),
             brain=_brain_label(ctx, plan),
             duration_ms=round(1000 * (time.monotonic() - started), 1),
+            outcome=result_outcome(plan, s, state, trace),
+            candidates=tuple(s.candidates[:12]),
+            comparison=s.comparison,
         )
 
     def _run_step(self, pool: ThreadPoolExecutor, ctx: ToolContext, index: int, name: str, raw_args: dict) -> TraceStep:
@@ -207,6 +210,40 @@ class Runner:
             attempts=attempts,
             error=error,
         )
+
+
+_DECLINED = ("I couldn't find", "I could not find", "No passage", "I could not find anything")
+# Answer paths that read a value at its printed label or in its table cell (agent/labels.py, table_answer.py).
+_AT_LABEL = ("value beside its label", "table cell")
+_SHOWN_AS_FOUND = {"extract", "find", "cite", "summarize", "filter", "count", "inconsistencies", "process"}
+
+
+def result_outcome(plan: Plan, s: Scratch, state: TaskState, trace: list[TraceStep]) -> str:
+    """What kind of result this is, from what the steps did, not from how confident they sounded:
+
+    - a step that knows (several candidates, a field compared, an operation not available) says so;
+    - a decline is missing evidence; an error is failed; part of the job done is partial;
+    - text, passages and extracted fields are shown as found ("extracted"), never as a conclusion;
+    - an answer is "supported" only when it is a value read at its printed label or in its table cell, cited, with
+      no warning; every other answer is "proposed" and needs review. OCR can still misread a supported value.
+    """
+    if state in (TaskState.FAILED, TaskState.CANCELLED):
+        return "failed"
+    if state == TaskState.UNSUPPORTED:
+        return "unsupported"
+    if s.outcome:
+        return s.outcome
+    if s.answer.startswith(_DECLINED):
+        return "missing_evidence"
+    if state == TaskState.PARTIAL:
+        return "partial"
+    intent = plan.intent.value
+    if intent in _SHOWN_AS_FOUND:
+        return "extracted"
+    used = next((t.summary for t in reversed(trace) if t.tool == "answer"), "")
+    if intent == "ask" and used in _AT_LABEL and s.sources and not s.warnings and s.confidence >= 0.7:
+        return "supported"
+    return "proposed"
 
 
 def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
