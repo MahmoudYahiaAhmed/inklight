@@ -1,0 +1,50 @@
+| arm · slice | n | by tool (after follow-ups) | first attempt correct | manual correction | honest partial | wrong abstention | silent wrong | overstated | tech. failure |
+|---|---|---|---|---|---|---|---|---|---|
+| A | 38 | 1 | 0 | 35 | 0 | 1 | 0 | 0 | 0 |
+| B | 38 | 1 | 0 | 35 | 1 | 1 | 0 | 0 | 0 |
+| A · dev | 6 | 1 | 0 | 4 | 0 | 1 | 0 | 0 | 0 |
+| A · reserved | 32 | 0 | 0 | 31 | 0 | 0 | 0 | 0 | 0 |
+| B · dev | 6 | 0 | 0 | 5 | 0 | 1 | 0 | 0 | 0 |
+| B · reserved | 32 | 1 | 0 | 30 | 1 | 0 | 0 | 0 | 0 |
+| A · ar | 11 | 0 | 0 | 10 | 0 | 1 | 0 | 0 | 0 |
+| A · en | 3 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
+| A · mixed | 24 | 0 | 0 | 23 | 0 | 0 | 0 | 0 | 0 |
+| B · ar | 11 | 0 | 0 | 10 | 0 | 1 | 0 | 0 | 0 |
+| B · en | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| B · mixed | 24 | 1 | 0 | 22 | 1 | 0 | 0 | 0 | 0 |
+| A · commercial_register | 9 | 0 | 0 | 9 | 0 | 0 | 0 | 0 | 0 |
+| A · contract | 6 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| A · letter | 6 | 1 | 0 | 5 | 0 | 0 | 0 | 0 | 0 |
+| A · multi-type | 6 | 0 | 0 | 5 | 0 | 1 | 0 | 0 | 0 |
+| A · receipt | 6 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| A · tax_card | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| A · vat_certificate | 2 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+| B · commercial_register | 9 | 0 | 0 | 9 | 0 | 0 | 0 | 0 | 0 |
+| B · contract | 6 | 1 | 0 | 5 | 0 | 0 | 0 | 0 | 0 |
+| B · letter | 6 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| B · multi-type | 6 | 0 | 0 | 5 | 0 | 1 | 0 | 0 | 0 |
+| B · receipt | 6 | 0 | 0 | 6 | 0 | 0 | 0 | 0 | 0 |
+| B · tax_card | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| B · vat_certificate | 2 | 0 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
+| A · absent | 3 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
+| A · ambiguous | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| A · calculate | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
+| A · compare | 7 | 0 | 0 | 6 | 0 | 1 | 0 | 0 | 0 |
+| A · export | 4 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| A · field | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
+| A · search | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| A · summary | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| A · table | 7 | 0 | 0 | 7 | 0 | 0 | 0 | 0 | 0 |
+| B · absent | 3 | 1 | 0 | 2 | 0 | 0 | 0 | 0 | 0 |
+| B · ambiguous | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| B · calculate | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
+| B · compare | 7 | 0 | 0 | 6 | 0 | 1 | 0 | 0 | 0 |
+| B · export | 4 | 0 | 0 | 3 | 1 | 0 | 0 | 0 | 0 |
+| B · field | 4 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | 0 |
+| B · search | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| B · summary | 3 | 0 | 0 | 3 | 0 | 0 | 0 | 0 | 0 |
+| B · table | 7 | 0 | 0 | 7 | 0 | 0 | 0 | 0 | 0 |
+| A · digital | 11 | 1 | 0 | 10 | 0 | 0 | 0 | 0 | 0 |
+| A · scan/photo | 27 | 0 | 0 | 25 | 0 | 1 | 0 | 0 | 0 |
+| B · digital | 11 | 1 | 0 | 10 | 0 | 0 | 0 | 0 | 0 |
+| B · scan/photo | 27 | 0 | 0 | 25 | 1 | 1 | 0 | 0 | 0 |

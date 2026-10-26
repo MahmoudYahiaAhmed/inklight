@@ -104,6 +104,12 @@ The fixes:
   - Arabic names are not detected, so Arabic copies of a label are listed, not chosen between.
   - In plain text, a value cited beside another field's label is flagged, not corrected.
 
+### Evaluated: agent-run workflows on real documents (no code change)
+- 38 tasks on 25 documents (mostly scanned Egyptian registers, tax cards and VAT certificates), run by a user agent
+  through the CLI with structure off and on, judged blind. The tool completed 2 of 76 runs; Docling and the small
+  models changed nothing material. Failures, three proposed fixes with reproductions, and the harness:
+  [docs/AGENT_EVALUATION.md](docs/AGENT_EVALUATION.md), `bench/agent_eval/`, `bench/results/agent_eval/`.
+
 ### Added: document structure from Docling on Indra's OCR (optional)
 - **`[structure] engine = "docling"`** (extra: `pip install "inklight[structure]"`) runs Docling's existing components
   on each document Indra has read: the Heron layout model, reading order and TableFormer, through Docling's

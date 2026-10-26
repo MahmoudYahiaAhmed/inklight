@@ -1,0 +1,9 @@
+2026-10-26T08:04:01+03:00 ingest attempt 1 failed in all arms before any document was read: DocumentAgent.add has no force argument (harness bug). Fixed: use agent.library.add(force=...). Rerun.
+2026-10-26T05:20:16.397678+00:00 dev arm A: ik.py crashed printing Arabic to a cp1252 console (UnicodeEncodeError) after the command had run and been logged; the action counted (A1-01 action 1). Fix: stdout reconfigured to UTF-8. No product, task, reference or scoring change. New ik.py sha256 83bcd4079c93be3c9c88288ccc05489f295e2c466ff02b8bf88ffd722d3db420
+2026-10-26T08:27:01+03:00 dev judging complete: 12 judgments (judge agent aa36760c)
+2026-10-26T08:46:21+03:00 bundled arm A reserved cases for judging (seed 11)
+2026-10-26T08:50:50+03:00 judge set 2 done (16). Disputed reference: A2-05 (case-e7eef1) — judge says capital now fully paid (p6 amendment [1] 2022/06/06, p7); reference expects founding 10% paid. Needs adjudication; frozen reference unchanged.
+2026-10-26T08:51:12+03:00 judge set 1 done (16). Adjudication recorded in runs/adjudication.json (A2-05 verified on p7).
+2026-10-26T09:06:51+03:00 user-agent runs complete (A, B: 38 tasks each). Starting controls A,B then small-models subset.
+2026-10-26T09:07:43+03:00 controls + B-models subset done; bundled arm B reserved (seed 23) and CTRL A,B (seed 31)
+2026-10-26T09:11:37+03:00 all judging complete (98 cases)

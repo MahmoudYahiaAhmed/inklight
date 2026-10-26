@@ -1,0 +1,6 @@
+{"g01-01": "tax_card+register", "g02-01": "tax_card", "g02-02": "commercial_register", "g02-03": "vat_certificate",
+ "g03-01": "commercial_register", "g04-01": "commercial_register", "g04-02": "vat_certificate", "g05-01": "tax_card",
+ "g06-01": "commercial_register", "g06-02": "vat_certificate", "g07-01": "contract", "g07-02": "commercial_register",
+ "g08-01": "tax_card", "g09-01": "contract", "g09-02": "commercial_register", "g10-01": "commercial_register",
+ "g10-02": "tax_card", "g11-01": "receipt", "g12-01": "receipt", "g13-01": "receipt", "g14-01": "receipt",
+ "g15-01": "letter", "g15-02": "letter", "g16-01": "letter", "g16-02": "letter", "control-two-companies": "control_table"}

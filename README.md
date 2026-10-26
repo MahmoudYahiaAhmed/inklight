@@ -223,6 +223,10 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 
 ## Limits
 
+- **Scanned Egyptian registers, tax cards and VAT certificates are not supported in practice.** In an agent-run
+  workflow evaluation on such documents (plus receipts, an NDA and UN letters), the tool completed 2 of 76 task runs;
+  every other correct result was read off the page by the person. Docling structure did not change this. Details:
+  [docs/AGENT_EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/AGENT_EVALUATION.md).
 - **Arabic questions are mostly answered by sentence matching**, not by a model that reads Arabic, and those
   answers are flagged for review (11 of 23 right on the reserved split). A value printed beside a label, a letter's
   sender, addressee or signer, and a labelled field are read from the page itself and are not flagged.

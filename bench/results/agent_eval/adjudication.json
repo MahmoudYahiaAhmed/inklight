@@ -1,0 +1,37 @@
+{
+ "note": "Post-hoc adjudication of disputed references. Frozen references are not edited; outcomes below are the judges', unchanged. Adjudicated by the orchestrator from the page images.",
+ "items": [
+  {
+   "task": "A2-05",
+   "case": "case-e7eef1",
+   "decision": "reference wrong",
+   "outcome_change": "none (judge already judged against the page)"
+  },
+  {
+   "task": "A1-06",
+   "case": "case-613ad6",
+   "decision": "reference wrong (accepted from judge evidence)",
+   "outcome_change": "none"
+  },
+  {
+   "task": "A2-07",
+   "case": "case-07ae2d",
+   "decision": "reference entry/date pairing disputed; names and order agreed",
+   "outcome_change": "none"
+  },
+  {
+   "task": "A1-06",
+   "case": "case-9d0d89",
+   "decision": "reference wrong (second judge, same evidence: p5 entry [9] 28518 2023/04/10)",
+   "outcome_change": "none"
+  }
+ ],
+ "overrides": {
+  "case-613ad6": {
+   "from": "correct_complete",
+   "to": "correct_after_manual_correction",
+   "why": "Consistency across judges on identical tool behaviour (values quoted, asked percentage not computed); stricter label applied."
+  }
+ },
+ "lesson": "Two of 38 frozen references (5%) took founding values from page 2 of a commercial register and missed later amendments; the task author made the same 'current vs original' error the tool is tested for."
+}

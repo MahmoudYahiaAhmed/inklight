@@ -1,0 +1,27 @@
+{
+ "frozen_at": "2026-10-26T05:13:21.965801+00:00",
+ "evaluated_commit": "3f1ec75d3fe62c755333db0866c5af27e2392da3",
+ "files": {
+  "frozen\\refs_A1.json": "18632dcb60f502f5cb162dd5270e09d5f1c964a9afd19697c737ba39e6b1c158",
+  "frozen\\refs_A2.json": "9fed51e28d6246c81a4a91fefe0bcbf40336b05258c4b17806cc0d15eaf481f8",
+  "frozen\\refs_A3.json": "42fa61385648fad811c414c250fa52db55a6a4f691502de77cac35216d006656",
+  "frozen\\refs_CTRL.json": "c7c93a740f79de62f173b4eef68c2aa39d34c71c77fc63ab4f528f5b570597cd",
+  "frozen\\split.json": "546aa38c54608ec83dc416a95fa4de1392756f1e808001697335b139b795d345",
+  "frozen\\tasks_A1.json": "8d173a8e97978f27b4d951d046621c2dd716b1d816ae0f6716e88084d57411cf",
+  "frozen\\tasks_A2.json": "b92a50f03451588a68423562288178fc218c3c0f7fb920e380107988be1b432c",
+  "frozen\\tasks_A3.json": "4eb0a3575c60234beb51072ce8c2221f63de955a2ce80ccae8501685107a019c",
+  "frozen\\tasks_CTRL.json": "40fe7a8be7e494ee308181b5eba1d22ae2c9700df74dd128ad49972b8a175918",
+  "judge_brief.md": "045cec41bd949bc79cdb5e2f0304e83cbc7ac33b9da542c4996526d4bee4be02",
+  "user_brief.md": "6e63412d77fa89e3eebc49e28cceaf7745dfbd3be8594404ea93359b709bde53",
+  "author_brief.md": "38f7c4917035c7b76cb3c74269f3228dee03d8956362061afd0fd2016e71c891",
+  "configs/arm-A.toml": "161f8d3db45758422de6a30f2072ea979bfd54f3e0c1e750c3ea41813f3c49ec",
+  "configs/arm-B.toml": "ed072cee419f6889502d903e6111ee230b51dbcab34740e63174aeb1b1d8ff77",
+  "configs/arm-B-models.toml": "8d99305a6e680d637ac8a99d0910c10e03c4ab5374593eac1a10d81952db6372",
+  "C:/Users/pc/inklight/bench/agent_eval/check.py": "d629e54e4bdb39dc1da259ce72fa96a72b9def0b296717b6aa960b702dac9014",
+  "C:/Users/pc/inklight/bench/agent_eval/ik.py": "e8800c75c730bbc84147b527911739803d5f693594fa87e778179d08e81707d4",
+  "C:/Users/pc/inklight/bench/agent_eval/ingest.py": "e657906f695d41f0d586ba9ddbc2282bb680647385f1d4c3b19350e3cb52436d",
+  "C:/Users/pc/inklight/bench/agent_eval/prepare_docs.py": "afaa4b5820d6a95c2a75ca21f7ab21550cec78f923546381919e7136c27d0deb",
+  "C:/Users/pc/inklight/bench/agent_eval/make_controls.py": "3e8869e50b4e3d599c679a2994b3ccb66b0740d835996cc85aad020012f53eb8",
+  "C:/Users/pc/inklight/bench/agent_eval/provenance.py": "45a9e167c79a396e100c91ad22f9b9342f09c898c9979c193c2ce863cdb715c9"
+ }
+}

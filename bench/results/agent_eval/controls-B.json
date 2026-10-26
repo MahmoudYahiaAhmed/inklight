@@ -1,0 +1,30 @@
+[
+ {
+  "task": "C-01",
+  "pass": false,
+  "answer": "Alpha Ltd\n\nEvidence: “Company name: Alpha Ltd” (table, page 1)",
+  "state": "succeeded",
+  "seconds": 1.12
+ },
+ {
+  "task": "C-02",
+  "pass": true,
+  "answer": "Limited company\n\nEvidence: “Company type: Limited company” (table, page 1)",
+  "state": "succeeded",
+  "seconds": 1.08
+ },
+ {
+  "task": "C-03",
+  "pass": false,
+  "answer": "The vendor is registration summary",
+  "state": "succeeded",
+  "seconds": 1.16
+ },
+ {
+  "task": "C-04",
+  "pass": true,
+  "answer": "Limited company\n\nEvidence: “Company type: Limited company” (table, page 1)",
+  "state": "succeeded",
+  "seconds": 1.09
+ }
+]

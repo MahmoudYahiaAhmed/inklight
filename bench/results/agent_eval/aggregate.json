@@ -1,0 +1,7967 @@
+{
+ "cases": [
+  {
+   "case": "case-a5cd68",
+   "arm": "A",
+   "task": "A1-01",
+   "language": "ar",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "wrong_abstention",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 4,
+   "action_seconds": [
+    0.61,
+    0.61,
+    0.63,
+    0.66
+   ],
+   "inklight_ms": [
+    46.0,
+    45.9,
+    57.1,
+    53.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-4d3c1a",
+   "arm": "B",
+   "task": "A1-01",
+   "language": "ar",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "wrong_abstention",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 4,
+   "action_seconds": [
+    1.19,
+    1.16,
+    0.48,
+    1.08
+   ],
+   "inklight_ms": [
+    568.2,
+    515.0,
+    491.1
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-ca264e",
+   "arm": "A",
+   "task": "A1-04",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.74,
+    0.67,
+    0.71
+   ],
+   "inklight_ms": [
+    155.8,
+    89.3,
+    149.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-18b8ff",
+   "arm": "B",
+   "task": "A1-04",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.14,
+    1.11,
+    1.13
+   ],
+   "inklight_ms": [
+    551.3,
+    522.3,
+    529.4
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-25165e",
+   "arm": "A",
+   "task": "A1-07",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.75,
+    0.67
+   ],
+   "inklight_ms": [
+    182.6,
+    112.9
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-3031d0",
+   "arm": "B",
+   "task": "A1-07",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.22,
+    1.11
+   ],
+   "inklight_ms": [
+    616.4,
+    526.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-bb3b93",
+   "arm": "A",
+   "task": "A3-02",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "table",
+   "source": "digital",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.62,
+    0.57,
+    0.6
+   ],
+   "inklight_ms": [
+    50.7,
+    22.2
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-1db208",
+   "arm": "B",
+   "task": "A3-02",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "table",
+   "source": "digital",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 4,
+   "action_seconds": [
+    1.06,
+    0.53,
+    0.46,
+    0.46
+   ],
+   "inklight_ms": [
+    487.0,
+    22.0
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-6deceb",
+   "arm": "A",
+   "task": "A3-08",
+   "language": "en",
+   "doc_type": "letter",
+   "task_type": "absent",
+   "source": "digital",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_abstention",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.54
+   ],
+   "inklight_ms": [
+    39.3
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-1332a1",
+   "arm": "B",
+   "task": "A3-08",
+   "language": "en",
+   "doc_type": "letter",
+   "task_type": "absent",
+   "source": "digital",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.08,
+    1.07
+   ],
+   "inklight_ms": [
+    497.8,
+    485.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-2c0146",
+   "arm": "A",
+   "task": "A3-10",
+   "language": "en",
+   "doc_type": "receipt",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.5,
+    0.51,
+    0.47
+   ],
+   "inklight_ms": [
+    14.9,
+    36.7
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-de06ce",
+   "arm": "B",
+   "task": "A3-10",
+   "language": "en",
+   "doc_type": "receipt",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "dev",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.52,
+    0.47
+   ],
+   "inklight_ms": [
+    15.4
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e79e4a",
+   "arm": "A",
+   "task": "A1-02",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.56,
+    0.68,
+    0.59
+   ],
+   "inklight_ms": [
+    55.8,
+    139.9
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-ee69af",
+   "arm": "A",
+   "task": "A1-03",
+   "language": "mixed",
+   "doc_type": "vat_certificate",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "partly",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.51,
+    0.52,
+    0.49
+   ],
+   "inklight_ms": [
+    18.5,
+    17.5
+   ],
+   "states": [
+    "partial",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e75690",
+   "arm": "A",
+   "task": "A1-05",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.57,
+    0.49,
+    0.55
+   ],
+   "inklight_ms": [
+    67.9,
+    1.3,
+    72.3
+   ],
+   "states": [
+    "succeeded",
+    "failed",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-613ad6",
+   "arm": "A",
+   "task": "A1-06",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "yes",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": true,
+   "adjudicated": true,
+   "actions": 2,
+   "action_seconds": [
+    0.59,
+    0.56
+   ],
+   "inklight_ms": [
+    93.9,
+    73.5
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-5e8bcc",
+   "arm": "A",
+   "task": "A1-08",
+   "language": "mixed",
+   "doc_type": "tax_card",
+   "task_type": "search",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "not_applicable",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.53,
+    0.48,
+    0.52
+   ],
+   "inklight_ms": [
+    45.2,
+    42.8
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-f3973d",
+   "arm": "A",
+   "task": "A1-09",
+   "language": "ar",
+   "doc_type": "tax_card",
+   "task_type": "absent",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.5,
+    0.51
+   ],
+   "inklight_ms": [
+    29.3,
+    31.9
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-5f5228",
+   "arm": "A",
+   "task": "A1-10",
+   "language": "mixed",
+   "doc_type": "vat_certificate",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.54,
+    0.51,
+    0.52
+   ],
+   "inklight_ms": [
+    47.0,
+    16.7,
+    42.3
+   ],
+   "states": [
+    "succeeded",
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-3030f3",
+   "arm": "A",
+   "task": "A1-11",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "not_applicable",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.57,
+    0.55
+   ],
+   "inklight_ms": [
+    82.0,
+    69.1
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e4a7db",
+   "arm": "A",
+   "task": "A1-12",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.87,
+    0.63,
+    0.48
+   ],
+   "inklight_ms": [
+    383.1,
+    146.7
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-9b5769",
+   "arm": "A",
+   "task": "A1-13",
+   "language": "ar",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.9,
+    0.63
+   ],
+   "inklight_ms": [
+    407.9,
+    137.4
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-48995f",
+   "arm": "A",
+   "task": "A2-01",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "summary",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.49,
+    0.57
+   ],
+   "inklight_ms": [
+    15.9,
+    86.4
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-2e6c5e",
+   "arm": "A",
+   "task": "A2-02",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.62,
+    0.64
+   ],
+   "inklight_ms": [
+    135.6,
+    160.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-157156",
+   "arm": "A",
+   "task": "A2-03",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.56,
+    0.57
+   ],
+   "inklight_ms": [
+    82.8,
+    86.3
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-cad57a",
+   "arm": "A",
+   "task": "A2-04",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.5,
+    0.64
+   ],
+   "inklight_ms": [
+    1.3,
+    143.3
+   ],
+   "states": [
+    "failed",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-e7eef1",
+   "arm": "A",
+   "task": "A2-05",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.62,
+    0.58
+   ],
+   "inklight_ms": [
+    121.0,
+    87.8
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-50a310",
+   "arm": "A",
+   "task": "A2-06",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "search",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.62,
+    0.63
+   ],
+   "inklight_ms": [
+    141.6,
+    148.5
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-07ae2d",
+   "arm": "A",
+   "task": "A2-07",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.6,
+    0.6,
+    0.49
+   ],
+   "inklight_ms": [
+    113.0,
+    110.5
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-205727",
+   "arm": "A",
+   "task": "A2-08",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.66,
+    0.54
+   ],
+   "inklight_ms": [
+    171.7,
+    45.1
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-1e7d7b",
+   "arm": "A",
+   "task": "A2-09",
+   "language": "ar",
+   "doc_type": "contract",
+   "task_type": "summary",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.47,
+    0.53
+   ],
+   "inklight_ms": [
+    12.7,
+    73.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-124114",
+   "arm": "A",
+   "task": "A2-10",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "json",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "yes",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.58,
+    0.58
+   ],
+   "inklight_ms": [
+    100.9
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-6162fa",
+   "arm": "A",
+   "task": "A2-11",
+   "language": "ar",
+   "doc_type": "tax_card",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "yes",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.49,
+    0.48
+   ],
+   "inklight_ms": [
+    17.5
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-7bdff4",
+   "arm": "A",
+   "task": "A2-12",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "absent",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.58,
+    0.53
+   ],
+   "inklight_ms": [
+    101.7,
+    60.3
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-0f66fc",
+   "arm": "A",
+   "task": "A2-13",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.55
+   ],
+   "inklight_ms": [
+    73.6
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-ed88d1",
+   "arm": "A",
+   "task": "A3-01",
+   "language": "en",
+   "doc_type": "letter",
+   "task_type": "summary",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "yes",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.51,
+    0.52
+   ],
+   "inklight_ms": [
+    23.7,
+    37.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-a70fec",
+   "arm": "A",
+   "task": "A3-03",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "search",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.51,
+    0.51,
+    0.51
+   ],
+   "inklight_ms": [
+    34.3,
+    37.7,
+    40.5
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e18d4b",
+   "arm": "A",
+   "task": "A3-04",
+   "language": "ar",
+   "doc_type": "letter",
+   "task_type": "compare",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.49,
+    0.54
+   ],
+   "inklight_ms": [
+    1.3,
+    49.2
+   ],
+   "states": [
+    "failed",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-640129",
+   "arm": "A",
+   "task": "A3-05",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.58,
+    1.52
+   ],
+   "inklight_ms": [
+    1029.1,
+    980.0
+   ],
+   "states": [
+    "partial",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-77a066",
+   "arm": "A",
+   "task": "A3-06",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.52,
+    0.48
+   ],
+   "inklight_ms": [
+    33.9,
+    16.7
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-969b08",
+   "arm": "A",
+   "task": "A3-07",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "yes",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.58,
+    1.52
+   ],
+   "inklight_ms": [
+    1035.3
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-ffe244",
+   "arm": "A",
+   "task": "A3-09",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.51,
+    0.5
+   ],
+   "inklight_ms": [
+    30.2,
+    21.0
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-025a1d",
+   "arm": "A",
+   "task": "A3-11",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "not_applicable",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.5,
+    0.51
+   ],
+   "inklight_ms": [
+    31.1,
+    46.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-2b83a5",
+   "arm": "A",
+   "task": "A3-12",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "field",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.55,
+    0.52
+   ],
+   "inklight_ms": [
+    51.7,
+    47.1
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-946ff4",
+   "arm": "B",
+   "task": "A1-02",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.58,
+    1.18,
+    0.47
+   ],
+   "inklight_ms": [
+    60.5,
+    571.4
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-2ac727",
+   "arm": "B",
+   "task": "A1-03",
+   "language": "mixed",
+   "doc_type": "vat_certificate",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "honest_partial",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "no",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 4,
+   "action_seconds": [
+    0.55,
+    0.51,
+    0.51,
+    0.47
+   ],
+   "inklight_ms": [
+    22.6
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-08be43",
+   "arm": "B",
+   "task": "A1-05",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.16,
+    0.59
+   ],
+   "inklight_ms": [
+    557.4,
+    95.4
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-9d0d89",
+   "arm": "B",
+   "task": "A1-06",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.19
+   ],
+   "inklight_ms": [
+    529.8
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-d8f56b",
+   "arm": "B",
+   "task": "A1-08",
+   "language": "mixed",
+   "doc_type": "tax_card",
+   "task_type": "search",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.13,
+    0.47,
+    1.08
+   ],
+   "inklight_ms": [
+    537.1,
+    490.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-c22489",
+   "arm": "B",
+   "task": "A1-09",
+   "language": "ar",
+   "doc_type": "tax_card",
+   "task_type": "absent",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.06,
+    1.08
+   ],
+   "inklight_ms": [
+    471.8,
+    488.9
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-b7563d",
+   "arm": "B",
+   "task": "A1-10",
+   "language": "mixed",
+   "doc_type": "vat_certificate",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.14,
+    0.73,
+    1.11
+   ],
+   "inklight_ms": [
+    515.4,
+    30.8,
+    507.1
+   ],
+   "states": [
+    "succeeded",
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-42b711",
+   "arm": "B",
+   "task": "A1-11",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.12,
+    1.12
+   ],
+   "inklight_ms": [
+    517.2,
+    533.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-624d73",
+   "arm": "B",
+   "task": "A1-12",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.76,
+    1.14,
+    1.15
+   ],
+   "inklight_ms": [
+    249.0,
+    546.7,
+    572.7
+   ],
+   "states": [
+    "partial",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-88e649",
+   "arm": "B",
+   "task": "A1-13",
+   "language": "ar",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.14,
+    1.08,
+    1.14
+   ],
+   "inklight_ms": [
+    432.9,
+    447.7,
+    543.6
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e39f25",
+   "arm": "B",
+   "task": "A2-01",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "summary",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.53,
+    0.5
+   ],
+   "inklight_ms": [
+    21.0,
+    18.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-0734f7",
+   "arm": "B",
+   "task": "A2-02",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.19,
+    1.17
+   ],
+   "inklight_ms": [
+    571.5,
+    571.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-712c0b",
+   "arm": "B",
+   "task": "A2-03",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.09,
+    0.6,
+    0.63
+   ],
+   "inklight_ms": [
+    524.0,
+    94.6
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-e8fa14",
+   "arm": "B",
+   "task": "A2-04",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.53,
+    6.44
+   ],
+   "inklight_ms": [
+    0.8,
+    5915.1
+   ],
+   "states": [
+    "failed",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-0cae41",
+   "arm": "B",
+   "task": "A2-05",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.14,
+    1.1
+   ],
+   "inklight_ms": [
+    521.9,
+    493.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-36387e",
+   "arm": "B",
+   "task": "A2-06",
+   "language": "ar",
+   "doc_type": "commercial_register",
+   "task_type": "search",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.17,
+    0.58
+   ],
+   "inklight_ms": [
+    556.9
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-2bea94",
+   "arm": "B",
+   "task": "A2-07",
+   "language": "mixed",
+   "doc_type": "commercial_register",
+   "task_type": "table",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": true,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.62,
+    0.49
+   ],
+   "inklight_ms": [
+    118.0,
+    0.8
+   ],
+   "states": [
+    "partial",
+    "failed"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-ff196d",
+   "arm": "B",
+   "task": "A2-08",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.16,
+    1.23
+   ],
+   "inklight_ms": [
+    561.3,
+    625.9
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-d7addd",
+   "arm": "B",
+   "task": "A2-09",
+   "language": "ar",
+   "doc_type": "contract",
+   "task_type": "summary",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    0.51,
+    1.12,
+    1.1
+   ],
+   "inklight_ms": [
+    19.5,
+    516.7,
+    507.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-0a0654",
+   "arm": "B",
+   "task": "A2-10",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "json",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "none_given",
+   "export": "yes",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.6,
+    0.61
+   ],
+   "inklight_ms": [
+    103.2
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-dcd289",
+   "arm": "B",
+   "task": "A2-11",
+   "language": "ar",
+   "doc_type": "tax_card",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "yes",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.52,
+    0.51
+   ],
+   "inklight_ms": [
+    20.0
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-b7ce5e",
+   "arm": "B",
+   "task": "A2-12",
+   "language": "mixed",
+   "doc_type": "contract",
+   "task_type": "absent",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_clarification",
+   "first_attempt": "wrong",
+   "citations": "yes",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.21,
+    1.44
+   ],
+   "inklight_ms": [
+    584.9,
+    627.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-1d77c9",
+   "arm": "B",
+   "task": "A2-13",
+   "language": "mixed",
+   "doc_type": "multi-type",
+   "task_type": "compare",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.17,
+    1.12
+   ],
+   "inklight_ms": [
+    575.4,
+    536.4
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-6947e8",
+   "arm": "B",
+   "task": "A3-01",
+   "language": "en",
+   "doc_type": "letter",
+   "task_type": "summary",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.53,
+    1.11
+   ],
+   "inklight_ms": [
+    20.7,
+    517.5
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-12141c",
+   "arm": "B",
+   "task": "A3-03",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "search",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.11,
+    1.14,
+    1.1
+   ],
+   "inklight_ms": [
+    502.7,
+    508.6,
+    487.4
+   ],
+   "states": [
+    "succeeded",
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-bcfb6a",
+   "arm": "B",
+   "task": "A3-04",
+   "language": "ar",
+   "doc_type": "letter",
+   "task_type": "compare",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "failed",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    0.5,
+    0.51
+   ],
+   "inklight_ms": [
+    0.8,
+    18.4
+   ],
+   "states": [
+    "failed",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 1
+  },
+  {
+   "case": "case-58074a",
+   "arm": "B",
+   "task": "A3-05",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "calculate",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.85,
+    1.11
+   ],
+   "inklight_ms": [
+    1158.3,
+    512.2
+   ],
+   "states": [
+    "partial",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-6e9d7c",
+   "arm": "B",
+   "task": "A3-06",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.07,
+    1.06,
+    0.46
+   ],
+   "inklight_ms": [
+    500.4,
+    492.7
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-b9bff0",
+   "arm": "B",
+   "task": "A3-07",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "export",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "csv",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "yes",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.85,
+    1.85
+   ],
+   "inklight_ms": [
+    1200.8
+   ],
+   "states": [
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-bcc41f",
+   "arm": "B",
+   "task": "A3-09",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.09,
+    0.5
+   ],
+   "inklight_ms": [
+    496.5,
+    20.8
+   ],
+   "states": [
+    "succeeded",
+    "partial"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-900324",
+   "arm": "B",
+   "task": "A3-11",
+   "language": "mixed",
+   "doc_type": "receipt",
+   "task_type": "table",
+   "source": "scan/photo",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 3,
+   "action_seconds": [
+    1.04,
+    1.05,
+    0.45
+   ],
+   "inklight_ms": [
+    464.0,
+    479.1
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-a0f7df",
+   "arm": "B",
+   "task": "A3-12",
+   "language": "mixed",
+   "doc_type": "letter",
+   "task_type": "field",
+   "source": "digital",
+   "group": "reserved",
+   "deliverable": "answer",
+   "outcome": "correct_after_manual_correction",
+   "first_attempt": "partially_correct",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 2,
+   "action_seconds": [
+    1.07,
+    1.08
+   ],
+   "inklight_ms": [
+    509.0,
+    503.2
+   ],
+   "states": [
+    "succeeded",
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)",
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-064955",
+   "arm": "A",
+   "task": "CTRL-01",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "silent_wrong",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.53
+   ],
+   "inklight_ms": [
+    49.3
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-f06c8d",
+   "arm": "B",
+   "task": "CTRL-01",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "silent_wrong",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.12
+   ],
+   "inklight_ms": [
+    505.1
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-398c57",
+   "arm": "A",
+   "task": "CTRL-02",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "silent_wrong",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.53
+   ],
+   "inklight_ms": [
+    50.1
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-c921fa",
+   "arm": "B",
+   "task": "CTRL-02",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "silent_wrong",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "none_given",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.09
+   ],
+   "inklight_ms": [
+    516.1
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-481e2d",
+   "arm": "A",
+   "task": "CTRL-03",
+   "language": "mixed",
+   "doc_type": "tax_card+register",
+   "task_type": "search",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.53
+   ],
+   "inklight_ms": [
+    50.8
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-162740",
+   "arm": "B",
+   "task": "CTRL-03",
+   "language": "mixed",
+   "doc_type": "tax_card+register",
+   "task_type": "search",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.1
+   ],
+   "inklight_ms": [
+    513.2
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-47027f",
+   "arm": "A",
+   "task": "CTRL-04",
+   "language": "mixed",
+   "doc_type": "tax_card+register",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_abstention",
+   "first_attempt": "abstained",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "no",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.55
+   ],
+   "inklight_ms": [
+    53.0
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-399233",
+   "arm": "B",
+   "task": "CTRL-04",
+   "language": "mixed",
+   "doc_type": "tax_card+register",
+   "task_type": "ambiguous",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.1
+   ],
+   "inklight_ms": [
+    512.3
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-76aecc",
+   "arm": "A",
+   "task": "CTRL-05",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "wrong",
+   "citations": "partly",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": true,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    0.55
+   ],
+   "inklight_ms": [
+    58.3
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  },
+  {
+   "case": "case-47788e",
+   "arm": "B",
+   "task": "CTRL-05",
+   "language": "ar",
+   "doc_type": "tax_card+register",
+   "task_type": "field",
+   "source": "scan/photo",
+   "group": "control",
+   "deliverable": "answer",
+   "outcome": "wrong_with_relevant_warning",
+   "first_attempt": "wrong",
+   "citations": "no",
+   "export": "not_applicable",
+   "warnings": "yes",
+   "uncertain": false,
+   "disputed": false,
+   "adjudicated": false,
+   "actions": 1,
+   "action_seconds": [
+    1.11
+   ],
+   "inklight_ms": [
+    514.0
+   ],
+   "states": [
+    "succeeded"
+   ],
+   "brains": [
+    "rules (planner: rules)"
+   ],
+   "failed_exit": 0
+  }
+ ],
+ "overall": {
+  "A": {
+   "n": 38,
+   "outcomes": {
+    "correct_complete": 0,
+    "correct_after_clarification": 0,
+    "correct_after_manual_correction": 35,
+    "honest_partial": 0,
+    "correct_abstention": 1,
+    "correct_clarification_request": 0,
+    "wrong_abstention": 1,
+    "wrong_with_relevant_warning": 1,
+    "silent_wrong": 0,
+    "overstated_completion": 0,
+    "technical_failure": 0
+   },
+   "by_tool_after_followups": 1,
+   "first_attempt": {
+    "abstained": 10,
+    "partially_correct": 8,
+    "wrong": 14,
+    "failed": 6
+   },
+   "first_attempt_correct": 0,
+   "silent_wrong": 0,
+   "overstated": 0,
+   "citations": {
+    "none_given": 9,
+    "partly": 15,
+    "no": 12,
+    "yes": 2
+   },
+   "exports": {
+    "partly": 1,
+    "yes": 3
+   },
+   "actions_mean": 2.29,
+   "action_seconds_median": 0.55,
+   "action_seconds_p90": 0.68,
+   "inklight_ms_median": 55.8,
+   "uncertain": 3,
+   "disputed": 3
+  },
+  "B": {
+   "n": 38,
+   "outcomes": {
+    "correct_complete": 0,
+    "correct_after_clarification": 1,
+    "correct_after_manual_correction": 35,
+    "honest_partial": 1,
+    "correct_abstention": 0,
+    "correct_clarification_request": 0,
+    "wrong_abstention": 1,
+    "wrong_with_relevant_warning": 0,
+    "silent_wrong": 0,
+    "overstated_completion": 0,
+    "technical_failure": 0
+   },
+   "by_tool_after_followups": 1,
+   "first_attempt": {
+    "abstained": 8,
+    "partially_correct": 10,
+    "wrong": 15,
+    "failed": 5
+   },
+   "first_attempt_correct": 0,
+   "silent_wrong": 0,
+   "overstated": 0,
+   "citations": {
+    "none_given": 10,
+    "partly": 20,
+    "no": 7,
+    "yes": 1
+   },
+   "exports": {
+    "no": 1,
+    "yes": 3
+   },
+   "actions_mean": 2.42,
+   "action_seconds_median": 1.08,
+   "action_seconds_p90": 1.19,
+   "inklight_ms_median": 505.1,
+   "uncertain": 5,
+   "disputed": 4
+  }
+ },
+ "controls": {
+  "A": {
+   "n": 5,
+   "outcomes": {
+    "correct_complete": 0,
+    "correct_after_clarification": 0,
+    "correct_after_manual_correction": 0,
+    "honest_partial": 0,
+    "correct_abstention": 0,
+    "correct_clarification_request": 0,
+    "wrong_abstention": 1,
+    "wrong_with_relevant_warning": 2,
+    "silent_wrong": 2,
+    "overstated_completion": 0,
+    "technical_failure": 0
+   },
+   "by_tool_after_followups": 0,
+   "first_attempt": {
+    "wrong": 4,
+    "abstained": 1
+   },
+   "first_attempt_correct": 0,
+   "silent_wrong": 2,
+   "overstated": 0,
+   "citations": {
+    "no": 4,
+    "partly": 1
+   },
+   "exports": {},
+   "actions_mean": 1,
+   "action_seconds_median": 0.53,
+   "action_seconds_p90": 0.55,
+   "inklight_ms_median": 50.8,
+   "uncertain": 4,
+   "disputed": 0
+  },
+  "B": {
+   "n": 5,
+   "outcomes": {
+    "correct_complete": 0,
+    "correct_after_clarification": 0,
+    "correct_after_manual_correction": 0,
+    "honest_partial": 0,
+    "correct_abstention": 0,
+    "correct_clarification_request": 0,
+    "wrong_abstention": 0,
+    "wrong_with_relevant_warning": 3,
+    "silent_wrong": 2,
+    "overstated_completion": 0,
+    "technical_failure": 0
+   },
+   "by_tool_after_followups": 0,
+   "first_attempt": {
+    "wrong": 5
+   },
+   "first_attempt_correct": 0,
+   "silent_wrong": 2,
+   "overstated": 0,
+   "citations": {
+    "no": 5
+   },
+   "exports": {},
+   "actions_mean": 1,
+   "action_seconds_median": 1.1,
+   "action_seconds_p90": 1.11,
+   "inklight_ms_median": 513.2,
+   "uncertain": 1,
+   "disputed": 0
+  }
+ },
+ "by": {
+  "group": {
+   "A|dev": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 4,
+     "honest_partial": 0,
+     "correct_abstention": 1,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "abstained": 2,
+     "partially_correct": 1,
+     "wrong": 2,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 3
+    },
+    "exports": {},
+    "actions_mean": 2.67,
+    "action_seconds_median": 0.61,
+    "action_seconds_p90": 0.71,
+    "inklight_ms_median": 52.0,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "A|reserved": {
+    "n": 32,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 31,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 1,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "failed": 5,
+     "partially_correct": 7,
+     "abstained": 8,
+     "wrong": 12
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 6,
+     "partly": 12,
+     "no": 12,
+     "yes": 2
+    },
+    "exports": {
+     "partly": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.22,
+    "action_seconds_median": 0.54,
+    "action_seconds_p90": 0.66,
+    "inklight_ms_median": 60.3,
+    "uncertain": 2,
+    "disputed": 3
+   },
+   "B|dev": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 5,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 1,
+     "partially_correct": 2,
+     "wrong": 2,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 3
+    },
+    "exports": {},
+    "actions_mean": 2.83,
+    "action_seconds_median": 1.08,
+    "action_seconds_p90": 1.16,
+    "inklight_ms_median": 515.0,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|reserved": {
+    "n": 32,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 1,
+     "correct_after_manual_correction": 30,
+     "honest_partial": 1,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "abstained": 7,
+     "partially_correct": 8,
+     "wrong": 13,
+     "failed": 4
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "no": 7,
+     "partly": 17,
+     "none_given": 7,
+     "yes": 1
+    },
+    "exports": {
+     "no": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.34,
+    "action_seconds_median": 1.08,
+    "action_seconds_p90": 1.19,
+    "inklight_ms_median": 503.2,
+    "uncertain": 4,
+    "disputed": 4
+   }
+  },
+  "language": {
+   "A|ar": {
+    "n": 11,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 10,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 4,
+     "partially_correct": 1,
+     "wrong": 5,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 4,
+     "yes": 1,
+     "no": 3
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.27,
+    "action_seconds_median": 0.59,
+    "action_seconds_p90": 0.67,
+    "inklight_ms_median": 73.5,
+    "uncertain": 1,
+    "disputed": 2
+   },
+   "A|en": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 2,
+     "honest_partial": 0,
+     "correct_abstention": 1,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "abstained": 1,
+     "failed": 1,
+     "partially_correct": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "partly": 1,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 0.51,
+    "action_seconds_p90": 0.52,
+    "inklight_ms_median": 36.7,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "A|mixed": {
+    "n": 24,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 23,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 1,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 9,
+     "failed": 4,
+     "partially_correct": 6,
+     "abstained": 5
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 10,
+     "none_given": 5,
+     "no": 9
+    },
+    "exports": {
+     "partly": 1,
+     "yes": 2
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.55,
+    "action_seconds_p90": 0.68,
+    "inklight_ms_median": 53.8,
+    "uncertain": 1,
+    "disputed": 1
+   },
+   "B|ar": {
+    "n": 11,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 10,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 4,
+     "partially_correct": 2,
+     "wrong": 4,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 7,
+     "no": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.36,
+    "action_seconds_median": 1.1,
+    "action_seconds_p90": 1.16,
+    "inklight_ms_median": 515.0,
+    "uncertain": 1,
+    "disputed": 2
+   },
+   "B|en": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 2,
+     "none_given": 1
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 0.8,
+    "action_seconds_p90": 1.08,
+    "inklight_ms_median": 485.6,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|mixed": {
+    "n": 24,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 1,
+     "correct_after_manual_correction": 22,
+     "honest_partial": 1,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "wrong": 11,
+     "abstained": 4,
+     "partially_correct": 6,
+     "failed": 3
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 11,
+     "none_given": 6,
+     "no": 6,
+     "yes": 1
+    },
+    "exports": {
+     "no": 1,
+     "yes": 2
+    },
+    "actions_mean": 2.5,
+    "action_seconds_median": 1.07,
+    "action_seconds_p90": 1.22,
+    "inklight_ms_median": 505.1,
+    "uncertain": 3,
+    "disputed": 2
+   }
+  },
+  "doc_type": {
+   "A|commercial_register": {
+    "n": 9,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 9,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 3,
+     "abstained": 4,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 4,
+     "no": 3,
+     "yes": 1,
+     "none_given": 1
+    },
+    "exports": {},
+    "actions_mean": 2.44,
+    "action_seconds_median": 0.6,
+    "action_seconds_p90": 0.71,
+    "inklight_ms_median": 111.7,
+    "uncertain": 2,
+    "disputed": 3
+   },
+   "A|contract": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "wrong": 3,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "no": 2,
+     "none_given": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2,
+    "action_seconds_median": 0.57,
+    "action_seconds_p90": 0.58,
+    "inklight_ms_median": 86.3,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|letter": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 5,
+     "honest_partial": 0,
+     "correct_abstention": 1,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "wrong": 2,
+     "abstained": 1,
+     "partially_correct": 2,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "yes": 1,
+     "partly": 2
+    },
+    "exports": {},
+    "actions_mean": 2.17,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 0.57,
+    "inklight_ms_median": 38.5,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|multi-type": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 5,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 1,
+     "failed": 2,
+     "wrong": 3
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 2,
+     "partly": 2,
+     "no": 2
+    },
+    "exports": {},
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.62,
+    "action_seconds_p90": 0.66,
+    "inklight_ms_median": 57.1,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|receipt": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "failed": 1,
+     "partially_correct": 2,
+     "abstained": 3
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "no": 2,
+     "none_given": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.17,
+    "action_seconds_median": 0.51,
+    "action_seconds_p90": 1.52,
+    "inklight_ms_median": 33.9,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "A|tax_card": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 1,
+     "wrong": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 2
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.5,
+    "action_seconds_p90": 0.52,
+    "inklight_ms_median": 31.9,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|vat_certificate": {
+    "n": 2,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 1,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 1,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 1,
+     "no": 1
+    },
+    "exports": {
+     "partly": 1
+    },
+    "actions_mean": 3,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 0.52,
+    "inklight_ms_median": 18.5,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|commercial_register": {
+    "n": 9,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 9,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "wrong": 2,
+     "abstained": 4,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 4,
+     "no": 1,
+     "none_given": 4
+    },
+    "exports": {},
+    "actions_mean": 2.11,
+    "action_seconds_median": 1.12,
+    "action_seconds_p90": 1.17,
+    "inklight_ms_median": 528.0,
+    "uncertain": 2,
+    "disputed": 4
+   },
+   "B|contract": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 1,
+     "correct_after_manual_correction": 5,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "partially_correct": 2,
+     "wrong": 3,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "none_given": 2,
+     "yes": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.86,
+    "action_seconds_p90": 1.19,
+    "inklight_ms_median": 512.2,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|letter": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 2,
+     "partially_correct": 3,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "partly": 5
+    },
+    "exports": {},
+    "actions_mean": 2.5,
+    "action_seconds_median": 1.07,
+    "action_seconds_p90": 1.11,
+    "inklight_ms_median": 487.4,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|multi-type": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 5,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 2,
+     "wrong": 3,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 3,
+     "partly": 2
+    },
+    "exports": {},
+    "actions_mean": 2.67,
+    "action_seconds_median": 1.14,
+    "action_seconds_p90": 1.19,
+    "inklight_ms_median": 540.0,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|receipt": {
+    "n": 6,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "failed": 1,
+     "partially_correct": 2,
+     "wrong": 2,
+     "abstained": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "partly": 4,
+     "no": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 1.06,
+    "action_seconds_p90": 1.85,
+    "inklight_ms_median": 494.6,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|tax_card": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 1,
+     "wrong": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 1,
+     "partly": 1
+    },
+    "exports": {
+     "yes": 1
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 1.06,
+    "action_seconds_p90": 1.08,
+    "inklight_ms_median": 488.9,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|vat_certificate": {
+    "n": 2,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 1,
+     "honest_partial": 1,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 1,
+     "no": 1
+    },
+    "exports": {
+     "no": 1
+    },
+    "actions_mean": 3.5,
+    "action_seconds_median": 0.55,
+    "action_seconds_p90": 1.11,
+    "inklight_ms_median": 268.9,
+    "uncertain": 1,
+    "disputed": 0
+   }
+  },
+  "task_type": {
+   "A|absent": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 2,
+     "honest_partial": 0,
+     "correct_abstention": 1,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "abstained": 1,
+     "wrong": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 2
+    },
+    "exports": {},
+    "actions_mean": 1.67,
+    "action_seconds_median": 0.53,
+    "action_seconds_p90": 0.54,
+    "inklight_ms_median": 39.3,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|ambiguous": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 2,
+     "abstained": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "no": 3
+    },
+    "exports": {},
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 0.56,
+    "inklight_ms_median": 42.3,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|calculate": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 4,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 2,
+     "abstained": 1,
+     "partially_correct": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 0.65,
+    "action_seconds_p90": 1.52,
+    "inklight_ms_median": 117.0,
+    "uncertain": 1,
+    "disputed": 2
+   },
+   "A|compare": {
+    "n": 7,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 1,
+     "failed": 3,
+     "wrong": 3
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 2,
+     "no": 2
+    },
+    "exports": {},
+    "actions_mean": 2.29,
+    "action_seconds_median": 0.61,
+    "action_seconds_p90": 0.66,
+    "inklight_ms_median": 55.8,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|export": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 1,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "failed": 1,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 2,
+     "none_given": 1,
+     "no": 1
+    },
+    "exports": {
+     "partly": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.25,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 1.52,
+    "inklight_ms_median": 18.5,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|field": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 4,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "failed": 1,
+     "abstained": 1,
+     "partially_correct": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "none_given": 1
+    },
+    "exports": {},
+    "actions_mean": 2.25,
+    "action_seconds_median": 0.55,
+    "action_seconds_p90": 0.62,
+    "inklight_ms_median": 60.4,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "A|search": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 2,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 1,
+     "partly": 1
+    },
+    "exports": {},
+    "actions_mean": 2.67,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 0.62,
+    "inklight_ms_median": 42.8,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|summary": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 2,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 0.52,
+    "action_seconds_p90": 0.53,
+    "inklight_ms_median": 30.7,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "A|table": {
+    "n": 7,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 7,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 2,
+     "abstained": 3,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 2,
+     "none_given": 2,
+     "no": 3
+    },
+    "exports": {},
+    "actions_mean": 2.71,
+    "action_seconds_median": 0.57,
+    "action_seconds_p90": 0.71,
+    "inklight_ms_median": 70.1,
+    "uncertain": 1,
+    "disputed": 1
+   },
+   "B|absent": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 1,
+     "correct_after_manual_correction": 2,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 1,
+     "no": 1,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 1.08,
+    "action_seconds_p90": 1.21,
+    "inklight_ms_median": 493.4,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|ambiguous": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 2,
+     "abstained": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "no": 2,
+     "none_given": 1
+    },
+    "exports": {},
+    "actions_mean": 2.67,
+    "action_seconds_median": 0.91,
+    "action_seconds_p90": 1.11,
+    "inklight_ms_median": 496.5,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|calculate": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 4,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "wrong": 1,
+     "partially_correct": 2,
+     "abstained": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 4
+    },
+    "exports": {},
+    "actions_mean": 1.75,
+    "action_seconds_median": 1.14,
+    "action_seconds_p90": 1.22,
+    "inklight_ms_median": 526.6,
+    "uncertain": 1,
+    "disputed": 2
+   },
+   "B|compare": {
+    "n": 7,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 6,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 2,
+     "wrong": 3,
+     "failed": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 1,
+     "no": 3,
+     "partly": 3
+    },
+    "exports": {},
+    "actions_mean": 2.57,
+    "action_seconds_median": 1.13,
+    "action_seconds_p90": 1.19,
+    "inklight_ms_median": 525.7,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|export": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 1,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "failed": 1,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "none_given": 1
+    },
+    "exports": {
+     "no": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.5,
+    "action_seconds_median": 0.54,
+    "action_seconds_p90": 1.85,
+    "inklight_ms_median": 62.9,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|field": {
+    "n": 4,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 4,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "failed": 1,
+     "abstained": 1,
+     "partially_correct": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 2,
+     "partly": 2
+    },
+    "exports": {},
+    "actions_mean": 2,
+    "action_seconds_median": 1.1,
+    "action_seconds_p90": 1.17,
+    "inklight_ms_median": 517.2,
+    "uncertain": 1,
+    "disputed": 0
+   },
+   "B|search": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 2,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 2,
+     "partly": 1
+    },
+    "exports": {},
+    "actions_mean": 2.67,
+    "action_seconds_median": 1.1,
+    "action_seconds_p90": 1.14,
+    "inklight_ms_median": 505.6,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|summary": {
+    "n": 3,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 3,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 2,
+     "wrong": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3
+    },
+    "exports": {},
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.53,
+    "action_seconds_p90": 1.11,
+    "inklight_ms_median": 21.0,
+    "uncertain": 0,
+    "disputed": 0
+   },
+   "B|table": {
+    "n": 7,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 7,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "partially_correct": 1,
+     "wrong": 4,
+     "abstained": 1,
+     "failed": 1
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "partly": 3,
+     "none_given": 3,
+     "no": 1
+    },
+    "exports": {},
+    "actions_mean": 2.86,
+    "action_seconds_median": 1.04,
+    "action_seconds_p90": 1.14,
+    "inklight_ms_median": 489.9,
+    "uncertain": 1,
+    "disputed": 2
+   }
+  },
+  "source": {
+   "A|digital": {
+    "n": 11,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 10,
+     "honest_partial": 0,
+     "correct_abstention": 1,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "wrong": 5,
+     "abstained": 2,
+     "failed": 2,
+     "partially_correct": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "no": 3,
+     "partly": 4,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2.18,
+    "action_seconds_median": 0.54,
+    "action_seconds_p90": 0.62,
+    "inklight_ms_median": 48.2,
+    "uncertain": 1,
+    "disputed": 1
+   },
+   "A|scan/photo": {
+    "n": 27,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 25,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 1,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 8,
+     "partially_correct": 6,
+     "wrong": 9,
+     "failed": 4
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 6,
+     "partly": 11,
+     "no": 9,
+     "yes": 1
+    },
+    "exports": {
+     "partly": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.33,
+    "action_seconds_median": 0.56,
+    "action_seconds_p90": 0.74,
+    "inklight_ms_median": 69.1,
+    "uncertain": 2,
+    "disputed": 2
+   },
+   "B|digital": {
+    "n": 11,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 1,
+     "correct_after_manual_correction": 10,
+     "honest_partial": 0,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 0,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 1,
+    "first_attempt": {
+     "wrong": 5,
+     "partially_correct": 3,
+     "abstained": 1,
+     "failed": 2
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 3,
+     "partly": 6,
+     "no": 1,
+     "yes": 1
+    },
+    "exports": {},
+    "actions_mean": 2.36,
+    "action_seconds_median": 1.08,
+    "action_seconds_p90": 1.17,
+    "inklight_ms_median": 502.7,
+    "uncertain": 2,
+    "disputed": 1
+   },
+   "B|scan/photo": {
+    "n": 27,
+    "outcomes": {
+     "correct_complete": 0,
+     "correct_after_clarification": 0,
+     "correct_after_manual_correction": 25,
+     "honest_partial": 1,
+     "correct_abstention": 0,
+     "correct_clarification_request": 0,
+     "wrong_abstention": 1,
+     "wrong_with_relevant_warning": 0,
+     "silent_wrong": 0,
+     "overstated_completion": 0,
+     "technical_failure": 0
+    },
+    "by_tool_after_followups": 0,
+    "first_attempt": {
+     "abstained": 7,
+     "partially_correct": 7,
+     "wrong": 10,
+     "failed": 3
+    },
+    "first_attempt_correct": 0,
+    "silent_wrong": 0,
+    "overstated": 0,
+    "citations": {
+     "none_given": 7,
+     "partly": 14,
+     "no": 6
+    },
+    "exports": {
+     "no": 1,
+     "yes": 3
+    },
+    "actions_mean": 2.44,
+    "action_seconds_median": 1.08,
+    "action_seconds_p90": 1.19,
+    "inklight_ms_median": 512.2,
+    "uncertain": 3,
+    "disputed": 3
+   }
+  }
+ },
+ "ingest": {
+  "ingest-A": {
+   "cold": 37.31,
+   "warm": 32.03,
+   "documents": {
+    "g16-02.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text"
+     ],
+     "ocr_ms": [
+      76.64110000769142,
+      47.53730000084033
+     ],
+     "mean_conf": 0.9969,
+     "structure": null
+    },
+    "g16-01.pdf": {
+     "pages": 2,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      112.15729999821633,
+      72.86290000047302
+     ],
+     "mean_conf": 0.9689,
+     "structure": null
+    },
+    "g15-02.pdf": {
+     "pages": 3,
+     "doc_type": "report",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text",
+      "text"
+     ],
+     "ocr_ms": [
+      45.05729999800678,
+      60.97730001056334,
+      98.76319999602856
+     ],
+     "mean_conf": 0.9999,
+     "structure": null
+    },
+    "g15-01.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      74.77780000044731,
+      85.79209999879822
+     ],
+     "mean_conf": 0.9397,
+     "structure": null
+    },
+    "g14-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      89.94989999337122
+     ],
+     "mean_conf": 0.8884,
+     "structure": null
+    },
+    "g13-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      137.21839999925578
+     ],
+     "mean_conf": 0.9758,
+     "structure": null
+    },
+    "g12-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      127.37239999842132
+     ],
+     "mean_conf": 0.8098,
+     "structure": null
+    },
+    "g11-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      111.21910000656499
+     ],
+     "mean_conf": 0.9258,
+     "structure": null
+    },
+    "g10-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      115.38790000486188
+     ],
+     "mean_conf": 0.7325,
+     "structure": null
+    },
+    "g10-01.pdf": {
+     "pages": 3,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "hybrid",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      382.5630000064848,
+      260.476599993126,
+      206.9446000168682
+     ],
+     "mean_conf": 0.8231,
+     "structure": null
+    },
+    "g09-02.pdf": {
+     "pages": 17,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      463.53989998897305,
+      392.5645000053919,
+      296.7342999909306,
+      301.79270000371616,
+      317.5009000042337,
+      313.1249999933061,
+      368.11639999359613,
+      315.8912000071723,
+      212.10810000775382,
+      297.60199999873294,
+      260.5010999905062,
+      290.4894000021159,
+      323.9059999905294,
+      341.4599999960046,
+      443.06020000658464,
+      196.13840000965865,
+      276.8980999971973
+     ],
+     "mean_conf": 0.7799,
+     "structure": null
+    },
+    "g09-01.pdf": {
+     "pages": 6,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      292.3010000085924,
+      272.4470999892219,
+      263.59499999671243,
+      268.01950002118247,
+      265.02509999409085,
+      215.73379999608733
+     ],
+     "mean_conf": 0.9276,
+     "structure": null
+    },
+    "g08-01.jpg": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      59.27209999936167
+     ],
+     "mean_conf": 0.8882,
+     "structure": null
+    },
+    "g07-02.pdf": {
+     "pages": 7,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      599.3078999963473,
+      658.5956999988412,
+      552.1201000083238,
+      524.6818000014173,
+      539.9662000054377,
+      519.3921999962186,
+      373.76039999799104
+     ],
+     "mean_conf": 0.8423,
+     "structure": null
+    },
+    "g07-01.pdf": {
+     "pages": 5,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      401.54590000747703,
+      422.27509998338064,
+      521.6170999919996,
+      426.2121999854571,
+      283.08600000309525
+     ],
+     "mean_conf": 0.9299,
+     "structure": null
+    },
+    "g06-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      294.5654000068316
+     ],
+     "mean_conf": 0.639,
+     "structure": null
+    },
+    "g06-01.pdf": {
+     "pages": 15,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      491.1854999954812,
+      478.1271999963792,
+      288.9419000130147,
+      353.2434000080684,
+      340.5369000029168,
+      385.71589999628486,
+      357.8544999982114,
+      278.5624999960419,
+      257.7940999981365,
+      257.6974999974482,
+      261.50910000433214,
+      262.00239999889163,
+      271.6617000041879,
+      155.33599998889258,
+      297.5099999966915
+     ],
+     "mean_conf": 0.8118,
+     "structure": null
+    },
+    "g05-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      189.38290000369307,
+      253.2091999964905
+     ],
+     "mean_conf": 0.8795,
+     "structure": null
+    },
+    "g04-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      192.19009998778347
+     ],
+     "mean_conf": 0.3384,
+     "structure": null
+    },
+    "g04-01.pdf": {
+     "pages": 4,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      385.35800000681775,
+      288.1093000032706,
+      340.9870999894338,
+      306.9007000012789
+     ],
+     "mean_conf": 0.8763,
+     "structure": null
+    },
+    "g03-01.pdf": {
+     "pages": 5,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      464.58319998782827,
+      431.8490999939968,
+      385.87119998555863,
+      315.9067000087816,
+      282.3657000117237
+     ],
+     "mean_conf": 0.8333,
+     "structure": null
+    },
+    "g02-03.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      249.80060000234516
+     ],
+     "mean_conf": 0.7109,
+     "structure": null
+    },
+    "g02-02.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      347.97989999788115,
+      318.4640999897965,
+      234.8376000081771,
+      270.3022999994573,
+      324.01569999638014,
+      249.5080000080634,
+      237.5339000063832,
+      254.9393999943277,
+      249.2539000013494
+     ],
+     "mean_conf": 0.8339,
+     "structure": null
+    },
+    "g02-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      146.1317999928724,
+      210.51580001221737
+     ],
+     "mean_conf": 0.7709,
+     "structure": null
+    },
+    "g01-01.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      343.95990000484744,
+      662.0843999990029,
+      358.6308999947505,
+      262.78779999847757,
+      247.54599999869242,
+      254.19279999186983,
+      270.22040000156267,
+      270.6203000052483,
+      240.10220000491245
+     ],
+     "mean_conf": 0.8275,
+     "structure": null
+    },
+    "control-two-companies.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "text"
+     ],
+     "ocr_ms": [
+      41.81230000540381
+     ],
+     "mean_conf": 1.0,
+     "structure": null
+    }
+   },
+   "brain": {
+    "reader": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    },
+    "embedder": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    },
+    "writer": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    }
+   }
+  },
+  "ingest-B-models": {
+   "cold": 182.99,
+   "warm": 158.43,
+   "documents": {
+    "g16-02.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text"
+     ],
+     "ocr_ms": [
+      71.53389999439241,
+      44.3613000024925
+     ],
+     "mean_conf": 0.9969,
+     "structure": {
+      "items": 22,
+      "tables": 1,
+      "pictures": 5,
+      "orphan_lines": 7,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.0,
+      "load_seconds": 0.0,
+      "cells_delivered": 64,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g16-01.pdf": {
+     "pages": 2,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      109.55829999875277,
+      74.31270000961376
+     ],
+     "mean_conf": 0.9689,
+     "structure": {
+      "items": 20,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 7,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.79,
+      "load_seconds": 0.0,
+      "cells_delivered": 51,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g15-02.pdf": {
+     "pages": 3,
+     "doc_type": "report",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text",
+      "text"
+     ],
+     "ocr_ms": [
+      56.20319998706691,
+      64.21180001052562,
+      118.11809999198886
+     ],
+     "mean_conf": 0.9999,
+     "structure": {
+      "items": 21,
+      "tables": 3,
+      "pictures": 6,
+      "orphan_lines": 20,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.82,
+      "load_seconds": 0.0,
+      "cells_delivered": 112,
+      "pages_structured": [
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    "g15-01.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      82.17799998965347,
+      82.52980001270771
+     ],
+     "mean_conf": 0.9397,
+     "structure": {
+      "items": 25,
+      "tables": 2,
+      "pictures": 6,
+      "orphan_lines": 10,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.96,
+      "load_seconds": 0.0,
+      "cells_delivered": 99,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g14-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      100.76579998712987
+     ],
+     "mean_conf": 0.8884,
+     "structure": {
+      "items": 24,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.32,
+      "load_seconds": 0.0,
+      "cells_delivered": 34,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g13-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      169.50650000944734
+     ],
+     "mean_conf": 0.9758,
+     "structure": {
+      "items": 24,
+      "tables": 2,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.8,
+      "load_seconds": 0.0,
+      "cells_delivered": 71,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g12-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      159.04089999821736
+     ],
+     "mean_conf": 0.8098,
+     "structure": {
+      "items": 46,
+      "tables": 0,
+      "pictures": 3,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.41,
+      "load_seconds": 0.0,
+      "cells_delivered": 48,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g11-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      134.73169999633683
+     ],
+     "mean_conf": 0.9258,
+     "structure": {
+      "items": 50,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 2,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.44,
+      "load_seconds": 0.0,
+      "cells_delivered": 50,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g10-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      134.6512000018265
+     ],
+     "mean_conf": 0.7325,
+     "structure": {
+      "items": 13,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 1,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.52,
+      "load_seconds": 0.0,
+      "cells_delivered": 14,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g10-01.pdf": {
+     "pages": 3,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "hybrid",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      459.6052999913809,
+      314.68260000110604,
+      234.41479999746662
+     ],
+     "mean_conf": 0.8231,
+     "structure": {
+      "items": 185,
+      "tables": 0,
+      "pictures": 9,
+      "orphan_lines": 10,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.44,
+      "load_seconds": 0.0,
+      "cells_delivered": 198,
+      "pages_structured": [
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    "g09-02.pdf": {
+     "pages": 17,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      525.6436999989091,
+      443.87279998045415,
+      329.2840999929467,
+      350.78970000176923,
+      363.74529999739025,
+      357.372899998154,
+      454.2816999819479,
+      389.0775000108988,
+      241.03810000087833,
+      380.54990000091493,
+      323.75220001267735,
+      339.40529999381397,
+      361.8589999896358,
+      343.47020000132034,
+      381.28250002046116,
+      213.43099999648985,
+      326.54159998492105
+     ],
+     "mean_conf": 0.7799,
+     "structure": {
+      "items": 12,
+      "tables": 4,
+      "pictures": 36,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15,
+       17
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 49.41,
+      "load_seconds": 0.0,
+      "cells_delivered": 32,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15,
+       16,
+       17
+      ]
+     }
+    },
+    "g09-01.pdf": {
+     "pages": 6,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      319.38090000039665,
+      305.15229999582516,
+      314.8421999940183,
+      317.3006000070018,
+      287.4425000118208,
+      241.27759999100817
+     ],
+     "mean_conf": 0.9276,
+     "structure": {
+      "items": 154,
+      "tables": 2,
+      "pictures": 19,
+      "orphan_lines": 80,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.22,
+      "load_seconds": 0.0,
+      "cells_delivered": 235,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ]
+     }
+    },
+    "g08-01.jpg": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      66.50889999582432
+     ],
+     "mean_conf": 0.8882,
+     "structure": {
+      "items": 14,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.33,
+      "load_seconds": 0.0,
+      "cells_delivered": 15,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g07-02.pdf": {
+     "pages": 7,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      674.2671999963932,
+      617.5697999933618,
+      665.9303999913391,
+      658.1103999851621,
+      622.7956999791786,
+      523.4438999905251,
+      517.1347999857971
+     ],
+     "mean_conf": 0.8423,
+     "structure": {
+      "items": 0,
+      "tables": 2,
+      "pictures": 17,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 7.87,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    "g07-01.pdf": {
+     "pages": 5,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      446.03450001886813,
+      416.5803999858326,
+      489.82600000454113,
+      457.8491000138456,
+      315.2940000145463
+     ],
+     "mean_conf": 0.9299,
+     "structure": {
+      "items": 120,
+      "tables": 0,
+      "pictures": 24,
+      "orphan_lines": 45,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.73,
+      "load_seconds": 0.0,
+      "cells_delivered": 400,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    },
+    "g06-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      320.61800000519725
+     ],
+     "mean_conf": 0.639,
+     "structure": {
+      "items": 0,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.64,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g06-01.pdf": {
+     "pages": 15,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      523.0801000070642,
+      476.42910000286065,
+      322.0437999989372,
+      382.6152000037837,
+      378.56610000744695,
+      393.6755999966408,
+      359.626900004514,
+      327.4670000100741,
+      301.7081000143662,
+      313.4656999973231,
+      311.82569999509724,
+      311.0426000057487,
+      340.0423999992199,
+      186.57299999176757,
+      319.0658000021358
+     ],
+     "mean_conf": 0.8118,
+     "structure": {
+      "items": 4,
+      "tables": 2,
+      "pictures": 29,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       15
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 8.29,
+      "load_seconds": 0.0,
+      "cells_delivered": 6,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15
+      ]
+     }
+    },
+    "g05-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      212.08960001240484,
+      289.5787000088603
+     ],
+     "mean_conf": 0.8795,
+     "structure": {
+      "items": 18,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.02,
+      "load_seconds": 0.0,
+      "cells_delivered": 25,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g04-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      229.61750000104075
+     ],
+     "mean_conf": 0.3384,
+     "structure": {
+      "items": 13,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.56,
+      "load_seconds": 0.0,
+      "cells_delivered": 12,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g04-01.pdf": {
+     "pages": 4,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      446.1112999924808,
+      328.61820000834996,
+      383.47060000523925,
+      373.22009998752037
+     ],
+     "mean_conf": 0.8763,
+     "structure": {
+      "items": 136,
+      "tables": 0,
+      "pictures": 9,
+      "orphan_lines": 12,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.73,
+      "load_seconds": 0.0,
+      "cells_delivered": 304,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4
+      ]
+     }
+    },
+    "g03-01.pdf": {
+     "pages": 5,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      516.7652999880374,
+      438.5515000030864,
+      388.8600000063889,
+      335.9545999992406,
+      327.28809998661745
+     ],
+     "mean_conf": 0.8333,
+     "structure": {
+      "items": 22,
+      "tables": 2,
+      "pictures": 16,
+      "orphan_lines": 14,
+      "rotated_pages_kept": [
+       1,
+       2
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.65,
+      "load_seconds": 0.0,
+      "cells_delivered": 120,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    },
+    "g02-03.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      256.4806999944267
+     ],
+     "mean_conf": 0.7109,
+     "structure": {
+      "items": 0,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.55,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g02-02.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      413.0503999986104,
+      348.9047999973991,
+      291.6097000124864,
+      257.16580000153044,
+      269.98460000322666,
+      272.9284999950323,
+      255.91220000205794,
+      252.99729999824194,
+      226.8670000048587
+     ],
+     "mean_conf": 0.8339,
+     "structure": {
+      "items": 85,
+      "tables": 1,
+      "pictures": 18,
+      "orphan_lines": 71,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.44,
+      "load_seconds": 0.0,
+      "cells_delivered": 525,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ]
+     }
+    },
+    "g02-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      185.68299999606097,
+      254.73299997975118
+     ],
+     "mean_conf": 0.7709,
+     "structure": {
+      "items": 15,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.85,
+      "load_seconds": 0.0,
+      "cells_delivered": 26,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g01-01.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      323.298800001794,
+      508.5377000068547,
+      361.68410000391304,
+      302.36520001199096,
+      284.48120001121424,
+      300.37589999847114,
+      329.14200000232086,
+      311.51399999362184,
+      273.95049999904586
+     ],
+     "mean_conf": 0.8275,
+     "structure": {
+      "items": 205,
+      "tables": 1,
+      "pictures": 12,
+      "orphan_lines": 41,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 4.39,
+      "load_seconds": 0.0,
+      "cells_delivered": 534,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ]
+     }
+    },
+    "control-two-companies.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "text"
+     ],
+     "ocr_ms": [
+      41.87829999864334
+     ],
+     "mean_conf": 1.0,
+     "structure": {
+      "items": 7,
+      "tables": 2,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.11,
+      "load_seconds": 0.0,
+      "cells_delivered": 13,
+      "pages_structured": [
+       1
+      ]
+     }
+    }
+   },
+   "brain": {
+    "reader": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    },
+    "embedder": {
+     "loaded": true,
+     "inference_calls": 82,
+     "fallback_reason": null
+    },
+    "writer": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    }
+   }
+  },
+  "ingest-B": {
+   "cold": 182.49,
+   "warm": 146.3,
+   "documents": {
+    "g16-02.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text"
+     ],
+     "ocr_ms": [
+      69.16610000189394,
+      48.621599991747644
+     ],
+     "mean_conf": 0.9969,
+     "structure": {
+      "items": 22,
+      "tables": 1,
+      "pictures": 5,
+      "orphan_lines": 7,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.22,
+      "load_seconds": 0.0,
+      "cells_delivered": 64,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g16-01.pdf": {
+     "pages": 2,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      113.33720000402536,
+      81.62409999931697
+     ],
+     "mean_conf": 0.9689,
+     "structure": {
+      "items": 20,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 7,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.86,
+      "load_seconds": 0.0,
+      "cells_delivered": 51,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g15-02.pdf": {
+     "pages": 3,
+     "doc_type": "report",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "text",
+      "text"
+     ],
+     "ocr_ms": [
+      64.43239999498473,
+      85.33539999916684,
+      121.0604999869247
+     ],
+     "mean_conf": 0.9999,
+     "structure": {
+      "items": 21,
+      "tables": 3,
+      "pictures": 6,
+      "orphan_lines": 20,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.2,
+      "load_seconds": 0.0,
+      "cells_delivered": 112,
+      "pages_structured": [
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    "g15-01.pdf": {
+     "pages": 2,
+     "doc_type": "letter",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      104.09210000216262,
+      102.946900005918
+     ],
+     "mean_conf": 0.9397,
+     "structure": {
+      "items": 25,
+      "tables": 2,
+      "pictures": 6,
+      "orphan_lines": 10,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.96,
+      "load_seconds": 0.0,
+      "cells_delivered": 99,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g14-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      117.85460000101011
+     ],
+     "mean_conf": 0.8884,
+     "structure": {
+      "items": 24,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.47,
+      "load_seconds": 0.0,
+      "cells_delivered": 34,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g13-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      231.29200000403216
+     ],
+     "mean_conf": 0.9758,
+     "structure": {
+      "items": 24,
+      "tables": 2,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.66,
+      "load_seconds": 0.0,
+      "cells_delivered": 71,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g12-01.jpg": {
+     "pages": 1,
+     "doc_type": "invoice",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      167.16180001094472
+     ],
+     "mean_conf": 0.8098,
+     "structure": {
+      "items": 46,
+      "tables": 0,
+      "pictures": 3,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.5,
+      "load_seconds": 0.0,
+      "cells_delivered": 48,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g11-01.jpg": {
+     "pages": 1,
+     "doc_type": "receipt",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      136.85660000919597
+     ],
+     "mean_conf": 0.9258,
+     "structure": {
+      "items": 50,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 2,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.44,
+      "load_seconds": 0.0,
+      "cells_delivered": 50,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g10-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      126.58389999705832
+     ],
+     "mean_conf": 0.7325,
+     "structure": {
+      "items": 13,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 1,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.51,
+      "load_seconds": 0.0,
+      "cells_delivered": 14,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g10-01.pdf": {
+     "pages": 3,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "hybrid",
+      "hybrid",
+      "hybrid"
+     ],
+     "ocr_ms": [
+      431.39749999681953,
+      293.7889999957406,
+      234.59489999368088
+     ],
+     "mean_conf": 0.8231,
+     "structure": {
+      "items": 185,
+      "tables": 0,
+      "pictures": 9,
+      "orphan_lines": 10,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.37,
+      "load_seconds": 0.0,
+      "cells_delivered": 198,
+      "pages_structured": [
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    "g09-02.pdf": {
+     "pages": 17,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      573.6391000100411,
+      474.181800003862,
+      356.85310001281323,
+      354.97180000675144,
+      372.7192000078503,
+      361.4527999961865,
+      429.41769999742974,
+      366.03410000680014,
+      226.75879998860182,
+      330.0114000085159,
+      355.5896000107168,
+      313.59179998980835,
+      291.8367999882321,
+      309.0861999880872,
+      352.86080001242226,
+      199.00620000407798,
+      297.9135999994469
+     ],
+     "mean_conf": 0.7799,
+     "structure": {
+      "items": 12,
+      "tables": 4,
+      "pictures": 36,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15,
+       17
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 47.71,
+      "load_seconds": 0.0,
+      "cells_delivered": 32,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15,
+       16,
+       17
+      ]
+     }
+    },
+    "g09-01.pdf": {
+     "pages": 6,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      313.25529999594437,
+      301.87210000440245,
+      306.8026000037207,
+      310.70499998895684,
+      291.67020000022603,
+      243.197700001474
+     ],
+     "mean_conf": 0.9276,
+     "structure": {
+      "items": 154,
+      "tables": 2,
+      "pictures": 19,
+      "orphan_lines": 80,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.99,
+      "load_seconds": 0.0,
+      "cells_delivered": 235,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6
+      ]
+     }
+    },
+    "g08-01.jpg": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      72.43989999551559
+     ],
+     "mean_conf": 0.8882,
+     "structure": {
+      "items": 14,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.3,
+      "load_seconds": 0.0,
+      "cells_delivered": 15,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g07-02.pdf": {
+     "pages": 7,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      615.7226999930572,
+      563.7083000037819,
+      653.2162999938009,
+      675.8113999967463,
+      648.1067999993684,
+      546.9565000021248,
+      524.6493000013288
+     ],
+     "mean_conf": 0.8423,
+     "structure": {
+      "items": 0,
+      "tables": 2,
+      "pictures": 17,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 7.7,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    "g07-01.pdf": {
+     "pages": 5,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      369.81809999997495,
+      352.674300003855,
+      420.89899998973124,
+      415.6070000026375,
+      288.6025999978301
+     ],
+     "mean_conf": 0.9299,
+     "structure": {
+      "items": 120,
+      "tables": 0,
+      "pictures": 24,
+      "orphan_lines": 45,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.26,
+      "load_seconds": 0.0,
+      "cells_delivered": 400,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    },
+    "g06-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      301.7771999875549
+     ],
+     "mean_conf": 0.639,
+     "structure": {
+      "items": 0,
+      "tables": 0,
+      "pictures": 4,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.62,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g06-01.pdf": {
+     "pages": 15,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      557.5209000089671,
+      436.8482999925618,
+      307.21720001020003,
+      390.4788999934681,
+      347.86460000032093,
+      351.4602999857743,
+      323.9328999989084,
+      303.1339000153821,
+      273.19840001291595,
+      270.49970000371104,
+      285.6956999967224,
+      291.80679999262793,
+      303.93060000642436,
+      189.17010000586743,
+      283.32040001259884
+     ],
+     "mean_conf": 0.8118,
+     "structure": {
+      "items": 4,
+      "tables": 2,
+      "pictures": 29,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       15
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 13.36,
+      "load_seconds": 0.0,
+      "cells_delivered": 6,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9,
+       10,
+       11,
+       12,
+       13,
+       14,
+       15
+      ]
+     }
+    },
+    "g05-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      210.84829999745125,
+      273.8493999859202
+     ],
+     "mean_conf": 0.8795,
+     "structure": {
+      "items": 18,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.27,
+      "load_seconds": 0.0,
+      "cells_delivered": 25,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g04-02.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      218.7065000034636
+     ],
+     "mean_conf": 0.3384,
+     "structure": {
+      "items": 13,
+      "tables": 0,
+      "pictures": 1,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.65,
+      "load_seconds": 0.0,
+      "cells_delivered": 12,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g04-01.pdf": {
+     "pages": 4,
+     "doc_type": "contract",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      463.2194000078016,
+      305.6343000062043,
+      376.5692999950261,
+      345.5719000121462
+     ],
+     "mean_conf": 0.8763,
+     "structure": {
+      "items": 136,
+      "tables": 0,
+      "pictures": 9,
+      "orphan_lines": 12,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 2.11,
+      "load_seconds": 0.0,
+      "cells_delivered": 304,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4
+      ]
+     }
+    },
+    "g03-01.pdf": {
+     "pages": 5,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      484.13089999667136,
+      425.1205000036862,
+      389.8577999934787,
+      631.9870999941486,
+      321.40960000106134
+     ],
+     "mean_conf": 0.8333,
+     "structure": {
+      "items": 22,
+      "tables": 2,
+      "pictures": 16,
+      "orphan_lines": 14,
+      "rotated_pages_kept": [
+       1,
+       2
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 3.65,
+      "load_seconds": 0.0,
+      "cells_delivered": 120,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    },
+    "g02-03.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr"
+     ],
+     "ocr_ms": [
+      263.527700008126
+     ],
+     "mean_conf": 0.7109,
+     "structure": {
+      "items": 0,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [
+       1
+      ],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.78,
+      "load_seconds": 0.0,
+      "cells_delivered": 0,
+      "pages_structured": [
+       1
+      ]
+     }
+    },
+    "g02-02.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      359.0300000141724,
+      335.53600000595907,
+      264.46720000967616,
+      255.0350000092294,
+      250.67229999694973,
+      251.28010000480572,
+      230.5074999894714,
+      228.95949999656295,
+      208.53379998152377
+     ],
+     "mean_conf": 0.8339,
+     "structure": {
+      "items": 85,
+      "tables": 1,
+      "pictures": 18,
+      "orphan_lines": 71,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 2,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 5.62,
+      "load_seconds": 0.0,
+      "cells_delivered": 525,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ]
+     }
+    },
+    "g02-01.pdf": {
+     "pages": 2,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      199.57899999280926,
+      236.61270000593504
+     ],
+     "mean_conf": 0.7709,
+     "structure": {
+      "items": 15,
+      "tables": 0,
+      "pictures": 2,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 0.93,
+      "load_seconds": 0.0,
+      "cells_delivered": 26,
+      "pages_structured": [
+       1,
+       2
+      ]
+     }
+    },
+    "g01-01.pdf": {
+     "pages": 9,
+     "doc_type": "certificate",
+     "status": "ready",
+     "page_sources": [
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr",
+      "ocr"
+     ],
+     "ocr_ms": [
+      299.7685000154888,
+      428.246899995429,
+      335.0292000104673,
+      280.5558999971254,
+      259.25119999737944,
+      271.95700000447687,
+      288.87679999752436,
+      290.5222000044887,
+      262.2140000021318
+     ],
+     "mean_conf": 0.8275,
+     "structure": {
+      "items": 205,
+      "tables": 1,
+      "pictures": 12,
+      "orphan_lines": 41,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 5.29,
+      "load_seconds": 0.0,
+      "cells_delivered": 534,
+      "pages_structured": [
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7,
+       8,
+       9
+      ]
+     }
+    },
+    "control-two-companies.pdf": {
+     "pages": 1,
+     "doc_type": "unknown",
+     "status": "ready",
+     "page_sources": [
+      "text"
+     ],
+     "ocr_ms": [
+      42.29769999801647
+     ],
+     "mean_conf": 1.0,
+     "structure": {
+      "items": 7,
+      "tables": 2,
+      "pictures": 0,
+      "orphan_lines": 0,
+      "rotated_pages_kept": [],
+      "foreign_tokens": 0,
+      "components": {
+       "docling": "2.142.1",
+       "docling_core": "2.104.0",
+       "layout": "Heron (onnx)",
+       "tables": "TableFormer (accurate), cell matching on the given text cells",
+       "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+       "indra_ocr": "1.1.2"
+      },
+      "seconds": 1.2,
+      "load_seconds": 0.0,
+      "cells_delivered": 13,
+      "pages_structured": [
+       1
+      ]
+     }
+    }
+   },
+   "brain": {
+    "reader": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    },
+    "embedder": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    },
+    "writer": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    }
+   }
+  }
+ }
+}
