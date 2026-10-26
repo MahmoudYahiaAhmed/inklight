@@ -4,104 +4,161 @@
 
 <h1 align="center">inklight</h1>
 
-<p align="center"><b>Local document intelligence for Arabic and English.</b><br>
-OCR, search, questions with sources, summaries, field extraction, review and export, on your own machine.</p>
+<p align="center"><b>A local document workspace for Arabic, English and mixed documents.</b><br>
+Import scans and PDFs, read their pages, text and tables, search them, review values and export what you approved, on your own machine.</p>
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://pypi.org/project/inklight/"><img alt="pypi" src="https://img.shields.io/pypi/v/inklight?style=flat-square&labelColor=0B0F14&color=22D3EE"></a>
+  <img alt="status" src="https://img.shields.io/badge/status-developer%20beta%200.2.0b1-F5B544?style=flat-square&labelColor=0B0F14">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
 
-<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/lead.png" width="900" alt="Two real screenshots of the Inklight workspace. Example 1: the Arabic question 'من وقّع الرسالة؟' on UN letter S/2025/380 is answered 'فاسيلي نيبينزيا', citing the signature line outlined on page 1. Example 2: 'What is the product?' on a scanned FUNSD insertion-order form is answered 'NEWPORT', citing 'PRODUCT: NEWPORT' outlined on the page."></p>
+<p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-turned-page.png" width="900" alt="The Inklight workspace: a synthetic English registration certificate scanned sideways, its text and tables read upright, the structure status, and raw export links, next to the page image."></p>
 
-<p align="center"><sub>Two separate examples, both genuine documents, captured from the running workspace at commit <code>915be7b</code>:
-<a href="https://documents.un.org/api/symbol/access?s=S/2025/380&l=ar&t=pdf">UN S/2025/380 (Arabic)</a> and
-<a href="https://guillaumejaume.github.io/FUNSD/">FUNSD</a> form 93106788.
-Requests, answers and evidence as the app returned them:
-<a href="https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/assets/showcase/arabic-letter-signer.json">example 1</a>,
-<a href="https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/assets/showcase/form-label-value.json">example 2</a>.
-The library lists the form as an "invoice": that is the classifier's real (wrong) label.</sub></p>
+Inklight reads documents with [Indra OCR](https://github.com/datalab-to/indra) (Arabic and English, on CPU) and,
+optionally, recovers layout and tables with [Docling](https://github.com/docling-project/docling). Everything it
+shows is either **what was read** (text, boxes, tables, search hits, each linked to its page) or **a proposal for you
+to check**. Nothing is uploaded anywhere.
 
-Point Inklight at PDFs, scans or photos (letters, contracts, reports, forms, invoices, receipts) and ask in plain
-English or Arabic. Every answer comes with **the page and passage it came from**, warnings when the evidence is weak,
-and a trace of what ran. Nothing leaves your machine.
+> **Developer beta (0.2.0b1, GitHub only).** The [PyPI package 0.1.0](https://pypi.org/project/inklight/) is an older
+> release without the workspace described here. This beta is for developers and careful users who check results
+> against the page. It is not production software; see [Limitations](#limitations).
 
-> **Where the work is.** The features below are in the **GitHub development build**. The
-> [PyPI release 0.1.0](https://pypi.org/project/inklight/) predates the Arabic and general-document work. It does
-> not include Arabic requests, Arabic search normalisation, broken-text-layer detection, the language routing or
-> the review presets. "General documents" is the direction. What works today is measured below, document type by
-> document type.
+## Install and launch
 
-## Install
+Python 3.11+, Windows / Linux / macOS, CPU only:
 
 ```bash
-# development build (what this page describes); Python 3.11+, Windows / Linux / macOS, CPU only
-pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight"
-inklight models pull        # optional: English reader + embedder, about 100 MB, once
+pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight@main"
 ```
-
-The screenshots and the newest examples below were made with commit `915be7b`; to reproduce them exactly, install
-that commit: `pip install "inklight @ git+https://github.com/MahmoudYahiaAhmed/inklight@915be7b"`.
-
-`pip install inklight` installs the published 0.1.0 instead. Indra's OCR models (about 76 MB) download on the first OCR
-run. After that, everything works offline.
-
-Optional: `pip install "inklight[structure]"` adds [Docling](https://github.com/docling-project/docling)'s layout,
-reading-order and table models on top of Indra's text (PyTorch, about 0.5 GB of weights; off until `[structure]
-engine = "docling"`). See [docs/STRUCTURE.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/STRUCTURE.md).
 
 ```bash
-inklight process ./documents                          # OCR, classify and index (incremental)
-inklight ask ./documents "Which court has jurisdiction?"
-inklight ask ./documents/letter.pdf "لخص هذه الوثيقة"   # one file; a folder summarises each document
-inklight serve                                        # web workspace on http://127.0.0.1:8765
+inklight --version
 ```
 
-## See it work
+```bash
+inklight serve
+```
 
-Each example below is real output from the development build: the first four from commit `915be7b`, the rest from
-`2709d33`. Each was run on the original file, with `--json` output saved in [`docs/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/showcase/). The examples show successes; the failures are in
-[the evaluation](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md) and summarised under [Limits](#limits).
+`inklight --version` prints the version and the commit the build came from, for example
+`inklight 0.2.0b1 (commit 1a2b3c4d5e)`. `inklight serve` opens the workspace at http://127.0.0.1:8765. Indra's OCR
+models (about 76 MB) download on the first OCR run; after that everything works offline. `inklight doctor` checks the
+installation.
 
-| Document | Request | Output | Evidence |
-|---|---|---|---|
-| Letter, digital PDF ([UN S/2025/300](https://documents.un.org/api/symbol/access?s=S/2025/300&l=en&t=pdf)), dated 9 May 2025 | `When will the open debate be held?` | **Tuesday, 20 May 2025** | p.1: "The open debate will be held on Tuesday, 20 May 2025, at 10 a.m." (the event's date, not the letter's) |
-| Arabic letter, digital PDF ([UN S/2025/380](https://documents.un.org/api/symbol/access?s=S/2025/380&l=ar&t=pdf)) | `من وقّع الرسالة؟` | **فاسيلي نيبينزيا** | p.1, signature line: "(توقيع) فاسيلي نيبينزيا" |
-| Form, scan ([FUNSD](https://guillaumejaume.github.io/FUNSD/) 93106788, magazine insertion order) | `What is the product?` | **NEWPORT** | p.1: "PRODUCT: NEWPORT", label and value paired by their row on the page |
-| Receipt, phone photo, English and Arabic (CORU, Costa Coffee) | `ما قيمة ضريبة القيمة المضافة؟` | **The tax is 8.60** | p.1, the amount's box on the "VAT ضريبة القيمة المضافة" row, read as a separate column (a development example: this receipt guided the change) |
-| Contract, digital PDF ([CUAD](https://zenodo.org/records/4595826), Imperial Garden outsourcing agreement) | `Which court has jurisdiction?` | **Miaoli District Court of Taiwan** | p.7: "herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance" |
-| Letter, 1983 typewritten scan ([UN S/16000](https://documents.un.org/api/symbol/access?s=S/16000&l=en&t=pdf)) | `Which city was hit by artillery fire on 8 September?` | **Abadan** | p.1: "8 September, when the city of Abadan was barraged by Iragi long-range artillery" (OCR's "Iragi" kept as read) |
-| Receipt, phone photo (CORU, Egypt) | `What is the total amount?` | **The total is 50.00** | p.1: "EGP 50.00" |
-| Arabic letter, digital PDF ([UN S/2023/90](https://documents.un.org/api/symbol/access?s=S/2023/90&l=ar&t=pdf)) | `لخص هذه الوثيقة` | Extractive summary, 5 sentences quoted from page 1, for example "جلسة إحاطة عقدها مجلس الأمن بشأن الحالة المتعلقة بالعراق، في 2 شباط/فبراير 2023" | every sentence is the document's own text with its page |
-| Arabic tax invoice, **synthetic** ([generated](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/usecases/make_synthetic.py)) | `استخرج رقم الفاتورة والتاريخ والإجمالي` | INV-7731 · شركة الواحة للتجهيزات المكتبية · 2024-05-12 · 4,600.00 | each value cites its line on p.1 |
-| Any document | `Translate this letter into French` | `unsupported`: "translation is not something Inklight does" | nothing was run |
+### Optional add-ons (separate, off by default)
+
+- **Document structure (Docling):** layout, reading order and tables on top of Indra's text, including pages scanned
+  sideways. It adds about 0.5 GB of PyTorch weights. Install
+  `pip install "inklight[structure] @ git+https://github.com/MahmoudYahiaAhmed/inklight@main"`, then set
+  `[structure] engine = "docling"` in `~/.inklight/config.toml`. Without it, pages show OCR lines only and the
+  workspace says so. Details: [docs/STRUCTURE.md](docs/STRUCTURE.md).
+- **Small English models** (`inklight models pull`, about 100 MB): an English reader and embedder. They are not used
+  for Arabic, where they measurably hurt.
+- **A remote language model** (an OpenAI-compatible server you run yourself) can be configured for questions. It is
+  off by default. A local 4B multilingual model was checked for this beta on 8 workflow tasks and did not help (0 of
+  8, the same as without it), so it is not part of the supported workflow.
+
+## Walkthrough
+
+**1. Import.** Drop PDFs, scans, photos or text files on the upload box, or run `inklight process ./folder`. Each
+file reports success or the reason it failed; a failed file does not stop the rest.
+
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-import.png" width="760" alt="Upload of three files: one ready, one rejected as an unsupported file type, one PDF that cannot be opened, each with its reason.">
+
+**2. Read the document.** The *Document* tab shows the OCR text of each page (Arabic right to left, mixed lines in
+their own direction), the tables Docling recovered, and whether structure ran on that page. A page scanned sideways
+is turned and structured upright, and the status says so (the image at the top). This is **what OCR read, not a
+verified copy**: on the synthetic Arabic card below, the Arabic-Indic numbers are misread (٤٧٣١٩ is shown as
+`EVY19`, the date and percentages are garbled) while the page's OCR estimate is 90%. Check every number against the
+page image beside it.
+
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-document.png" width="760" alt="A synthetic Arabic registration certificate: its text is laid out right to left and its three tables are shown, but the registration number ٤٧٣١٩ is read as EVY19 and the date and percentages are garbled.">
+
+**3. Search and open the page.** Search covers every document, in Arabic and English. Each hit opens its page with
+the passage outlined.
+
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-search.png" width="760" alt="Search for 'Registration number' lists passages from several synthetic certificates; the first is outlined on its page.">
+
+**4. Review and export.** *Review & export* proposes a value for each field you name, from a printed label of that
+name or a typed field (a date, a total). You accept it, correct it or mark it absent; the OCR reading is kept next to
+your decision. Only approved reviews are exported, with the predicted value, the raw reading, your final value, the
+action, the source page and box, and who approved it; a document reviewed again keeps its earlier rows, marked
+`superseded`. A proposed value with a warning (several cells on the row, Arabic and Latin text mixed, low OCR
+confidence) is marked ⚠; a "number" field is never proposed from text without digits. Review covers the fields you name, not a correction of the whole text.
+The *Document* tab's exports (`.txt`, `.json` with boxes and tables, tables `.csv`) are the **raw** reading and say
+so in their first line.
+
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-review.png" width="760" alt="A review of four named fields: two accepted, one corrected (the OCR had cut 'Co.'), one marked absent.">
+
+**5. Ask (experimental).** Every result first says what it is: *extracted text*, *proposed answer: review before
+use*, *supported answer* (a value at its printed label or table cell), *partial result*, *missing evidence*,
+*several candidates: choose one*, or *unsupported*. When several values match, they are listed and you choose.
+"Compare the registration number in these documents" shows each document's value and page, then *matches*,
+*differs* or *cannot determine*. "Compare these documents" without a field is labelled a text comparison, not a
+field comparison.
 
 <table>
 <tr>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/arabic-summary.png" alt="Arabic summary request on a UN letter, answered with quoted sentences laid out right to left"><br><sub>An Arabic request and an Arabic summary, laid out right to left.</sub></td>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/arabic-extract.png" alt="Arabic field extraction from a synthetic tax invoice, shown as a table"><br><sub>Fields from a <b>synthetic</b> Arabic invoice: each value comes from the label to its right.</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/letter-event-date.png" alt="Question on UN letter S/2025/300 answered 'Tuesday, 20 May 2025', with the sentence outlined on page 1"><br><sub>A letter dated 9 May: the open debate's date (20 May) comes from the sentence about it, outlined on page 1.</sub></td>
-<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/assets/showcase/mixed-receipt-vat.png" alt="Arabic question on an English and Arabic receipt answered 'The tax is 8.60', with the amount outlined"><br><sub>An Arabic question on a mixed receipt: the VAT amount was read in a separate column and paired with its row (development example).</sub></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-compare.png" alt="Field comparison of the registration number in two synthetic certificates: 47319 on page 1 of each, result matches."></td>
+<td width="50%"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/beta-candidates.png" alt="Two tables each with a company name: both values are listed as candidates and the user's choice is shown as a proposed value."></td>
 </tr>
 </table>
 
-Screenshots were taken from the real workspace by [`bench/showcase.py`](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/showcase.py), which types each request
-into the app and saves the browser's picture with the result JSON next to it ([`docs/assets/showcase/`](https://github.com/MahmoudYahiaAhmed/inklight/tree/main/docs/assets/showcase/)).
-The top image stacks two of those screenshots unedited under caption bars
-([`bench/showcase_compose.py`](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/showcase_compose.py)). To reproduce the newest four:
+The screenshots show synthetic documents and public UN letters, captured from the running workspace at commit
+`4aa23f9`.
+
+The same from the command line:
 
 ```bash
-inklight process -c config.toml ./showcase-docs        # the four documents named above, in one folder
-inklight serve -c config.toml --port 8777 --no-open
-python bench/showcase.py --url http://127.0.0.1:8777 --cases bench/showcase_cases_v2.json --out docs/assets/showcase --width 1440 --height 900
-python bench/showcase_compose.py --out docs/assets/showcase/lead.png "Example 1|Arabic letter, UN S/2025/380 (genuine): who signed it|docs/assets/showcase/arabic-letter-signer.png" "Example 2|English form, FUNSD 93106788 scan (genuine): the value beside its label|docs/assets/showcase/form-label-value.png"
+inklight process ./documents                      # OCR, classify and index (incremental)
+inklight search "رقم السجل"                       # passages with document and page
+inklight show contract.pdf --page 2 --format text
+inklight structure contract.pdf --format md -o contract.md   # needs the structure add-on
+inklight ask a.pdf b.pdf "Compare the registration number in these documents"
+inklight review export -o approved.csv
 ```
 
-## Measured results
+## What is ready and what is not
+
+| | Status |
+|---|---|
+| Import with per-file errors; page viewer; rotated pages; tables | ready in this beta |
+| Arabic and mixed text | shown as read; **Arabic-Indic digits are often misread**, with no per-cell warning in the Document tab |
+| Search across documents, opening the page with the passage outlined | ready |
+| Review of named fields; export of approved values with the original reading and source page | ready (named fields only) |
+| Raw exports: text, JSON with boxes and tables, tables CSV | ready, marked as not reviewed |
+| Docling structure | optional add-on |
+| Ask: questions, field comparison, candidates | **experimental**: says what it found, but often finds nothing on real scans |
+| Remote language model | off; not part of the beta |
+
+## Limitations
+
+- **Answers on real scans are weak.** On a private set of scanned Egyptian registers, tax cards and certificates,
+  questions and comparisons mostly end as *missing evidence*, *cannot determine*, or a *proposed* passage that is not
+  the answer. This beta reports that honestly instead of returning a wrong value as an answer; it did not make the
+  answers right. A field comparison works only when the field is printed as a label with its value, or as a table
+  cell.
+- **OCR misreads.** Arabic-Indic digits are often misread (on the synthetic Arabic card every number is wrong), and
+  stamps too. The OCR confidence shown is the reader's own estimate; it does not guarantee the text, and the
+  Document tab and table view do not mark doubtful cells (Ask and review do).
+- **Turned pages:** text and tables are read upright, but a table cell can still be split differently from the
+  upright scan (a partner's role and share merged into one cell).
+- **Proposed answers can be wrong without a specific warning.** "What is the expiry date?" on a card with only a
+  registration date returns that date's line as a *proposed* answer. Treat every *proposed* result as a pointer to
+  check, not as an answer.
+- **Field proposals** come from printed labels and typed fields. A value that wraps onto a second line can be cut
+  short, and a value in a bilingual table can include the label in the other language (flagged ⚠); correct it in
+  review.
+- **Classification is keyword-based** and often wrong (an Arabic UN letter labelled "contract").
+- No handwriting. No time-saving or accuracy claim is made for this beta.
+
+The historical evaluation, with every failure, is in [docs/AGENT_EVALUATION.md](docs/AGENT_EVALUATION.md) (an
+agent-run workflow evaluation: the tool completed at most 1 of 38 tasks) and [docs/EVALUATION.md](docs/EVALUATION.md)
+(question answering on 90 documents). A summary follows.
+
+<details>
+<summary>Historical evaluation (0.1.x development builds)</summary>
 
 Automated evaluation on **90 original documents** (letters, contracts, reports, forms, certificates, invoices,
 receipts). It covers English, Arabic and mixed language, digital and scanned. Expected answers were fixed before
@@ -169,8 +226,7 @@ product?", "ما الرمز البريدي للأقصر؟") is answered with the
 An earlier version that paired labels with values only for dates and amounts (`bcd4752`) made **no difference** on
 its own new documents or on these. Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#labels-and-values-on-the-page-915be7b).
 
-<details>
-<summary>Earlier external datasets (fields), the optional models, and what the numbers do not say</summary>
+#### Earlier external datasets, the optional models, and what the numbers do not say
 
 **External datasets** (fields; fresh split, build H `3788bf9`, rules; details in [BENCHMARKS.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)):
 
@@ -194,7 +250,31 @@ Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blo
 - no human study
 - no handwriting
 - synthetic stand-ins for Arabic forms, certificates, invoices and contracts
-- unit tests (617) counted separately
+- unit tests counted separately
+
+#### Limits recorded for the 0.1.x builds
+
+- **Scanned Egyptian registers, tax cards and VAT certificates are not supported in practice.** In an agent-run
+  workflow evaluation on such documents (plus receipts, an NDA and UN letters), the tool completed at most 1 of 38
+  tasks in any configuration (a correct "not in the document"); every other correct result was read off the page by
+  the person. A corrected build (form labels never returned as values, several candidates listed, the documents you
+  pass kept, rotated pages given structure) made failures safer but did not raise that number, with or without
+  Docling structure. Details:
+  [docs/AGENT_EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/AGENT_EVALUATION.md).
+- **Arabic questions are mostly answered by sentence matching**, not by a model that reads Arabic, and those
+  answers are flagged for review (11 of 23 right on the reserved split). A value printed beside a label, a letter's
+  sender, addressee or signer, and a labelled field are read from the page itself and are not flagged.
+- **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
+- **Missing facts.** A question whose subject the document mentions but whose value it does not ("when will the
+  debate be held?") is now usually declined. On new documents, 1 of 8 was still answered without a flag. The check
+  can also decline a fact that is there: a table value printed under its column header ("CAPTION:") was declined as
+  a blank field.
+- Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
+- Typewritten Arabic scans OCR only partly.
+- Classification is keyword-based.
+- No handwriting. No genuine Arabic forms or invoices were available to test, so synthetic ones stand in.
+- Current status by capability and language: [docs/CAPABILITIES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md). Every case, including failures:
+  [docs/EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md).
 
 </details>
 
@@ -220,30 +300,6 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
   of the person or item asked about ([how, and what it costs](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/STRUCTURE.md)).
 - **Optional models** are small and English-only. They are used where they measurably help, and skipped where they
   harm. Each result's `checks` says which ran.
-
-## Limits
-
-- **Scanned Egyptian registers, tax cards and VAT certificates are not supported in practice.** In an agent-run
-  workflow evaluation on such documents (plus receipts, an NDA and UN letters), the tool completed at most 1 of 38
-  tasks in any configuration (a correct "not in the document"); every other correct result was read off the page by
-  the person. A corrected build (form labels never returned as values, several candidates listed, the documents you
-  pass kept, rotated pages given structure) made failures safer but did not raise that number, with or without
-  Docling structure. Details:
-  [docs/AGENT_EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/AGENT_EVALUATION.md).
-- **Arabic questions are mostly answered by sentence matching**, not by a model that reads Arabic, and those
-  answers are flagged for review (11 of 23 right on the reserved split). A value printed beside a label, a letter's
-  sender, addressee or signer, and a labelled field are read from the page itself and are not flagged.
-- **English answers are wrong without a flag** about 1 time in 5 (8 of 42), most often on forms and long contracts.
-- **Missing facts.** A question whose subject the document mentions but whose value it does not ("when will the
-  debate be held?") is now usually declined. On new documents, 1 of 8 was still answered without a flag. The check
-  can also decline a fact that is there: a table value printed under its column header ("CAPTION:") was declined as
-  a blank field.
-- Receipt photos: totals and counts across receipts are often wrong (one receipt unclassified, cash amounts misread).
-- Typewritten Arabic scans OCR only partly.
-- Classification is keyword-based.
-- No handwriting. No genuine Arabic forms or invoices were available to test, so synthetic ones stand in.
-- Current status by capability and language: [docs/CAPABILITIES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md). Every case, including failures:
-  [docs/EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md).
 
 <details>
 <summary>Python API, configuration, security</summary>
@@ -278,7 +334,7 @@ OCR layer is pluggable). Full audit: [THIRD_PARTY_LICENSES.md](https://github.co
 
 ```bash
 pip install -e ".[dev]"
-pytest                                   # 617 tests
+pytest                                   # the full suite (about 900 tests)
 ruff check src tests && mypy src
 python -I bench/usecases/evaluate.py --help     # the evaluation above (documents: bench/usecases/README.md)
 ```

@@ -3,6 +3,50 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [SemVer](https://semver.org/).
 
+## [0.2.0b1] — Developer beta (GitHub only, not on PyPI)
+
+A local document workspace built from the existing components (Indra OCR, optional Docling structure, review).
+No new models, datasets or benchmarks. Answering questions remains experimental.
+
+### Added
+- **Document tab** in the workspace: each page's OCR text (right to left for Arabic, per-line direction for mixed
+  text), the tables Docling recovered, and the structure status per page, including pages turned and structured
+  upright, or the reason structure is unavailable.
+- **Raw exports** of a document: text, JSON with boxes and tables, tables CSV. Each starts with a note that it is the
+  raw reading, not reviewed. Approved review exports now include the source page.
+- **Outcomes on every result** (API `outcome`, CLI "Outcome:" line, first line of each workspace card): extracted
+  text, proposed answer, supported answer, partial result, missing evidence, several candidates, unsupported, failed.
+- **Candidates to choose from** when several values match, each with its page and box; the choice is shown as a
+  proposed value, not an answer.
+- **Field comparison** across documents ("compare the registration number in these documents"): each document's
+  value and evidence, then matches / differs / cannot determine. A comparison without a named field is labelled a
+  text comparison.
+- `inklight --version` and the workspace footer show the build's source commit (stamped into the wheel).
+
+### Changed
+- A run of field names merged into one block (as Docling can do on registers) is declined instead of returned as a
+  value.
+- Review proposes a value for an empty field only when it is a supported answer at a printed label or table cell.
+- Upload reports per-file success, failure and warnings; uploads keep their original names.
+- "OCR" confidence is shown as "OCR estimate" and never presented as a guarantee.
+- The CLI reports a missing file by name; the first-run model notice no longer repeats after the models are cached.
+- Ask is labelled experimental in the workspace.
+- After an independent review of the beta: a "number" field is never proposed from text without digits (a
+  bilingual table's label); a value taken from a row of several cells, or mixing Arabic and Latin text, is flagged;
+  Arabic field names work in review and extraction; a number or date question answered by a passage without digits
+  is *missing evidence*; a comparison shows each document's warnings and does not report "differs" on a doubtful
+  reading; approved exports mark superseded reviews and include the source box; the raw tables CSV starts with its
+  header and the raw JSON leaves out the local path.
+
+### Known limitations of this beta
+- Arabic-Indic digits are often misread by OCR; the Document tab and table view do not mark doubtful cells.
+- A table on a turned page can be split differently from the upright scan.
+- *Proposed* answers can be wrong without a specific warning (a registration date offered for an expiry date).
+
+### Checked and not adopted
+- A local 4B multilingual instruction model as planner/answerer: 0 of 8 workflow tasks, the same as without it. Not
+  integrated; the remote-model option stays off by default.
+
 ## [0.1.1] — Unreleased
 
 Fixes from a second external review of `914d321`. **0.1.0 (already on PyPI) is affected by the three
