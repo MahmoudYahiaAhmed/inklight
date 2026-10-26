@@ -91,7 +91,7 @@ def export(agent: Any, info: DocumentInfo, fmt: str) -> tuple[str, str, str]:
     if fmt == "json":
         data = {
             "note": RAW_NOTE,
-            "document": info.model_dump(mode="json"),
+            "document": info.model_dump(mode="json", exclude={"path"}),  # no local path in a file meant to be shared
             "pages": [
                 {
                     "number": p.number,
@@ -110,12 +110,16 @@ def export(agent: Any, info: DocumentInfo, fmt: str) -> tuple[str, str, str]:
     if fmt == "tables.csv":
         buf = io.StringIO()
         writer = csv.writer(buf)
-        writer.writerow([RAW_NOTE])
-        writer.writerow(["table", "page", "row", "column", "header", "text"])
+        # The note goes in a column of its own, so the first row stays the header for spreadsheets and pandas.
+        writer.writerow(["table", "page", "row", "column", "header", "text", "note"])
+        note = [RAW_NOTE + " Cells starting with = + - @ are prefixed with ' (spreadsheet safety)."]
         for t in tables(agent, info.id):
             for r, row in enumerate(t["rows"]):
                 for c, text in enumerate(row):
-                    writer.writerow([t["index"], t["page"], r + 1, c + 1, r in t["header_rows"], _safe_cell(text)])
+                    writer.writerow(
+                        [t["index"], t["page"], r + 1, c + 1, r in t["header_rows"], _safe_cell(text), *note]
+                    )
+                    note = []
         return "﻿" + buf.getvalue(), "text/csv; charset=utf-8", "tables.csv"
     raise ValueError("format must be txt, json or tables.csv")
 

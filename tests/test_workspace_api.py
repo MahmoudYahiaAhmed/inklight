@@ -75,14 +75,18 @@ def test_raw_exports_say_they_are_not_reviewed(client, fmt):
     assert r.status_code == 200
     assert "attachment" in r.headers["content-disposition"]
     body = r.content.decode("utf-8-sig")
-    assert "not reviewed" in body.splitlines()[0] or json.loads(body)["note"].startswith("Raw extraction")
     if fmt == "json":
         data = json.loads(body)
+        assert data["note"].startswith("Raw extraction") and "not reviewed" in data["note"]
         assert data["pages"][0]["lines"][0]["bbox"] and len(data["tables"]) == 3
+        assert "path" not in data["document"]  # no local path in a shared file
     if fmt == "tables.csv":
         rows = list(csv.reader(io.StringIO(body)))
-        assert rows[1] == ["table", "page", "row", "column", "header", "text"]
-        assert any(row[-1] == "٤٧٣١٩" for row in rows[2:])
+        assert rows[0] == ["table", "page", "row", "column", "header", "text", "note"]  # a header spreadsheets read
+        assert "not reviewed" in rows[1][6]
+        assert any(row[5] == "٤٧٣١٩" for row in rows[1:])
+    if fmt == "txt":
+        assert "not reviewed" in body.splitlines()[0]
     if fmt == "txt":
         assert "شركة النخيل الذهبي للتجارة" in body
 

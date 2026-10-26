@@ -344,7 +344,17 @@ class ReviewStore:
         """Approved reviews only: one row per field with prediction, warning, decision and approval."""
         _require_name(actor)
         reviews = self.find(status="approved", cohort=cohort)
-        rows = [_export_row(r, f) for r in reviews for f in r.fields]
+        # A document reviewed again: its earlier approved values stay in the export, marked superseded.
+        latest: dict[tuple[str | None, str], str] = {}
+        for r in reviews:
+            for f in r.fields:
+                key = (r.doc_sha256, f.field)
+                latest[key] = max(latest.get(key, ""), r.approved_at or "")
+        rows = [
+            _export_row(r, f) | {"superseded": (r.approved_at or "") < latest[(r.doc_sha256, f.field)]}
+            for r in reviews
+            for f in r.fields
+        ]
         with self._tx() as db:
             for r in reviews:
                 self._event(db, r.id, actor, "exported", note=fmt)
@@ -373,12 +383,14 @@ EXPORT_COLUMNS = (
     "warning",
     "flagged",
     "source_page",
+    "source_bbox",
     "final",
     "entered_input",
     "action",
     "decided_by",
     "approved_by",
     "approved_at",
+    "superseded",
 )
 
 
@@ -398,6 +410,7 @@ def _export_row(r: Review, f: ReviewField) -> dict[str, Any]:
         "warning": f.warning,
         "flagged": f.flagged,
         "source_page": (f.source or {}).get("page"),
+        "source_bbox": json.dumps((f.source or {}).get("bbox")) if (f.source or {}).get("bbox") else None,
         "final": f.final,
         "entered_input": f.entered,
         "action": f.action,

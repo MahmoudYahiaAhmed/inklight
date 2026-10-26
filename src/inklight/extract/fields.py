@@ -489,6 +489,7 @@ def _value_elsewhere(
         parsed = parse_typed(spec.type, nxt.text, day_first)
         return [(spec.name, _Candidate(parsed[0], parsed[1], nxt, 0.8, "label-next-line"))] if parsed else []
     row = [j for j in layout.row_after(lines, i) if not is_label(lines[j].text)]
+    cells_on_row = len(row)
     if spec.type == "text":  # a name belongs to its label only when it sits close by
         rtl = layout.rtl(line.text)
         # A two-cell row ("label: | value") pairs its cells at any distance; with more cells, only a close one.
@@ -497,6 +498,10 @@ def _value_elsewhere(
     hits = [(j, p) for j, text in _row_cells(lines, row) if (p := _cell_value(spec.type, text, day_first)) is not None]
     if len(hits) == 1:
         j, (value, raw) = hits[0]
+        if spec.type == "text" and cells_on_row > 1:
+            # A bilingual table prints the label again in the other language between label and value.
+            note = f"{cells_on_row} cells on the {line.text.strip()!r} row; took the nearest, which may be a label"
+            return [(spec.name, _Candidate(value, raw, lines[j], _AMBIGUOUS, "label-row", {"warning": note}))]
         return [(spec.name, _Candidate(value, raw, lines[j], 0.9, "label-row"))]
     if len(hits) > 1:
         titled: dict[str, list[tuple[int, tuple[Any, str]]]] = {}
@@ -618,6 +623,16 @@ def _is_payment(lines: list[_Line], k: int) -> bool:
     )
 
 
+_ARABIC = re.compile(r"[؀-ۿ]")
+_LATIN = re.compile(r"[A-Za-z]")
+_NUMBERED = re.compile(r"(?:^|_)(?:number|no|num|id|code)$|رقم")
+
+
+def _numbered_field(spec: FieldSpec) -> bool:
+    """A text field whose name says it is a number or code ("registration_number", "tax_id", "رقم_القيد")."""
+    return spec.type == "text" and bool(_NUMBERED.search(spec.name))
+
+
 def _source(doc: DocumentInfo, line: _Line) -> Source:
     return Source(
         doc_id=doc.id,
@@ -670,6 +685,14 @@ def extract_record(
         if best is None:
             values[spec.name] = ExtractedValue(field=spec.name, warning="not found" if spec.required else None)
             continue
+        if _numbered_field(spec) and not any(ch.isdigit() for ch in best.raw):
+            # "Registration number: رقم القيد" — a number with no digit is a label or a heading, not the value.
+            values[spec.name] = ExtractedValue(
+                field=spec.name,
+                source=_source(doc, best.line),
+                warning=f"only “{best.raw.strip()}” was found where the value should be: no digits, so not proposed",
+            )
+            continue
         conf = best.quality * (best.line.conf if best.line.conf is not None else 0.9)
         distinct = {str(c.value) for c in cands}
         warning = None
@@ -689,6 +712,10 @@ def extract_record(
         if spec.type == "date" and _implausibly_future(spec.name, best.value):
             warning = (warning + "; " if warning else "") + "date is more than a year in the future; check the year"
             conf *= 0.5
+        if spec.type == "text" and _ARABIC.search(best.raw) and _LATIN.search(best.raw):
+            warning = (warning + "; " if warning else "") + (
+                "the value mixes Arabic and Latin text; it may include the label in the other language"
+            )
         if best.line.conf is not None and best.line.conf < 0.85:
             warning = (warning + "; " if warning else "") + f"low OCR confidence ({best.line.conf:.2f})"
         raw_values[spec.name] = best.value

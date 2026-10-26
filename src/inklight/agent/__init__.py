@@ -247,8 +247,12 @@ class DocumentAgent:
         if schema is not None:
             specs = schema_from_dict(schema) if isinstance(schema, dict) else load_schema(schema)
             names = [s.name for s in specs]
+        elif fields:
+            # Named fields are read directly, in any language ("رقم القيد"), without going through the planner.
+            specs = [resolve_field(f) for f in fields]
+            names = [s.name for s in specs]
         else:
-            specs, names = None, list(fields or [])
+            specs, names = None, []
         report = self.add(items)
         scope = [d.id for d in report.documents]
         if not scope:

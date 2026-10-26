@@ -169,3 +169,98 @@ def test_the_cli_shows_the_outcome_and_names_a_missing_file(tmp_path, monkeypatc
     r = runner.invoke(cli_app, ["ask", str(card), "What is the registration number?"])
     assert r.exit_code == 0, r.output
     assert "Outcome:" in r.output and "760413" in r.output, r.output
+
+
+# -- after the independent review of the beta: labels in review, missing values, doubtful comparisons, exports ------
+
+BILINGUAL = {
+    "bilingual.png": [[
+        ((300, 290, 380, 315), "Field"), ((560, 290, 640, 325), "البيان"), ((990, 290, 1180, 322), "Value"),
+        ((190, 367, 430, 399), "Company name"),
+        ((530, 365, 1450, 401), "شركة النخيل الذهبي للتجارة / Golden Palm Trading Co. اسم الشركة"),
+        ((190, 443, 494, 476), "Registration number"), ((520, 444, 645, 478), "رقم القيد"),
+        ((700, 442, 800, 474), "47319"),
+    ]],
+    "register-low.png": [[((100, 60, 600, 90), "COMMERCIAL REGISTER EXTRACT"),
+                          ((100, 120, 400, 142), "Registration number: 47819")]],
+    "register-ok.png": [[((100, 60, 600, 90), "COMMERCIAL REGISTER EXTRACT"),
+                         ((100, 120, 400, 142), "Registration number: 47319")]],
+}  # fmt: skip
+
+
+class _LowConfEngine(LinesEngine):
+    """Indra's stand-in, with one document read at low confidence."""
+
+    def read(self, path, *, max_pages, password=None):  # noqa: ANN001, ANN202
+        content = super().read(path, max_pages=max_pages, password=password)
+        if path.name != "register-low.png":
+            return content
+        pages = tuple(
+            p.model_copy(update={"lines": tuple(x.model_copy(update={"conf": 0.55}) for x in p.lines)})
+            for p in content.pages
+        )
+        return content.model_copy(update={"pages": pages})
+
+
+@pytest.fixture(scope="module")
+def bilingual(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("bilingual")
+    for k, name in enumerate(BILINGUAL):
+        (tmp / name).write_bytes(PNG + bytes(k + 200))
+    settings = make_settings(tmp / "home")
+    lib = Library(settings, engine=_LowConfEngine(BILINGUAL))
+    agent = DocumentAgent(settings, library=lib)
+    agent.add([tmp / n for n in BILINGUAL])
+    yield agent, {d.name: d.id for d in agent.library.documents()}, tmp
+    agent.close()
+    lib.close()
+
+
+def test_a_label_is_never_proposed_as_a_number_field_in_review(bilingual):
+    agent, ids, _ = bilingual
+    review = agent.open_review(ids["bilingual.png"], ["registration number", "company name"], reviewer="Tester")
+    got = {f.field: f for f in review.fields}
+    assert got["registration_number"].predicted != "رقم القيد", got["registration_number"]
+    assert got["registration_number"].predicted in (None, "47319")
+    # A value in a bilingual row may carry the label in the other language: it is flagged, not presented as clean.
+    assert got["company_name"].flagged and "Arabic and Latin" in (got["company_name"].warning or "")
+
+
+def test_an_arabic_field_name_can_be_extracted(bilingual):
+    agent, ids, tmp = bilingual
+    record = agent.extract([tmp / "bilingual.png"], fields=["رقم القيد"])[0]
+    assert list(record.fields) == ["رقم_القيد"]
+
+
+def test_a_number_question_answered_without_digits_is_missing_evidence(library):
+    res = _ask(library, ["letter.png"], "What is the budget amount?")
+    assert res.outcome == "missing_evidence", (res.outcome, res.answer)
+
+
+def test_a_difference_resting_on_a_low_confidence_reading_cannot_be_determined(bilingual):
+    agent, ids, _ = bilingual
+    res = agent.ask(
+        "Compare the registration number in these documents",
+        doc_ids=[ids["register-low.png"], ids["register-ok.png"]],
+        save=False,
+    )
+    assert res.comparison is not None, res.answer
+    assert res.comparison["verdict"] == "cannot determine", res.answer
+    assert res.warnings and any("register-low.png" in w for w in res.warnings), res.warnings
+    assert "low confidence" in res.answer
+
+
+def test_a_superseded_review_is_marked_in_the_export(bilingual):
+    agent, ids, _ = bilingual
+    doc = ids["register-ok.png"]
+    for _ in range(2):
+        r = agent.open_review(doc, ["registration number"], reviewer="Tester")
+        agent.reviews.decide(r.id, "registration_number", reviewer="Tester", action="accepted")
+        agent.reviews.approve(r.id, reviewer="Tester")
+    import csv
+    import io
+
+    rows = [x for x in csv.DictReader(io.StringIO(agent.reviews.export("csv", actor="Tester")))
+            if x["document"] == "register-ok.png"]  # fmt: skip
+    assert sorted(x["superseded"] for x in rows) == ["False", "True"], rows
+    assert all(x["source_bbox"] for x in rows)

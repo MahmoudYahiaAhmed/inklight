@@ -7,7 +7,6 @@ import difflib
 import io
 import json
 import re
-import unicodedata
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
 from typing import Any
@@ -266,7 +265,9 @@ def _aggregate(op: str, values: list[Decimal]) -> Decimal:
 def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
     docs = ctx.docs()
     if len(docs) < 2:
-        raise ToolError("Comparison needs at least two documents")
+        raise ToolError(
+            "Comparison needs at least two documents: select them (Ctrl/⌘-click in the workspace) or give each file"
+        )
     docs = docs[:5]
     if len(ctx.docs()) > 5:
         ctx.scratch.warn("Compared the first 5 documents only")
@@ -310,10 +311,13 @@ def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
         ratio = difflib.SequenceMatcher(None, "\n".join(text_a), "\n".join(text_b), autojunk=False).ratio()
         block = [f"**{base_doc.name} vs {doc.name}** — text similarity {ratio:.0%}"]
         if specs:
+            shown = ", ".join(sp.name.replace("_", " ") for sp in specs)
+            found_any = any(x.fields[sp.name].value is not None for x in (base, other) for sp in specs)
             block.append(
-                "Field differences:\n" + "\n".join(f"  - {d}" for d in diffs)
+                f"Fields compared ({shown}), as extracted:\n" + "\n".join(f"  - {d}" for d in diffs)
                 if diffs
-                else "Field differences: none among the compared fields"
+                else f"Fields compared ({shown}), as extracted: no difference in the values read"
+                + ("" if found_any else " (no value was found in either document)")
             )
         changed = _changed_numbers(only_a, only_b)
         if changed:
@@ -551,22 +555,32 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
             elif used and head and not head.startswith(_DECLINED) and sub.sources:
                 entry |= {"status": "found", "value": head, "source": sub.sources[0].model_dump(mode="json")}
                 entry["warnings"] = list(sub.warnings)
+                conf = sub.sources[0].ocr_conf
+                if conf is not None and conf < _LOW_OCR and not any("confidence" in w for w in sub.warnings):
+                    entry["warnings"].append(f"OCR read this value with low confidence ({conf:.2f})")
             else:
                 entry["status"] = "not found"
             values.append(entry)
     finally:
         ctx.scratch = saved
     found = [v for v in values if v["status"] == "found"]
+    flagged = [v for v in found if v.get("warnings")]
     if len(found) == len(values):
         keys = {_value_key(v["value"]) for v in found}
         verdict = "matches" if len(keys) == 1 else "differs"
+        if verdict == "differs" and flagged:
+            verdict = "cannot determine"  # a difference resting on a doubtful reading is not a finding
     else:
         verdict = "cannot determine"
     s = ctx.scratch
+    for v in flagged:
+        for w in v["warnings"]:
+            s.warn(f"{v['document']}: {w}")
     lines = [f"Compared “{named}” in {len(values)} documents:"]
     for v in values:
         if v["status"] == "found":
-            lines.append(f"- {v['document']}: {v['value']} (page {v['source']['page']})")
+            doubt = " ⚠ " + "; ".join(v["warnings"]) if v.get("warnings") else ""
+            lines.append(f"- {v['document']}: {v['value']} (page {v['source']['page']}){doubt}")
         elif v["status"] == "several candidates":
             lines.append(f"- {v['document']}: several candidates ({', '.join(v['candidates'][:4])}) — choose one")
         else:
@@ -574,7 +588,9 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
     why = {
         "matches": "the values read are the same",
         "differs": "the values read are different",
-        "cannot determine": "a value could not be read in every document; check the documents yourself",
+        "cannot determine": "a value was read with low confidence; check the documents yourself"
+        if flagged and len(found) == len(values)
+        else "a value could not be read in every document; check the documents yourself",
     }[verdict]
     lines.append(f"Result: {verdict} — {why}. Check the cited places: OCR can misread a value.")
     s.answer = "\n".join(lines)
@@ -587,10 +603,13 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
     return f"field comparison: {verdict}"
 
 
+_LOW_OCR = 0.85  # the same bar extraction uses for "low OCR confidence"
+
+
 def _value_key(value: str) -> str:
-    """A value compared across documents: digits in Latin form, without spaces or punctuation, case folded."""
-    text = "".join(str(unicodedata.decimal(ch)) if ch.isdigit() else ch for ch in value)
-    return re.sub(r"[\W_]+", "", text).casefold()
+    """A value compared across documents: digits in Latin form, without spaces or punctuation, case folded
+    (textnorm.fold; a digit-like sign with no decimal value, such as "²", is kept as it is)."""
+    return fold(value)
 
 
 def _changed_numbers(only_a: list[str], only_b: list[str]) -> list[str]:

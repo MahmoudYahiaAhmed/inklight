@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import logging
+import re
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -215,6 +216,11 @@ class Runner:
 _DECLINED = ("I couldn't find", "I could not find", "No passage", "I could not find anything")
 # Answer paths that read a value at its printed label or in its table cell (agent/labels.py, table_answer.py).
 _AT_LABEL = ("value beside its label", "table cell")
+_CLOSEST = "The closest passage is:"
+_ASKS_FOR_DIGITS = re.compile(
+    r"\b(?:number|no\.|date|when|how (?:many|much)|amount|total|percent(?:age)?)\b|رقم|تاريخ|متى|كم\s|نسبة|مبلغ",
+    re.IGNORECASE,
+)
 _SHOWN_AS_FOUND = {"extract", "find", "cite", "summarize", "filter", "count", "inconsistencies", "process"}
 
 
@@ -233,8 +239,12 @@ def result_outcome(plan: Plan, s: Scratch, state: TaskState, trace: list[TraceSt
         return "unsupported"
     if s.outcome:
         return s.outcome
-    if s.answer.startswith(_DECLINED):
+    if s.answer.startswith(_DECLINED) or s.answer.startswith(_CLOSEST):
         return "missing_evidence"
+    if plan.intent.value == "ask" and _ASKS_FOR_DIGITS.search(plan.query):
+        head = s.answer.split("\n\nEvidence:")[0]
+        if not any(ch.isdigit() for ch in head):
+            return "missing_evidence"  # a number or date was asked for and the passage found has none
     if state == TaskState.PARTIAL:
         return "partial"
     intent = plan.intent.value

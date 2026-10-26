@@ -239,9 +239,11 @@ function comparisonBlock(r) {
       h("thead", {}, h("tr", {}, ...["document", `“${c.field}”`, "evidence"].map((x) => h("th", {}, x)))),
       h("tbody", {}, ...c.values.map((v) => h("tr", {},
         h("td", {}, v.document),
-        h("td", { dir: "auto", class: v.status === "found" ? "" : "none" }, v.status === "found" ? v.value : v.status === "several candidates" ? `several: ${v.candidates.join(", ")}` : "not found"),
+        h("td", { dir: "auto", class: v.status === "found" ? "" : "none" }, v.status === "found" ? v.value : v.status === "several candidates" ? `several: ${v.candidates.join(", ")}` : "not found",
+          ...(v.warnings || []).map((w) => h("div", { class: "warn-t" }, `⚠ ${w}`))),
         h("td", {}, v.source ? h("button", { class: "ghost small", type: "button", onclick: () => openDoc(v.source.doc_id, v.source.page, v.source.bbox) }, `page ${v.source.page}`) : "—"))))),
-    h("div", { class: `verdict ${c.verdict.replace(/\s+/g, "-")}` }, `Result: ${c.verdict}`));
+    h("div", { class: `verdict ${c.verdict.replace(/\s+/g, "-")}` }, `Result: ${c.verdict}`),
+    h("div", { class: "muted" }, (r.answer.split("\n").find((x) => x.startsWith("Result:")) || "").replace(/^Result: [^—]*— /, "")));
 }
 
 function renderExamples() {
