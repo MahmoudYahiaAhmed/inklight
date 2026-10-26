@@ -3,8 +3,10 @@
 Used by the label answers (labels.py) and by the check on the other answering paths (label_guard.py), so both
 apply the same rules:
 
-- copies of one label are told apart by the names in the section above each ("Salary:" under "Alice Martin");
-- with no name, copies that print different values are reported, not chosen between;
+- copies of one label are told apart by the names in the section above each ("Salary:" under "Alice Martin") or on
+  its value's row ("Company type" over "Beta Ltd | Partnership");
+- with no name, a question word found in only one copy's section picks it ("the company name of Supplier 2");
+  otherwise copies that print different values are reported, not chosen between;
 - a single label whose section does not hold the name the question gives is flagged when the page is divided into
   sections, or when the document prints that name nowhere; otherwise it answers.
 """
@@ -17,7 +19,7 @@ from dataclasses import dataclass, replace
 from ..schemas import PageContent, Source
 from . import lines as ln
 from .answer import words
-from .binding import _key
+from .binding import _digits, _key
 from .context import ToolContext
 from .scope import name_candidates, names_in, section_text
 
@@ -25,6 +27,7 @@ _DOC_WORDS_RE = re.compile(r"\.[A-Za-z0-9]+$")
 _TITLE_LINES = 3  # the first page's top lines name what the document is about
 _MAX_PAGES = 5
 _SHOWN = 4  # copies listed in an ambiguous answer
+_ROW = 0.5  # lines within half a line height of a value cell are on its row
 
 
 @dataclass(frozen=True)
@@ -36,6 +39,7 @@ class Terms:
     about: frozenset[str]  # field words the document's title or file name prints: a label need not carry them
     unprinted: frozenset[str]  # names the document prints nowhere
     asked: frozenset[str] = frozenset()  # every word of the question, generic ones too ("type", "name")
+    numbers: frozenset[str] = frozenset()  # numbers the question gives ("Supplier 2"), in Latin digits
 
 
 def question_terms(ctx: ToolContext, doc_id: str, wanted: set[str], question: str, doc_words: set[str]) -> Terms:
@@ -60,7 +64,18 @@ def question_terms(ctx: ToolContext, doc_id: str, wanted: set[str], question: st
         fields, names = set(wanted), set()
     unprinted = ((owners | capitals) & wanted) - printed
     asked = frozenset(_key(w) for w in words(question))
-    return Terms(frozenset(fields), frozenset(names), frozenset(fields & subject), frozenset(unprinted), asked)
+    return Terms(
+        frozenset(fields),
+        frozenset(names),
+        frozenset(fields & subject),
+        frozenset(unprinted),
+        asked,
+        _numbers(question),
+    )
+
+
+def _numbers(text: str) -> frozenset[str]:
+    return frozenset(re.findall(r"\d+", _digits(text)))
 
 
 def _subject(ctx: ToolContext, doc_id: str, pages: list[ln.PageIndex], doc_words: set[str]) -> set[str]:
@@ -83,6 +98,33 @@ def section(lab: ln.Label) -> str:
     return section_text(page.lines, lab.index, extent, page.headers())
 
 
+def scope_text(lab: ln.Label) -> str:
+    """The section above a label and the rows its value cells are on: what tells copies of a label apart."""
+    page = ln.index(lab.page)
+    _, cells, _ = page.value(lab)
+    rows = [
+        o.text
+        for c in cells
+        for o in page.lines
+        if c.bbox and o.bbox and ln.offset(c.bbox, o.bbox) <= _ROW * (c.bbox[3] - c.bbox[1])
+    ]
+    return " ".join([section(lab), *rows])
+
+
+def _distinct_by_question(same: list[ln.Label], terms: Terms) -> ln.Label | None:
+    """The one copy whose section holds a question word the others' do not ("Supplier 2"), else None."""
+    extra = set(terms.asked) - set(terms.fields) - ln.keys(same[0].text)
+    if not extra and not terms.numbers:
+        return None
+    counts = [
+        (len(extra & {_key(w) for w in words(section(lab))}) + len(terms.numbers & _numbers(section(lab))), lab)
+        for lab in same
+    ]
+    best = max(n for n, _ in counts)
+    hits = [lab for n, lab in counts if n == best]
+    return hits[0] if best > 0 and len(hits) == 1 else None
+
+
 def pick(found: list[ln.Label], terms: Terms) -> ln.Label | None:
     """The label to answer from among the best-scoring ones, or None when copies with different values cannot be
     told apart (the caller reports them with ``say_ambiguous``)."""
@@ -91,16 +133,20 @@ def pick(found: list[ln.Label], terms: Terms) -> ln.Label | None:
     tied = len({frozenset(ln.keys(lab.text)) for lab in top}) > 1
     names = set(terms.names)
     if names:
-        named = [(len(names_in(names, section(lab))), lab) for lab in same]
+        named = [(len(names_in(names, scope_text(lab))), lab) for lab in same]
         most = max(n for n, _ in named)
         hits = [lab for n, lab in named if n == most and n > 0]
         if len(hits) == 1:
             return replace(hits[0], tied=tied)
+        chosen = _distinct_by_question(hits, terms) if len(hits) > 1 else None
+        if chosen is not None:
+            return replace(chosen, tied=tied)
         if hits or differ(same):
             return None
         return replace(same[0], tied=tied, unscoped=doubt_for(terms, same[0].page, single=len(same) == 1))
     if differ(same):
-        return None
+        chosen = _distinct_by_question(same, terms)
+        return replace(chosen, tied=tied) if chosen is not None else None
     return replace(same[0], tied=tied, unscoped=unprinted_doubt(terms))
 
 

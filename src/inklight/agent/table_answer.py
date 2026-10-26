@@ -34,6 +34,7 @@ from .scope import conflicts
 from .unmentioned import say_no_evidence
 
 _MAX_DOCS = 3
+_SHOWN = 4  # candidate tables listed when the question does not say which
 _NAME_KEYS = {_key(w) for w in words("name names الاسم اسم")}
 _VALUE_KEYS = {_key(w) for w in words("value values القيمه")}
 _FIELD_KEYS = {_key(w) for w in words("field fields item البيان البند")}
@@ -60,6 +61,7 @@ def table_answer(ctx: ToolContext, question: str) -> str | None:
     if not wanted_words(question):
         return None
     docs = list(dict.fromkeys(h.source.doc_id for h in ctx.scratch.hits)) or ctx.scratch.doc_ids
+    found: list[tuple[str, Any, _Hit]] = []  # every table, in every document in scope, whose heading matches
     for doc_id in docs[:_MAX_DOCS]:
         document = ctx.structure(doc_id)
         if document is None or not document.tables:
@@ -70,13 +72,50 @@ def table_answer(ctx: ToolContext, question: str) -> str | None:
         hits = [h for table in tables for h in _hits(table, document, fields, terms)]
         if not hits and fields and _is_who(question):
             hits = [h for table in tables for h in _who_hits(table, document, fields)]
-        if not hits:
-            continue
-        hits.sort(key=lambda h: (-h.score, -h.overlap))
-        best = hits[0]
-        tied = [h for h in hits[1:] if (h.score, h.overlap) == (best.score, best.overlap) and h.header != best.header]
-        return _answer(ctx, doc_id, document, best, tied=bool(tied), kind=expected_kind(question))
-    return None
+        found += [(doc_id, document, h) for h in hits]
+    if not found:
+        return None
+    found.sort(key=lambda x: (-x[2].score, -x[2].overlap))
+    doc_id, document, best = found[0]
+    top = [x for x in found if (x[2].score, x[2].overlap) == (best.score, best.overlap)]
+    tied = [h for _, _, h in top[1:] if h.header != best.header]
+    same = [x for x in top if ln.keys(x[2].header) == ln.keys(best.header)]  # the same heading in other tables
+    if len({_values_of(h) for _, _, h in same}) > 1:
+        return _say_candidates(ctx, same)
+    return _answer(ctx, doc_id, document, best, tied=bool(tied), kind=expected_kind(question))
+
+
+def _values_of(hit: _Hit) -> tuple[str, ...]:
+    cells = hit.cells or tuple((r, hit.col) for r in hit.rows)
+    return tuple(" ".join(hit.grid.rows[r][c].split()) for r, c in cells if hit.grid.rows[r][c].strip())
+
+
+def _say_candidates(ctx: ToolContext, found: list[tuple[str, Any, _Hit]]) -> str:
+    """Several tables carry the heading asked about, with different values, and the question does not say which:
+    each is listed with its document and page, none is chosen."""
+    s = ctx.scratch
+    shown, sources = [], []
+    for doc_id, document, hit in found[:_SHOWN]:
+        doc = ctx.library.get(doc_id)
+        page_no = hit.table.prov[0].page_no if hit.table.prov else 1
+        page = next((p for p in ctx.pages(doc_id) if p.number == page_no), None)
+        cells = hit.cells or tuple((r, hit.col) for r in hit.rows)
+        filled = _distinct(hit.grid, [(r, c, hit.grid.rows[r][c]) for r, c in cells if hit.grid.rows[r][c].strip()])
+        for r, c, v in filled[:2]:
+            where = f"{doc.name}, page {page_no}" if doc is not None else f"page {page_no}"
+            shown.append(f"- {v}: table on {where}")
+            if doc is not None:
+                sources.append(_source(doc, doc_id, document, page, hit, r, c, v))
+    header = found[0][2].header
+    s.answer = f"“{header}” has a different value in each of {len(found)} tables:\n" + "\n".join(shown)
+    s.sources = sources
+    s.confidence = 0.25
+    s.warn(
+        f"Low confidence: “{header}” is a heading in {len(found)} tables with different values and the question does "
+        "not say which is meant; name the company, person or document."
+    )
+    s.notes.append(f"answer: the heading “{header}” is in several tables; none chosen")
+    return "heading in several tables"
 
 
 def _upright_tables(ctx: ToolContext, doc_id: str, document: Any) -> list[Any]:

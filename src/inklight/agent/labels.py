@@ -64,6 +64,8 @@ def label_answer(ctx: ToolContext, question: str) -> str | None:
         return None
     kind = expected_kind(question)
     docs = list(dict.fromkeys(h.source.doc_id for h in ctx.scratch.hits)) or ctx.scratch.doc_ids
+    answers: list[tuple] = []  # (doc, doc_id, label, value, cells, terms) for each document whose label has a value
+    unread = None  # a numbered field name or blank form field with nothing beside it: said only if no value is found
     for doc_id in docs[:_MAX_DOCS]:
         doc = ctx.library.get(doc_id)
         if doc is None:
@@ -74,6 +76,8 @@ def label_answer(ctx: ToolContext, question: str) -> str | None:
             continue
         best = sc.pick(found, terms)
         if best is None:
+            if answers:
+                continue
             sc.say_ambiguous(ctx, doc, doc_id, found, terms)
             return "label repeated in several sections"
         page = ln.index(best.page)
@@ -84,18 +88,79 @@ def label_answer(ctx: ToolContext, question: str) -> str | None:
         if value is not None and kind != "date" and not date_label and _only_a_date(value):
             continue  # "Which meeting …?", "What is the meeting number?" are not answered by a bare date
         if value is None:
-            if not best.colon or nearby or _form_labels(page.lines) < _FORM_LIKE:
-                continue  # prose ending in ":", or something sits beside it that is not read as a value
-            say_no_evidence(
-                ctx,
-                f"a value of “{best.text}”",
-                f"the label “{best.text}” is on page {best.page.number}, but nothing is written beside or below it "
-                "(a blank field)",
-            )
-            return "blank field"
+            numbered = bool(ln.MARKER.match(page.lines[best.index].text.strip()))
+            if numbered and not nearby and set(terms.fields) <= ln.keys(best.text):
+                unread = unread or (doc, doc_id, best, "numbered")  # the field asked for, by every word of it
+            elif best.colon and not nearby and _form_labels(page.lines) >= _FORM_LIKE:
+                unread = unread or (doc, doc_id, best, "blank")
+            continue  # prose ending in ":", or something sits beside it that is not read as a value
+        answers.append((doc, doc_id, best, value, cells, terms))
+    if len(answers) > 1 and len({_norm_value(a[3]) for a in answers}) > 1:
+        _say_several(ctx, answers)
+        return "the field has a value in several documents"
+    if answers:
+        doc, doc_id, best, value, cells, _ = answers[0]
         _answer(ctx, doc, doc_id, best, value, cells)
         return "value beside its label"
+    if unread is not None:
+        doc, doc_id, best, why = unread
+        _say_unread(ctx, doc, doc_id, best, why)
+        return "blank field" if why == "blank" else "field name without a readable value"
     return None
+
+
+def _norm_value(value: str) -> str:
+    return " ".join(value.split()).casefold()
+
+
+def _say_unread(ctx: ToolContext, doc, doc_id: str, best: ln.Label, why: str) -> None:  # type: ignore[no-untyped-def]
+    """Decline, saying where the field is so a person can read it: a blank form field, or a numbered field name
+    (as in a register's column headings) whose value is not printed beside or below it."""
+    page = ln.index(best.page)
+    line = page.lines[best.index]
+    n = best.page.number
+    if why == "blank":
+        reason = f"the label “{best.text}” is on page {n}, but nothing is written beside or below it (a blank field)"
+    else:
+        reason = (
+            f"the field name “{best.text}” is printed on page {n}, but no value is printed beside or below it "
+            "(it may be in a table row further down the page)"
+        )
+    say_no_evidence(ctx, f"a value of “{best.text}”", reason)
+    s = ctx.scratch
+    s.answer = f"{s.answer[:-1]}: {reason}. Check that place on the page."
+    s.sources = [
+        Source(
+            doc_id=doc_id, path=doc.path, name=doc.name, page=n, bbox=line.bbox if page.boxes else None,
+            excerpt=line.text.strip(), ocr_conf=line.conf,
+        )
+    ]  # fmt: skip
+    s.confidence = 0.0
+
+
+def _say_several(ctx: ToolContext, answers: list[tuple]) -> None:
+    """The field has a value in more than one document and the question does not say which: list each."""
+    s = ctx.scratch
+    shown, sources = [], []
+    for doc, doc_id, best, value, cells, _ in answers:
+        page = ln.index(best.page)
+        line = page.lines[best.index]
+        shown.append(f"- {value}: {doc.name}, page {best.page.number}")
+        sources.append(
+            Source(
+                doc_id=doc_id, path=doc.path, name=doc.name, page=best.page.number,
+                bbox=ln.union([line.bbox, *[c.bbox for c in cells]]) if page.boxes else None,  # type: ignore[list-item]
+                excerpt="\n".join([line.text.strip(), *[c.text.strip() for c in cells]]),
+                ocr_conf=min([x.conf for x in [line, *cells] if x.conf is not None], default=None),
+            )
+        )  # fmt: skip
+    label = answers[0][2].text
+    s.answer = f"“{label}” has a different value in each of {len(answers)} documents:\n" + "\n".join(shown)
+    s.sources = sources
+    s.confidence = 0.25
+    s.warn(f"Low confidence: “{label}” is printed in {len(answers)} documents with different values and the question "
+           "does not say which document is meant; name it.")  # fmt: skip
+    s.notes.append(f"answer: the label “{label}” has a value in several documents; none chosen")
 
 
 def terms_for(ctx: ToolContext, doc_id: str, question: str) -> sc.Terms:
@@ -169,12 +234,19 @@ def _labels(ctx: ToolContext, doc_id: str, terms: sc.Terms) -> list[ln.Label]:
             text = line.text.strip()
             label, inline, colon = ln.split(text)
             label_words = ln.WORD.findall(label)
-            if not label_words or len(label_words) > ln.MAX_LABEL_WORDS or ln.SENTENCE.search(text) or len(text) > 60:
+            numbered = ln.enumerated_label(text)  # "(ب) ٢- عنوان الشركة أو اسمها": a field name, function words and all
+            plain = ln.strip_markers(text)
+            limit = ln.MAX_LABEL_WORDS + (2 if numbered else 0)
+            if not label_words or len(label_words) > limit or ln.SENTENCE.search(plain) or len(plain) > 60:
                 continue
-            if not colon and (len(words(label)) < len(label_words) or label[:1].islower()):
+            if not colon and not numbered and (len(words(label)) < len(label_words) or label[:1].islower()):
                 continue  # "Recalling that by its …", "account General …": prose, not a bare label
             if _TITLE_START.search(text) or (set(words(label)) & _DOC_WORDS and not colon):
                 continue  # "Letter dated …", "TAX INVOICE", "Form W-8BEN": the document's title, not a field
+            if colon:  # "Registration" over "number:" is one label, when the line above adds field words asked for
+                joined = _wrapped(ln.index(page), i, label)
+                if ln.keys(joined) & wanted > ln.keys(label) & wanted:
+                    label = joined
             keys = ln.keys(label)
             own = ln.own_keys(label)
             shared = wanted & keys
@@ -187,10 +259,34 @@ def _labels(ctx: ToolContext, doc_id: str, terms: sc.Terms) -> list[ln.Label]:
     return found
 
 
+def _wrapped(page: ln.PageIndex, i: int, label: str) -> str:
+    """A label printed over two lines ("Registration" over "number:"): the bare words just above it in its column,
+    with nothing beside them, are the label's first words."""
+    me = page.lines[i].bbox
+    if me is None or len(ln.WORD.findall(label)) > 2:
+        return label
+    h = max(me[3] - me[1], 1.0)
+    for j, o in enumerate(page.lines):
+        if j == i or o.bbox is None or not 0 <= me[1] - o.bbox[3] <= 0.6 * h or not ln.layout.same_column(me, o.bbox):
+            continue
+        text = o.text.strip()
+        head, rest, colon = ln.split(text)
+        lone = not any(
+            k != j and ln.beside(o.bbox, x.bbox, ln.layout.rtl(text)) for k, x in enumerate(page.lines) if x.bbox
+        )
+        if head == text and not colon and not rest and len(ln.WORD.findall(text)) <= 3 and lone:
+            return f"{text} {label}"
+    return label
+
+
 def _form_labels(lines: list[TextLine]) -> int:
-    """Word-only labels with a colon that are not letter-header furniture: how form-like the page is."""
+    """Word-only labels with a colon, or numbered field names, that are not letter-header furniture: how form-like
+    the page is."""
     count = 0
     for line in lines:
+        if ln.enumerated_label(line.text):
+            count += 1
+            continue
         head, _, colon = ln.split(line.text.strip())
         word_label = colon and head and not re.search(r"\d", head) and len(ln.WORD.findall(head)) <= 4
         if word_label and not set(words(head)) <= _HEADER_LABELS:

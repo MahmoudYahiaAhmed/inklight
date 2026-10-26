@@ -5,6 +5,7 @@ There is deliberately no shell, code-execution, network or delete tool.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Annotated, Any, Literal
@@ -81,7 +82,13 @@ def _inspect(ctx: ToolContext, a: InspectArgs) -> str:
     if a.doc_type:
         wanted = SINGULAR.get(a.doc_type, a.doc_type)
         keep = [d.id for d in docs if d.doc_type == wanted]
-        if keep:
+        if ctx.scratch.explicit and len(keep) < len(docs) and not restricts(ctx.plan.query):
+            # The person chose these documents; "the contract and the register" describes them, it does not ask
+            # to drop the ones the classifier typed otherwise. "Only the contracts" does.
+            ctx.scratch.notes.append(
+                f"scope: kept all {len(docs)} documents you selected; the request's “{a.doc_type}” describes them"
+            )
+        elif keep:
             ctx.scratch.doc_ids = keep
         else:
             ctx.scratch.warn(f"No document was classified as '{wanted}'; used all {len(docs)} documents")
@@ -92,6 +99,18 @@ def _inspect(ctx: ToolContext, a: InspectArgs) -> str:
     if low:
         ctx.scratch.warn("Low OCR confidence in: " + ", ".join(low[:5]) + "; extracted values may be wrong")
     return f"{len(ctx.scratch.doc_ids)} documents (" + ", ".join(f"{n} {k}" for k, n in kinds.items()) + ")"
+
+
+_RESTRICT = re.compile(
+    r"\b(?:only|just|except|excluding|exclude|among|apart from|other than)\b"
+    r"|(?:^|\s)(?:فقط|بس|إلا|الا|ماعدا|ما عدا|عدا|من بين|باستثناء)(?:\s|$|[؟?.،,])",
+    re.IGNORECASE,
+)
+
+
+def restricts(request: str) -> bool:
+    """Whether the request explicitly narrows the documents it was given ("only the contracts", "العقود فقط")."""
+    return bool(_RESTRICT.search(request))
 
 
 def _search(ctx: ToolContext, a: SearchArgs) -> str:

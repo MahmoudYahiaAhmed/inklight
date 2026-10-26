@@ -44,6 +44,18 @@ def check_label_scope(ctx: ToolContext, question: str) -> str | None:
     if _bare_label(head):
         say_no_evidence(ctx, _phrase(question, fields), f"the passage found is only the label “{head}”")
         return "a bare label is not an answer"
+    named = _field_name(ctx, src, head)
+    if named:
+        say_no_evidence(
+            ctx,
+            _phrase(question, fields),
+            f"the passage found is the field name “{named}” printed on page {src.page}, not its value",
+        )
+        s.answer = (
+            f"{s.answer[:-1]}: the passage found is the field name “{named}” on page {src.page}, not its value. "
+            "Check that place on the page."
+        )
+        return "a field name is not an answer"
     if _restates(head, question):
         say_no_evidence(
             ctx, _phrase(question, fields), f"the passage found only repeats the question's words (“{head}”)"
@@ -154,6 +166,30 @@ def _table_heading(ctx: ToolContext, doc_id: str, head: str) -> str | None:
             for text in grid.rows[r]:
                 if text.strip() and _squash(text) == first:
                     return text
+    return None
+
+
+def _field_name(ctx: ToolContext, src: Source, head: str) -> str | None:
+    """The answer is one of the page's field names: a numbered field name ("(ب) ٢- عنوان الشركة") or a bare
+    "Label:", wherever on the page it is printed; the field it names is not the question's value."""
+    parts = [x.strip() for x in head.splitlines() if x.strip()]
+    if len(parts) != 1:
+        return None  # "Move-in:" followed by its value is a label and its value, not a field name alone
+    first = parts[0].strip('“”"')
+    if not ln.WORD.search(first):
+        return None
+    page_content = next((p for p in ctx.pages(src.doc_id) if p.number == src.page), None) if src.page else None
+    if page_content is None:
+        return None
+    target = _squash(ln.strip_markers(first)).rstrip(":")
+    for line in ln.index(page_content).lines:
+        text = line.text.strip()
+        if not (ln.enumerated_label(text) or _bare_label(text)):
+            continue
+        if _squash(ln.strip_markers(text)).rstrip(":") == target:
+            return ln.strip_markers(text).rstrip(":")
+    if ln.enumerated_label(first):
+        return ln.strip_markers(first)
     return None
 
 

@@ -268,3 +268,23 @@ def stacked_card() -> Page:
             cells.append(Cell(text, r, c, box, header=r == 0))
     p.table(cells, (100, 100, 870, 590))
     return p
+
+
+def suppliers(
+    names: tuple[tuple[str, str], ...] = (("Alpha Ltd", "Limited company"), ("Beta Ltd", "Partnership")),
+) -> Page:
+    """Two (or more) tables with identical headings, one company each, under "Supplier 1", "Supplier 2" (the
+    evaluation's ambiguity control)."""
+    p = Page()
+    for k, (name, kind) in enumerate(names):
+        top = 100 + 200 * k
+        p.line(f"Supplier {k + 1}", (100, top, 400, top + 40))
+        p.text(DocItemLabel.SECTION_HEADER, f"Supplier {k + 1}", (100, top, 400, top + 40))
+        cells = []
+        for r, row in enumerate((("Company name", "Company type"), (name, kind))):
+            for c, text in enumerate(row):
+                box = (100 + 350 * c, top + 50 + 50 * r, 440 + 350 * c, top + 90 + 50 * r)
+                p.line(text, box)
+                cells.append(Cell(text, r, c, box, header=r == 0))
+        p.table(cells, (100, top + 50, 790, top + 140))
+    return p

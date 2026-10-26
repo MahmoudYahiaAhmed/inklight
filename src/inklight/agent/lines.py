@@ -25,6 +25,11 @@ _ROW_BAND = 0.35  # cells within this many line heights of the nearest one share
 _TEXT_PITCH = 20.0  # synthetic layout of a page without boxes: one line every 20 points, 14 high
 _TEXT_HEIGHT = 14.0
 _CACHE_SIZE = 32
+# A list marker before a form's field name: "1.", "٢-", "(ب)", "(1)", "a)". Not a year in brackets, a phone prefix
+# ("(+20)") or the start of a number ("2-3 days", "1.5").
+MARKER = re.compile(r"^\s*(?:\(\s*[^\W_]{1,2}\s*\)|[^\W\d_]\)|[0-9٠-٩]{1,2}\s*[-–.)](?![0-9٠-٩]))\s*[-–]?\s*")
+_MAX_MARKERS = 3
+_ENUMERATED_WORDS = 8
 
 
 @dataclass(frozen=True)
@@ -136,8 +141,31 @@ def placed(page: PageContent) -> list[TextLine]:
     ]
 
 
+def strip_markers(text: str) -> str:
+    """The text without the list markers in front of it: "(ب) ٢- عنوان الشركة" -> "عنوان الشركة"."""
+    for _ in range(_MAX_MARKERS):
+        m = MARKER.match(text)
+        if not m or m.end() == 0:
+            break
+        text = text[m.end() :]
+    return text.strip()
+
+
+def enumerated_label(text: str) -> bool:
+    """A numbered field name with nothing after it: "١- نوع الشركة", "(ب) ٢- عنوان الشركة أو اسمها", "2. Company
+    type". Its only digits are the list markers, so it is never a value."""
+    raw = text.strip()
+    rest = strip_markers(raw)
+    if rest == raw or not rest:
+        return False
+    found = WORD.findall(rest)
+    return bool(found) and len(found) <= _ENUMERATED_WORDS and not re.search(r"\d", rest) and not SENTENCE.search(rest)
+
+
 def split(text: str) -> tuple[str, str, bool]:
-    """A line as (label words, the rest, has a colon): "Area code (+20) 97" -> ("Area code", "(+20) 97")."""
+    """A line as (label words, the rest, has a colon): "Area code (+20) 97" -> ("Area code", "(+20) 97"). List
+    markers before a field name are not part of it ("٢- عنوان الشركة" -> "عنوان الشركة")."""
+    text = strip_markers(text) if MARKER.match(text) else text
     if ":" in text and not re.search(r"\d:\d|://", text):  # "10:30" and URLs are not labels
         head, _, rest = text.partition(":")
         head = re.sub(r"^[\d%\s.]+", "", head).strip(_BULLET + " ")  # "12% Service" -> "Service"
@@ -169,8 +197,10 @@ def own_keys(label: str) -> set[str]:
 
 
 def _label_line(text: str) -> bool:
-    """A short label line ("Salary:", "Salary: 52,000", "Total 70.00"), not a sentence."""
-    label, _, colon = split(text.strip())
+    """A short label line ("Salary:", "Salary: 52,000", "Total 70.00", "4. Registration number: 31907"), not a
+    sentence."""
+    text = strip_markers(text.strip())
+    label, _, colon = split(text)
     n = len(WORD.findall(label))
     return 0 < n <= (MAX_LABEL_WORDS if colon else 4) and len(text.strip()) <= 60 and not SENTENCE.search(text)
 
@@ -178,7 +208,10 @@ def _label_line(text: str) -> bool:
 def value_like(text: str, colon: bool) -> bool:
     """A value: any text after a colon; otherwise something with digits beyond a bare footnote or year in
     brackets ("(2024)", "[1]")."""
+    if enumerated_label(text):
+        return False  # another numbered field name, not this one's value
     rest = re.sub(r"\[\d+\]|\(\d{4}\)", "", text).strip()
+    rest = strip_markers(rest) if MARKER.match(rest) else rest
     if not rest:
         return False
     return colon or bool(re.search(r"\d", rest))
@@ -209,11 +242,54 @@ def value(label: Label, lines: list[TextLine]) -> tuple[str | None, list[TextLin
     for under in below_all(lines, label.index):  # the first line under it that reads as its value
         text = under.text.strip()
         short = label.colon or len(text) <= 40  # without a colon, only a short value line belongs to the label
-        if short and not is_label(text) and value_like(text, label.colon):
+        if short and not is_label(text) and not other_field(text) and value_like(text, label.colon):
             return text, [under], True
-        if is_label(text):
-            break  # a "Label:" under it starts another field
+        if is_label(text) or other_field(text):
+            break  # a "Label:" or "Label: value" under it starts another field
+    cell = header_cell(lines, label.index) if not label.colon else None
+    if cell is not None:
+        return cell.text.strip(), [cell], True
     return None, [], any(not is_label(o.text) for o in side)  # a "Label:" below or beside is another field
+
+
+def header_cell(lines: list[TextLine], i: int) -> TextLine | None:
+    """The cell under a column heading: line ``i`` is a bare field name on a row of at least two of them, each with
+    a cell squarely under it ("Company name | Company type" over "Alpha Ltd | Limited company"). A heading alone,
+    or prose, has no such row, so a value without a digit is only read under a heading of a table."""
+    me = lines[i]
+    if me.bbox is None or not _bare_heading(me.text):
+        return None
+    h = max(me.bbox[3] - me.bbox[1], 1.0)
+    peers = [
+        j
+        for j, o in enumerate(lines)
+        if j != i
+        and o.bbox is not None
+        and offset(me.bbox, o.bbox) <= 0.5 * h
+        and _bare_heading(o.text)
+        and not layout.same_column(me.bbox, o.bbox)
+    ]
+    under = _squarely_under(lines, i)
+    if not peers or under is None or not any(_squarely_under(lines, j) is not None for j in peers):
+        return None
+    text = under.text.strip()
+    if is_label(text) or _bare_heading(text) and not text[:1].isupper() and not layout.rtl(text):
+        return None
+    return under if len(text) <= 60 and not SENTENCE.search(text) else None
+
+
+def _bare_heading(text: str) -> bool:
+    label, rest, colon = split(text.strip())
+    n = len(WORD.findall(label))
+    return not colon and not rest and 0 < n <= 4 and not re.search(r"\d", text) and len(text.strip()) <= 40
+
+
+def _squarely_under(lines: list[TextLine], i: int) -> TextLine | None:
+    """The line right under line ``i`` that its box mostly covers horizontally (a table cell under its heading)."""
+    me = lines[i].bbox
+    assert me is not None
+    found = [o for o in below_all(lines, i) if o.bbox is not None and _overlap_share(me, o.bbox) >= 0.5]
+    return found[0] if found else None
 
 
 def value_mode(lab: Label, lines: list[TextLine], cells: list[TextLine]) -> str:
@@ -266,8 +342,16 @@ def gap(a: BBox, b: BBox, right_to_left: bool) -> float:
     return a[0] - b[2] if right_to_left else b[0] - a[2]
 
 
+def other_field(text: str) -> bool:
+    """A line that is a field of its own: "4. Registration number: 31907", "Registration number: 31907". Under a
+    label without a value, it is the next field, not that label's value."""
+    label, rest, colon = split(text.strip())
+    return colon and bool(rest) and 0 < len(WORD.findall(label)) <= MAX_LABEL_WORDS and _label_line(text)
+
+
 def is_label(text: str) -> bool:
-    return text.strip().endswith(":")
+    """A field name, not a value: "Label:" or a numbered field name ("٢- عنوان الشركة")."""
+    return text.strip().endswith(":") or enumerated_label(text)
 
 
 def label_line(text: str) -> bool:

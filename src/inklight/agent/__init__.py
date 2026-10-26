@@ -135,7 +135,8 @@ class DocumentAgent:
             docs = sorted(self.library.documents(), key=lambda d: d.name.lower())
             scope = [d.id for d in docs if d.status.value == "ready"]
         plan = self.plan(request)
-        return self.run_plan(plan, scope, report=report, policy=policy, cancel=cancel, save=save)
+        explicit = files is not None or doc_ids is not None
+        return self.run_plan(plan, scope, report=report, policy=policy, cancel=cancel, save=save, explicit=explicit)
 
     def run_plan(
         self,
@@ -146,8 +147,9 @@ class DocumentAgent:
         policy: Policy | None = None,
         cancel: threading.Event | None = None,
         save: bool = True,
+        explicit: bool = False,
     ) -> AgentResult:
-        scratch = Scratch(doc_ids=list(doc_ids))
+        scratch = Scratch(doc_ids=list(doc_ids), explicit=explicit)
         if report:
             for path, error in report.failed:
                 scratch.warn(f"Skipped {Path(path).name}: {error}")

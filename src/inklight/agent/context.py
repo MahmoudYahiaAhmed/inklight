@@ -30,6 +30,7 @@ class Policy:
 @dataclass
 class Scratch:
     doc_ids: list[str] = field(default_factory=list)
+    explicit: bool = False  # the person chose these documents (files or ids), rather than the whole library
     hits: list[SearchHit] = field(default_factory=list)
     records: list[Record] = field(default_factory=list)
     excluded: list[Record] = field(default_factory=list)

@@ -14,6 +14,7 @@ import json
 import math
 import re
 from collections import Counter
+from collections.abc import Callable
 
 from ..extract import CATALOG, FieldSpec, extract_record
 from ..extract.amounts import PAYMENT
@@ -295,12 +296,15 @@ def answer_question(ctx: ToolContext, question: str) -> str:
     if role_answer(ctx, question):
         return "role from the document's layout"
     from .label_guard import check_label_scope
+    from .labels import label_answer
+    from .table_answer import table_answer
 
     if _field_shortcut(ctx, question):
         guarded = check_label_scope(ctx, question)
-        return guarded or f"field shortcut ({s.confidence:.2f})"
-    from .labels import label_answer
-    from .table_answer import table_answer
+        if guarded:
+            return guarded
+        other = _printed_label_overrides(ctx, question, table_answer, label_answer)
+        return other or f"field shortcut ({s.confidence:.2f})"
 
     tabled = table_answer(ctx, question)
     if tabled:
@@ -341,6 +345,33 @@ def answer_question(ctx: ToolContext, question: str) -> str:
     if s.confidence < 0.3:
         s.warn("Low confidence: the evidence only weakly supports this answer. Check the cited passage.")
     return used
+
+
+def _printed_label_overrides(
+    ctx: ToolContext, question: str, *paths: Callable[[ToolContext, str], str | None]
+) -> str | None:
+    """The field extractor's value gives way to the printed label or table cell naming the question's field when
+    those list several candidates (two suppliers, two documents) or read a different value; otherwise the
+    extractor's answer stands. Returns the path's outcome when it replaced the answer, else None."""
+    s = ctx.scratch
+    kept = (s.answer, list(s.sources), s.confidence, list(s.warnings), list(s.notes))
+    head = s.answer.removeprefix("The ").split(" is ", 1)[-1].split("\n")[0].strip()
+    for path in paths:
+        outcome = path(ctx, question)
+        if not outcome:
+            continue
+        listed = "\n-" in s.answer
+        declined = s.answer.startswith("I couldn't find")
+        if listed or (not declined and _squash(head) not in _squash(s.answer)):
+            s.notes.append("the printed label's value is used, not the field extractor's")
+            return outcome
+        break
+    s.answer, s.sources, s.confidence, s.warnings, s.notes = kept[0], kept[1], kept[2], kept[3], kept[4]
+    return None
+
+
+def _squash(text: str) -> str:
+    return "".join(text.split()).casefold()
 
 
 def _field_shortcut(ctx: ToolContext, question: str) -> bool:
