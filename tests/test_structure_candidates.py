@@ -28,7 +28,7 @@ FIXTURES = {
 @pytest.fixture(scope="module", autouse=True)
 def _no_model_preload():
     mp = pytest.MonkeyPatch()
-    mp.setattr("inklight.structure.docling_run.preload", lambda settings: None)
+    mp.setattr("inklight.structure.run.preload", lambda settings: None)
     yield
     mp.undo()
 

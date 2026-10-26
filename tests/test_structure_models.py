@@ -1,7 +1,7 @@
-"""End to end with the real components: Indra OCR, then Docling's layout and TableFormer models on Indra's lines.
+"""End to end with the real models: Inklight OCR, then the layout and table structure models on the OCR's lines.
 
-Skipped where Docling (an optional install) or the OCR models are not available, as in CI. The documents are the
-synthetic registration cards of bench/structure/make_synthetic.py, scanned (no text layer).
+Skipped where the structure runtime (an optional install) or the models are not available, as in CI. The documents
+are the synthetic registration cards of bench/structure/make_synthetic.py, scanned (no text layer).
 """
 
 from __future__ import annotations
@@ -11,7 +11,8 @@ from pathlib import Path
 
 import pytest
 
-pytest.importorskip("docling")
+pytest.importorskip("torch")
+pytest.importorskip("docling_core")
 pytest.importorskip("pymupdf")
 
 from inklight import DocumentAgent  # noqa: E402
@@ -31,7 +32,7 @@ def cards(tmp_path_factory):
     out = tmp_path_factory.mktemp("cards")
     sys.argv = ["make_synthetic", str(out)]
     make_synthetic.main()
-    settings = make_settings(out / "home", structure={"engine": "docling"})
+    settings = make_settings(out / "home", structure={"engine": "inklight"})
     with DocumentAgent(settings) as agent:
         report = agent.add([out / "regcard-en-scan.pdf", out / "regcard-ar-scan.pdf"])
         assert not report.failed, report.failed
@@ -70,19 +71,19 @@ def test_arabic_card_answers_are_values_not_headings(cards, question, expect):
     assert expect in _head(res), res.answer
 
 
-def test_docling_text_is_indras_text_only(cards):
-    """Every cell Docling worked on came from Indra's stored lines: none was read a second time."""
+def test_structure_text_is_the_ocr_text_only(cards):
+    """Every cell the structure stages worked on came from the OCR's stored lines: none was read a second time."""
     agent, ids, _ = cards
     for name, doc_id in ids.items():
         meta, document = agent.library.structure(doc_id)
         lines = sum(1 for p in agent.library.pages(doc_id) for ln in p.lines if ln.text.strip() and ln.bbox)
         assert meta["cells_delivered"] == lines, (name, meta)
         assert meta["foreign_tokens"] == 0 and meta["orphan_lines"] == 0, (name, meta)
-        assert "Indra's stored lines" in meta["components"]["ocr"]
+        assert "the OCR's stored lines" in meta["components"]["ocr"]
 
 
-def test_docling_runs_no_ocr_of_its_own(cards):
-    """Control: with every Indra line replaced by a marker word, Docling's output holds the markers only."""
+def test_structure_runs_no_ocr_of_its_own(cards):
+    """Control: with every OCR line replaced by a marker word, the structure holds the markers only."""
     from inklight.structure import structure_document
 
     agent, ids, out = cards
@@ -104,8 +105,8 @@ def test_docling_runs_no_ocr_of_its_own(cards):
     assert done.meta["cells_delivered"] == sum(1 for p in marked.pages for ln in p.lines if ln.bbox)
 
 
-def test_only_pages_with_tables_go_to_docling(cards, tmp_path):
-    """A text page and a table page: with pages = "tables", Docling sees only the table page, and the answer from
+def test_only_pages_with_tables_are_structured(cards, tmp_path):
+    """A text page and a table page: with pages = "tables", only the table page is structured, and the answer from
     its table cites the document's own page number."""
     import pymupdf
 
@@ -116,7 +117,7 @@ def test_only_pages_with_tables_go_to_docling(cards, tmp_path):
     pdf.insert_pdf(pymupdf.open(out / "regcard-en-scan.pdf"))
     two = tmp_path / "two-pages.pdf"
     pdf.save(two)
-    settings = make_settings(tmp_path / "home", structure={"engine": "docling", "pages": "tables"})
+    settings = make_settings(tmp_path / "home", structure={"engine": "inklight", "pages": "tables"})
     with DocumentAgent(settings) as agent:
         agent.add([two])
         doc_id = agent.library.documents()[0].id
@@ -124,4 +125,4 @@ def test_only_pages_with_tables_go_to_docling(cards, tmp_path):
         assert meta["pages_structured"] == [2], meta
         res = agent.ask("What is the company name?", doc_ids=[doc_id], save=False)
         assert "Golden Palm Trading Co" in _head(res) and res.sources[0].page == 2, res.answer
-        assert agent.library.pages(doc_id)[0].blocks[0].ref is None  # page 1 keeps Indra's layout
+        assert agent.library.pages(doc_id)[0].blocks[0].ref is None  # page 1 keeps the OCR's layout

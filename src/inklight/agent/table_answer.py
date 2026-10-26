@@ -1,4 +1,4 @@
-"""Questions answered from a table's cells, using the structure Docling recovered (rows, columns, header cells).
+"""Questions answered from a table's cells, using the recovered table structure (rows, columns, header cells).
 
 A registration card prints "Company name | Company type | Registration number" as column headings over one row of
 values; a partners table repeats "Name | Role | Share" for several people. Read as lines, the heading nearest the
@@ -122,8 +122,8 @@ def _say_candidates(ctx: ToolContext, found: list[tuple[str, Any, _Hit]]) -> str
 
 
 def _upright_tables(ctx: ToolContext, doc_id: str, document: Any) -> list[Any]:
-    """Tables on pages whose frame Docling and Indra share: upright pages, and turned pages Docling was given turned
-    upright (a structure stored before that keeps Indra's own layout on them)."""
+    """Tables on pages whose frame the structure and the OCR share: upright pages, and turned pages structured turned
+    upright (a structure stored before that keeps the OCR's own layout on them)."""
     pages = {p.number: p for p in ctx.pages(doc_id)}
     upright = ctx.structure_meta(doc_id).get("rotated_pages_structured", [])
     out = []
@@ -364,7 +364,7 @@ def _source(doc, doc_id: str, document: Any, page: PageContent | None, hit: _Hit
 
 
 def _cell_conf(page: PageContent | None, bbox: Any) -> float | None:
-    """The lowest confidence Indra gave a line read inside the cell."""
+    """The lowest confidence the OCR gave a line read inside the cell."""
     if page is None or bbox is None:
         return None
     confs = [

@@ -23,7 +23,7 @@ from ..errors import ModelUnavailable
 def _session(path: Path, threads: int) -> Any:
     try:
         import onnxruntime as ort
-    except ImportError as exc:  # pragma: no cover - indra-ocr depends on it
+    except ImportError as exc:  # pragma: no cover - a dependency
         raise ModelUnavailable("onnxruntime is not installed") from exc
     opts = ort.SessionOptions()
     opts.intra_op_num_threads = threads

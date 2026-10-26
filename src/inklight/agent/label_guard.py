@@ -189,7 +189,7 @@ _SEGMENT = re.compile(r"\s+(?=\(\s*[^\W_]{1,2}\s*\)|[0-9٠-٩]{1,2}\s*[-–.)](?
 
 
 def _merged_field_names(ctx: ToolContext, src: Source, head: str) -> list[str] | None:
-    """The answer is several field names run together (Docling merges a register's stacked header cells into one
+    """The answer is several field names run together (the structure stage merges stacked header cells into one
     block): split at its list markers, two or more pieces, most of them field names printed on the cited page
     (numbered field names or "Label:" lines). Returns the field names, or None."""
     pieces = [ln.strip_markers(p).strip(" -–:") for p in _SEGMENT.split(head.strip().strip('“”"'))]

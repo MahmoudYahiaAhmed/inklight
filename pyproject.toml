@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "inklight"
-version = "0.2.0b1"
+version = "0.3.0b1"
 description = "Inklight — a local-first, OCR-powered document agent. See documents. Understand meaning. Take action."
 readme = "README.md"
 license = "Apache-2.0"
@@ -28,7 +28,12 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "indra-ocr>=1.1",
+  # Inklight OCR runs on ONNX Runtime; PDFs are read and rendered with PDFium; images with OpenCV and Pillow.
+  "onnxruntime>=1.17",
+  "opencv-python-headless>=4.8",
+  "pypdfium2>=4.30",
+  "pillow>=10",
+  "huggingface_hub>=0.23",  # the small models Ask can use (inklight models pull)
   "pydantic>=2.6",
   "typer>=0.12",
   "rich>=13",
@@ -41,8 +46,9 @@ dependencies = [
 
 [project.optional-dependencies]
 remote = ["httpx>=0.27"]
-# Document structure (layout, reading order, tables) from Docling on Indra's OCR; brings PyTorch. docs/STRUCTURE.md
-structure = ["docling>=2.142,<3", "docling-core>=2.104,<3"]
+# Inklight document structure (layout, reading order, tables) on the OCR's text: PyTorch runs the table model,
+# docling-core holds the structured document. docs/STRUCTURE.md
+structure = ["torch>=2.2", "torchvision>=0.17", "safetensors>=0.4", "rtree>=1.0", "docling-core>=2.104,<3"]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.5", "mypy>=1.10", "httpx>=0.27", "pymupdf>=1.24", "docling-core>=2.104,<3"]
 
 [project.scripts]
@@ -67,14 +73,16 @@ include = ["src/inklight", "tests", "docs", "hatch_build.py", "README.md", "LICE
 testpaths = ["tests"]
 addopts = "-q"
 markers = [
-  "ocr: needs the Indra OCR models (downloaded on first use)",
+  "ocr: needs the Inklight OCR models (downloaded on first use)",
   "models: needs the Inklight small models (`inklight models pull`)",
-  "structure: needs Docling and its layout/table models (`pip install \"inklight[structure]\"`)",
+  "structure: needs the structure runtime and models (`pip install \"inklight[structure]\"`)",
 ]
 
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+# Model code taken from its upstream projects, kept as close to them as possible so it can be compared line by line.
+extend-exclude = ["src/inklight/backends/ocr/*.py", "src/inklight/backends/structure/tableformer", "src/inklight/backends/structure/datamodel.py", "src/inklight/backends/structure/layout_postprocessor.py", "src/inklight/backends/structure/assemble.py", "src/inklight/backends/structure/reading_order.py", "src/inklight/backends/structure/reading_order_rb.py", "src/inklight/backends/structure/list_markers.py", "src/inklight/backends/structure/form_fields.py", "src/inklight/backends/structure/spatial.py", "src/inklight/backends/structure/tables.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM", "S"]
@@ -91,6 +99,11 @@ warn_unused_ignores = false
 check_untyped_defs = true
 plugins = ["pydantic.mypy"]
 
+[[tool.mypy.overrides]]
+module = ["inklight.backends.ocr.*", "inklight.backends.structure.tableformer.*", "inklight.backends.structure.datamodel", "inklight.backends.structure.layout_postprocessor", "inklight.backends.structure.assemble", "inklight.backends.structure.reading_order", "inklight.backends.structure.reading_order_rb", "inklight.backends.structure.list_markers", "inklight.backends.structure.form_fields", "inklight.backends.structure.spatial", "inklight.backends.structure.tables"]
+ignore_errors = true
+follow_imports = "skip"
+
 [tool.coverage.run]
 source = ["inklight"]
-omit = ["src/inklight/server/*", "src/inklight/__main__.py"]
+omit = ["src/inklight/server/*", "src/inklight/__main__.py", "src/inklight/backends/*"]

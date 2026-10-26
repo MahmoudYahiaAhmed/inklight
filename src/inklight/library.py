@@ -58,7 +58,7 @@ def doc_id_for(path: Path) -> str:
 
 @dataclass(frozen=True)
 class _Read:
-    """A file Indra has read, waiting to be structured and indexed."""
+    """A file the OCR has read, waiting to be structured and indexed."""
 
     path: Path
     kind: str
@@ -87,7 +87,7 @@ class Library:
         self._text_engine = PlainTextEngine()
         self.brain = brain or Brain(self.settings)
         self.retriever = Retriever(self.store, self.brain)
-        self._structures: dict[tuple[str, int], Any] = {}  # parsed DoclingDocuments, a few at a time
+        self._structures: dict[tuple[str, int], Any] = {}  # parsed structured documents, a few at a time
         self._closed = False
 
     @property
@@ -112,10 +112,10 @@ class Library:
             paths = [paths]
         files, skipped = discover(list(paths), self.settings.limits.max_files_per_task)
         report = IngestReport(warnings=skipped)
-        structured = self.settings.structure.engine == "docling"
+        structured = self.settings.structure.enabled
         if structured and files:
-            self._preload_structure()  # Docling's models load while Indra reads the first document
-        # With structure on, document i is structured on one worker while Indra reads document i+1.
+            self._preload_structure()  # the structure models load while the OCR reads the first document
+        # With structure on, document i is structured on one worker while the OCR reads document i+1.
         worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="inklight-structure") if structured else None
         waiting: deque[tuple[Path, Future[tuple[DocumentInfo, bool]]]] = deque()
         try:
@@ -182,9 +182,9 @@ class Library:
             return None, exc
 
     def _preload_structure(self) -> None:
-        """Start loading Docling's models in the background (once per process). A failure is reported later, by
+        """Start loading the structure models in the background (once per process). A failure is reported later, by
         the document whose structure could not be built."""
-        from .structure.docling_run import preload
+        from .structure.run import preload
 
         preload(self.settings.structure)
 
@@ -239,7 +239,7 @@ class Library:
         return _Read(checked.path, checked.kind, doc_id, base, content, password)
 
     def _finish(self, step: _Read) -> tuple[DocumentInfo, bool]:
-        """Structure (when on), chunk, classify and store a document Indra has read."""
+        """Structure (when on), chunk, classify and store a document the OCR has read."""
         doc_id, base = step.doc_id, step.base
         content, structure = self._structure(step.path, step.kind, step.content, step.password)
         chunks = [c for page in content.pages for c in chunk_page(page)]
@@ -274,10 +274,10 @@ class Library:
     def _structure(
         self, path: Path, kind: str, content: DocumentContent, password: str | None = None
     ) -> tuple[DocumentContent, tuple[str, str, str] | None]:
-        """Docling's structure on the OCR just read, when enabled. A failure keeps Indra's own layout and says so;
+        """The document structure on the OCR just read, when enabled. A failure keeps the OCR's own layout and says so;
         it never fails the document."""
         settings = self.settings.structure
-        if settings.engine != "docling" or kind == "text":
+        if not settings.enabled or kind == "text":
             return content, None
         from .structure import ENGINE, structure_document
 
@@ -292,7 +292,7 @@ class Library:
         return done.content, (ENGINE, meta, done.document_json)
 
     def structure(self, doc_id: str) -> tuple[dict, Any] | None:
-        """(meta, DoclingDocument) stored for a document, or None. The document is None when text is not stored
+        """(meta, structured document) stored for a document, or None. The document is None when text is not stored
         (privacy.store_text = false) or docling-core is not installed."""
         stored = self.store.get_structure(doc_id)
         if stored is None:

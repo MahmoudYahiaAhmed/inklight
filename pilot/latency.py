@@ -32,7 +32,7 @@ class Counted:
     """Wraps IndraEngine.reread to count and time every second reading."""
 
     def __init__(self) -> None:
-        from inklight.ocr.indra import IndraEngine
+        from inklight.ocr.engine import InklightOCR as IndraEngine
 
         self.calls = 0
         self.seconds = 0.0

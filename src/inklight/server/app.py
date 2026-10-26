@@ -274,7 +274,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
 
     @app.get("/api/documents/{doc_id}/structure")
     def document_structure(doc_id: str, format: str = "json") -> Response:  # noqa: A002 - the query parameter name
-        """The document's Docling structure: format=json (DoclingDocument), md, html or meta (what ran)."""
+        """The document's structure: format=json (docling-core's document format), md, html or meta (what ran)."""
         _doc(doc_id)
         stored = current().library.structure(doc_id)
         if stored is None:
@@ -292,7 +292,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             )
         if format == "html":
             headers = (
-                {"X-Inklight-Note": "Docling's HTML export leaves out text inside pictures; md and json keep it"}
+                {"X-Inklight-Note": "The HTML export leaves out text inside pictures; md and json keep it"}
                 if any(pic.children for pic in docling_doc.pictures)
                 else {}
             )

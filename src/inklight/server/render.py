@@ -16,7 +16,7 @@ def render_page(path: Path, number: int, page: PageContent, dpi: float) -> bytes
     try:
         import cv2
         import numpy as np
-    except ImportError:  # pragma: no cover - indra-ocr installs opencv
+    except ImportError:  # pragma: no cover - opencv is a dependency
         return None
     with path.open("rb") as fh:
         is_pdf = fh.read(5) == b"%PDF-"

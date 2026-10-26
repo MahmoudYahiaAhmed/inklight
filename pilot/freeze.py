@@ -77,16 +77,16 @@ def tree_files(folder: Path) -> dict[str, str]:
 
 
 def freeze(models_out: Path, brain: str) -> None:
-    import indra_ocr
     from huggingface_hub import try_to_load_from_cache
 
     import inklight
+    from inklight import modelstore
 
     if git("status", "--porcelain", "--", "src") not in ("", None):
         sys.exit("src/ has uncommitted changes: commit them first, so the baseline names real code")
     if models_out.exists() and any(models_out.iterdir()):
         sys.exit(f"{models_out} is not empty: freeze into a new folder")
-    ocr_src = Path(indra_ocr.model_dir())  # Indra's own pinned snapshot, from the local cache
+    ocr_src = modelstore.ensure(modelstore.OCR)  # the pinned OCR models, verified
     ocr_dst = models_out / "indra"
     shutil.copytree(ocr_src, ocr_dst)
     small: dict[str, dict] = {}
@@ -132,7 +132,7 @@ def freeze(models_out: Path, brain: str) -> None:
         "requirements_lock_sha256": sha256(LOCK),
         "brain": brain,
         "second_reading": True,
-        "indra_ocr_version": metadata.version("indra-ocr"),
+        "ocr_models_revision": modelstore.OCR.revision,
         "ocr_models": {"source": str(ocr_src.name), "files": tree_files(ocr_dst)},
         "small_models": {
             role: {**info, "files": tree_files(models_out / "small" / info["repo"].replace("/", "--"))}

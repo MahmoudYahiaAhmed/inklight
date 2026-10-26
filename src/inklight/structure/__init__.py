@@ -1,6 +1,6 @@
-"""Document structure from Docling on top of Indra's OCR (optional: ``pip install "inklight[structure]"``).
+"""Inklight document structure on top of Inklight OCR (optional: ``pip install "inklight[structure]"``).
 
-Indra reads the text; Docling's existing models find the layout, reading order, headings, lists, tables (rows,
+The OCR reads the text; the structure models find the layout, reading order, headings, lists, tables (rows,
 columns, spans, headers) and pictures; Inklight keeps the indexing, retrieval, answers, citations and review.
 See docs/STRUCTURE.md for how the pieces connect and what is measured.
 """
@@ -18,28 +18,28 @@ from ..schemas import DocumentContent
 
 log = logging.getLogger(__name__)
 
-ENGINE = "docling"
+ENGINE = "inklight"
 
 
 @dataclass(frozen=True)
 class Structured:
-    content: DocumentContent  # the same pages and OCR lines, with Docling's blocks
-    document_json: str  # the DoclingDocument, as Docling serialises it
+    content: DocumentContent  # the same pages and OCR lines, with the structure's blocks
+    document_json: str  # the structured document (docling-core's DoclingDocument format)
     meta: dict[str, Any]
 
 
 def available() -> bool:
-    from .docling_run import available as docling_available
+    from .run import available as runtime_available
 
-    return docling_available()
+    return runtime_available()
 
 
 def structure_document(
     path: Path, content: DocumentContent, settings: StructureSettings, password: str | None = None
 ) -> Structured:
-    """Run Docling on ``path`` with ``content``'s OCR lines as its text, and map its structure onto the pages."""
+    """Structure ``path`` with ``content``'s OCR lines as its text, and map the structure onto the pages."""
     from .adapter import adapt
-    from .docling_run import run
+    from .run import run
 
     result = run(path, content, settings, password)
     adapted = adapt(result.document, list(content.pages), upright=result.upright)
@@ -59,12 +59,12 @@ def structure_document(
 
 
 def load_document(document_json: str | None) -> Any | None:
-    """A stored DoclingDocument, or None when there is none or docling-core is not installed."""
+    """A stored structured document, or None when there is none or docling-core is not installed."""
     if not document_json:
         return None
     try:
         from docling_core.types.doc import DoclingDocument
     except ImportError:
-        log.warning("A stored document structure needs docling-core to be read: pip install docling-core")
+        log.warning('A stored document structure needs the structure runtime: pip install "inklight[structure]"')
         return None
     return DoclingDocument.model_validate_json(document_json)

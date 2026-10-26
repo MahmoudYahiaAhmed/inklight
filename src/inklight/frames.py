@@ -1,15 +1,15 @@
 """Page frames: the page as stored (upright) and the page as the file shows it (original).
 
-Indra reads a page turned sideways or upside down by turning it upright first. ``PageContent.rotation`` is how far
+The OCR reads a page turned sideways or upside down by turning it upright first. ``PageContent.rotation`` is how far
 the page as shown is turned counter-clockwise from upright (0, 90, 180 or 270), and the stored lines, blocks, table
-cells and citation boxes are all in the upright frame, whose size is ``PageContent.width x height``. Docling is given
+cells and citation boxes are all in the upright frame, whose size is ``PageContent.width x height``. Structure gets
 the page turned upright too, so its boxes share that frame. Only displaying a box on the page as the file shows it
 needs the original frame:
 
     upright --to_original--> original --to_upright--> upright        (the same box, both ways)
 
 The original frame of a PDF page is pdfium's rendering of it (its own /Rotate applied, as a viewer shows it); of an
-image, the image as read. Measured with Indra on a page image turned 0/90/180/270 degrees counter-clockwise: the
+image, the image as read. Measured with the OCR on a page image turned 0/90/180/270 degrees counter-clockwise: the
 stored boxes were identical in all four, and ``rotation`` was the turn.
 """
 

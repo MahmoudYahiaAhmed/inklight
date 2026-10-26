@@ -34,7 +34,7 @@ FIXTURES = {"card-ar.png": fx.arabic_card, "partners-en.png": fx.english_partner
 def _no_model_preload():
     """These tests replace Docling's inference with fixed documents: its models need not load in the background."""
     mp = pytest.MonkeyPatch()
-    mp.setattr("inklight.structure.docling_run.preload", lambda settings: None)
+    mp.setattr("inklight.structure.run.preload", lambda settings: None)
     yield
     mp.undo()
 
@@ -486,7 +486,7 @@ def test_the_structure_endpoint(library, monkeypatch):
 
 def test_only_pages_where_indra_found_a_table_are_chosen():
     from inklight.config import StructureSettings
-    from inklight.structure.docling_run import chosen_pages
+    from inklight.structure.run import chosen_pages
 
     text_page = _page(fx.Page()).model_copy(update={"number": 1, "blocks": (Block(index=0, label="Text", text="x"),)})
     table_page = _page(fx.arabic_card()).model_copy(
@@ -498,7 +498,7 @@ def test_only_pages_where_indra_found_a_table_are_chosen():
 
 
 def test_docling_page_numbers_are_mapped_back_to_the_documents():
-    from inklight.structure.docling_run import _renumbered
+    from inklight.structure.run import _renumbered
 
     document = fx.arabic_card().doc  # Docling numbered the one page it was given 1; it is the document's page 3
     _renumbered(document, {1: 3})

@@ -1,6 +1,6 @@
 """The workspace's document views: structure status, tables, and raw exports.
 
-Everything here is what was read, as read: OCR text and boxes from Indra, tables from Docling when structure ran.
+Everything here is what was read, as read: OCR text and boxes, and tables when document structure ran.
 Nothing is reviewed or corrected here; exports say so in their first line. Approved values come from review
 (review.py, /api/reviews/export).
 """
@@ -14,7 +14,9 @@ from typing import Any
 
 from ..schemas import DocumentInfo, PageContent
 
-RAW_NOTE = "Raw extraction as read by OCR (and Docling for tables): not reviewed. OCR confidence is an estimate."
+RAW_NOTE = (
+    "Raw extraction as read by OCR (and document structure for tables): not reviewed. OCR confidence is an estimate."
+)
 
 
 def structure_status(agent: Any, info: DocumentInfo, pages: list[PageContent]) -> dict[str, Any]:

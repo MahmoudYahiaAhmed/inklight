@@ -7,11 +7,12 @@ from collections.abc import Callable
 from ..config import OCRSettings
 from ..errors import ConfigError
 from .base import OCREngine
-from .indra import IndraEngine
+from .engine import IndraEngine, InklightOCR
 from .plaintext import PlainTextEngine
 
 _FACTORIES: dict[str, Callable[[OCRSettings], OCREngine]] = {
-    "indra": IndraEngine,
+    "inklight": InklightOCR,
+    "indra": InklightOCR,  # the earlier name of the same engine, so existing configurations keep working
 }
 
 
@@ -26,4 +27,4 @@ def create_engine(settings: OCRSettings) -> OCREngine:
         raise ConfigError(f"Unknown OCR engine {settings.engine!r}; known: {sorted(_FACTORIES)}") from exc
 
 
-__all__ = ["OCREngine", "IndraEngine", "PlainTextEngine", "create_engine", "register_engine"]
+__all__ = ["OCREngine", "InklightOCR", "IndraEngine", "PlainTextEngine", "create_engine", "register_engine"]

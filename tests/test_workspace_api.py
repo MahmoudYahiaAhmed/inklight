@@ -35,7 +35,7 @@ def client(tmp_path_factory):
     settings = make_settings(tmp / "home", structure={"engine": "docling"})
     mp = pytest.MonkeyPatch()
     mp.setenv("INKLIGHT_ALLOWED_HOSTS", "testserver")  # TestClient's host; not allowed by default
-    mp.setattr("inklight.structure.docling_run.preload", lambda settings: None)
+    mp.setattr("inklight.structure.run.preload", lambda settings: None)
     mp.setattr("inklight.structure.structure_document", _fixed_structure(pages))
     agent = DocumentAgent(settings, library=Library(settings, engine=FixedOCR(pages)))
     agent.add([tmp / "card-ar.png"])

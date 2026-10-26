@@ -260,14 +260,14 @@ def test_indra_rereads_an_image_region(tmp_path):
     np = pytest.importorskip("numpy")
     from inklight.config import OCRSettings
     from inklight.errors import ModelUnavailable
-    from inklight.ocr.indra import IndraEngine
+    from inklight.ocr.engine import InklightOCR
 
     img = np.full((300, 900), 255, dtype=np.uint8)
     cv2.putText(img, "TOTAL", (40, 160), cv2.FONT_HERSHEY_SIMPLEX, 1.6, 0, 3)
     cv2.putText(img, "63.000", (560, 160), cv2.FONT_HERSHEY_SIMPLEX, 1.6, 0, 3)
     path = Path(tmp_path) / "receipt.png"
     cv2.imwrite(str(path), img)
-    engine = IndraEngine(OCRSettings())
+    engine = InklightOCR(OCRSettings())
     try:
         engine.converter()
     except ModelUnavailable:

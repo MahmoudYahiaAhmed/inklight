@@ -1,8 +1,7 @@
-"""Indra OCR backend (https://github.com/datalab-to/indra).
+"""Inklight OCR as an engine: PDFs (a sound text layer first, OCR where needed) and images, page by page.
 
-Uses Indra's public API only: ``indra_ocr.load`` -> ``Converter.convert`` for
-PDFs (digital text layer first, OCR where needed) and ``Converter.ocr`` on
-``read_images`` frames for images, so page pixel sizes are known for overlays.
+The reading itself is ``inklight.backends.ocr``; this module turns its pages into Inklight's ``PageContent`` with
+boxes in the frame of the rendered page, so overlays and citations line up.
 """
 
 from __future__ import annotations
@@ -12,6 +11,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+from .. import modelstore
 from ..config import OCRSettings
 from ..errors import ModelUnavailable, OCRError
 from ..schemas import BBox, Block, DocumentContent, PageContent, TextLine
@@ -20,13 +20,14 @@ from .textcheck import layer_is_broken
 _IMAGE_KINDS = {"png", "jpeg", "tiff", "bmp", "webp"}
 
 
-class IndraEngine:
-    name = "indra"
+class InklightOCR:
+    name = "inklight"
 
     def __init__(self, settings: OCRSettings) -> None:
         self.settings = settings
         self._converter: Any = None
         self._lock = threading.Lock()
+        self.progress: modelstore.Progress | None = None  # set by a caller that shows the first download
 
     def supports(self, kind: str) -> bool:
         return kind == "pdf" or kind in _IMAGE_KINDS
@@ -34,31 +35,24 @@ class IndraEngine:
     # -- lifecycle ---------------------------------------------------------
 
     def converter(self) -> Any:
-        """Load Indra lazily, once. Its models (~76 MB) download on first use."""
+        """Load the OCR models lazily, once (downloaded on first use: ~76 MB)."""
         with self._lock:
             if self._converter is None:
+                from ..backends import ocr
+
+                folder = modelstore.ensure(modelstore.OCR, self.settings.model_dir, progress=self.progress)
                 try:
-                    import indra_ocr
-                except ImportError as exc:  # pragma: no cover - dependency is required
-                    raise ModelUnavailable("indra-ocr is not installed: pip install indra-ocr") from exc
-                try:
-                    self._converter = indra_ocr.load(
-                        path=self.settings.model_dir,
-                        threads=self.settings.threads,
-                        dpi=self.settings.dpi,
-                        mode=self.settings.mode,
+                    self._converter = ocr.load(
+                        folder, threads=self.settings.threads, dpi=self.settings.dpi, mode=self.settings.mode
                     )
                 except Exception as exc:
-                    raise ModelUnavailable(
-                        f"Could not load Indra OCR models: {exc}. Check network access for the first "
-                        "download, or set ocr.model_dir / INDRA_OCR_MODEL_DIR to a local copy."
-                    ) from exc
+                    raise ModelUnavailable(f"Could not load the Inklight OCR models from {folder}: {exc}") from exc
             return self._converter
 
     # -- reading -----------------------------------------------------------
 
     def read(self, path: Path, *, max_pages: int, password: str | None = None) -> DocumentContent:
-        import indra_ocr
+        from ..backends.ocr import InputError
 
         conv = self.converter()
         try:
@@ -66,7 +60,7 @@ class IndraEngine:
                 pages, total = self._read_pdf(conv, path, max_pages, password)
             else:
                 pages, total = self._read_image(conv, path, max_pages)
-        except indra_ocr.InputError as exc:
+        except InputError as exc:
             raise OCRError(str(exc)) from exc
         except OCRError:
             raise
@@ -127,7 +121,7 @@ class IndraEngine:
         try:
             doc = pdfium.PdfDocument(str(path), password=password)
             try:
-                arr = doc[index].render(scale=scale, grayscale=True).to_numpy()  # Indra's scale: same box frame
+                arr = doc[index].render(scale=scale, grayscale=True).to_numpy()  # the OCR's scale: same box frame
             finally:
                 doc.close()
             page = conv.ocr(arr[..., 0] if arr.ndim == 3 else arr)
@@ -139,7 +133,7 @@ class IndraEngine:
         return page, "broken Arabic text layer; OCR instead"
 
     def _read_image(self, conv: Any, path: Path, max_pages: int) -> tuple[list[PageContent], int]:
-        from indra_ocr.document import read_images
+        from ..backends.ocr import read_images
 
         frames = read_images(path)
         pages = []
@@ -159,7 +153,7 @@ class IndraEngine:
                 continue
             height, width = gray.shape[:2]
             if int(getattr(page, "rotation", 0) or 0) in (90, 270):
-                width, height = height, width  # Indra's boxes are in the upright frame
+                width, height = height, width  # the OCR's boxes are in the upright frame
             pages.append(_to_page(index + 1, page, float(width), float(height)))
         return pages, len(frames)
 
@@ -172,7 +166,8 @@ class IndraEngine:
         if _is_pdf(path) or rotation:
             return None
         import cv2
-        from indra_ocr.document import read_images
+
+        from ..backends.ocr import read_images
 
         frames = read_images(path)
         if not 1 <= page <= len(frames):
@@ -206,11 +201,9 @@ def _is_pdf(path: Path) -> bool:
 
 
 def _pdf_scale(w_pt: float, h_pt: float, dpi: float) -> float:
-    """Mirror Indra's render scale so stored boxes match a re-render."""
-    try:
-        from indra_ocr.document import MAX_PAGE_PIXELS
-    except ImportError:  # pragma: no cover - older Indra
-        MAX_PAGE_PIXELS = 100_000_000  # noqa: N806
+    """The OCR's render scale, so stored boxes match a re-render."""
+    from ..backends.ocr.document import MAX_PAGE_PIXELS
+
     k = dpi / 72.0
     return float(min(k, (MAX_PAGE_PIXELS / max(w_pt * h_pt, 1.0)) ** 0.5))
 
@@ -263,3 +256,6 @@ def _to_page(number: int, page: Any, width: float, height: float) -> PageContent
         note=str(getattr(page, "note", "") or ""),
         ocr_ms=timings.get("total_ms"),
     )
+
+
+IndraEngine = InklightOCR  # the earlier name, kept for code that imports it

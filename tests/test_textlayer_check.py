@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from inklight.config import OCRSettings
-from inklight.ocr.indra import IndraEngine
+from inklight.ocr.engine import InklightOCR
 from inklight.ocr.textcheck import broken_arabic_share, layer_is_broken
 
 # UN S/2023/50 (Arabic), page 2, as its text layer decodes: lam-alef split ("األمني"), alef runs ("اااااا").
@@ -82,7 +82,7 @@ def _two_page_pdf(path: Path) -> Path:
 
 
 def test_engine_ocrs_a_page_whose_layer_is_broken(tmp_path):
-    engine = IndraEngine(OCRSettings())
+    engine = InklightOCR(OCRSettings())
     fake = FakeConverter()
     engine._converter = fake
     content = engine.read(_two_page_pdf(tmp_path / "ar.pdf"), max_pages=10)
@@ -95,7 +95,7 @@ def test_engine_ocrs_a_page_whose_layer_is_broken(tmp_path):
 
 
 def test_engine_keeps_text_layer_in_text_mode(tmp_path):
-    engine = IndraEngine(OCRSettings(mode="text"))
+    engine = InklightOCR(OCRSettings(mode="text"))
     fake = FakeConverter()
     engine._converter = fake
     content = engine.read(_two_page_pdf(tmp_path / "ar.pdf"), max_pages=10)
@@ -117,7 +117,7 @@ class EmptyConverter(FakeConverter):
 
 @pytest.mark.parametrize("converter", [FailingConverter, EmptyConverter])
 def test_a_failed_reread_keeps_the_layer_and_the_document(tmp_path, converter):
-    engine = IndraEngine(OCRSettings())
+    engine = InklightOCR(OCRSettings())
     fake = converter()
     engine._converter = fake
     content = engine.read(_two_page_pdf(tmp_path / "ar.pdf"), max_pages=10)

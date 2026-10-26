@@ -32,7 +32,7 @@ def resolve(
             return found
     try:
         from huggingface_hub import hf_hub_download, try_to_load_from_cache
-    except ImportError as exc:  # pragma: no cover - indra-ocr depends on it
+    except ImportError as exc:  # pragma: no cover - a dependency
         raise ModelUnavailable("huggingface_hub is required to locate models") from exc
     out: dict[str, Path] = {}
     for name in files:

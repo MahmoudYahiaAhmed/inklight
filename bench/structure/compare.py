@@ -1,4 +1,4 @@
-"""Controlled comparison: Inklight without (A) and with (B) Docling's structure, on the same Indra OCR.
+"""Controlled comparison: Inklight without (A) and with (B) document structure, on the same OCR.
 
     python bench/structure/compare.py --docs DIR --models MODELS --out OUT.json [--brain rules]
 
@@ -39,9 +39,9 @@ NOT_FOUND = re.compile(
 
 def ocr_once(docs: Path, models: Path, cache: Path, files: list[str]) -> None:
     from inklight.config import OCRSettings
-    from inklight.ocr.indra import IndraEngine
+    from inklight.ocr import create_engine
 
-    engine = IndraEngine(OCRSettings(model_dir=str(models / "indra")))
+    engine = create_engine(OCRSettings(model_dir=str(models / "indra")))
     cache.mkdir(parents=True, exist_ok=True)
     for name in files:
         out = cache / f"{name}.json"
@@ -94,7 +94,7 @@ def run_mode(mode: str, docs: Path, cache: Path, home: Path, cases: dict, brain:
     StructureSettings = getattr(config, "StructureSettings", None)  # noqa: N806 (absent before structure support)
 
     tuning = json.loads(os.environ.get("STRUCTURE_COMPARE_TUNING", "{}"))  # e.g. {"table_mode": "fast"}
-    engine = "docling" if mode == "B" else "none"
+    engine = "docling" if mode == "B" else "none"  # "docling" is accepted by every version measured
     extra = {"structure": StructureSettings(engine=engine, **tuning)} if StructureSettings else {}
     settings = Settings(
         home=home,
@@ -236,14 +236,18 @@ def main() -> None:
         result["wall_s"] = round(time.perf_counter() - started, 1)
         results.append(result)
     from inklight.config import StructureSettings
-    from inklight.structure.docling_run import components
+
+    try:
+        from inklight.structure.run import components
+    except ImportError:  # a checkout from before the internal structure backend
+        from inklight.structure.docling_run import components  # type: ignore[no-redef]
 
     report = {
         "label": "STRUCTURE COMPARISON (synthetic documents, fixed Indra OCR)",
         "modes": {
             "A0": f"unchanged Inklight from {args.baseline_src}" if args.baseline_src else None,
             "A": "this build, structure off",
-            "B": "this build, Docling structure on Indra's lines",
+            "B": "this build, document structure on the OCR's lines",
         },
         "brain": args.brain,
         "python": platform.python_version(),

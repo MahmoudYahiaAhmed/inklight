@@ -1,13 +1,13 @@
-"""Docling's document structure as Inklight pages, without losing or changing Indra's text.
+"""The document structure as Inklight pages, without losing or changing the OCR's text.
 
-- Each page keeps its original OCR ``lines`` untouched (text, box, confidence as Indra read them).
-- Its ``blocks`` become Docling's items in Docling's reading order, each with ``ref`` pointing back to the item
-  ('#/tables/0') and its box converted from Docling's page coordinates to Inklight's frame.
+- Each page keeps its original OCR ``lines`` untouched (text, box, confidence as the OCR read them).
+- Its ``blocks`` become the structure's items in reading order, each with ``ref`` pointing back to the item
+  ('#/tables/0') and its box converted from the structure's page coordinates (points) to Inklight's frame.
 - A table block's text names each value with its column header ("اسم الشركة: شركة …"), row by row, so search and
   answers see which header a value belongs to; the cells themselves stay in the stored DoclingDocument.
 - Text inside a picture becomes "Picture-Text" blocks, which are searched like any text.
-- A line that no Docling item holds is kept as a "Text" block of its own: no recognised text disappears.
-- Text Docling produced that is not in Indra's lines would mean another OCR ran; it is counted ("foreign_tokens").
+- A line that no structure item holds is kept as a "Text" block of its own: no recognised text disappears.
+- Text in the structure that is not in the OCR's lines would mean another OCR ran; it is counted ("foreign_tokens").
 """
 
 from __future__ import annotations
@@ -48,7 +48,7 @@ class Adapted:
 
 def adapt(document: Any, pages: list[PageContent], upright: Collection[int] = ()) -> Adapted:
     """Inklight pages whose blocks are ``document``'s items; ``pages`` are the OCR pages it was built from, and
-    ``upright`` the turned pages (rotation 90/180/270) that Docling was given turned upright."""
+    ``upright`` the turned pages (rotation 90/180/270) that were structured turned upright."""
     by_number = {p.number: p for p in pages}
     blocks: dict[int, list[Block]] = {p.number: [] for p in pages}
     pictures = {pic.self_ref for pic in document.pictures}
@@ -57,7 +57,7 @@ def adapt(document: Any, pages: list[PageContent], upright: Collection[int] = ()
         for prov in getattr(item, "prov", []) or []:
             page = by_number.get(prov.page_no)
             if page is None or page.number in kept:
-                continue  # a rotated page keeps Indra's own layout (its boxes are in the upright frame)
+                continue  # a rotated page keeps the OCR's own layout (its boxes are in the upright frame)
             label = _label(item, pictures)
             text = _text(item, document)
             if label == "Picture":
@@ -92,7 +92,7 @@ def adapt(document: Any, pages: list[PageContent], upright: Collection[int] = ()
         "tables": len(document.tables),
         "pictures": len(document.pictures),
         "orphan_lines": orphans_total,
-        "rotated_pages_kept": sorted(kept),  # pages whose frame Docling did not share: Indra's layout kept
+        "rotated_pages_kept": sorted(kept),  # pages whose frame the structure did not share: OCR layout kept
         "rotated_pages_structured": sorted(p.number for p in pages if p.rotation % 360 and p.number not in kept),
         "foreign_tokens": _foreign_tokens(document, pages),
     }
@@ -100,8 +100,8 @@ def adapt(document: Any, pages: list[PageContent], upright: Collection[int] = ()
 
 
 def same_frame(page: PageContent, document: Any, upright: Collection[int] = ()) -> bool:
-    """Whether Docling's page and Indra's are the same upright frame: a page Indra read turned counts only when
-    Docling was given it turned upright (``upright``; a structure stored before that keeps Indra's layout), and
+    """Whether the structure's page and the OCR's are the same upright frame: a page the OCR read turned counts only
+    when it was structured turned upright (``upright``; a structure stored before that keeps the OCR's layout), and
     both have the same shape (a frame turned by one of them and not the other has width and height swapped)."""
     size = getattr(document.pages.get(page.number), "size", None)
     if page.rotation % 360 and page.number not in upright:
@@ -250,7 +250,7 @@ def to_inklight(bbox: Any, page_size: Any, page: PageContent) -> BBox | None:
 
 
 def _to_inklight(bbox: Any, page_size: Any, page: PageContent) -> BBox | None:
-    """A Docling box (page units, either origin) in Inklight's frame (pixels of the rendered page, top-left)."""
+    """A structure box (page units, either origin) in Inklight's frame (pixels of the rendered page, top-left)."""
     if bbox is None or page_size is None or not page.width or not page.height:
         return None
     top_left = bbox.to_top_left_origin(page_height=page_size.height)
@@ -300,7 +300,7 @@ def _squash(text: str) -> str:
 
 
 def _foreign_tokens(document: Any, pages: list[PageContent]) -> int:
-    """Tokens in Docling's text that are not in Indra's lines: more than zero would mean another text source."""
+    """Tokens in the structure's text that are not in the OCR's lines: more than zero would mean another text source."""
     known = {t for p in pages for ln in p.lines for t in _TOKEN.findall(ln.text)}
     found = {
         t

@@ -30,14 +30,14 @@ class Limits(BaseModel):
     task_timeout_s: float = Field(600.0, gt=0)
     step_timeout_s: float = Field(300.0, gt=0)
     max_retries: int = Field(1, ge=0, le=5)
-    ocr_workers: int = Field(0, ge=0, description="0 = let Indra pick from available cores.")
+    ocr_workers: int = Field(0, ge=0, description="0 = let the OCR pick from available cores.")
     context_chars: int = Field(6000, ge=500, description="Evidence budget handed to any model.")
 
 
 class OCRSettings(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    engine: str = "indra"
+    engine: str = "inklight"
     dpi: float = Field(200.0, ge=72, le=600)
     mode: Literal["auto", "ocr", "text"] = "auto"
     threads: int = Field(4, ge=1, le=64)
@@ -81,32 +81,29 @@ class ExtractionSettings(BaseModel):
 
 
 class StructureSettings(BaseModel):
-    """Document structure from Docling (layout, reading order, tables), built on Indra's OCR text.
+    """Inklight document structure (layout, reading order, tables), built on the OCR's text.
 
-    Off by default: Docling and its models (PyTorch, ~0.5 GB of weights) are an optional install,
+    Off by default: its runtime (PyTorch) and models (~380 MB, downloaded once) are an optional install,
     ``pip install "inklight[structure]"``. See docs/STRUCTURE.md.
     """
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    engine: Literal["none", "docling"] = Field(
-        "none", description="'docling': Docling's layout, reading order and table structure on Indra's text."
+    engine: Literal["none", "inklight", "docling"] = Field(
+        "none",
+        description="'inklight': layout, reading order and table structure on the OCR's text "
+        "('docling' is the earlier name of the same setting).",
     )
-    table_model: Literal["tableformer", "tableformer_v2"] = Field(
-        "tableformer", description="Docling's table-structure model: TableFormer, or TableFormer V2."
-    )
-    table_mode: Literal["accurate", "fast"] = Field("accurate", description="TableFormer (V1) mode.")
-    layout_runtime: Literal["torch", "onnx"] = Field(
-        "onnx", description="Run the Heron layout model as its ONNX export with ONNX Runtime (faster), or with PyTorch."
-    )
+    table_mode: Literal["accurate", "fast"] = Field("accurate", description="Table structure model: accurate or fast.")
     pages: Literal["all", "tables"] = Field(
-        "all", description="'tables': only pages where Indra's layout found a table or form go to Docling."
-    )
-    artifacts_path: str | None = Field(
-        None, description="A local copy of Docling's model weights (no download); default: Docling's own cache."
+        "all", description="'tables': only pages where the OCR's layout found a table or form are structured."
     )
     threads: int = Field(0, ge=0, le=64, description="CPU threads for the layout and table models; 0 = all cores.")
-    batch_size: int = Field(4, ge=1, le=64, description="Pages (layout) and tables (TableFormer) per model call.")
+    batch_size: int = Field(4, ge=1, le=64, description="Pages per layout model call.")
+
+    @property
+    def enabled(self) -> bool:
+        return self.engine != "none"
 
 
 class Privacy(BaseModel):

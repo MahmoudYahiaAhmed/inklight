@@ -73,30 +73,35 @@ def _progress() -> Progress:
     )
 
 
-def _first_run_notice(agent) -> None:  # type: ignore[no-untyped-def]
-    """Say so before Indra fetches its models, instead of appearing to hang."""
-    if agent.settings.ocr.model_dir:
-        return
-    try:
-        from huggingface_hub import try_to_load_from_cache
-        from indra_ocr.models import HF_REPO, HF_REVISION
+def _ensure_models(settings) -> None:  # type: ignore[no-untyped-def]
+    """Fetch the models a run needs before it starts, with a progress bar on first use (verified copies are used
+    as they are, without network access)."""
+    from . import modelstore
+    from .structure.run import available as structure_available
 
-        # The detector is one of the files Indra always fetches (indra_ocr.models.FILES); the repo has no config.json.
-        cached = isinstance(try_to_load_from_cache(HF_REPO, "det.onnx", revision=HF_REVISION), str)
-    except Exception:  # best effort only
-        return
-    if not cached:
-        console.print(
-            Text(
-                "First run: downloading Indra OCR models (~76 MB, once). Licensed by Datalab under a modified "
-                "OpenRAIL-M license — see THIRD_PARTY_LICENSES.md.",
-                "accent",
-            )
-        )
+    wanted = [(modelstore.OCR, settings.ocr.model_dir)]
+    if settings.structure.enabled and structure_available():
+        tables = modelstore.TABLES if settings.structure.table_mode == "accurate" else modelstore.TABLES_FAST
+        wanted += [(modelstore.LAYOUT, None), (tables, None)]
+    for model, local in wanted:
+        if modelstore.locate(model, local) is not None:
+            continue
+        mb = model.size / 1e6
+        console.print(Text(f"First use: downloading the {model.title} models ({mb:.0f} MB, once).", "accent"))
+        with _progress() as bar:
+            task = bar.add_task(f"Downloading {model.title}", total=model.size)
+
+            def on(_what: str, done: int, total: int, task=task, bar=bar) -> None:  # type: ignore[no-untyped-def]
+                bar.update(task, completed=done, total=total)
+
+            try:
+                modelstore.ensure(model, local, progress=on)
+            except InklightError as exc:
+                _fail(exc)
 
 
 def _ingest_with_progress(agent, paths: list[str], password: str | None = None, force: bool = False):  # type: ignore[no-untyped-def]
-    _first_run_notice(agent)
+    _ensure_models(agent.settings)
     with _progress() as bar:
         task = bar.add_task("Reading documents", total=None)
 
@@ -446,31 +451,31 @@ def structure(
     out: Annotated[Path | None, typer.Option("--out", "-o", help="Write to this file.")] = None,
     config: ConfigOpt = None,
 ) -> None:
-    """Export a document's structure from Docling: Markdown, the DoclingDocument JSON, HTML, or what ran (meta).
+    """Export a document's structure: Markdown, its JSON (docling-core's document format), HTML, or what ran (meta).
 
-    Needs the document to have been processed with [structure] engine = "docling"."""
+    Needs the document to have been processed with [structure] engine = "inklight"."""
     agent = _agent(config)
     info = agent.library.find(doc)
     if info is None:
         _fail(InklightError(f"No document matches {doc!r}"))
     stored = agent.library.structure(info.id)
     if stored is None:
-        _fail(InklightError(f'{info.name} has no stored structure: process it with [structure] engine = "docling"'))
+        _fail(InklightError(f'{info.name} has no stored structure: process it with [structure] engine = "inklight"'))
     meta, document = stored
     if fmt == "meta":
         text = json.dumps(meta, ensure_ascii=False, indent=2)
     elif document is None:
         _fail(
-            InklightError("The structure's text is not stored (privacy.store_text = false) or docling-core is missing")
+            InklightError(
+                "The structure's text is not stored (privacy.store_text = false), or the structure runtime is missing"
+            )
         )
     elif fmt == "json":
         text = json.dumps(document.export_to_dict(), ensure_ascii=False, indent=2)
     elif fmt == "html":
         text = document.export_to_html()
         if any(pic.children for pic in document.pictures):
-            console.print(
-                Text("Note: Docling's HTML export leaves out text inside pictures; md and json keep it.", "warn")
-            )
+            console.print(Text("Note: the HTML export leaves out text inside pictures; md and json keep it.", "warn"))
     elif fmt == "md":
         text = document.export_to_markdown(traverse_pictures=True)  # text inside pictures included
     else:
@@ -495,27 +500,30 @@ def doctor(config: ConfigOpt = None) -> None:
         ("home", str(settings.home), True),
         ("cpu cores", str(os.cpu_count()), True),
     ]
-    try:
-        from importlib.metadata import version
+    from . import modelstore
+    from .structure.run import available as structure_available
 
-        import indra_ocr  # noqa: F401
+    def model_row(name: str, model: modelstore.ModelSet, local: str | None, needed: bool) -> None:
+        info = modelstore.status(model, local)
+        if info["installed"]:
+            rows.append((name, f"ready ({model.size / 1e6:.0f} MB, revision {model.revision[:7]})", True))
+        else:
+            why = info.get("problem") or "not downloaded yet: `inklight models pull` (or it downloads on first use)"
+            rows.append((name, str(why), not needed and "problem" not in info))
 
-        rows.append(("indra-ocr", version("indra-ocr"), True))
-    except Exception as exc:  # report, don't crash
-        rows.append(("indra-ocr", f"missing ({exc})", False))
-    from .structure.docling_run import available as docling_available
-    from .structure.docling_run import components
-
-    wanted = settings.structure.engine == "docling"
-    if docling_available():
-        rows.append(
-            ("structure", f"docling {components(settings.structure)['docling']} ({settings.structure.engine})", True)
-        )
+    model_row("OCR models", modelstore.OCR, settings.ocr.model_dir, True)
+    wanted = settings.structure.enabled
+    if structure_available():
+        rows.append(("structure", "on" if wanted else 'installed, off ([structure] engine = "inklight")', True))
+        if wanted:
+            tables = modelstore.TABLES if settings.structure.table_mode == "accurate" else modelstore.TABLES_FAST
+            model_row("layout model", modelstore.LAYOUT, None, True)
+            model_row("table model", tables, None, True)
     else:
         rows.append(
             (
                 "structure",
-                "docling not installed" + (" — but [structure] engine = docling" if wanted else ""),
+                'not installed: pip install "inklight[structure]"' + (" (it is turned on)" if wanted else ""),
                 not wanted,
             )
         )
@@ -578,23 +586,51 @@ def review_export(
 
 @models_app.command("status")
 def models_status(config: ConfigOpt = None) -> None:
-    """Show which small models are installed."""
+    """Show where each model is, its pinned revision and whether its files are complete and verified."""
+    from . import modelstore
     from .brains import Brain
 
-    for role, info in Brain(_settings(config)).status().items():
-        console.print(Text(f"{role}: {json.dumps(info)}"))
+    settings = _settings(config)
+    for model in modelstore.SETS.values():
+        local = settings.ocr.model_dir if model is modelstore.OCR else None
+        console.print(Text(f"{model.title}: {json.dumps(modelstore.status(model, local))}"))
+    for role, info in Brain(settings).status().items():
+        console.print(Text(f"{role} (Ask): {json.dumps(info)}"))
 
 
 @models_app.command("pull")
 def models_pull(
-    writer: Annotated[bool, typer.Option(help="Also fetch the 135M writer (~137 MB).")] = False,
+    structure: Annotated[
+        bool | None, typer.Option(help="Also fetch the document structure models (~384 MB); default: when it is on.")
+    ] = None,
+    ask: Annotated[
+        bool, typer.Option(help="Also fetch the small models Ask uses (reader 66 MB, embedder 34 MB).")
+    ] = True,
+    writer: Annotated[bool, typer.Option(help="Also fetch the 135M writer (~137 MB) for Ask.")] = False,
     config: ConfigOpt = None,
 ) -> None:
-    """Download the small models once (reader 66 MB, embedder 34 MB). Works offline afterwards."""
+    """Download the models once (OCR ~76 MB, and the ones asked for); everything runs offline afterwards."""
+    from . import modelstore
     from .brains import hub
 
     settings = _settings(config)
-    roles = ["reader", "embedder"] + (["writer"] if writer else [])
+    wanted = [(modelstore.OCR, settings.ocr.model_dir)]
+    if structure or (structure is None and settings.structure.enabled):
+        tables = modelstore.TABLES if settings.structure.table_mode == "accurate" else modelstore.TABLES_FAST
+        wanted += [(modelstore.LAYOUT, None), (tables, None)]
+    for model, local in wanted:
+        with _progress() as bar:
+            task = bar.add_task(f"{model.title}", total=model.size)
+
+            def on(_what: str, done: int, total: int, task=task, bar=bar) -> None:  # type: ignore[no-untyped-def]
+                bar.update(task, completed=done, total=total)
+
+            try:
+                folder = modelstore.ensure(model, local, progress=on)
+            except InklightError as exc:
+                _fail(exc)
+        console.print(Text.assemble(("✓ ", "ok"), (f"{model.title:<40}", "bold"), (str(folder), "muted")))
+    roles = (["reader", "embedder"] if ask else []) + (["writer"] if writer else [])
     for role in roles:
         repo = getattr(settings.models, role)
         with console.status(f"Downloading {role} ({repo})…", spinner_style=CYAN):

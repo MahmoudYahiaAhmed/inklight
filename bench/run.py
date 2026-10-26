@@ -1,4 +1,4 @@
-"""Reproducible benchmark suite. Every number in docs/BENCHMARKS.md comes from this script.
+"""Reproducible benchmark suite. Every number in evaluation/BENCHMARKS.md comes from this script.
 
     python bench/run.py            # full run, writes bench/results.json and bench/results.md
     python bench/run.py --quick    # fewer documents
@@ -326,7 +326,7 @@ def main() -> None:  # noqa: C901 - a linear script
 
     from inklight import DocumentAgent
     from inklight.config import load_settings
-    from inklight.ocr.indra import IndraEngine
+    from inklight.ocr.engine import InklightOCR
 
     work = Path(tempfile.mkdtemp(prefix="inklight-bench-"))
     demo, synth = work / "demo", work / "synth"
@@ -335,7 +335,7 @@ def main() -> None:  # noqa: C901 - a linear script
     truth = synth_invoices(synth, n)
 
     # --- OCR engine alone ------------------------------------------------
-    engine = IndraEngine(load_settings(home=str(work / "h0")).ocr)
+    engine = InklightOCR(load_settings(home=str(work / "h0")).ocr)
     t = time.perf_counter()
     engine.converter()
     results["indra_load_s"] = round(time.perf_counter() - t, 2)
@@ -522,11 +522,11 @@ def main() -> None:  # noqa: C901 - a linear script
     agent.close()
     stats = pstats.Stats(pr)
     total = stats.total_tt  # type: ignore[attr-defined]
-    buckets = {"indra_ocr_python": 0.0, "inklight_python": 0.0, "native_c_calls": 0.0, "other_python": 0.0}
+    buckets = {"ocr_python": 0.0, "inklight_python": 0.0, "native_c_calls": 0.0, "other_python": 0.0}
     for (file, _line, _fn), (_cc, _nc, tt, _ct, _callers) in stats.stats.items():  # type: ignore[attr-defined]
         f = file.replace("\\", "/")
-        if "indra_ocr" in f or "onnxruntime" in f or "pypdfium" in f or "cv2" in f:
-            buckets["indra_ocr_python"] += tt
+        if "inklight/backends/ocr" in f.replace("\\", "/") or "onnxruntime" in f or "pypdfium" in f or "cv2" in f:
+            buckets["ocr_python"] += tt
         elif "/inklight/" in f:
             buckets["inklight_python"] += tt
         elif file == "~":  # C functions: ONNX Runtime inference, pdfium, OpenCV, sqlite, hashing

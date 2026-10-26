@@ -103,7 +103,7 @@ async function renderDocPanel() {
   const p = pages.find((x) => x.number === page);
   const exp = (fmt, label) => h("a", { class: "ghost small button", href: withToken(`/api/documents/${doc.id}/export?format=${fmt}`) }, label);
   const status = structure?.available
-    ? h("div", {}, h("b", {}, "Structure: "), `Docling on Indra's OCR · ${structure.tables} table(s) · this page: ${structure.pages[page] || "—"}`)
+    ? h("div", {}, h("b", {}, "Structure: "), `Inklight document structure · ${structure.tables} table(s) · this page: ${structure.pages[page] || "—"}`)
     : h("div", { class: "warn-t" }, h("b", {}, "Structure unavailable: "), structure?.reason || "");
   const textCard = h("article", { class: "card" },
     h("div", { class: "card-head" }, h("div", { class: "req" }, `Page ${page} text (as read by OCR)`)),
@@ -112,7 +112,7 @@ async function renderDocPanel() {
     h("article", { class: "card" },
       h("div", { class: "card-head" }, h("div", { class: "req" }, doc.name), h("span", { class: `chip ${doc.doc_type}` }, doc.doc_type),
         h("span", {}, `${doc.pages} page(s)`),
-        doc.mean_conf != null ? h("span", { title: "Indra's own estimate of its reading. It does not guarantee any value is right." }, `OCR estimate ${(doc.mean_conf * 100).toFixed(0)}%`) : null),
+        doc.mean_conf != null ? h("span", { title: "The OCR's own estimate of its reading. It does not guarantee any value is right." }, `OCR estimate ${(doc.mean_conf * 100).toFixed(0)}%`) : null),
       status,
       h("div", { class: "actions" }, h("span", { class: "muted" }, "Raw extraction (not reviewed):"),
         exp("txt", "Text (.txt)"), exp("json", "Text, boxes and tables (.json)"), structure?.available ? exp("tables.csv", "Tables (.csv)") : null)),
@@ -122,7 +122,7 @@ async function renderDocPanel() {
       const tables = await api(`/api/documents/${doc.id}/tables`);
       if (state.viewer.doc?.id !== doc.id) return;
       out.append(h("article", { class: "card" }, h("div", { class: "card-head" }, h("div", { class: "req" }, `Tables (${tables.length})`),
-        h("span", { class: "muted" }, "as recovered by Docling; cells hold the OCR text")),
+        h("span", { class: "muted" }, "as recovered by document structure; cells hold the OCR text")),
         ...(tables.length ? tables.map(tableGrid) : [h("div", { class: "muted" }, "No table found in this document.")])));
     } catch (err) { out.append(h("div", { class: "card warning" }, `Tables could not be loaded: ${err.message}`)); }
   }
@@ -540,7 +540,7 @@ async function loadStatus() {
     h("div", {}, `${v.installed ? "✓" : "✗"} ${k} (${v.params}) — ${v.repo}${v.installed ? "" : " · run `inklight models pull`"}`)),
     h("div", {}, `Remote model: ${s.models.remote.configured ? `configured (${s.models.remote.used_for})` : "off — nothing leaves this machine"}`));
   $("#set-info").replaceChildren(
-    h("div", {}, `OCR: Indra · ${s.ocr.dpi} dpi · mode ${s.ocr.mode}`),
+    h("div", {}, `OCR: Inklight OCR · ${s.ocr.dpi} dpi · mode ${s.ocr.mode}`),
     h("div", {}, `Limits: ${s.limits.max_file_mb} MB/file · ${s.limits.max_pages} pages · ${s.limits.max_steps} steps · ${s.limits.task_timeout_s}s/task`),
     h("div", {}, `Privacy: text stored locally = ${s.privacy.store_text}; document text in logs = ${s.privacy.log_document_text}`),
     h("div", {}, `Outputs: ${s.outputs}`), h("div", {}, `Library: ${s.stats.documents} docs · ${s.stats.pages} pages · ${s.stats.chunks} chunks · v${s.version}`));

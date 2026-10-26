@@ -37,8 +37,10 @@ jobs:
       - name: Cache models
         uses: actions/cache@v4
         with:
-          path: ~/.cache/huggingface
-          key: hf-${{ runner.os }}-indra-v1
+          path: |
+            ~/.cache/inklight
+            ~/.cache/huggingface
+          key: models-${{ runner.os }}-ocr-bd02167
       - run: pip install -e ".[dev]"
       - run: pytest --cov=inklight --cov-report=term --cov-fail-under=80
 

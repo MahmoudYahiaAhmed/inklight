@@ -1,6 +1,6 @@
 """Is a PDF text layer's Arabic usable?
 
-Indra already refuses a text layer with a broken font map, or one whose codes are Latin while the page shows
+The OCR already refuses a text layer with a broken font map, or one whose codes are Latin while the page shows
 another script. It cannot see a layer whose codes are Arabic letters, but the wrong ones: a font that maps the
 lam-alef ligature and positional forms badly. The UN's Arabic PDFs are like this ("األمم" for "الأمم",
 "امرساااااا" for "المرسلة"). The text looks Arabic, but searching and reading it fails.

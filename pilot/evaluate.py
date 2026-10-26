@@ -295,7 +295,7 @@ class Instrument:
     def __init__(self) -> None:
         import onnxruntime as ort
 
-        from inklight.ocr.indra import IndraEngine
+        from inklight.ocr.engine import InklightOCR as IndraEngine
 
         self.calls: Counter = Counter()
         self.rereads = 0
@@ -433,9 +433,9 @@ def provenance(config: Path, mode: str) -> dict[str, Any]:
         "settings": {k: v for k, v in settings.model_dump(mode="json").items() if k not in ("home", "output_dir")},
     }
     if mode != "frozen":
-        import indra_ocr
+        from inklight import modelstore
 
-        ocr_dir = Path(settings.ocr.model_dir) if settings.ocr.model_dir else Path(indra_ocr.model_dir())
+        ocr_dir = Path(settings.ocr.model_dir) if settings.ocr.model_dir else modelstore.ensure(modelstore.OCR)
         out["ocr_model_files"] = {"folder": ocr_dir.as_posix(), "sha256": tree_files(ocr_dir)}
         if settings.models.brain != "rules" and settings.model_cache:
             out["small_model_files"] = {

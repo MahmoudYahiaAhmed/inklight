@@ -33,7 +33,7 @@ class Block(Frozen):
     bbox: BBox | None = None
     conf: float | None = Field(None, description="Mean OCR confidence of the lines inside the block.")
     ref: str | None = Field(
-        None, description="The Docling item this block comes from ('#/tables/0'), when structure is enabled."
+        None, description="The structure item this block comes from ('#/tables/0'), when structure is enabled."
     )
 
 
