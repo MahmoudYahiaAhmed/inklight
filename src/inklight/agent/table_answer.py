@@ -119,12 +119,14 @@ def _say_candidates(ctx: ToolContext, found: list[tuple[str, Any, _Hit]]) -> str
 
 
 def _upright_tables(ctx: ToolContext, doc_id: str, document: Any) -> list[Any]:
-    """Tables on pages whose frame Docling and Indra share; a rotated page keeps Indra's own layout."""
+    """Tables on pages whose frame Docling and Indra share: upright pages, and turned pages Docling was given turned
+    upright (a structure stored before that keeps Indra's own layout on them)."""
     pages = {p.number: p for p in ctx.pages(doc_id)}
+    upright = ctx.structure_meta(doc_id).get("rotated_pages_structured", [])
     out = []
     for table in document.tables:
         page = pages.get(table.prov[0].page_no) if table.prov else None
-        if page is not None and same_frame(page, document):
+        if page is not None and same_frame(page, document, upright):
             out.append(table)
     return out
 

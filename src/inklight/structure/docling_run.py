@@ -42,6 +42,7 @@ class DoclingRun:
     cells_delivered: int  # Indra lines handed to Docling as its OCR cells
     components: dict[str, str]
     pages: list[int] = field(default_factory=list)  # the pages Docling was run on
+    upright: list[int] = field(default_factory=list)  # pages Indra read turned, given to Docling turned upright
 
 
 def available() -> bool:
@@ -87,10 +88,19 @@ def run(path: Path, content: DocumentContent, settings: StructureSettings, passw
         empty = DoclingDocument(name=path.stem)
         return DoclingRun(empty, time.perf_counter() - started, 0.0, 0, components(settings), [])
     converter, load_seconds = _converter(settings)
-    # Docling numbers the pages it is given from 1; they are mapped back to the document's own numbers.
-    given = [p.model_copy(update={"number": i + 1}) for i, p in enumerate(chosen)]
+    # A page Indra read turned (rotation 90/180/270) has its lines in the upright frame: Docling is given that page
+    # turned upright too, so its boxes are in the same frame (frames.py). Docling numbers the pages it is given from
+    # 1; they are mapped back to the document's own numbers.
+    turns = {p.number: p.rotation % 360 for p in chosen if p.rotation % 360}
+    given = [p.model_copy(update={"number": i + 1, "rotation": 0}) for i, p in enumerate(chosen)]
     with tempfile.TemporaryDirectory(prefix="inklight-structure-") as work:
-        source = _images_only(path, [p.number for p in chosen], Path(work), password) if pdf else path
+        numbers = [p.number for p in chosen]
+        if pdf:
+            source = _images_only(path, numbers, Path(work), password, turns)
+        elif turns:
+            source = _frames_upright(path, numbers, Path(work), turns)
+        else:
+            source = path
         with _LOCK, indra_ocr.lines_for(source, given) as delivered:
             result = converter.convert(source, max_num_pages=max(len(given), 1), raises_on_error=True)
     document = _renumbered(result.document, {i + 1: p.number for i, p in enumerate(chosen)})
@@ -101,6 +111,7 @@ def run(path: Path, content: DocumentContent, settings: StructureSettings, passw
         cells_delivered=delivered.get("cells", 0),
         components=components(settings),
         pages=[p.number for p in chosen],
+        upright=sorted(turns),
     )
 
 
@@ -152,22 +163,49 @@ def threads(settings: StructureSettings) -> int:
     return settings.threads or os.cpu_count() or 4
 
 
-def _images_only(path: Path, numbers: list[int], work: Path, password: str | None) -> Path:
-    """The PDF's pages ``numbers`` (1-based) rendered one by one into a PDF of images, at the original page size."""
+def _images_only(
+    path: Path, numbers: list[int], work: Path, password: str | None, turns: dict[int, int] | None = None
+) -> Path:
+    """The PDF's pages ``numbers`` (1-based) rendered one by one into a PDF of images, at the original page size;
+    a page in ``turns`` (Indra's rotation) is turned upright."""
     import pypdfium2 as pdfium
 
     pdf = pdfium.PdfDocument(str(path), password=password)
     out = work / f"{path.stem}.pdf"
+    turns = turns or {}
     try:
         wanted = [n for n in numbers if 1 <= n <= len(pdf)]
         if not wanted:
             raise ValueError("the PDF has none of the pages asked for")
-        render = (pdf[n - 1].render(scale=_RASTER_DPI / 72).to_pil().convert("RGB") for n in wanted)
+        render = (
+            _upright(pdf[n - 1].render(scale=_RASTER_DPI / 72).to_pil().convert("RGB"), turns.get(n, 0)) for n in wanted
+        )
         first = next(render)
         first.save(out, save_all=True, append_images=render, resolution=_RASTER_DPI)  # one page in memory at a time
     finally:
         pdf.close()
     return out
+
+
+def _frames_upright(path: Path, numbers: list[int], work: Path, turns: dict[int, int]) -> Path:
+    """An image file's frames ``numbers`` as Indra read them, each turned upright, in a PDF of images."""
+    from indra_ocr.document import read_images
+    from PIL import Image
+
+    frames = read_images(path)
+    wanted = [n for n in numbers if 1 <= n <= len(frames)]
+    if not wanted:
+        raise ValueError("the image has none of the pages asked for")
+    out = work / f"{path.stem}-upright.pdf"
+    images = (_upright(Image.fromarray(frames[n - 1]).convert("RGB"), turns.get(n, 0)) for n in wanted)
+    first = next(images)
+    first.save(out, save_all=True, append_images=images, resolution=_RASTER_DPI)
+    return out
+
+
+def _upright(image: Any, turn: int) -> Any:
+    """The page image turned upright: Indra's rotation is how far it is turned counter-clockwise (frames.py)."""
+    return image.rotate(-turn, expand=True, fillcolor="white") if turn else image
 
 
 def _converter(settings: StructureSettings) -> tuple[Any, float]:

@@ -123,17 +123,26 @@ function renderPage() {
   $("#page").classList.toggle("hidden", !$("#page-text").classList.contains("hidden"));
   img.onerror = () => { $("#page").classList.add("hidden"); $("#page-text").classList.remove("hidden"); };
   img.src = withToken(`/api/documents/${doc.id}/pages/${page}/image`);
+  // Stored boxes are in the upright frame (p.width x p.height); the image is the page as the file shows it,
+  // turned p.rotation degrees counter-clockwise from upright (inklight/frames.py, to_original).
+  const turn = ((p.rotation || 0) % 360 + 360) % 360;
+  const [ow, oh] = turn === 90 || turn === 270 ? [p.height, p.width] : [p.width, p.height];
+  const shown = (x, y) => turn === 90 ? [y, p.width - x] : turn === 180 ? [p.width - x, p.height - y]
+    : turn === 270 ? [p.height - y, x] : [x, y];
   const add = (bbox, cls, title) => {
-    const [x0, y0, x1, y1] = bbox;
+    const [ax, ay] = shown(bbox[0], bbox[1]);
+    const [bx, by] = shown(bbox[2], bbox[3]);
+    const [x0, y0, x1, y1] = [Math.min(ax, bx), Math.min(ay, by), Math.max(ax, bx), Math.max(ay, by)];
     overlay.append(h("div", { class: `box ${cls}`, title,
-      style: `left:${(x0 / p.width) * 100}%;top:${(y0 / p.height) * 100}%;width:${((x1 - x0) / p.width) * 100}%;height:${((y1 - y0) / p.height) * 100}%` }));
+      style: `left:${(x0 / ow) * 100}%;top:${(y0 / oh) * 100}%;width:${((x1 - x0) / ow) * 100}%;height:${((y1 - y0) / oh) * 100}%` }));
   };
   for (const b of p.blocks) if (b.bbox) add(b.bbox, "", `${b.label}${b.conf != null ? ` · ${(b.conf * 100).toFixed(0)}%` : ""}`);
   if (highlight) {
     add(highlight, "hit", "evidence");
     img.onload = () => {
       const wrap = $("#page-wrap");
-      wrap.scrollTop = Math.max(0, (highlight[1] / p.height) * img.clientHeight - 120);
+      const top = Math.min(shown(highlight[0], highlight[1])[1], shown(highlight[2], highlight[3])[1]);
+      wrap.scrollTop = Math.max(0, (top / oh) * img.clientHeight - 120);
     };
   }
 }

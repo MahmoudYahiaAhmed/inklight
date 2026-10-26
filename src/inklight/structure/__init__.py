@@ -42,7 +42,7 @@ def structure_document(
     from .docling_run import run
 
     result = run(path, content, settings, password)
-    adapted = adapt(result.document, list(content.pages))
+    adapted = adapt(result.document, list(content.pages), upright=result.upright)
     meta = {
         **adapted.meta,
         "components": result.components,

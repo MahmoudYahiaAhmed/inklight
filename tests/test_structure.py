@@ -275,6 +275,15 @@ def test_a_rotated_page_keeps_indras_own_layout():
     assert adapted.pages[0].blocks == content.blocks and adapted.meta["rotated_pages_kept"] == [1]
 
 
+def test_a_turned_page_given_to_docling_upright_is_structured():
+    """Indra read the page turned (rotation 90) and Docling was given it turned upright: one frame, structured."""
+    page = fx.arabic_card()
+    content = _page(page).model_copy(update={"rotation": 90})
+    adapted = adapt(page.doc, [content], upright=[1])
+    assert adapted.meta["rotated_pages_kept"] == [] and adapted.meta["rotated_pages_structured"] == [1]
+    assert any(b.ref for b in adapted.pages[0].blocks) and adapted.pages[0].lines == content.lines
+
+
 # ---------------------------------------------------------------- failures and compatibility
 
 

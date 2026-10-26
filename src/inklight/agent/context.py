@@ -61,6 +61,7 @@ class ToolContext:
     _pages: dict[str, list[PageContent]] = field(default_factory=dict)
     rows: dict[str, list[Source]] = field(default_factory=dict)  # visual rows per document, built once per task
     _structures: dict[str, Any] = field(default_factory=dict)
+    _structure_meta: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     @property
     def brain(self) -> Any:
@@ -95,4 +96,10 @@ class ToolContext:
         if doc_id not in self._structures:
             stored = self.library.structure(doc_id)
             self._structures[doc_id] = stored[1] if stored else None
+            self._structure_meta[doc_id] = stored[0] if stored else {}
         return self._structures[doc_id]
+
+    def structure_meta(self, doc_id: str) -> dict[str, Any]:
+        """What the structure step recorded for the document (pages structured, pages turned upright, ...)."""
+        self.structure(doc_id)
+        return self._structure_meta.get(doc_id, {})

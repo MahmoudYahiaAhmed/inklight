@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Collection
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -45,12 +46,13 @@ class Adapted:
     meta: dict[str, Any] = field(default_factory=dict)
 
 
-def adapt(document: Any, pages: list[PageContent]) -> Adapted:
-    """Inklight pages whose blocks are ``document``'s items; ``pages`` are the OCR pages it was built from."""
+def adapt(document: Any, pages: list[PageContent], upright: Collection[int] = ()) -> Adapted:
+    """Inklight pages whose blocks are ``document``'s items; ``pages`` are the OCR pages it was built from, and
+    ``upright`` the turned pages (rotation 90/180/270) that Docling was given turned upright."""
     by_number = {p.number: p for p in pages}
     blocks: dict[int, list[Block]] = {p.number: [] for p in pages}
     pictures = {pic.self_ref for pic in document.pictures}
-    kept = {p.number for p in pages if not same_frame(p, document)}
+    kept = {p.number for p in pages if not same_frame(p, document, upright)}
     for item, _level in document.iterate_items(traverse_pictures=True):
         for prov in getattr(item, "prov", []) or []:
             page = by_number.get(prov.page_no)
@@ -90,17 +92,21 @@ def adapt(document: Any, pages: list[PageContent]) -> Adapted:
         "tables": len(document.tables),
         "pictures": len(document.pictures),
         "orphan_lines": orphans_total,
-        "rotated_pages_kept": sorted(kept),
+        "rotated_pages_kept": sorted(kept),  # pages whose frame Docling did not share: Indra's layout kept
+        "rotated_pages_structured": sorted(p.number for p in pages if p.rotation % 360 and p.number not in kept),
         "foreign_tokens": _foreign_tokens(document, pages),
     }
     return Adapted(adapted, meta)
 
 
-def same_frame(page: PageContent, document: Any) -> bool:
-    """Whether Docling's page and Indra's are the same upright frame: not rotated by Indra, and the same shape
-    (an image whose orientation one of them corrected and the other did not has its width and height swapped)."""
+def same_frame(page: PageContent, document: Any, upright: Collection[int] = ()) -> bool:
+    """Whether Docling's page and Indra's are the same upright frame: a page Indra read turned counts only when
+    Docling was given it turned upright (``upright``; a structure stored before that keeps Indra's layout), and
+    both have the same shape (a frame turned by one of them and not the other has width and height swapped)."""
     size = getattr(document.pages.get(page.number), "size", None)
-    if page.rotation or size is None or not page.width or not page.height:
+    if page.rotation % 360 and page.number not in upright:
+        return False
+    if size is None or not page.width or not page.height:
         return False
     return abs(size.width / size.height - page.width / page.height) <= 0.02 * (page.width / page.height)
 
