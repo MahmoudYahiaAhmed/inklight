@@ -48,7 +48,7 @@ function renderDocs() {
   const docs = state.docs.filter((d) => !q || d.name.toLowerCase().includes(q) || d.doc_type.includes(q));
   if (!docs.length) list.append(h("li", { class: "muted", style: "padding:10px" }, state.docs.length ? "No match." : "No documents yet."));
   for (const d of docs) {
-    const conf = d.mean_conf == null ? "" : ` · OCR ${(d.mean_conf * 100).toFixed(0)}%`;
+    const conf = d.mean_conf == null ? "" : ` · OCR est. ${(d.mean_conf * 100).toFixed(0)}%`;
     const li = h("li", { class: `doc ${state.selected.has(d.id) ? "selected" : ""} ${state.viewer.doc?.id === d.id ? "active" : ""}`,
       title: "Click to preview · Ctrl/⌘-click to add to the agent's scope" },
       h("div", { class: "doc-name" }, d.name),
@@ -85,11 +85,54 @@ async function upload(files) {
   for (const f of files) form.append("files", f, f.name);
   try {
     const res = await api("/api/documents", { method: "POST", body: form });
-    const failed = res.failed.map((f) => `${f.file}: ${f.error}`);
-    status.textContent = `✓ ${res.documents.length} ready in ${res.seconds}s` + (failed.length ? ` · ✗ ${failed.join("; ")}` : "");
+    status.replaceChildren(
+      h("div", { class: res.documents.length ? "ok-t" : "" }, `✓ ${res.documents.length} of ${files.length} ready in ${res.seconds}s`),
+      ...res.failed.map((f) => h("div", { class: "bad-t" }, `✗ ${f.file}: ${f.error}`)),
+      ...(res.warnings || []).map((w) => h("div", { class: "warn-t" }, `⚠ ${w}`)));
     await loadDocs();
     if (res.documents[0]) openDoc(res.documents[0].id, 1);
-  } catch (e) { status.textContent = `✗ ${e.message}`; }
+  } catch (e) { status.replaceChildren(h("div", { class: "bad-t" }, `✗ Import failed: ${e.message}`)); }
+}
+
+// ------------------------------------------------------------------ document panel
+
+async function renderDocPanel() {
+  const { doc, pages, page, structure } = state.viewer;
+  const out = $("#doc-out");
+  if (!doc) return;
+  const p = pages.find((x) => x.number === page);
+  const exp = (fmt, label) => h("a", { class: "ghost small button", href: withToken(`/api/documents/${doc.id}/export?format=${fmt}`) }, label);
+  const status = structure?.available
+    ? h("div", {}, h("b", {}, "Structure: "), `Docling on Indra's OCR · ${structure.tables} table(s) · this page: ${structure.pages[page] || "—"}`)
+    : h("div", { class: "warn-t" }, h("b", {}, "Structure unavailable: "), structure?.reason || "");
+  const textCard = h("article", { class: "card" },
+    h("div", { class: "card-head" }, h("div", { class: "req" }, `Page ${page} text (as read by OCR)`)),
+    h("pre", { class: "page-text-inline", dir: "auto" }, p ? (p.markdown || p.lines.map((l) => l.text).join("\n")) : ""));
+  out.replaceChildren(
+    h("article", { class: "card" },
+      h("div", { class: "card-head" }, h("div", { class: "req" }, doc.name), h("span", { class: `chip ${doc.doc_type}` }, doc.doc_type),
+        h("span", {}, `${doc.pages} page(s)`),
+        doc.mean_conf != null ? h("span", { title: "Indra's own estimate of its reading. It does not guarantee any value is right." }, `OCR estimate ${(doc.mean_conf * 100).toFixed(0)}%`) : null),
+      status,
+      h("div", { class: "actions" }, h("span", { class: "muted" }, "Raw extraction (not reviewed):"),
+        exp("txt", "Text (.txt)"), exp("json", "Text, boxes and tables (.json)"), structure?.available ? exp("tables.csv", "Tables (.csv)") : null)),
+    textCard);
+  if (structure?.available) {
+    try {
+      const tables = await api(`/api/documents/${doc.id}/tables`);
+      if (state.viewer.doc?.id !== doc.id) return;
+      out.append(h("article", { class: "card" }, h("div", { class: "card-head" }, h("div", { class: "req" }, `Tables (${tables.length})`),
+        h("span", { class: "muted" }, "as recovered by Docling; cells hold the OCR text")),
+        ...(tables.length ? tables.map(tableGrid) : [h("div", { class: "muted" }, "No table found in this document.")])));
+    } catch (err) { out.append(h("div", { class: "card warning" }, `Tables could not be loaded: ${err.message}`)); }
+  }
+}
+
+function tableGrid(t) {
+  return h("div", { class: "table-wrap" }, h("div", { class: "muted" }, `Table ${t.index} · page ${t.page}`, " ",
+      h("button", { class: "ghost small", type: "button", onclick: () => openDoc(state.viewer.doc.id, t.page) }, "Show page")),
+    h("table", { class: "grid" }, h("tbody", {}, ...t.rows.map((row, r) => h("tr", {}, ...row.map((cell) =>
+      h(t.header_rows.includes(r) ? "th" : "td", { dir: "auto" }, cell)))))));
 }
 
 // ------------------------------------------------------------------ viewer
@@ -99,12 +142,14 @@ async function openDoc(id, page, highlight = null) {
     const data = await api(`/api/documents/${id}`);
     state.viewer.doc = data.document;
     state.viewer.pages = data.pages;
+    state.viewer.structure = data.structure;
   }
   state.viewer.page = Math.max(1, Math.min(page, state.viewer.pages.length || 1));
   state.viewer.highlight = highlight;
   $("#viewer").classList.add("open");
   renderDocs();
   renderPage();
+  renderDocPanel();
   reviewLabel();
 }
 
@@ -113,7 +158,10 @@ function renderPage() {
   if (!doc) return;
   const p = pages.find((x) => x.number === page);
   $("#viewer-title").textContent = doc.name;
-  $("#viewer-meta").textContent = `${doc.doc_type} · ${doc.pages} page(s) · ${p ? p.source : ""}${doc.mean_conf != null ? ` · OCR ${(doc.mean_conf * 100).toFixed(1)}%` : ""}`;
+  const st = state.viewer.structure;
+  const pageStatus = st?.available ? (st.pages[page] || "") : "structure unavailable";
+  const turned = p?.rotation && !pageStatus.includes("turned") ? ` · page turned ${p.rotation}°, shown as in the file` : "";
+  $("#viewer-meta").textContent = `${doc.doc_type} · ${doc.pages} page(s) · ${p ? (p.source === "text" ? "text layer" : p.source === "hybrid" ? "text layer + OCR" : "OCR") : ""} · ${pageStatus}${turned}`;
   $("#page-label").textContent = `${page} / ${pages.length}`;
   $("#page-text").textContent = p ? p.markdown : "";
   const img = $("#page-img");
@@ -150,22 +198,59 @@ function renderPage() {
 // ------------------------------------------------------------------ agent
 
 const EXAMPLES = [
-  "Read all these invoices and create a CSV of vendor, date, tax, and total",
-  "Find every contract that expires within 90 days",
-  "Find all invoices above $5,000",
-  "Compare these reports and explain the differences",
-  "Extract all customer names and flag inconsistent records",
-  "What is the sum of all invoice totals?",
-  "Find the paragraph about termination notice",
+  "What is the registration number?",
+  "ما اسم الشركة؟",
+  "Compare the registration number in these documents",
+  "Find the paragraph about the meeting",
+  "Extract the date and total of these receipts",
 ];
+
+// What a result is. The server decides it from what the steps did (agent/runner.py, result_outcome).
+const OUTCOMES = {
+  extracted: ["Extracted text / search results", "Shown as found. Nothing was concluded from it."],
+  proposed: ["Proposed answer — review before use", "Drawn from the documents: open each cited place and confirm before relying on it."],
+  supported: ["Supported answer — value at its printed label, cited", "The value printed at the label or table cell asked about. OCR can still misread it: check the cited place."],
+  partial: ["Partial result", "Only part of the request was done; the answer says which part."],
+  missing_evidence: ["Missing evidence", "The documents in scope did not show the value asked for."],
+  ambiguous: ["Several candidates — choose one", "More than one value matches. Choose the one you mean; each opens at its source."],
+  unsupported: ["Unsupported operation", "This operation is not available for this request."],
+  failed: ["Failed", "An error stopped the task."],
+};
+
+function candidatesBlock(r) {
+  if (!r.candidates?.length) return null;
+  const chosen = h("div", { class: "chosen", dir: "auto" });
+  return h("div", { class: "candidates" },
+    h("div", { class: "muted" }, "Choose the value you mean (it opens at its source):"),
+    ...r.candidates.map((c) => h("button", { class: "ghost small candidate", type: "button", dir: "auto",
+      onclick: () => {
+        openDoc(c.source.doc_id, c.source.page, c.source.bbox);
+        chosen.replaceChildren(h("b", {}, "Your choice: "), c.value, h("span", { class: "muted" },
+          ` — ${c.context || c.source.name}${(c.context || "").includes("page") ? "" : `, page ${c.source.page}`}. A proposed value: check it at the source, and use Review to approve it.`));
+      } }, `${c.value} · ${c.context || c.source.name}`)),
+    chosen);
+}
+
+function comparisonBlock(r) {
+  const c = r.comparison;
+  if (!c) return null;
+  return h("div", { class: "comparison" },
+    h("table", { class: "grid" },
+      h("thead", {}, h("tr", {}, ...["document", `“${c.field}”`, "evidence"].map((x) => h("th", {}, x)))),
+      h("tbody", {}, ...c.values.map((v) => h("tr", {},
+        h("td", {}, v.document),
+        h("td", { dir: "auto", class: v.status === "found" ? "" : "none" }, v.status === "found" ? v.value : v.status === "several candidates" ? `several: ${v.candidates.join(", ")}` : "not found"),
+        h("td", {}, v.source ? h("button", { class: "ghost small", type: "button", onclick: () => openDoc(v.source.doc_id, v.source.page, v.source.bbox) }, `page ${v.source.page}`) : "—"))))),
+    h("div", { class: `verdict ${c.verdict.replace(/\s+/g, "-")}` }, `Result: ${c.verdict}`));
+}
 
 function renderExamples() {
   $("#examples").replaceChildren(...EXAMPLES.map((t) => h("button", { class: "example", type: "button", onclick: () => { $("#ask-input").value = t; $("#ask-input").focus(); } }, t)));
 }
 
 function sourceRow(s, i) {
-  const conf = s.ocr_conf != null ? ` · OCR ${(s.ocr_conf * 100).toFixed(0)}%` : "";
-  return h("div", { class: "source", onclick: () => openDoc(s.doc_id, s.page, s.bbox) },
+  const conf = s.ocr_conf != null ? ` · OCR estimate ${(s.ocr_conf * 100).toFixed(0)}%` : "";
+  return h("div", { class: "source", title: "Open this page. The OCR estimate is the reader's own; it does not guarantee the text.", onclick: () => openDoc(s.doc_id, s.page, s.bbox) },
     h("b", {}, `[${i + 1}] ${s.name} p.${s.page}${conf}`),
     h("span", { dir: "auto" }, `“${s.excerpt.replace(/\s+/g, " ").slice(0, 220)}${s.excerpt.length > 220 ? "…" : ""}”`));
 }
@@ -209,7 +294,9 @@ function resultCard(r) {
         h("div", {}, h("b", {}, "Understood as: "), (r.interpretation || []).join(" · ")),
         (r.not_understood || []).length ? h("div", { class: "not-applied" }, h("b", {}, "Not applied: "), r.not_understood.map((x) => `“${x}”`).join(", ")) : null)
     : null;
+  const [outcomeLabel, outcomeHelp] = OUTCOMES[r.outcome] || [r.outcome, ""];
   return h("article", { class: "card" },
+    h("div", { class: `outcome ${r.outcome}`, title: outcomeHelp }, outcomeLabel, h("span", { class: "muted" }, ` — ${outcomeHelp}`)),
     h("div", { class: "card-head" },
       h("div", { class: "req", dir: "auto" }, r.request),
       h("span", { class: `state ${r.state}` }, r.state), h("span", {}, r.intent),
@@ -217,7 +304,9 @@ function resultCard(r) {
       confBar("evidence", r.evidence_confidence, "How well the documents support the result (OCR, labels, cross-checks)"),
       h("span", {}, `${Math.round(r.duration_ms)} ms`), h("span", { title: "Which models were used" }, r.brain)),
     understood,
-    h("div", { class: "answer", dir: "auto" }, answer),
+    r.comparison ? null : h("div", { class: "answer", dir: "auto" }, answer),
+    comparisonBlock(r),
+    candidatesBlock(r),
     table,
     r.records.length ? h("div", { class: "actions" }, h("button", { class: "ghost small", type: "button", onclick: () => csvDownload(r.records) }, "Download CSV")) : null,
     r.files_written.length ? h("div", { class: "files muted" }, "Saved: ", ...r.files_written.map((f) => { const n = f.split(/[\\/]/).pop(); return h("a", { href: withToken(`/api/outputs/${encodeURIComponent(n)}`) }, n); })) : null,
@@ -442,6 +531,7 @@ async function loadStatus() {
   const loaded = Object.entries(s.models).filter(([k, v]) => k !== "remote" && v.installed).map(([k, v]) => `${k} ${v.params}`);
   $("#brain-pill").textContent = s.brain === "rules" || !loaded.length ? "rules · offline" : loaded.join(" + ");
   $("#brain-pill").title = `Brain mode: ${s.brain}`;
+  $("#build").textContent = `v${s.version} · ${s.commit}`;
   $("#set-brain").value = s.brain;
   $("#set-writer").checked = s.use_writer;
   $("#set-models").replaceChildren(...Object.entries(s.models).filter(([k]) => k !== "remote").map(([k, v]) =>
@@ -462,6 +552,7 @@ function wire() {
     document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === `panel-${t.dataset.tab}`));
     if (t.dataset.tab === "history") loadHistory();
     if (t.dataset.tab === "review") { reviewLabel(); loadQueue(); }
+    if (t.dataset.tab === "doc") renderDocPanel();
   }));
   $("#review-name").value = storageGet("inklight-reviewer") || "";
   $("#review-form").addEventListener("submit", startReview);

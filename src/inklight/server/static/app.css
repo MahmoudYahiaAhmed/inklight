@@ -153,3 +153,30 @@ dialog::backdrop { background: rgba(0,0,0,.6); }
 /* review */
 #panel-review .composer-row input, #panel-review .composer-row select { min-width: 0; flex: 1; }
 #panel-review td input { width: 100%; min-width: 140px; }
+
+/* beta workspace: outcomes, candidates, comparison, document panel */
+.exp { font-size: 9.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--amber); margin-left: 4px; }
+.notice { border-left: 3px solid var(--amber); color: var(--muted); font-size: 12.5px; }
+.outcome { font-weight: 600; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; background: var(--panel-2); border-left: 3px solid var(--line-2); }
+.outcome .muted { font-weight: 400; font-size: 12px; }
+.outcome.supported { border-left-color: var(--green); }
+.outcome.proposed, .outcome.partial, .outcome.extracted { border-left-color: var(--amber); }
+.outcome.ambiguous { border-left-color: var(--cyan); }
+.outcome.missing_evidence, .outcome.unsupported, .outcome.failed { border-left-color: var(--red); }
+.candidates { display: grid; gap: 6px; margin: 8px 0; }
+.candidate { text-align: start; }
+.chosen { font-size: 13px; }
+.comparison { margin: 8px 0; }
+.verdict { margin-top: 6px; font-weight: 600; }
+.verdict.matches { color: var(--green); }
+.verdict.differs { color: var(--red); }
+.verdict.cannot-determine { color: var(--amber); }
+.page-text-inline { white-space: pre-wrap; unicode-bidi: plaintext; text-align: start; max-height: 360px; overflow: auto;
+  background: var(--panel-2); padding: 10px; border-radius: 8px; font: 13px/1.6 var(--sans); }
+.table-wrap { margin: 10px 0; overflow-x: auto; }
+.table-wrap th, .table-wrap td { unicode-bidi: plaintext; }
+a.button { display: inline-block; text-decoration: none; color: var(--text); border: 1px solid var(--line-2); padding: 3px 10px; border-radius: 8px; }
+.review-scope { margin-bottom: 6px; }
+.build { font-size: 10.5px; margin-left: 6px; }
+.ok-t { color: var(--green); } .warn-t { color: var(--amber); } .bad-t { color: var(--red); }
+[dir=auto] { unicode-bidi: plaintext; }

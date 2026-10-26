@@ -12,6 +12,7 @@ Security model (local-first):
 
 from __future__ import annotations
 
+import contextlib
 import hmac
 import os
 import re
@@ -28,13 +29,13 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from .. import __version__
+from .. import __version__, build_commit
 from .._brand import NAME, TAGLINE
 from ..agent import DocumentAgent, Policy
 from ..config import Settings
 from ..errors import InklightError, InputRejected
 from ..safety import SUPPORTED_EXTENSIONS, safe_filename
-from . import review_api
+from . import review_api, workspace
 from .render import render_page
 
 STATIC = Path(__file__).parent / "static"
@@ -63,6 +64,13 @@ def _hostname(raw: str) -> str:
     if raw.startswith("["):
         return raw.split("]")[0] + "]"
     return raw.rsplit(":", 1)[0] if raw.count(":") == 1 else raw
+
+
+def _discard(path: Path) -> None:
+    """Delete an uploaded file, and its own folder when that is now empty."""
+    path.unlink(missing_ok=True)
+    with contextlib.suppress(OSError):
+        path.parent.rmdir()  # only succeeds for an empty per-upload folder
 
 
 def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAPI:
@@ -112,6 +120,8 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get("x-inklight") != "1":
             return JSONResponse({"detail": "Missing X-Inklight header"}, status_code=403)
         response = await call_next(request)
+        if not request.url.path.startswith("/api/"):
+            response.headers["Cache-Control"] = "no-cache"  # revalidate the workspace's files after an upgrade
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
@@ -137,6 +147,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             "name": NAME,
             "tagline": TAGLINE,
             "version": __version__,
+            "commit": build_commit(),
             "models": a.library.brain.status(),
             "brain": a.settings.models.brain,
             "use_writer": a.settings.models.use_writer,
@@ -186,7 +197,10 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             if Path(name).suffix.lower() not in SUPPORTED_EXTENSIONS:
                 rejected.append({"file": up.filename, "error": "unsupported file type"})
                 continue
-            target = folder / f"{secrets.token_hex(4)}-{name}"
+            # Each upload in a folder of its own: the library shows the file's own name, and two uploads with
+            # the same name never overwrite each other.
+            target = folder / secrets.token_hex(4) / name
+            target.parent.mkdir()
             size = 0
             with target.open("wb") as fh:
                 while chunk := await up.read(1 << 20):
@@ -195,7 +209,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
                         break
                     fh.write(chunk)
             if size > limit:
-                target.unlink(missing_ok=True)
+                _discard(target)
                 rejected.append({"file": up.filename, "error": f"larger than {a.settings.limits.max_file_mb:g} MB"})
                 continue
             saved.append(target)
@@ -203,14 +217,18 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             report = await run_in_threadpool(a.library.add, saved) if saved else None
         except Exception:
             for path in saved:  # never leave orphaned uploads behind
-                Path(path).unlink(missing_ok=True)
+                _discard(Path(path))
             raise
-        failed = [{"file": Path(p).name.split("-", 1)[-1], "error": e} for p, e in (report.failed if report else [])]
+        failed = [
+            {"file": Path(p).name, "error": e.replace(f"{Path(p).name}: ", "")}
+            for p, e in (report.failed if report else [])
+        ]
         for p, _ in report.failed if report else []:
-            Path(p).unlink(missing_ok=True)
+            _discard(Path(p))
         return {
             "documents": [d.model_dump(mode="json") for d in (report.documents if report else [])],
             "failed": rejected + failed,
+            "warnings": list(report.warnings) if report else [],
             "seconds": round(report.seconds, 2) if report else 0,
         }
 
@@ -226,7 +244,33 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
     def document(doc_id: str) -> dict[str, Any]:
         info = _doc(doc_id)
         pages = current().library.pages(doc_id)
-        return {"document": info.model_dump(mode="json"), "pages": [p.model_dump(mode="json") for p in pages]}
+        return {
+            "document": info.model_dump(mode="json"),
+            "pages": [p.model_dump(mode="json") for p in pages],
+            "structure": workspace.structure_status(current(), info, pages),
+        }
+
+    @app.get("/api/documents/{doc_id}/tables")
+    def document_tables(doc_id: str) -> list[dict[str, Any]]:
+        """The document's tables as grids (rows of cell text, header rows, page), when its structure is stored."""
+        _doc(doc_id)
+        return workspace.tables(current(), doc_id)
+
+    @app.get("/api/documents/{doc_id}/export")
+    def document_export(doc_id: str, format: str = "txt") -> Response:  # noqa: A002 - the query parameter name
+        """Raw extraction, as read (not reviewed): format=txt (text by page), json (pages, lines with boxes and OCR
+        confidence, blocks) or tables.csv (every table's cells)."""
+        info = _doc(doc_id)
+        try:
+            body, media, suffix = workspace.export(current(), info, format)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        name = f"{Path(info.name).stem}-raw.{suffix}"
+        return Response(
+            body,
+            media_type=media,
+            headers={"Content-Disposition": f'attachment; filename="{safe_filename(name, "export")}"'},
+        )
 
     @app.get("/api/documents/{doc_id}/structure")
     def document_structure(doc_id: str, format: str = "json") -> Response:  # noqa: A002 - the query parameter name
@@ -262,8 +306,8 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         a.library.remove(doc_id)
         uploads = a.settings.uploads.resolve()
         path = Path(info.path).resolve()
-        if path.parent == uploads:  # only files we stored ourselves are deleted from disk
-            path.unlink(missing_ok=True)
+        if uploads in (path.parent, path.parent.parent):  # only files we stored ourselves are deleted from disk
+            _discard(path)
         return {"removed": doc_id}
 
     @app.get("/api/documents/{doc_id}/pages/{number}/image")

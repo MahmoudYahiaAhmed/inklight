@@ -1,6 +1,7 @@
 """HTTP API (FastAPI TestClient) and CLI (Typer CliRunner)."""
 
 import json
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -85,11 +86,14 @@ def test_upload_and_delete(client, tmp_path):
         ("files", ("empty.pdf", b"", "application/pdf")),
     ]
     r = client.post("/api/documents", headers=H, files=files).json()
-    assert [d["name"].split("-", 1)[1] for d in r["documents"]] == ["note.txt"]
+    assert [d["name"] for d in r["documents"]] == ["note.txt"]  # the file's own name, no storage prefix
     assert {f["file"] for f in r["failed"]} == {"evil.exe", "empty.pdf"}
     doc_id = r["documents"][0]["id"]
+    stored = Path(r["documents"][0]["path"])
+    assert stored.exists()
     assert client.delete(f"/api/documents/{doc_id}", headers=H).status_code == 200
     assert client.get(f"/api/documents/{doc_id}").status_code == 404
+    assert not stored.exists() and not stored.parent.exists()  # the upload and its own folder are gone
 
 
 runner = CliRunner()

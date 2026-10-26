@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "inklight"
-version = "0.1.1.dev0"
+version = "0.2.0b1"
 description = "Inklight — a local-first, OCR-powered document agent. See documents. Understand meaning. Take action."
 readme = "README.md"
 license = "Apache-2.0"
@@ -58,8 +58,10 @@ Source = "https://github.com/MahmoudYahiaAhmed/inklight"
 [tool.hatch.build.targets.wheel]
 packages = ["src/inklight"]
 
+[tool.hatch.build.targets.wheel.hooks.custom]  # hatch_build.py: stamps the source commit into inklight/_build.py
+
 [tool.hatch.build.targets.sdist]
-include = ["src/inklight", "tests", "docs", "README.md", "LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "CHANGELOG.md"]
+include = ["src/inklight", "tests", "docs", "hatch_build.py", "README.md", "LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "CHANGELOG.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

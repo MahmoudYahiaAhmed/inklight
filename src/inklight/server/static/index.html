@@ -35,19 +35,32 @@
       <footer class="side-foot">
         <button class="ghost" id="open-settings">Settings</button>
         <span id="brain-pill" class="pill">rules</span>
+        <span id="build" class="build muted"></span>
       </footer>
     </aside>
 
     <main class="workspace">
       <nav class="tabs" role="tablist">
-        <button class="tab active" data-tab="ask" role="tab">Agent</button>
-        <button class="tab" data-tab="extract" role="tab">Extract</button>
+        <button class="tab active" data-tab="doc" role="tab">Document</button>
         <button class="tab" data-tab="search" role="tab">Search</button>
+        <button class="tab" data-tab="review" role="tab">Review &amp; export</button>
+        <button class="tab" data-tab="extract" role="tab">Extract fields</button>
+        <button class="tab" data-tab="ask" role="tab">Ask <span class="exp">experimental</span></button>
         <button class="tab" data-tab="history" role="tab">History</button>
-        <button class="tab" data-tab="review" role="tab">Review</button>
       </nav>
 
-      <section class="panel active" id="panel-ask">
+      <section class="panel active" id="panel-doc">
+        <div id="doc-out" class="results">
+          <article class="card muted">Import documents on the left, then select one: its pages open on the right, and its
+            text, tables and raw exports appear here.</article>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-ask">
+        <div class="card notice">Experimental. Answers are drawn from the documents and each says what it is: a
+          <b>supported</b> answer is a value read at its printed label or in its table cell, with that place cited; a
+          <b>proposed</b> answer needs your review; several matches are listed for you to choose. OCR can misread any
+          value, so check the cited place before relying on it.</div>
         <form id="ask-form" class="composer">
           <textarea id="ask-input" rows="2" maxlength="4000"
             placeholder="Ask anything, or give a task — “Find every contract that expires within 90 days”"></textarea>
@@ -64,9 +77,9 @@
 
       <section class="panel" id="panel-extract">
         <form id="extract-form" class="composer">
-          <input id="extract-fields" value="invoice_number, vendor, date, tax, total" aria-label="Fields">
+          <input id="extract-fields" value="" placeholder="Fields, e.g. registration number, date, total" aria-label="Fields">
           <div class="composer-row">
-            <div class="scope">Fields are typed (money, dates, ids) and every value keeps its page and box.</div>
+            <div class="scope">Each value is read at a printed label of that name (dates, amounts and ids are typed) and keeps its page and box. Raw extraction: review before use.</div>
             <button type="submit" class="primary">Extract</button>
           </div>
         </form>
@@ -76,7 +89,7 @@
       <section class="panel" id="panel-search">
         <form id="search-form" class="composer">
           <input id="search-input" placeholder="Search passages across the library" aria-label="Search">
-          <div class="composer-row"><div class="scope">Keyword BM25, fused with semantic vectors when installed.</div>
+          <div class="composer-row"><div class="scope">Searches the text of every document (Arabic and English). Click a result to open its page.</div>
             <button type="submit" class="primary">Search</button></div>
         </form>
         <div id="search-out" class="results"></div>
@@ -94,12 +107,16 @@
               <option value="review">Review: check the predicted values</option>
               <option value="manual">Manual entry: type every value (predictions hidden)</option>
             </select>
-            <input id="review-cohort" placeholder="Cohort (e.g. genuine-invoice)" maxlength="64" aria-label="Cohort">
-            <input id="review-fields" placeholder="Fields, e.g. date, sender, total (empty: preset for the document type)" maxlength="400" aria-label="Fields to review">
+            <input id="review-cohort" placeholder="Batch name (optional)" maxlength="64" aria-label="Batch name">
+            <input id="review-fields" placeholder="Fields, e.g. registration number, date (empty: a preset for the document type)" maxlength="400" aria-label="Fields to review">
           </div>
+          <div class="scope review-scope">Review covers named fields: Inklight proposes each value from a printed label of
+            that name (or a typed field such as a date or total) and you accept, correct or mark it absent. It is not a
+            correction of the whole document's text. The original reading is kept next to your decision, and only
+            approved reviews are exported.</div>
           <div class="composer-row">
             <div class="scope" id="review-doc-label">Open a document in the viewer, then start its review.</div>
-            <button type="button" class="ghost" id="review-export">Export approved (CSV)</button>
+            <button type="button" class="ghost" id="review-export">Export approved values (CSV)</button>
             <button type="submit" class="primary">Start review</button>
           </div>
         </form>
