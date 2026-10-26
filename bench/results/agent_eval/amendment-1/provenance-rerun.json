@@ -18,5 +18,6 @@
  "libraries": "fresh, isolated homes; cold = first ingest in a fresh process with model weights on the local disk cache; warm = re-ingest with force in the same process",
  "machine": "same as baseline (AMD Ryzen 7 8700F, 16 threads, 31.6 GB, CPU only, Windows 11)",
  "judging": "baseline A/B and rerun A2/B2 cases bundled together, arm names redacted, random ids, mixed batches; judge_brief_v2.md; corrected references (AM-1); 8 judges; separate reviewers (reviewer_brief.md) on 92 cases",
- "all_documents_now_development_data": true
+ "all_documents_now_development_data": true,
+ "published_commits_vs_evaluated_wheels": "Before publication, two registration numbers copied from the private documents into a docstring of src/inklight/agent/lines.py and into synthetic tests were replaced by invented ones (and a synthetic company name changed), and the four commits from the answer-selection fix on were rebuilt; their hashes changed (b2240c9->bfeae05, 8e77041->a7ec8ee, 1bbbdb0->d9e0496). The evaluated wheels (sha256 19fbb756..., b3e7ff25...) were built from the pre-publication commits; the only difference in the package is that docstring, so behaviour is identical."
 }

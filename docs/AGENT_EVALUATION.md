@@ -375,7 +375,10 @@ EVAL_PYTHON bench/agent_eval/visualize.py WORKSPACE OUT_DIR --judging judging2  
 ```
 
 Rerun provenance: [`provenance-rerun.json`](../bench/results/agent_eval/amendment-1/provenance-rerun.json) (commit,
-wheel hash, superseded build, identical dependencies, models, settings, cache conditions, judging). Harness changes
+wheel hash, superseded build, identical dependencies, models, settings, cache conditions, judging). Before publication,
+two registration numbers copied from the private documents into a docstring and synthetic tests were replaced by
+invented ones and the commits rebuilt; the evaluated wheels were built from the earlier versions, which differ from
+the published commits only in that docstring. Harness changes
 and failures: [`harness_log.txt`](../bench/results/agent_eval/amendment-1/harness_log.txt).
 
 ## Reproduce
