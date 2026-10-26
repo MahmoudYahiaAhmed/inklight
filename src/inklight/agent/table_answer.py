@@ -94,14 +94,16 @@ def _hits(table: Any, document: Any, fields: set[str], terms: Any) -> list[_Hit]
     grid = table_grid(table, document)
     if not grid.rows:
         return []
-    headers = set() if grid.field_value() else grid.header_rows or _inferred_header(grid)
+    headers = set() if grid.field_value() else grid.heads()
     body = [r for r in range(len(grid.rows)) if r not in headers]
     grid = Grid(grid.rows, headers, grid.boxes)
     out: list[_Hit] = []
-    if headers:
+    for heads, rows_below in grid.sections(headers) if headers else []:  # each stacked sub-table on its own
+        if not heads or not rows_below:
+            continue
         for col in range(len(grid.rows[0])):
-            header = grid.header_for(col)
-            hit = _scored(header, fields, terms, grid, body, skip_col=col)
+            header = grid.header_for(col, heads)
+            hit = _scored(header, fields, terms, grid, rows_below, skip_col=col)
             if hit is not None:
                 score, rows = hit
                 out.append(_Hit(table, grid, rows, col, header, score, _overlap(terms, header)))
@@ -145,25 +147,27 @@ def _who_hits(table: Any, document: Any, fields: set[str]) -> list[_Hit]:
     that is exactly those words ("Manager") beats one that only contains them ("Deputy Manager"); several equally
     good rows are listed together, not chosen between."""
     grid = table_grid(table, document)
-    headers = grid.header_rows or _inferred_header(grid)
-    names = [c for c in range(len(grid.rows[0]) if grid.rows else 0) if _NAME_KEYS & ln.keys(grid.header_for(c))]
-    if not headers or not names or not fields:
+    headers = grid.heads()
+    if not headers or not fields or not grid.rows:
         return []
     grid = Grid(grid.rows, headers, grid.boxes)
-    matches: list[tuple[int, int]] = []  # (exactness, row)
-    for r in range(len(grid.rows)):
-        if r in headers:
+    matches: list[tuple[int, int, int, list[int]]] = []  # (exactness, row, name column, the section's header rows)
+    for heads, body in grid.sections(headers):
+        names = [c for c in range(len(grid.rows[0])) if _NAME_KEYS & ln.keys(grid.header_for(c, heads))]
+        if not heads or not names:
             continue
-        for c, text in enumerate(grid.rows[r]):
-            if c in names or not text.strip() or not fields <= ln.keys(text):
-                continue
-            matches.append((int(ln.own_keys(text) == fields), r))
+        for r in body:
+            for c, text in enumerate(grid.rows[r]):
+                if c in names or not text.strip() or not fields <= ln.keys(text):
+                    continue
+                matches.append((int(ln.own_keys(text) == fields), r, names[0], heads))
     if not matches:
         return []
-    best = max(m for m, _ in matches)
-    rows = sorted({r for m, r in matches if m == best})
-    cells = tuple((r, names[0]) for r in rows)
-    return [_Hit(table, grid, rows, -1, grid.header_for(names[0]), 1.0, 0, cells)]
+    best = max(m[0] for m in matches)
+    chosen = sorted({(r, c) for m, r, c, _ in matches if m == best})
+    heads = next(h for m, r, c, h in matches if m == best)
+    rows = [r for r, _ in chosen]
+    return [_Hit(table, grid, rows, -1, grid.header_for(chosen[0][1], heads), 1.0, 0, tuple(chosen))]
 
 
 def _field_value_table(grid: Grid) -> bool:
@@ -178,17 +182,6 @@ def _field_value_table(grid: Grid) -> bool:
 
 def _overlap(terms: Any, text: str) -> int:
     return len(terms.asked & ln.keys(text))
-
-
-def _inferred_header(grid: Grid) -> set[int]:
-    """A table whose header row Docling did not mark: its first row, when that row is words only and the rows
-    under it hold something else (TableFormer leaves some header rows unflagged)."""
-    if len(grid.rows) < 2:
-        return set()
-    first = [c for c in grid.rows[0] if c.strip()]
-    if not first or any(any(ch.isdigit() for ch in c) for c in first):
-        return set()
-    return {0}
 
 
 def _row_keys(grid: Grid, r: int, skip_col: int) -> set[str]:

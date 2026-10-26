@@ -241,3 +241,30 @@ def staff() -> Page:
     p.text(DocItemLabel.TEXT, "VAT 14% applies to all lines", (100, 400, 600, 440))
     p.line("14%", (700, 400, 760, 440))  # a short line no Docling item holds; its text occurs in another block
     return p
+
+
+def stacked_card() -> Page:
+    """The page's three tables read as one (as layout analysis did on a scan): only the first header row is
+    flagged, and a section title row ("الشركاء", "البطاقة الضريبية") separates the sub-tables."""
+    p = Page()
+    rows = [
+        ("اسم الشركة", "نوع الشركة", "رقم القيد"),
+        ("شركة النخيل الذهبي للتجارة", "شركة ذات مسئولية محدودة", "٤٧٣١٩"),
+        (None, None, "الشركاء"),
+        ("الاسم", "الصفة", "نسبة المشاركة"),
+        ("سامي عبد الرحيم", "مدير", "٦٠٪"),
+        ("ليلى منصور", "شريك", "٤٠٪"),
+        (None, None, "البطاقة الضريبية"),
+        ("رقم التسجيل الضريبي", "المأمورية", None),
+        ("٥٢٠-٨٨١-٣٠٦", "مأمورية ضرائب الدقي", None),
+    ]
+    cells = []
+    for r, row in enumerate(rows):
+        for c, text in enumerate(row):
+            if text is None:
+                continue
+            box = (100 + 260 * c, 100 + 50 * r, 350 + 260 * c, 140 + 50 * r)
+            p.line(text, box)
+            cells.append(Cell(text, r, c, box, header=r == 0))
+    p.table(cells, (100, 100, 870, 590))
+    return p

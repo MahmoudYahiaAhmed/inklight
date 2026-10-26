@@ -496,3 +496,49 @@ def test_docling_page_numbers_are_mapped_back_to_the_documents():
     assert list(document.pages) == [3] and document.pages[3].page_no == 3
     assert all(p.page_no == 3 for t in document.tables for p in t.prov)
     assert all(p.page_no == 3 for item, _ in document.iterate_items(traverse_pictures=True) for p in item.prov)
+
+
+# ---------------------------------------------------------------- stacked tables read as one
+
+
+@pytest.fixture(scope="module")
+def stacked(tmp_path_factory):
+    tmp = tmp_path_factory.mktemp("structure-stacked")
+    pages = {"stacked.png": fx.stacked_card()}
+    (tmp / "stacked.png").write_bytes(PNG + b"stacked")
+    settings = make_settings(tmp / "home", structure={"engine": "docling"})
+    lib = Library(settings, engine=FixedOCR(pages))
+    mp = pytest.MonkeyPatch()
+    mp.setattr("inklight.structure.structure_document", _fixed_structure(pages))
+    agent = DocumentAgent(settings, library=lib)
+    agent.add([tmp / "stacked.png"])
+    ids = {d.name: d.id for d in agent.library.documents()}
+    yield agent, ids, pages
+    mp.undo()
+    agent.close()
+    lib.close()
+
+
+@pytest.mark.parametrize(
+    ("question", "expect", "absent"),
+    [
+        ("ما اسم الشركة؟", "شركة النخيل الذهبي للتجارة", "سامي"),
+        ("ما نوع الشركة؟", "شركة ذات مسئولية محدودة", "مدير"),
+        ("من المدير؟", "سامي عبد الرحيم", "ليلى"),
+        ("ما نسبة مشاركة ليلى منصور؟", "٤٠٪", "٦٠٪"),
+        ("ما المأمورية؟", "مأمورية ضرائب الدقي", "شريك"),
+        ("ما رقم التسجيل الضريبي؟", "٥٢٠-٨٨١-٣٠٦", "شركة"),
+    ],
+)
+def test_each_stacked_table_answers_under_its_own_heading(stacked, question, expect, absent):
+    res = _ask(stacked, "stacked.png", question)
+    head = _head(res)
+    assert head.startswith(expect) and absent not in head, res.answer
+    assert not _flagged(res), res.warnings
+
+
+def test_stacked_tables_are_indexed_under_their_own_headings(stacked):
+    agent, ids, _ = stacked
+    table = next(b for b in agent.library.pages(ids["stacked.png"])[0].blocks if b.label == "Table")
+    assert "الاسم: سامي عبد الرحيم" in table.text and "المأمورية: مأمورية ضرائب الدقي" in table.text
+    assert "اسم الشركة: الاسم" not in table.text and "الشركاء" in table.text

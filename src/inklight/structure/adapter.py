@@ -131,18 +131,17 @@ def table_text(table: Any, document: Any) -> str:
             for row in grid.rows
             if row[key_col].strip()
         )
-    lines = []
-    for r, row in enumerate(grid.rows):
-        if r in grid.header_rows:
-            continue
-        parts = []
-        for c, value in enumerate(row):
-            if not value.strip():
-                continue
-            header = grid.header_for(c)
-            parts.append(f"{header}: {value}" if header and header != value else value)
-        if parts:
-            lines.append(" | ".join(dict.fromkeys(parts)))
+    lines = list(grid.titles())  # section titles of stacked sub-tables ("الشركاء")
+    for heads, body in grid.sections():
+        for r in body:
+            parts = []
+            for c, value in enumerate(grid.rows[r]):
+                if not value.strip():
+                    continue
+                header = grid.header_for(c, heads)
+                parts.append(f"{header}: {value}" if header and header != value else value)
+            if parts:
+                lines.append(" | ".join(dict.fromkeys(parts)))
     if not lines:  # a table of headers only
         lines = [" | ".join(v for v in row if v.strip()) for row in grid.rows]
     return "\n".join(lines)
@@ -174,10 +173,54 @@ class Grid:
         rtl = sum(layout.rtl(c) for c in cells) > len(cells) / 2
         return len(self.rows[0]) - 1 if rtl and self.rows else 0
 
-    def header_for(self, col: int) -> str:
-        """The column's header text: its header-row cells top to bottom, repeated spans written once."""
-        parts = [self.rows[r][col] for r in sorted(self.header_rows) if self.rows[r][col].strip()]
+    def header_for(self, col: int, rows: list[int] | set[int] | None = None) -> str:
+        """The column's header text: its header-row cells top to bottom (of ``rows``, else the table's header rows),
+        repeated spans written once."""
+        heads = sorted(self.header_rows if rows is None else rows)
+        parts = [self.rows[r][col] for r in heads if self.rows[r][col].strip()]
         return " / ".join(dict.fromkeys(parts))
+
+    def heads(self) -> set[int]:
+        """The header rows: those TableFormer marked, else the first row when it is words only and rows follow it
+        (TableFormer leaves some header rows unmarked)."""
+        if self.header_rows:
+            return set(self.header_rows)
+        return {0} if len(self.rows) > 1 and self._plain(0) else set()
+
+    def sections(self, headers: set[int] | None = None) -> list[tuple[list[int], list[int]]]:
+        """The table's stacked sub-tables, as (header rows, body rows). Layout analysis may read a page's stacked
+        tables (company, partners, tax card) as one: a break row, empty or holding a single cell such as a section
+        title ("الشركاء"), ends a sub-table, and a plain-words row after it heads the next one."""
+        heads = sorted(self.heads() if headers is None else headers)
+        out: list[tuple[list[int], list[int]]] = []
+        body: list[int] = []
+        r = heads[-1] + 1 if heads else 0
+        while r < len(self.rows):
+            if not self._break(r):
+                body.append(r)
+                r += 1
+                continue
+            if heads or body:
+                out.append((heads, body))
+            while r < len(self.rows) and self._break(r):
+                r += 1
+            heads, body = ([r], []) if r < len(self.rows) and self._plain(r) else ([], [])
+            r += 1 if heads else 0
+        if heads or body:
+            out.append((heads, body))
+        return out
+
+    def titles(self) -> list[str]:
+        """Text of the break rows that hold a section title."""
+        return [next(c for c in row if c.strip()) for r, row in enumerate(self.rows) if self._break(r) and any(row)]
+
+    def _break(self, r: int) -> bool:
+        filled = [c for c in self.rows[r] if c.strip()]
+        return not filled or (len(self.rows[r]) >= 3 and len(set(filled)) == 1 and len(filled) <= 1)
+
+    def _plain(self, r: int) -> bool:
+        filled = [c for c in self.rows[r] if c.strip()]
+        return bool(filled) and not any(ch.isdigit() for c in filled for ch in c)
 
 
 def table_grid(table: Any, document: Any = None) -> Grid:
