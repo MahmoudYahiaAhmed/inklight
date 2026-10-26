@@ -3,7 +3,7 @@
 An automated evaluation of Inklight on general documents in English, Arabic and mixed language: letters,
 contracts, reports, forms and certificates, invoices and receipts, as digital PDFs, scans and photographs.
 It is small (65 documents) and is not a benchmark leaderboard. Every number in
-[docs/EVALUATION.md](../../docs/EVALUATION.md) comes from these scripts.
+[evaluation/EVALUATION.md](../../evaluation/EVALUATION.md) comes from these scripts.
 
 | File | What it is |
 |---|---|
@@ -19,7 +19,7 @@ It is small (65 documents) and is not a benchmark leaderboard. Every number in
   a synthetic template never straddle splits. `dev` documents were used to find and fix failures.
   `reserved`, `fresh` and `fresh2` documents were not looked at during development. Every run on them is logged in
   `reserved-access.log` (time, build, arguments) before any file is read. Only a split's first run is independent;
-  [`docs/EVALUATION.md`](../../docs/EVALUATION.md) says which later runs followed fixes they prompted.
+  [`evaluation/EVALUATION.md`](../../evaluation/EVALUATION.md) says which later runs followed fixes they prompted.
 - **Full answers are kept.** Each run stores complete answers, cited passages and warnings, so a run can be rescored
   without running it again.
 - **Expected results come from the sources:** dataset annotations (CUAD, FUNSD, CORU, INV-CDIP, Voxel51), the

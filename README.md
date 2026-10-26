@@ -153,8 +153,8 @@ inklight review export -o approved.csv
 - **Classification is keyword-based** and often wrong (an Arabic UN letter labelled "contract").
 - No handwriting. No time-saving or accuracy claim is made for this beta.
 
-The historical evaluation, with every failure, is in [docs/AGENT_EVALUATION.md](docs/AGENT_EVALUATION.md) (an
-agent-run workflow evaluation: the tool completed at most 1 of 38 tasks) and [docs/EVALUATION.md](docs/EVALUATION.md)
+The historical evaluation, with every failure, is in [evaluation/AGENT_EVALUATION.md](evaluation/AGENT_EVALUATION.md) (an
+agent-run workflow evaluation: the tool completed at most 1 of 38 tasks) and [evaluation/EVALUATION.md](evaluation/EVALUATION.md)
 (question answering on 90 documents). A summary follows.
 
 <details>
@@ -165,7 +165,7 @@ receipts). It covers English, Arabic and mixed language, digital and scanned. Ex
 any run. The table shows the **reserved split** (30 documents, held out from development), with models on (the default).
 
 - **First access** is the one independent run of the development build. It ran from uncommitted source, now
-  [reconstructed, and its re-run reproduces the stored results](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/bench/results/usecases/provenance/README.md)
+  [reconstructed, and its re-run reproduces the stored results](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/results/usecases/provenance/README.md)
   (the same behaviour, not the original bytes).
 - **Rerun** is commit `8c54921`, after three fixes those same documents prompted. It is not independent.
 
@@ -196,7 +196,7 @@ OCR can miss words, so the answer no longer claims the fact is absent.
 | Unanswerable, answered silently | 10 | 7 | 30 |
 | Answerable, declined | 0 | **0** | 42 |
 
-Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#missing-information-not-found-d012e07).
+Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/EVALUATION.md#missing-information-not-found-d012e07).
 
 **Answers connected to what was asked** (`9fc8da7`, 11 more new genuine documents, first run). The sender is not the
 addressee, a letter's own date is not an event's, and a total that includes tax is not the tax.
@@ -210,7 +210,7 @@ addressee, a letter's own date is not an event's, and a total that includes tax 
 | Unanswerable (subject mentioned, value missing), answered without a flag | 4 of 8 | **1** of 8 |
 
 One correct receipt answer became a silent error ("VAT-Inclusive" was not recognised as a qualifier).
-Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#answers-connected-to-what-was-asked-9fc8da7).
+Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/EVALUATION.md#answers-connected-to-what-was-asked-9fc8da7).
 
 **Labels and values on the page** (`915be7b`, a further 10 new genuine documents: letters, Wikipedia infoboxes in
 English and Arabic, scanned forms, receipts; first run). A question that names a printed label ("What is the
@@ -224,11 +224,11 @@ product?", "ما الرمز البريدي للأقصر؟") is answered with the
 | Wrong, not flagged | 9 | 8 |
 
 An earlier version that paired labels with values only for dates and amounts (`bcd4752`) made **no difference** on
-its own new documents or on these. Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#labels-and-values-on-the-page-915be7b).
+its own new documents or on these. Details: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/EVALUATION.md#labels-and-values-on-the-page-915be7b).
 
 #### Earlier external datasets, the optional models, and what the numbers do not say
 
-**External datasets** (fields; fresh split, build H `3788bf9`, rules; details in [BENCHMARKS.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/BENCHMARKS.md#external-datasets)):
+**External datasets** (fields; fresh split, build H `3788bf9`, rules; details in [BENCHMARKS.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/BENCHMARKS.md#external-datasets)):
 
 | Set | Values | Correct | Correct without review | Silently wrong |
 |---|---|---|---|---|
@@ -243,7 +243,7 @@ answering**:
 - Both help English: reader 16 → 20 of 53 answers; embedder top-3 retrieval 37 → 42 of 53.
 
 So Arabic queries use keyword search and skip the reader. The writer model is off by default and was never loaded.
-Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md#do-the-optional-models-harm-arabic).
+Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/EVALUATION.md#do-the-optional-models-harm-arabic).
 
 **Not covered by these numbers:**
 - small samples: 9 to 42 questions per row
@@ -260,7 +260,7 @@ Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blo
   the person. A corrected build (form labels never returned as values, several candidates listed, the documents you
   pass kept, rotated pages given structure) made failures safer but did not raise that number, with or without
   Docling structure. Details:
-  [docs/AGENT_EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/AGENT_EVALUATION.md).
+  [evaluation/AGENT_EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/AGENT_EVALUATION.md).
 - **Arabic questions are mostly answered by sentence matching**, not by a model that reads Arabic, and those
   answers are flagged for review (11 of 23 right on the reserved split). A value printed beside a label, a letter's
   sender, addressee or signer, and a labelled field are read from the page itself and are not flagged.
@@ -273,8 +273,8 @@ Full ablation: [EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blo
 - Typewritten Arabic scans OCR only partly.
 - Classification is keyword-based.
 - No handwriting. No genuine Arabic forms or invoices were available to test, so synthetic ones stand in.
-- Current status by capability and language: [docs/CAPABILITIES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md). Every case, including failures:
-  [docs/EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/EVALUATION.md).
+- Current status by capability and language: [evaluation/CAPABILITIES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/CAPABILITIES.md). Every case, including failures:
+  [evaluation/EVALUATION.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/EVALUATION.md).
 
 </details>
 
@@ -291,7 +291,7 @@ documents ─► OCR (Indra) ─► deterministic processing ──────�
 ```
 
 - **OCR** is [Indra OCR](https://github.com/datalab-to/indra), on CPU, with a right-to-left recognizer for Arabic. Inklight
-  OCRs a PDF page itself when its Arabic text layer is broken (a [measured heuristic](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/CAPABILITIES.md#the-text-layer-detector-is-a-heuristic)).
+  OCRs a PDF page itself when its Arabic text layer is broken (a [measured heuristic](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/CAPABILITIES.md#the-text-layer-detector-is-a-heuristic)).
 - **Deterministic processing** does most of the work: it reads labels and layout in both directions, parses dates
   (including Arabic month names) and amounts, plans from your request, and computes sums exactly. It never sends
   text anywhere.

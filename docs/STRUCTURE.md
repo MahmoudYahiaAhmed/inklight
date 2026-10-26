@@ -209,7 +209,7 @@ Structure was not run on that corpus: it would need the documents to be processe
   frame of Indra's lines (`inklight/frames.py`; recorded per document as `rotated_pages_structured`). A library
   structured before this change keeps Indra's layout on those pages until `inklight reindex`. A page whose frames
   still do not match is listed in `rotated_pages_kept` and keeps Indra's layout. On the evaluation's registers,
-  structure on turned pages did not improve task completion (docs/AGENT_EVALUATION.md, AM-1).
+  structure on turned pages did not improve task completion (evaluation/AGENT_EVALUATION.md, AM-1).
 - **Docling's HTML export leaves out text inside pictures**; there is no option for it. The Markdown export
   (pictures traversed), the JSON, and Inklight's own blocks keep that text. The CLI warns, and the server sets an
   `X-Inklight-Note` header.
@@ -245,4 +245,4 @@ python bench/structure/compare.py --docs ./synthetic --models PATH/TO/MODELS --o
     --baseline-src PATH/TO/030dd41/src     # optional: also run an unchanged checkout as A0
 ```
 
-The stored result is `bench/results/structure/compare-synthetic.json`.
+The stored result is `evaluation/results/structure/compare-synthetic.json`.

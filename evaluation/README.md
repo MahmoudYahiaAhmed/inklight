@@ -1,0 +1,19 @@
+# Evaluation archive
+
+Historical measurements of Inklight, kept because the README, the CHANGELOG and the docs cite them. Each report
+names the build it measured. Numbers from before 0.3 were taken with Inklight OCR and document structure running
+through the `indra-ocr` and `docling` packages. Since 0.3 the same model files run inside Inklight. The equivalence
+check of that change is summarised in the CHANGELOG (0.3.0, "Internal model backends").
+
+Local folder names in stored results are shortened to `~` (the user folder) and `<scratch>` (a temporary work folder).
+
+| Report | What it answers | Raw results |
+|---|---|---|
+| [AGENT_EVALUATION.md](AGENT_EVALUATION.md) | Can a person finish real document tasks with Inklight? 38 tasks on mostly scanned Arabic business documents, run by agents, judged blind, plus amendment AM-1. | [results/agent_eval/](results/agent_eval/) and the briefs the agents worked from, in [briefs/](briefs/) |
+| [EVALUATION.md](EVALUATION.md) | General documents (letters, contracts, reports, forms, certificates, invoices, receipts) in English, Arabic and mixed language: extraction, answers, refusals, citations. | [results/usecases/](results/usecases/), produced by `bench/usecases/` |
+| [BENCHMARKS.md](BENCHMARKS.md) | Field extraction on two public receipt and invoice datasets (CORD, Voxel51), plus speed and memory on synthetic documents. | [results/external/](results/external/) (`bench/external.py`), `bench/results.json` (`bench/run.py`) |
+| [CAPABILITIES.md](CAPABILITIES.md) | What works, by capability and language, with the diagnostic runs behind it. | `results/capability-diag*.json`, `results/date-extraction-compare.txt` |
+| [../docs/STRUCTURE.md](../docs/STRUCTURE.md) | Document structure (layout, tables, reading order) on synthetic registration cards, with and without structure. | [results/structure/](results/structure/) (`bench/structure/compare.py`) |
+| [../pilot/README.md](../pilot/README.md) | The invoice pilot protocol: a rehearsal on synthetic invoices and second-reading latency. | [results/pilot/](results/pilot/) |
+
+The scripts that produced these results are still in `bench/` and `pilot/`. The tests use some of them.

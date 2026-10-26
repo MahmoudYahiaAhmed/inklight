@@ -17,7 +17,7 @@ It is deliberately narrow, because declining a question the documents do answer 
   receipt, or a question over the whole library), only words with a known equivalent in the other language can
   be looked up. One unknown word means nothing is concluded. So does a document in scope that is not indexed yet.
 
-Measured on the dev split of bench/usecases before it was adopted; see docs/EVALUATION.md.
+Measured on the dev split of bench/usecases before it was adopted; see evaluation/EVALUATION.md.
 """
 
 from __future__ import annotations

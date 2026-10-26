@@ -1,6 +1,6 @@
 """Re-score saved predictions with the five-outcome definitions in bench/scoring.py.
 
-    python bench/rescore.py bench/results/external
+    python bench/rescore.py evaluation/results/external
 
 The original result files are read, never modified. For each one, a rescored summary is written to
 ``<dir>/rescored/<name>`` with the sha256 of the file it came from, and ``<dir>/rescored/tables.md`` lists

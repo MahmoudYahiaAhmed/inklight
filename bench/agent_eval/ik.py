@@ -20,7 +20,7 @@ import sys
 import time
 from pathlib import Path
 
-EVAL = Path(os.environ.get("INKLIGHT_EVAL_DIR", r"C:/Users/pc/inklight-eval-private"))
+EVAL = Path(os.environ.get("INKLIGHT_EVAL_DIR", "~/inklight-eval-private")).expanduser()
 CLI = EVAL / "venv" / "Scripts" / "inklight.exe"
 BUDGET = 4
 

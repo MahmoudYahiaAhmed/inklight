@@ -59,6 +59,6 @@ Types: `text`, `money`, `number`, `date`, `email`, `phone`, `id`.
   needs agreeing evidence: number format plus magnitude, OCR confidence or a disagreeing second reading of
   the image region. A second reading needs an image document at rotation 0, not a PDF.
 - Digit *misreads* that keep the format (`12.000` for 12,600) and signs read from a nearby line are not
-  detected. They are the remaining silent receipt errors in docs/BENCHMARKS.md.
+  detected. They are the remaining silent receipt errors in evaluation/BENCHMARKS.md.
 - Values that appear only inside complex tables (merged cells, no ruling) may be missed. Indra itself
   documents complex tables as a limitation.

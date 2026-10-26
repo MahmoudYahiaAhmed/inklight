@@ -1,4 +1,4 @@
-"""Regressions from the agent-run evaluation (docs/AGENT_EVALUATION.md), reproduced on synthetic pages.
+"""Regressions from the agent-run evaluation (evaluation/AGENT_EVALUATION.md), reproduced on synthetic pages.
 
 Each page copies the mechanism of a demonstrated failure, not its document: the geometry of a register's header
 column of numbered labels, two supplier tables with identical headings, two documents of different types passed

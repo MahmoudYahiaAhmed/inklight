@@ -72,7 +72,7 @@ checked against a reference, and unseen paraphrases. The paraphrase rule is "exa
 
 We measured it. Used as a zero-shot intent classifier (log-likelihood ranking over 10 labels, the most
 reliable way to use a small model), SmolLM2-135M-Instruct scored **27.5%** on the 40-request planner set.
-The deterministic planner scored **100%** on that set (see `docs/BENCHMARKS.md` — the set was written
+The deterministic planner scored **100%** on that set (see `evaluation/BENCHMARKS.md` — the set was written
 alongside the planner, so treat 100% as an upper bound, not a generalisation claim). On 17 request forms
 run end to end over held-out external documents, 13 of 13 supported forms returned exactly the right
 documents and 4 of 4 unsupported ones were reported rather than guessed. So the small models

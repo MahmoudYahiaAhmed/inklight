@@ -1,0 +1,5021 @@
+{
+ "label": "AUTOMATED DIAGNOSTIC, not a benchmark",
+ "provenance": {
+  "inklight_version": "0.1.1.dev0",
+  "inklight_file": "~\\inklight\\src\\inklight\\__init__.py",
+  "python": "3.13.9 | packaged by Anaconda, Inc. | (main, Oct 21 2025, 19:09:58) [MSC v.1929 64 bit (AMD64)]"
+ },
+ "runs": {
+  "auto": {
+   "mode": "auto",
+   "documents": {
+    "en-invoice-syn-1": {
+     "lang": "en",
+     "modality": "image-synthetic",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9514,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 812,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.981,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Proctor Levy Willis invoice",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 44848471",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 838.68",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who is the seller?",
+       "answer": "The vendor is Proctor, Levy and Willis",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 401,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.583,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-syn-1.jpg** (invoice, 1 page)\n  - IBAN: GB89NZLM61247862676381 (en-invoice-syn-1.jpg p.1)\n  - Adidas Baseball Youth Cleats (en-invoice-syn-1.jpg p.1)\n  - Spikes Kids Shoes Black White (en-invoice-syn-1.jpg p.1)\n  - MARIO 64 NINTENDO Little Kids (en-invoice-syn-1.jpg p.1)\n  - NWT VANS BOYS/YOUTH SK8-HI (en-invoice-syn-1.jpg p.1"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "44848471",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2021-03-26",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "838.68",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-syn-2": {
+     "lang": "en",
+     "modality": "image-synthetic",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9399,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 709,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.986,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Miller Wright Clark invoice",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 65128151",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 75.57",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who is the client?",
+       "answer": "The customer is Rogers, Floyd and Smith",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 281,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.5,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-syn-2.jpg** (invoice, 1 page)\n  - IBAN: GB46VTBI62944172792808 (en-invoice-syn-2.jpg p.1)\n  - West Rhondamouth, MO 27619 (en-invoice-syn-2.jpg p.1)\n  - New Sealed Illustrated Leather (en-invoice-syn-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "65128151",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2014-07-18",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "75.57",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-scan-1": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9184,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 436,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Three Tree Productions invoice Brothers",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 2750",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 2,000.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who should the check be payable to?",
+       "answer": "E\nTotal\n$2,000.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 386,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.448,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-scan-1.pdf** (invoice, 1 page)\n  - Philip Morris USA/YSP \"Brothers\"TV:60 (en-invoice-scan-1.pdf p.1)\n  - PLEASE MAKE CHECK PAYABLE TO (en-invoice-scan-1.pdf p.1)\n  - THREE TREE PRODUTIONS, INC. (en-invoice-scan-1.pdf p.1)\n  - Source: https://www.industrydocuments.ucsf.edu/docs/lkxd0060 (en-invoice-scan-1.pdf p.1)"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "2750",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2000-04-10",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "2000.0",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-scan-2": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.741,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 875,
+      "arabic_share": 0.0,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "Manning Selvage Lee TV news monitor tapes",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 191",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the invoice date?",
+       "answer": "191 14\nATTN: JOHN R. BANKHEAD\nINVOICE DATE: O1 /31 /92",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What are the payment terms?",
+       "answer": "O1 /31 /92\n\nEvidence: “INVOICE DATE: O1 /31 /92”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 464,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.571,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-scan-2.pdf** (invoice, 1 page)\n  - MANNING, SELVAGE & LEE, INC, (en-invoice-scan-2.pdf p.1)\n  - 99 PARK AVENUE, NEW YORK, N.Y. (en-invoice-scan-2.pdf p.1)\n  - TERMS: NET - 10 DAYS FROM RECEIPT OF INVOICE (en-invoice-scan-2.pdf p.1)\n  - 229 Peachtree St., N.E., Suite 1600 (en-invoice-scan-2.pdf p.1)\n  - Source: https://www.indu"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "191",
+       "correct": false,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1982-02-22",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "70.0",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-receipt-photo-1": {
+     "lang": "en",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9422,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 428,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Magic Planet Cairo Festival City receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the receipt number?",
+       "answer": "0155375697\n\nEvidence: “Card #: 0155375697”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total amount?",
+       "answer": "The total is 50.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the VAT amount?",
+       "answer": "The tax is 3.99",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 231,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.5,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-receipt-photo-1.jpg** (receipt, 1 page)\n  - MAJID AL FUTTAIM LEISURE & (en-receipt-photo-1.jpg p.1)\n  - Magic planet - Cairo Festival City (en-receipt-photo-1.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "50.0",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-receipt-photo-2": {
+     "lang": "en",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9433,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 639,
+      "arabic_share": 0.019,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Abu Auf Mall of Egypt Delicious Mix",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the transaction number?",
+       "answer": "0000000",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What was the total amount?",
+       "answer": "The total is 210.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who was the cashier?",
+       "answer": "abdallah hussain\nRejister",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 234,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.436,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-receipt-photo-2.jpg** (receipt, 1 page)\n  - Default, Abu auf, Cairo, Egypt (en-receipt-photo-2.jpg p.1)\n  - facebook abusul - Instagra n abun (en-receipt-photo-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "210.0",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2022-09-03",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-contract-digital-1": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 7,
+      "mean_conf": 1.0,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 12123,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Miaoli Royal Resort Hotel outsourcing contract",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "When was the agreement signed?",
+       "answer": "one month\n\nEvidence: “Should both Parties be unable to reach an agreement within one month through negotiation, they may apply for an”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which court has jurisdiction?",
+       "answer": "Miaoli District Court of Taiwan\n\nEvidence: “herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the architect?",
+       "answer": "Chang Chen-Bin\n\nEvidence: “Planning Unit: Chang Chen-Bin Architects Office”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 695,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.754,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-contract-digital-1.pdf** (contract, 7 pages)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (en-contract-digital-1.pdf p.1)\n  - Source: IMPERIAL GARDEN & RESORT, INC., DRS (on F-1), 10/28/2016 (en-contract-digital-1.pdf p.1)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (en-contract-digital"
+     },
+     "fields": [
+      {
+       "field": "agreement_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "governing_court",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "agreement_date",
+       "governing_court"
+      ],
+      "error": null
+     }
+    },
+    "en-contract-digital-2": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 16,
+      "mean_conf": 1.0,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 34055,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Rare Element Resources intellectual property agreement Synchron",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the agreement?",
+       "answer": "The date is 2017-10-02",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Which law governs the agreement?",
+       "answer": "Article 18.04.\n18.04 Governing Law; Jurisdiction",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who are the parties?",
+       "answer": "The Parties shall cooperate with\none another",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 886,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.888,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-contract-digital-2.pdf** (contract, 16 pages)\n  - or more Affiliates, the \"Investor\"), and Rare Element Resources Ltd., a British Columbia Corporation having a principal place of business at P.O. (en-contract-digital-2.pdf p.1)\n  - 1.01 Investor wishes to acquire certain rights under the Patents and related Technical Information in ac"
+     },
+     "fields": [
+      {
+       "field": "agreement_date",
+       "labels": true,
+       "value": "2017-10-02",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "governing_law",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "agreement_date",
+       "governing_law"
+      ],
+      "error": null
+     }
+    },
+    "en-agreement-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 15,
+      "mean_conf": 0.9778,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 37046,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "model status of forces agreement peace-keeping operations",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What does the model agreement concern?",
+       "answer": "all\nissues pertaining to this section be covered",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "When was the document issued?",
+       "answer": "Upon conclusion of a specific\nagreement, the provision in question could instead be inserted in a memorandum of\nunderstanding",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which resolution requested the model agreement?",
+       "answer": "memorandum of\nunderstanding",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 641,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.694,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-agreement-scan.pdf** (contract, 15 pages)\n  - Model status-of-forces agreement for peace-keeping operations (en-agreement-scan.pdf p.1)\n  - from [host country/territory], members of the United Nations peace-keeping (en-agreement-scan.pdf p.8)\n  - Representative/Commander and members ofthe United Nations peace-keeping operation (en-agr"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1990-10-09",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-letter-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 1.0,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 5725,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Democratic Republic of the Congo North Kivu communiqué M23",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the letter?",
+       "answer": "The date is 2022-11-23",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who signed the letter?",
+       "answer": "Victoria Liolocha Lieta\nChargé d’Affaires a.i.\n70123",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which region does the communiqué concern?",
+       "answer": "North Kivu\n\nEvidence: “the security situation in North Kivu issued by the Deputy Prime Minister and Minister”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 615,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.712,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-letter-digital.pdf** (unknown, 3 pages)\n  - the Permanent Mission of the Democratic Republic of the (en-letter-digital.pdf p.1)\n  - Congo to the United Nations addressed to the President of the (en-letter-digital.pdf p.1)\n  - communiqué of the Government of the Democratic Republic of the Congo concerning (en-letter-digital.pdf p.1)\n  "
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": "2023-01-18",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "en-letter-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 2,
+      "mean_conf": 0.9822,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 3085,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Iran letter bombardment civilian areas Abadan",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the letter?",
+       "answer": "7 September 1983\n\nEvidence: “Pursuant to my Ambassador's letter of 7 September 1983 (S/15962) regarding the”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which city was hit by artillery fire on 8 September?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: where vendor contains \"artillery fire\"; columns: invoice_number, vendor, date, total\nNot applied: “city”; “hit”\nThe documents below match only the parts that were applied.\n\nNo documents match vendor contains \"artillery fire\".",
+       "state": "partial",
+       "intent": "filter",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 0,
+       "brain": "reader (planner: rules)"
+      },
+      {
+       "q": "Which mission sent the letter?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: documents: letters; columns: invoice_number, vendor, date, total\nNot applied: “mission”\nThe documents below match only the parts that were applied.\n\nExtracted invoice_number, vendor, date, total from 1 document(s):\n\ndocument | i",
+       "state": "partial",
+       "intent": "extract",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 616,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.727,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-letter-scan.pdf** (unknown, 2 pages)\n  - LETTER DATED 22 SEPTEMBER 1983 FROM THE CHARGE D'AFFAIRES (en-letter-scan.pdf p.1)\n  - Pursuant to my Ambassador's letter of 7 September 1983 (S/15962) regarding the (en-letter-scan.pdf p.1)\n  - constant bombardment of civilian areas in Iran by the ruling Baathist régime of (en-letter-scan.pdf "
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": "1983-09-22",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "en-report-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 14,
+      "mean_conf": 1.0,
+      "doc_type": "report",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 51577,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "UNITAD investigative team Da'esh accountability report",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Which resolution established the Investigative Team?",
+       "answer": "resolution 2379\n\nEvidence: “Within the parameters established by the Security Council in its resolution 2379”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the Investigative Team known as?",
+       "answer": "United Nations Investigative Team\n\nEvidence: “known by the designation of United Nations Investigative Team to Promote”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "The report covers the implementation of which resolution?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: documents: reports; columns: invoice_number, vendor, date, total\nNot applied: “covers”; “implementation”; “resolution”\nThe documents below match only the parts that were applied.\n\nExtracted invoice_number, vendor, date, total fr",
+       "state": "partial",
+       "intent": "extract",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 675,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.833,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-report-digital.pdf** (report, 14 pages)\n  - In its resolution 2379 (2017), the Security Council requested the Secretary- (en-report-digital.pdf p.1)\n  - General to establish an Investigative Team, headed by a Special Adviser, to support (en-report-digital.pdf p.1)\n  - Investigative Team shall share the evidence with the competent Iraq"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2024-01-15",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-report-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 0.9812,
+      "doc_type": "contract",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 18679,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "definition of aggression General Assembly resolution 3314",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What does resolution 3314 define?",
+       "answer": "international peace and security\n\nEvidence: “of international peace and security,”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "On what date was resolution 3314 adopted?",
+       "answer": "8 December 1969\n\nEvidence: “8 December 1969, it adopted and opened for signature”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "At which plenary meeting was resolution 3314 adopted?",
+       "answer": "2280th\n\nEvidence: “2280th plenary meeting”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 514,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.707,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-report-scan.pdf** (contract, 3 pages)\n  - General Assembly—Twenty-ninth Session (en-report-scan.pdf p.1)\n  - Law of Treaties, Documents of the Conference (United Nations (en-report-scan.pdf p.1)\n  - tion on Principles of International Law concerning Friendly (en-report-scan.pdf p.3)\n  - session, the International Law Commission, in th"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-form-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 6,
+      "mean_conf": 1.0,
+      "doc_type": "report",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 37649,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "request for taxpayer identification number and certification",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is this form requesting?",
+       "answer": "your TIN\n\nEvidence: “than Form W-9 to request your TIN, you must use the requester’s form if”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the revision date of the form?",
+       "answer": "Date\nGeneral Instructions\nSection references are to the Internal Revenue Code unless otherwise\nnoted.\nFuture developments. For the latest information about developments\nrelated to Form W-9",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Should the form be sent to the IRS?",
+       "answer": "Do not\nsend to the IRS",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 830,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.844,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-digital.pdf** (report, 6 pages)\n  - 3a Check the appropriate box for federal tax classification of the entity/individual whose name is entered on line 1. (en-form-digital.pdf p.1)\n  - Note: Check the “LLC” box above and, in the entry space, enter the appropriate code (C, S, or P) for the tax (en-form-digital.pdf p.1)\n  - 3b If on"
+     },
+     "fields": [
+      {
+       "field": "form_number",
+       "labels": true,
+       "value": "W-9",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "revision",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "form_number",
+       "revision"
+      ],
+      "error": null
+     }
+    },
+    "en-form-scan-1": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.7678,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 1365,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.964,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "fax cover sheet George Baroody",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Who is the fax addressed to?",
+       "answer": "Attorney General\nBetty D. Montgomery",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "How many pages including the cover sheet?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: task: count\nNot applied: “pages”; “cover”; “sheet”\nThe documents below match only the parts that were applied.\n\n1 document(s) in scope: 1 unknown",
+       "state": "partial",
+       "intent": "count",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 0,
+       "brain": "rules (planner: rules)"
+      },
+      {
+       "q": "What is the phone number?",
+       "answer": "The phone is (336) 335-7363",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 512,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.547,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-scan-1.png** (unknown, 1 page)\n  - FAX NUMBER: _(336) 335-7392_ (en-form-scan-1.png p.1)\n  - PHONE NUMBER: (336) 335-7363 (en-form-scan-1.png p.1)\n  - NUMBER OF PAGES INCLUDING COVER SHEET: __3_ (en-form-scan-1.png p.1)\n  - SENDER/PHONE NUMBER:June Flynn for Eric Browa/(614) 466-8980 (en-form-scan-1.png p.1)\n  - reader of this me"
+     },
+     "fields": [
+      {
+       "field": "to",
+       "labels": true,
+       "value": "George Baroody",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": true,
+       "value": "1998-12-10",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "to",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-form-scan-2": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8922,
+      "doc_type": "report",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 1361,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.958,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Kool Waterfall test market",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Who is the form from?",
+       "answer": "B\" Kool\n\nEvidence: “The theme \"B\" Kool has replaced all previous POS.”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What brand is tested?",
+       "answer": "PRICE POINT:\nFULL S\nPV $\n\n(Indicate Distributor's Cost Per Carton",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the manufacturer?",
+       "answer": "D. J. Landro",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 524,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.704,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-scan-2.png** (report, 1 page)\n  - promoting old style packs to clean up inventory. (en-form-scan-2.png p.1)\n  - All POS is being converted to \"B\" Kool. (en-form-scan-2.png p.1)\n  - It was not a problem obtaining new distribution. (en-form-scan-2.png p.1)\n  - New packaging is just following up on the old \"packaging\". (en-form-scan"
+     },
+     "fields": [
+      {
+       "field": "brand",
+       "labels": true,
+       "value": "Kool Waterfall",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "from",
+       "labels": true,
+       "value": "D. J. Landro",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "brand",
+       "from"
+      ],
+      "error": null
+     }
+    },
+    "ar-letter-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 0.9512,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 4558,
+      "arabic_share": 0.988,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "جمهورية الكونغو الديمقراطية شمال كيفو",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الوضع الأمني في شمال كيفو",
+       "rank": 3,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما تاريخ الرسالة؟",
+       "answer": "50\nمرفق الرسالة المؤرخة 18 كانون الثاني/يناير 2023",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من وقع الرسالة؟",
+       "answer": "23-01144",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما المنطقة التي يتناولها البيان؟",
+       "answer": "23\n\nEvidence: “1 - تحيط علما بالرفض المتكرر من جانب حركة 23 مارس تنفيذ متطلبات خطة السلام التي”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 8,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 1.0,
+      "mentions_a_key": false,
+      "answer": "23-01144"
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "ar-report-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 15,
+      "mean_conf": 0.9666,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 39544,
+      "arabic_share": 0.997,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "فريق التحقيق داعش المساءلة",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "تقرير الأمين العام تنفيذ القرار 2697",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما القرار الذي أنشأ فريق التحقيق؟",
+       "answer": ".\n\nEvidence: “في ما يتعلق بالخطوات المقبلة لفريق التحقيق لتقديم الأدلة إلى السلطات العراقية المختصة.”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "تنفيذ أي قرار يتناوله التقرير؟",
+       "answer": "General\n15 January 2024\nArabic\nOriginal: English\nتنفيذ القرار 2023 2697",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من قدم التقرير؟",
+       "answer": "8\n\nEvidence: “8 - وأعد الأمين العام هذا التقرير بالتنسيق مع المستشار الخاص لفريق التحقيق، المكلف من قبل”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 26,
+      "arabic_share": 0.933,
+      "language_matches": true,
+      "from_document": 1.0,
+      "mentions_a_key": false,
+      "answer": "S/2024/20\nالحق في الخصوصية"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2024-01-15",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-letter-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 2,
+      "mean_conf": 0.9092,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 2712,
+      "arabic_share": 0.972,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "رسالة جمهورية ايران الاسلامية قصف المناطق المدنية",
+       "rank": 4,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "عبادان",
+       "rank": null,
+       "methods": [
+        "semantic"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما تاريخ الرسالة؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من أي بعثة أرسلت الرسالة؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما المدينة التي قصفت بالمدفعية؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 35,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.8,
+      "mentions_a_key": false,
+      "answer": "1983\n\nEvidence: “22 September 1983”"
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "ar-report-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 5,
+      "mean_conf": 0.8993,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 7633,
+      "arabic_share": 0.996,
+      "key_recall": 0.667
+     },
+     "search": [
+      {
+       "q": "تعريف العدوان",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الجمعية العامة تعريف العدوان",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما موضوع القرار 3314؟",
+       "answer": "1. (3)",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "متى اعتمد القرار؟",
+       "answer": "3)\n\nEvidence: “(3)”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "في أي جلسة عامة اعتمد القرار؟",
+       "answer": "3)\n(١١) القرار ٢٦٢٥(د – ٢٥) ، المرفق .\n-345-",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 22,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.667,
+      "mentions_a_key": false,
+      "answer": "344\n\nEvidence: “-344-”"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-agreement-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 18,
+      "mean_conf": 0.8196,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 28858,
+      "arabic_share": 0.986,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "نموذج اتفاق مركز القوات عمليات حفظ السلم",
+       "rank": 2,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما موضوع نموذج الاتفاق؟",
+       "answer": "9.7815.0\n.. 1",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما رقم القرار الذي طلب إعداد النموذج؟",
+       "answer": "9.7817.0\n\nEvidence: “(9.7817.0”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "لمن قدم التقرير؟",
+       "answer": "Arabic\nPage 12\n-1-\nالزى والاسلحة",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 23,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.75,
+      "mentions_a_key": false,
+      "answer": "13\n\nEvidence: “Page 13”"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1990-10-09",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-1": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8755,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 382,
+      "arabic_share": 0.892,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Abu Auf almond butter order",
+       "rank": 3,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the order number?",
+       "answer": "23.11 2022-#WSO 0000059905\n\nEvidence: “e 23.11 2022-#WSO 0000059905”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total price?",
+       "answer": "WSO 0000059905\n\nEvidence: “e 23.11 2022-#WSO 0000059905”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What product was ordered?",
+       "answer": "220.00\nO\nIII",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 256,
+      "arabic_share": 0.28,
+      "language_matches": true,
+      "from_document": 0.356,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-1.jpg** (unknown, 1 page)\n  - المحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد (mx-receipt-photo-1.jpg p.1)\n  - e 23.11 2022-#WSO 0000059905 (mx-receipt-photo-1.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "251.0",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-2": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.869,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 711,
+      "arabic_share": 0.654,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Starbucks Sokhna receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the check number?",
+       "answer": "Chk 3118",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total payment amount?",
+       "answer": "46.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the TAX Card number?",
+       "answer": "N\n\nEvidence: “CRNO, 18522//TAX Card N),21271959g”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 232,
+      "arabic_share": 0.144,
+      "language_matches": true,
+      "from_document": 0.35,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-2.jpg** (unknown, 1 page)\n  - CRNO, 18522//TAX Card N),21271959g (mx-receipt-photo-2.jpg p.1)\n  - ليوما 30ممنهية وذلك في غفون (mx-receipt-photo-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "51.0",
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-3": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8807,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 309,
+      "arabic_share": 0.806,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Masary payment receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "خدمات الدفع الذكية",
+       "rank": 2,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the operation number?",
+       "answer": "O Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total amount?",
+       "answer": "Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما رقم العملية؟",
+       "answer": "O Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 166,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.3,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-3.jpg** (unknown, 1 page)\n  - 13.12.2022-13:36:51 (2014 391 (mx-receipt-photo-3.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": true,
+       "value": "13.12",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2022-12-13",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-4": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9113,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 784,
+      "arabic_share": 0.186,
+      "key_recall": 0.667
+     },
+     "search": [
+      {
+       "q": "Abu Auf Coffee Brazilian Light receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the transaction number?",
+       "answer": "01112700777",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the customer?",
+       "answer": "The customer is le",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What was the total amount?",
+       "answer": "The total is 330.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 318,
+      "arabic_share": 0.204,
+      "language_matches": true,
+      "from_document": 0.566,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-4.jpg** (receipt, 1 page)\n  - Bulidingi , (هد 201 حي ملقي اتعربي الشيرتون الزمه. (mx-receipt-photo-4.jpg p.1)\n  - Facebook abuauf | Instagram abuauf. (mx-receipt-photo-4.jpg p.1)\n  - مجل تجاران: 150361 5 الفاهرد (mx-receipt-photo-4.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "330.0",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2023-11-02",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-article-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 23,
+      "mean_conf": 0.9286,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 75109,
+      "arabic_share": 0.979,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "عاصمة مصر القاهرة",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الرئيس عبد الفتاح السيسي",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما عاصمة مصر؟",
+       "answer": "1311 34\n\nEvidence: “(1311 34”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من رئيس مصر؟",
+       "answer": "1953\n\nEvidence: “يونيو 13) .1953] أما الحكومة فهي الهيئة التنفيذية والإدارية اللُيا للولة، وتتكون من رئيس مجلس”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من رئيس الوزراء؟",
+       "answer": "1953\n\nEvidence: “يونيو 13) .1953] أما الحكومة فهي الهيئة التنفيذية والإدارية اللُيا للولة، وتتكون من رئيس مجلس”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 40,
+      "arabic_share": 0.75,
+      "language_matches": true,
+      "from_document": 0.8,
+      "mentions_a_key": false,
+      "answer": "لمصر\n\nEvidence: “البيانات المناخية لمصر”"
+     },
+     "fields": [
+      {
+       "field": "capital",
+       "labels": true,
+       "value": "اللغة الرسمية",
+       "correct": false,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "capital"
+      ],
+      "error": null
+     }
+    }
+   },
+   "ingest_seconds": 60.2,
+   "ingest_failed": [],
+   "export": {
+    "rows": 44,
+    "columns": [
+     "review_id",
+     "document",
+     "doc_sha256",
+     "cohort",
+     "mode",
+     "baseline",
+     "field",
+     "predicted",
+     "predicted_raw",
+     "confidence",
+     "method",
+     "warning",
+     "flagged",
+     "final",
+     "entered_input",
+     "action",
+     "decided_by",
+     "approved_by",
+     "approved_at"
+    ],
+    "all_custom_fields_exported": true,
+    "arabic_values_exported": true
+   },
+   "brain_usage": {
+    "reader": {
+     "loaded": true,
+     "inference_calls": 492,
+     "fallback_reason": null
+    },
+    "embedder": {
+     "loaded": true,
+     "inference_calls": 152,
+     "fallback_reason": null
+    },
+    "writer": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    }
+   },
+   "onnx_calls": {
+    "indra/orient.onnx": 110,
+    "indra/det.onnx": 181,
+    "indra/script.onnx": 796,
+    "indra/rec.onnx": 413,
+    "indra/rec_world.onnx": 33,
+    "indra/rec_cjk.onnx": 32,
+    "indra/order.onnx": 162,
+    "indra/rec_rtl.onnx": 381,
+    "onnx/model_int8.onnx": 644
+   }
+  },
+  "ocr": {
+   "mode": "ocr",
+   "documents": {
+    "en-invoice-syn-1": {
+     "lang": "en",
+     "modality": "image-synthetic",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9514,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 812,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.981,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Proctor Levy Willis invoice",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 44848471",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 838.68",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who is the seller?",
+       "answer": "The vendor is Proctor, Levy and Willis",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 401,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.583,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-syn-1.jpg** (invoice, 1 page)\n  - IBAN: GB89NZLM61247862676381 (en-invoice-syn-1.jpg p.1)\n  - Adidas Baseball Youth Cleats (en-invoice-syn-1.jpg p.1)\n  - Spikes Kids Shoes Black White (en-invoice-syn-1.jpg p.1)\n  - MARIO 64 NINTENDO Little Kids (en-invoice-syn-1.jpg p.1)\n  - NWT VANS BOYS/YOUTH SK8-HI (en-invoice-syn-1.jpg p.1"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "44848471",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2021-03-26",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "838.68",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-syn-2": {
+     "lang": "en",
+     "modality": "image-synthetic",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9399,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 709,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.986,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Miller Wright Clark invoice",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 65128151",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 75.57",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who is the client?",
+       "answer": "The customer is Rogers, Floyd and Smith",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 281,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.5,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-syn-2.jpg** (invoice, 1 page)\n  - IBAN: GB46VTBI62944172792808 (en-invoice-syn-2.jpg p.1)\n  - West Rhondamouth, MO 27619 (en-invoice-syn-2.jpg p.1)\n  - New Sealed Illustrated Leather (en-invoice-syn-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "65128151",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2014-07-18",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "75.57",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-scan-1": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9184,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 436,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Three Tree Productions invoice Brothers",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 2750",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the total?",
+       "answer": "The total is 2,000.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who should the check be payable to?",
+       "answer": "E\nTotal\n$2,000.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 386,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.448,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-scan-1.pdf** (invoice, 1 page)\n  - Philip Morris USA/YSP \"Brothers\"TV:60 (en-invoice-scan-1.pdf p.1)\n  - PLEASE MAKE CHECK PAYABLE TO (en-invoice-scan-1.pdf p.1)\n  - THREE TREE PRODUTIONS, INC. (en-invoice-scan-1.pdf p.1)\n  - Source: https://www.industrydocuments.ucsf.edu/docs/lkxd0060 (en-invoice-scan-1.pdf p.1)"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "2750",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2000-04-10",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "2000.0",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-invoice-scan-2": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "invoice",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.741,
+      "doc_type": "invoice",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 875,
+      "arabic_share": 0.0,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "Manning Selvage Lee TV news monitor tapes",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the invoice number?",
+       "answer": "The invoice number is 191",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the invoice date?",
+       "answer": "191 14\nATTN: JOHN R. BANKHEAD\nINVOICE DATE: O1 /31 /92",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What are the payment terms?",
+       "answer": "O1 /31 /92\n\nEvidence: “INVOICE DATE: O1 /31 /92”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 464,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.571,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-invoice-scan-2.pdf** (invoice, 1 page)\n  - MANNING, SELVAGE & LEE, INC, (en-invoice-scan-2.pdf p.1)\n  - 99 PARK AVENUE, NEW YORK, N.Y. (en-invoice-scan-2.pdf p.1)\n  - TERMS: NET - 10 DAYS FROM RECEIPT OF INVOICE (en-invoice-scan-2.pdf p.1)\n  - 229 Peachtree St., N.E., Suite 1600 (en-invoice-scan-2.pdf p.1)\n  - Source: https://www.indu"
+     },
+     "fields": [
+      {
+       "field": "invoice_number",
+       "labels": false,
+       "value": "191",
+       "correct": false,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1982-02-22",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "total",
+       "labels": false,
+       "value": "70.0",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "invoice_number",
+       "date",
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "en-receipt-photo-1": {
+     "lang": "en",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9422,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 428,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Magic Planet Cairo Festival City receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the receipt number?",
+       "answer": "0155375697\n\nEvidence: “Card #: 0155375697”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total amount?",
+       "answer": "The total is 50.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What is the VAT amount?",
+       "answer": "The tax is 3.99",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 231,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.5,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-receipt-photo-1.jpg** (receipt, 1 page)\n  - MAJID AL FUTTAIM LEISURE & (en-receipt-photo-1.jpg p.1)\n  - Magic planet - Cairo Festival City (en-receipt-photo-1.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "50.0",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-receipt-photo-2": {
+     "lang": "en",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9433,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 639,
+      "arabic_share": 0.019,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Abu Auf Mall of Egypt Delicious Mix",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the transaction number?",
+       "answer": "0000000",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What was the total amount?",
+       "answer": "The total is 210.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who was the cashier?",
+       "answer": "abdallah hussain\nRejister",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 234,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.436,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-receipt-photo-2.jpg** (receipt, 1 page)\n  - Default, Abu auf, Cairo, Egypt (en-receipt-photo-2.jpg p.1)\n  - facebook abusul - Instagra n abun (en-receipt-photo-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "210.0",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2022-09-03",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-contract-digital-1": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 7,
+      "mean_conf": 0.9346,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 12147,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.997,
+      "reference": "the PDF's own text layer"
+     },
+     "search": [
+      {
+       "q": "Miaoli Royal Resort Hotel outsourcing contract",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "When was the agreement signed?",
+       "answer": "one month\n\nEvidence: “Should both Parties be unable to reach an agreement within one month through negotiation, they may apply for an”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which court has jurisdiction?",
+       "answer": "Miaoli District Court of Taiwan\n\nEvidence: “herein agree to take the Miaoli District Court of Taiwan as the competent court of first instance pursuant to the laws of the”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the architect?",
+       "answer": "Chang Chen-Bin\n\nEvidence: “Planning Unit: Chang Chen-Bin Architects Office”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 695,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.754,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-contract-digital-1.pdf** (contract, 7 pages)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (en-contract-digital-1.pdf p.1)\n  - Source: IMPERIAL GARDEN & RESORT, INC., DRS (on F-1), 10/28/2016 (en-contract-digital-1.pdf p.1)\n  - Outsourcing Contract on Development of Miaoli Royal Resort Hotel (en-contract-digital"
+     },
+     "fields": [
+      {
+       "field": "agreement_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "governing_court",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "agreement_date",
+       "governing_court"
+      ],
+      "error": null
+     }
+    },
+    "en-contract-digital-2": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 16,
+      "mean_conf": 0.9758,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 34058,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 1.0,
+      "reference": "the PDF's own text layer"
+     },
+     "search": [
+      {
+       "q": "Rare Element Resources intellectual property agreement Synchron",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the agreement?",
+       "answer": "The date is 2017-10-02",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Which law governs the agreement?",
+       "answer": "Article 18.04.\n18.04 Governing Law: Jurisdiction",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who are the parties?",
+       "answer": "their agents, employees, experts, and attorneys\n\nEvidence: “by the Parties, their agents, employees, experts, and attorneys, and by the mediator, are confidential, privileged, and inadmissible for any purpose,”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 886,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.888,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-contract-digital-2.pdf** (contract, 16 pages)\n  - or more Affiliates, the \"Investor\"), and Rare Element Resources Ltd., a British Columbia Corporation having a principal place of business at P.O. (en-contract-digital-2.pdf p.1)\n  - 1.01 Investor wishes to acquire certain rights under the Patents and related Technical Information in ac"
+     },
+     "fields": [
+      {
+       "field": "agreement_date",
+       "labels": true,
+       "value": "2017-10-02",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "governing_law",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "agreement_date",
+       "governing_law"
+      ],
+      "error": null
+     }
+    },
+    "en-agreement-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 15,
+      "mean_conf": 0.9778,
+      "doc_type": "contract",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 37046,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "model status of forces agreement peace-keeping operations",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What does the model agreement concern?",
+       "answer": "all\nissues pertaining to this section be covered",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "When was the document issued?",
+       "answer": "Upon conclusion of a specific\nagreement, the provision in question could instead be inserted in a memorandum of\nunderstanding",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which resolution requested the model agreement?",
+       "answer": "memorandum of\nunderstanding",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 641,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.694,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-agreement-scan.pdf** (contract, 15 pages)\n  - Model status-of-forces agreement for peace-keeping operations (en-agreement-scan.pdf p.1)\n  - from [host country/territory], members of the United Nations peace-keeping (en-agreement-scan.pdf p.8)\n  - Representative/Commander and members ofthe United Nations peace-keeping operation (en-agr"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1990-10-09",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-letter-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 0.9862,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 5727,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.994,
+      "reference": "the PDF's own text layer"
+     },
+     "search": [
+      {
+       "q": "Democratic Republic of the Congo North Kivu communiqué M23",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the letter?",
+       "answer": "The date is 2022-11-23",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "Who signed the letter?",
+       "answer": "Victoria Liolocha Lieta\nChargé d’Affaires a.i.\n70123",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which region does the communiqué concern?",
+       "answer": "North Kivu\n\nEvidence: “the Congo concerning the security situation in North Kivu”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 615,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.712,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-letter-digital.pdf** (unknown, 3 pages)\n  - the Permanent Mission of the Democratic Republic of the (en-letter-digital.pdf p.1)\n  - Congo to the United Nations addressed to the President of the (en-letter-digital.pdf p.1)\n  - communiqué of the Government of the Democratic Republic of the Congo concerning (en-letter-digital.pdf p.1)\n  "
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": "2023-01-18",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "en-letter-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 2,
+      "mean_conf": 0.9822,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 3085,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Iran letter bombardment civilian areas Abadan",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the date of the letter?",
+       "answer": "7 September 1983\n\nEvidence: “Pursuant to my Ambassador's letter of 7 September 1983 (S/15962) regarding the”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Which city was hit by artillery fire on 8 September?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: where vendor contains \"artillery fire\"; columns: invoice_number, vendor, date, total\nNot applied: “city”; “hit”\nThe documents below match only the parts that were applied.\n\nNo documents match vendor contains \"artillery fire\".",
+       "state": "partial",
+       "intent": "filter",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 0,
+       "brain": "reader (planner: rules)"
+      },
+      {
+       "q": "Which mission sent the letter?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: documents: letters; columns: invoice_number, vendor, date, total\nNot applied: “mission”\nThe documents below match only the parts that were applied.\n\nExtracted invoice_number, vendor, date, total from 1 document(s):\n\ndocument | i",
+       "state": "partial",
+       "intent": "extract",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 616,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.727,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-letter-scan.pdf** (unknown, 2 pages)\n  - LETTER DATED 22 SEPTEMBER 1983 FROM THE CHARGE D'AFFAIRES (en-letter-scan.pdf p.1)\n  - Pursuant to my Ambassador's letter of 7 September 1983 (S/15962) regarding the (en-letter-scan.pdf p.1)\n  - constant bombardment of civilian areas in Iran by the ruling Baathist régime of (en-letter-scan.pdf "
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": "1983-09-22",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "en-report-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 14,
+      "mean_conf": 0.9871,
+      "doc_type": "report",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 51571,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.999,
+      "reference": "the PDF's own text layer"
+     },
+     "search": [
+      {
+       "q": "UNITAD investigative team Da'esh accountability report",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Which resolution established the Investigative Team?",
+       "answer": "resolution 2379\n\nEvidence: “Within the parameters established by the Security Council in its resolution 2379”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the Investigative Team known as?",
+       "answer": "United Nations Investigative Team\n\nEvidence: “known by the designation of United Nations Investigative Team to Promote”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "The report covers the implementation of which resolution?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: documents: reports; columns: invoice_number, vendor, date, total\nNot applied: “covers”; “implementation”; “resolution”\nThe documents below match only the parts that were applied.\n\nExtracted invoice_number, vendor, date, total fr",
+       "state": "partial",
+       "intent": "extract",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 675,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.833,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-report-digital.pdf** (report, 14 pages)\n  - In its resolution 2379 (2017), the Security Council requested the Secretary- (en-report-digital.pdf p.1)\n  - General to establish an Investigative Team, headed by a Special Adviser, to support (en-report-digital.pdf p.1)\n  - Investigative Team shall share the evidence with the competent Iraq"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2024-01-15",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-report-scan": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 0.9812,
+      "doc_type": "contract",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 18679,
+      "arabic_share": 0.0,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "definition of aggression General Assembly resolution 3314",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What does resolution 3314 define?",
+       "answer": "international peace and security\n\nEvidence: “of international peace and security,”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "On what date was resolution 3314 adopted?",
+       "answer": "8 December 1969\n\nEvidence: “8 December 1969, it adopted and opened for signature”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "At which plenary meeting was resolution 3314 adopted?",
+       "answer": "2280th\n\nEvidence: “2280th plenary meeting”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 514,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.707,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-report-scan.pdf** (contract, 3 pages)\n  - General Assembly—Twenty-ninth Session (en-report-scan.pdf p.1)\n  - Law of Treaties, Documents of the Conference (United Nations (en-report-scan.pdf p.1)\n  - tion on Principles of International Law concerning Friendly (en-report-scan.pdf p.3)\n  - session, the International Law Commission, in th"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-form-digital": {
+     "lang": "en",
+     "modality": "digital",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 6,
+      "mean_conf": 0.9789,
+      "doc_type": "report",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 37621,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.995,
+      "reference": "the PDF's own text layer"
+     },
+     "search": [
+      {
+       "q": "request for taxpayer identification number and certification",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is this form requesting?",
+       "answer": "your TIN\n\nEvidence: “than Form W-9 to request your TIN, you must use the requester’s form if”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the revision date of the form?",
+       "answer": "Date\nGeneral Instructions",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Should the form be sent to the IRS?",
+       "answer": "Do not\nsend to the IRS.\nGo to www.irs.gov/FormW9 for instructions and the latest information",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 831,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.844,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-digital.pdf** (report, 6 pages)\n  - 3a Check the appropriate box for federal tax classification of the entity/individual whose name is entered on line $1. (en-form-digital.pdf p.1)\n  - Note: Check the “LLC” box above and, in the entry space, enter the appropriate code (C, S, or P) for the tax (en-form-digital.pdf p.1)\n  - 3b If o"
+     },
+     "fields": [
+      {
+       "field": "form_number",
+       "labels": true,
+       "value": "W-9",
+       "correct": true,
+       "flagged": true
+      },
+      {
+       "field": "revision",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "form_number",
+       "revision"
+      ],
+      "error": null
+     }
+    },
+    "en-form-scan-1": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.7678,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 1365,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.964,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "fax cover sheet George Baroody",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Who is the fax addressed to?",
+       "answer": "Attorney General\nBetty D. Montgomery",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "How many pages including the cover sheet?",
+       "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: task: count\nNot applied: “pages”; “cover”; “sheet”\nThe documents below match only the parts that were applied.\n\n1 document(s) in scope: 1 unknown",
+       "state": "partial",
+       "intent": "count",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 0,
+       "brain": "rules (planner: rules)"
+      },
+      {
+       "q": "What is the phone number?",
+       "answer": "The phone is (336) 335-7363",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 512,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.547,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-scan-1.png** (unknown, 1 page)\n  - FAX NUMBER: _(336) 335-7392_ (en-form-scan-1.png p.1)\n  - PHONE NUMBER: (336) 335-7363 (en-form-scan-1.png p.1)\n  - NUMBER OF PAGES INCLUDING COVER SHEET: __3_ (en-form-scan-1.png p.1)\n  - SENDER/PHONE NUMBER:June Flynn for Eric Browa/(614) 466-8980 (en-form-scan-1.png p.1)\n  - reader of this me"
+     },
+     "fields": [
+      {
+       "field": "to",
+       "labels": true,
+       "value": "George Baroody",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": true,
+       "value": "1998-12-10",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "to",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "en-form-scan-2": {
+     "lang": "en",
+     "modality": "scan",
+     "type": "form",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8922,
+      "doc_type": "report",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 1361,
+      "arabic_share": 0.0,
+      "key_recall": 1.0,
+      "word_recall": 0.958,
+      "reference": "dataset transcription"
+     },
+     "search": [
+      {
+       "q": "Kool Waterfall test market",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "Who is the form from?",
+       "answer": "B\" Kool\n\nEvidence: “The theme \"B\" Kool has replaced all previous POS.”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What brand is tested?",
+       "answer": "PRICE POINT:\nFULL S\nPV $\n\n(Indicate Distributor's Cost Per Carton",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the manufacturer?",
+       "answer": "D. J. Landro",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 524,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.704,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**en-form-scan-2.png** (report, 1 page)\n  - promoting old style packs to clean up inventory. (en-form-scan-2.png p.1)\n  - All POS is being converted to \"B\" Kool. (en-form-scan-2.png p.1)\n  - It was not a problem obtaining new distribution. (en-form-scan-2.png p.1)\n  - New packaging is just following up on the old \"packaging\". (en-form-scan"
+     },
+     "fields": [
+      {
+       "field": "brand",
+       "labels": true,
+       "value": "Kool Waterfall",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "from",
+       "labels": true,
+       "value": "D. J. Landro",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "brand",
+       "from"
+      ],
+      "error": null
+     }
+    },
+    "ar-letter-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 3,
+      "mean_conf": 0.9512,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 4558,
+      "arabic_share": 0.988,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "جمهورية الكونغو الديمقراطية شمال كيفو",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الوضع الأمني في شمال كيفو",
+       "rank": 3,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما تاريخ الرسالة؟",
+       "answer": "50\nمرفق الرسالة المؤرخة 18 كانون الثاني/يناير 2023",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من وقع الرسالة؟",
+       "answer": "23-01144",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما المنطقة التي يتناولها البيان؟",
+       "answer": "23\n\nEvidence: “1 - تحيط علما بالرفض المتكرر من جانب حركة 23 مارس تنفيذ متطلبات خطة السلام التي”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 8,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 1.0,
+      "mentions_a_key": false,
+      "answer": "23-01144"
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "ar-report-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 15,
+      "mean_conf": 0.9666,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 39544,
+      "arabic_share": 0.997,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "فريق التحقيق داعش المساءلة",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "تقرير الأمين العام تنفيذ القرار 2697",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما القرار الذي أنشأ فريق التحقيق؟",
+       "answer": ".\n\nEvidence: “في ما يتعلق بالخطوات المقبلة لفريق التحقيق لتقديم الأدلة إلى السلطات العراقية المختصة.”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "تنفيذ أي قرار يتناوله التقرير؟",
+       "answer": "General\n15 January 2024\nArabic\nOriginal: English\nتنفيذ القرار 2023 2697",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من قدم التقرير؟",
+       "answer": "8\n\nEvidence: “8 - وأعد الأمين العام هذا التقرير بالتنسيق مع المستشار الخاص لفريق التحقيق، المكلف من قبل”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 26,
+      "arabic_share": 0.933,
+      "language_matches": true,
+      "from_document": 1.0,
+      "mentions_a_key": false,
+      "answer": "S/2024/20\nالحق في الخصوصية"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2024-01-15",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-letter-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "letter",
+     "ingest": {
+      "engine": "indra",
+      "pages": 2,
+      "mean_conf": 0.9092,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 2712,
+      "arabic_share": 0.972,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "رسالة جمهورية ايران الاسلامية قصف المناطق المدنية",
+       "rank": 4,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "عبادان",
+       "rank": null,
+       "methods": [
+        "semantic"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما تاريخ الرسالة؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من أي بعثة أرسلت الرسالة؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما المدينة التي قصفت بالمدفعية؟",
+       "answer": "1983\n\nEvidence: “22 September 1983”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 35,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.8,
+      "mentions_a_key": false,
+      "answer": "1983\n\nEvidence: “22 September 1983”"
+     },
+     "fields": [
+      {
+       "field": "letter_date",
+       "labels": true,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "letter_date"
+      ],
+      "error": null
+     }
+    },
+    "ar-report-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 5,
+      "mean_conf": 0.8993,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 7633,
+      "arabic_share": 0.996,
+      "key_recall": 0.667
+     },
+     "search": [
+      {
+       "q": "تعريف العدوان",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الجمعية العامة تعريف العدوان",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما موضوع القرار 3314؟",
+       "answer": "1. (3)",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "متى اعتمد القرار؟",
+       "answer": "3)\n\nEvidence: “(3)”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "في أي جلسة عامة اعتمد القرار؟",
+       "answer": "3)\n(١١) القرار ٢٦٢٥(د – ٢٥) ، المرفق .\n-345-",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 22,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.667,
+      "mentions_a_key": false,
+      "answer": "344\n\nEvidence: “-344-”"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-agreement-scan": {
+     "lang": "ar",
+     "modality": "scan",
+     "type": "contract",
+     "ingest": {
+      "engine": "indra",
+      "pages": 18,
+      "mean_conf": 0.8196,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 28858,
+      "arabic_share": 0.986,
+      "key_recall": 0.333
+     },
+     "search": [
+      {
+       "q": "نموذج اتفاق مركز القوات عمليات حفظ السلم",
+       "rank": 2,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما موضوع نموذج الاتفاق؟",
+       "answer": "9.7815.0\n.. 1",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما رقم القرار الذي طلب إعداد النموذج؟",
+       "answer": "9.7817.0\n\nEvidence: “(9.7817.0”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "لمن قدم التقرير؟",
+       "answer": "Arabic\nPage 12\n-1-\nالزى والاسلحة",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 23,
+      "arabic_share": 0.0,
+      "language_matches": false,
+      "from_document": 0.75,
+      "mentions_a_key": false,
+      "answer": "13\n\nEvidence: “Page 13”"
+     },
+     "fields": [
+      {
+       "field": "date",
+       "labels": false,
+       "value": "1990-10-09",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-1": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8755,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 382,
+      "arabic_share": 0.892,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Abu Auf almond butter order",
+       "rank": 3,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the order number?",
+       "answer": "23.11 2022-#WSO 0000059905\n\nEvidence: “e 23.11 2022-#WSO 0000059905”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total price?",
+       "answer": "WSO 0000059905\n\nEvidence: “e 23.11 2022-#WSO 0000059905”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What product was ordered?",
+       "answer": "220.00\nO\nIII",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 256,
+      "arabic_share": 0.28,
+      "language_matches": true,
+      "from_document": 0.356,
+      "mentions_a_key": true,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-1.jpg** (unknown, 1 page)\n  - المحافظات خلال 72 ساعه, خدمة التوصيل متاحه في خلال مواعيد (mx-receipt-photo-1.jpg p.1)\n  - e 23.11 2022-#WSO 0000059905 (mx-receipt-photo-1.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "251.0",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": null,
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-2": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.869,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 711,
+      "arabic_share": 0.654,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Starbucks Sokhna receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the check number?",
+       "answer": "Chk 3118",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total payment amount?",
+       "answer": "46.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the TAX Card number?",
+       "answer": "N\n\nEvidence: “CRNO, 18522//TAX Card N),21271959g”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 232,
+      "arabic_share": 0.144,
+      "language_matches": true,
+      "from_document": 0.35,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-2.jpg** (unknown, 1 page)\n  - CRNO, 18522//TAX Card N),21271959g (mx-receipt-photo-2.jpg p.1)\n  - ليوما 30ممنهية وذلك في غفون (mx-receipt-photo-2.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "51.0",
+       "correct": false,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-3": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.8807,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 309,
+      "arabic_share": 0.806,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "Masary payment receipt",
+       "rank": 2,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "خدمات الدفع الذكية",
+       "rank": 2,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the operation number?",
+       "answer": "O Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "What is the total amount?",
+       "answer": "Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "ما رقم العملية؟",
+       "answer": "O Sila\n53gili sia Tedata",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 2,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 166,
+      "arabic_share": 0.0,
+      "language_matches": true,
+      "from_document": 0.3,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-3.jpg** (unknown, 1 page)\n  - 13.12.2022-13:36:51 (2014 391 (mx-receipt-photo-3.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": true,
+       "value": "13.12",
+       "correct": false,
+       "flagged": true
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2022-12-13",
+       "correct": true,
+       "flagged": true
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "mx-receipt-photo-4": {
+     "lang": "mixed",
+     "modality": "photo",
+     "type": "receipt",
+     "ingest": {
+      "engine": "indra",
+      "pages": 1,
+      "mean_conf": 0.9113,
+      "doc_type": "receipt",
+      "type_correct": true
+     },
+     "ocr": {
+      "chars": 784,
+      "arabic_share": 0.186,
+      "key_recall": 0.667
+     },
+     "search": [
+      {
+       "q": "Abu Auf Coffee Brazilian Light receipt",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "What is the transaction number?",
+       "answer": "01112700777",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "Who is the customer?",
+       "answer": "The customer is le",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      },
+      {
+       "q": "What was the total amount?",
+       "answer": "The total is 330.00",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": true,
+       "correct_with_source": true,
+       "sources": 1,
+       "brain": "embedder (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "Summarize this document",
+      "state": "succeeded",
+      "intent": "summarize",
+      "chars": 318,
+      "arabic_share": 0.204,
+      "language_matches": true,
+      "from_document": 0.566,
+      "mentions_a_key": false,
+      "answer": "Extractive summary (sentences quoted from the documents):\n\n**mx-receipt-photo-4.jpg** (receipt, 1 page)\n  - Bulidingi , (هد 201 حي ملقي اتعربي الشيرتون الزمه. (mx-receipt-photo-4.jpg p.1)\n  - Facebook abuauf | Instagram abuauf. (mx-receipt-photo-4.jpg p.1)\n  - مجل تجاران: 150361 5 الفاهرد (mx-receipt-photo-4.jpg p.1)"
+     },
+     "fields": [
+      {
+       "field": "total",
+       "labels": false,
+       "value": "330.0",
+       "correct": true,
+       "flagged": false
+      },
+      {
+       "field": "date",
+       "labels": false,
+       "value": "2023-11-02",
+       "correct": true,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "total",
+       "date"
+      ],
+      "error": null
+     }
+    },
+    "ar-article-digital": {
+     "lang": "ar",
+     "modality": "digital",
+     "type": "report",
+     "ingest": {
+      "engine": "indra",
+      "pages": 23,
+      "mean_conf": 0.9286,
+      "doc_type": "unknown",
+      "type_correct": false
+     },
+     "ocr": {
+      "chars": 75109,
+      "arabic_share": 0.979,
+      "key_recall": 1.0
+     },
+     "search": [
+      {
+       "q": "عاصمة مصر القاهرة",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      },
+      {
+       "q": "الرئيس عبد الفتاح السيسي",
+       "rank": 1,
+       "methods": [
+        "hybrid"
+       ],
+       "hits": 10
+      }
+     ],
+     "qa": [
+      {
+       "q": "ما عاصمة مصر؟",
+       "answer": "1311 34\n\nEvidence: “(1311 34”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من رئيس مصر؟",
+       "answer": "1953\n\nEvidence: “يونيو 13) .1953] أما الحكومة فهي الهيئة التنفيذية والإدارية اللُيا للولة، وتتكون من رئيس مجلس”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      },
+      {
+       "q": "من رئيس الوزراء؟",
+       "answer": "1953\n\nEvidence: “يونيو 13) .1953] أما الحكومة فهي الهيئة التنفيذية والإدارية اللُيا للولة، وتتكون من رئيس مجلس”",
+       "state": "succeeded",
+       "intent": "ask",
+       "correct": false,
+       "correct_with_source": false,
+       "sources": 3,
+       "brain": "embedder+reader (planner: rules)"
+      }
+     ],
+     "summary": {
+      "request": "لخص هذه الوثيقة",
+      "state": "succeeded",
+      "intent": "ask",
+      "chars": 40,
+      "arabic_share": 0.75,
+      "language_matches": true,
+      "from_document": 0.8,
+      "mentions_a_key": false,
+      "answer": "لمصر\n\nEvidence: “البيانات المناخية لمصر”"
+     },
+     "fields": [
+      {
+       "field": "capital",
+       "labels": true,
+       "value": "اللغة الرسمية",
+       "correct": false,
+       "flagged": false
+      }
+     ],
+     "review": {
+      "opened": true,
+      "fields_in_review": [
+       "capital"
+      ],
+      "error": null
+     }
+    }
+   },
+   "ingest_seconds": 66.2,
+   "ingest_failed": [],
+   "export": {
+    "rows": 44,
+    "columns": [
+     "review_id",
+     "document",
+     "doc_sha256",
+     "cohort",
+     "mode",
+     "baseline",
+     "field",
+     "predicted",
+     "predicted_raw",
+     "confidence",
+     "method",
+     "warning",
+     "flagged",
+     "final",
+     "entered_input",
+     "action",
+     "decided_by",
+     "approved_by",
+     "approved_at"
+    ],
+    "all_custom_fields_exported": true,
+    "arabic_values_exported": true
+   },
+   "brain_usage": {
+    "reader": {
+     "loaded": true,
+     "inference_calls": 486,
+     "fallback_reason": null
+    },
+    "embedder": {
+     "loaded": true,
+     "inference_calls": 152,
+     "fallback_reason": null
+    },
+    "writer": {
+     "loaded": false,
+     "inference_calls": 0,
+     "fallback_reason": null
+    }
+   },
+   "onnx_calls": {
+    "indra/orient.onnx": 156,
+    "indra/det.onnx": 163,
+    "indra/script.onnx": 971,
+    "indra/rec.onnx": 718,
+    "indra/rec_world.onnx": 33,
+    "indra/rec_cjk.onnx": 31,
+    "indra/order.onnx": 144,
+    "indra/rec_rtl.onnx": 380,
+    "onnx/model_int8.onnx": 638
+   }
+  }
+ },
+ "gaps": [
+  "Arabic digital contract or agreement with an open licence: none found",
+  "Arabic or bilingual form or certificate with an open licence: none found (Humans in the Loop Arabic Documents OCR is CC0 but needs a request form)",
+  "Arabic invoice: none found apart from Arabic-English receipts (CORU)",
+  "Genuine English invoice as a digital PDF: only synthetic invoice images (Voxel51) and archive scans",
+  "Handwriting: not covered"
+ ]
+}

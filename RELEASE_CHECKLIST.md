@@ -9,8 +9,7 @@
       name. This is **not** a trademark search: run one (USPTO/EUIPO/WIPO) for software classes 9 and 42 before
       investing in the brand. `lumen` was rejected because it is taken on PyPI (HoloViz "Lumen AI", same domain).
 - [ ] Check domain availability (e.g. inklight.dev / inklight.ai). Not verified here.
-- [ ] Create the GitHub repository `MahmoudYahiaAhmed/inklight` (the URLs in `pyproject.toml` and the README badge
-      point there; change them if you use another owner or an organisation). Step by step: docs/PUBLISHING.md.
+- [x] GitHub repository `MahmoudYahiaAhmed/inklight` (the URLs in `pyproject.toml` and the README point there).
 - [x] Copyright holder set in `NOTICE` and `pyproject.toml` (`Mahmoud AboEl-Wfa`); change both if it should be a company.
 - [ ] On PyPI, create the project with **Trusted Publishing** for `.github/workflows/release.yml`
       (environment `pypi`) — no API token is stored anywhere.
@@ -20,7 +19,7 @@
 
 - [ ] `ruff format --check src tests && ruff check src tests && mypy src`
 - [ ] `pytest` is green locally and in CI on Linux, Windows and macOS for Python 3.11–3.13.
-- [ ] `python bench/run.py` (and `bench/memory.py`); update docs/BENCHMARKS.md only from that output.
+- [ ] `python bench/run.py` (and `bench/memory.py`); update evaluation/BENCHMARKS.md only from that output.
 - [ ] Bump `version` in `pyproject.toml` **and** `src/inklight/__init__.py`; update CHANGELOG.md.
 - [ ] `python -m build && twine check dist/*`; install the wheel in a clean venv and run
       `inklight doctor`, `inklight process examples/documents`, `inklight ask examples/documents "Find all invoices above $5,000"`.

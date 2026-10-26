@@ -91,7 +91,7 @@ defects below.** Upgrade once 0.1.1 is published.
 - The `TaskState` enum gained `unsupported`.
 
 ### Layout-aware answers (`bcd4752`, `915be7b`)
-Measured in [docs/EVALUATION.md](docs/EVALUATION.md#labels-and-values-on-the-page-915be7b).
+Measured in [evaluation/EVALUATION.md](evaluation/EVALUATION.md#labels-and-values-on-the-page-915be7b).
 - **Labels paired with values across OCR columns.** Visual rows group lines by bounding box, ordered by the
   script's direction (Arabic right to left).
   - *Extraction.* A money or date field whose label has no value in reading direction tries the other side
@@ -160,13 +160,13 @@ The fixes:
   Fixes the false "Comparison needs at least two documents".
 - **Rotated pages get structure**: Docling is given pages Indra read turned (90/180/270) turned upright; one
   coordinate transform (`inklight.frames`) links stored boxes, table cells and citations shown on the page.
-- Measured on the same workload: failures safer, task completion unchanged (docs/AGENT_EVALUATION.md, AM-1).
+- Measured on the same workload: failures safer, task completion unchanged (evaluation/AGENT_EVALUATION.md, AM-1).
 
 ### Evaluated: agent-run workflows on real documents (no code change)
 - 38 tasks on 25 documents (mostly scanned Egyptian registers, tax cards and VAT certificates), run by a user agent
   through the CLI with structure off and on, judged blind. The tool completed 2 of 76 runs; Docling and the small
   models changed nothing material. Failures, three proposed fixes with reproductions, and the harness:
-  [docs/AGENT_EVALUATION.md](docs/AGENT_EVALUATION.md), `bench/agent_eval/`, `bench/results/agent_eval/`.
+  [evaluation/AGENT_EVALUATION.md](evaluation/AGENT_EVALUATION.md), `bench/agent_eval/`, `evaluation/results/agent_eval/`.
 
 ### Added: document structure from Docling on Indra's OCR (optional)
 - **`[structure] engine = "docling"`** (extra: `pip install "inklight[structure]"`) runs Docling's existing components
@@ -223,7 +223,7 @@ The fixes:
 
 ### Fixed after evaluating on external documents (third review)
 Found by running real OCR on Voxel51 invoices and CORD receipts (dev splits; see
-[docs/BENCHMARKS.md](docs/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:
+[evaluation/BENCHMARKS.md](evaluation/BENCHMARKS.md#external-datasets)). Holdout field accuracy, 0.1.0 → this release:
 synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine receipts 3.2% → 68.5%.
 - **Two-column layouts took the wrong value.** In a "Seller: / Client:" block, the line after a label in
   reading order belongs to the other column, so an IBAN or the seller's name was returned as the customer.
@@ -279,7 +279,7 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
 
   Arabic queries now use keyword search, and the reader is not asked about Arabic. Each skip is stated in the
   result's `checks`. OCR is unaffected by the models: stored text was identical with them on or off. See
-  [docs/EVALUATION.md](docs/EVALUATION.md).
+  [evaluation/EVALUATION.md](evaluation/EVALUATION.md).
 - **Arabic requests are understood:** summarise, compare, count, extract and find. On the reserved split, Arabic
   summaries went from 0/9 recognised to 9/9, covering 17/27 key facts, every sentence quoted verbatim.
 - **Arabic questions** are answered from the best-matching sentence: words, light stems, sentences and question
@@ -301,7 +301,7 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   was declined (0 of 42).
 - **Evaluation runs keep complete answers and cited passages**, so they can be rescored exactly. The first-access
   source of the reserved and fresh runs is reconstructed; its re-run reproduces the stored results
-  (`bench/results/usecases/provenance/`), which shows the same behaviour but is not a byte-exact recovery.
+  (`evaluation/results/usecases/provenance/`), which shows the same behaviour but is not a byte-exact recovery.
 - **Requests Inklight cannot carry out** ("translate this", "email it", "sign it") are `unsupported` with the reason,
   instead of `succeeded`.
 - **Questions about a document's content** stay questions: "Which city was hit…?" used to become an invoice filter.
@@ -324,7 +324,7 @@ synthetic invoices 41.7% → 99.7% (silent errors 30.8% → 0.3%), genuine recei
   text lays out right to left in the workspace.
 - **Evaluation:** `bench/usecases/` holds 75 documents in dev, reserved and fresh splits, expected results written
   before running, logged reserved access, a full pipeline per run, the model ablations and synthetic Arabic
-  documents (labelled). Results are in `bench/results/usecases/`.
+  documents (labelled). Results are in `evaluation/results/usecases/`.
 - **Broken Arabic PDF text layers are OCR'd instead of indexed.** The UN's Arabic PDFs carry a text layer in
   Arabic letters, but the wrong ones ("األمم" for "الأمم", "امرساااااا" for "المرسلة"). Indra's own checks
   accept it, so the broken text was indexed, searched and quoted.

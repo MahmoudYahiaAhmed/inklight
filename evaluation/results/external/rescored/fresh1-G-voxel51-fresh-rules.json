@@ -1,0 +1,4211 @@
+{
+ "source_file": "fresh1-G-voxel51-fresh-rules.json",
+ "source_sha256": "a076bb4bd3940f3de77ab187cf0ebc608672ea0a7199e4fa2b6632a34cfcda9c",
+ "build": "G",
+ "dataset": "voxel51",
+ "genuine": false,
+ "split": "fresh",
+ "brain_mode": "rules",
+ "input": "original files via OCR",
+ "provenance": {
+  "inklight_version": "0.1.1.dev0",
+  "dist_version": "0.1.1.dev0",
+  "inklight_file": "<scratch>\\evalenv\\venvG\\Lib\\site-packages\\inklight\\__init__.py",
+  "install_method": "pip from file:///<scratch>/evalenv/distG/inklight-0.1.1.dev0-py3-none-any.whl",
+  "wheel_sha256": "518a87190224076600e2bbf0f12131bdb3378f4e0a5f622f43966873b0a0e009",
+  "git_commit": "e61a8d6a77097d950449acaa07234a4bf4b84bc1",
+  "harness_commit": "54355d782d9a57e768ca18daf11380895370689f (bench/ modified)",
+  "python": "3.12.10",
+  "executable": "<scratch>\\evalenv\\venvG\\Scripts\\python.exe",
+  "platform": "Windows AMD64",
+  "date": "2026-10-24"
+ },
+ "extraction": {
+  "overall": {
+   "n": 359,
+   "counts": {
+    "correct_unflagged": 329,
+    "correct_flagged": 28,
+    "wrong_unflagged": 1,
+    "wrong_flagged": 1,
+    "missing": 0
+   },
+   "value_accuracy": 0.994,
+   "coverage_without_review": 0.916,
+   "precision_unflagged": 0.997,
+   "silent_error_rate": 0.003,
+   "review_rate": 0.081,
+   "missing_rate": 0.0
+  },
+  "fields": {
+   "customer": {
+    "n": 60,
+    "counts": {
+     "correct_unflagged": 60,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 0
+    },
+    "value_accuracy": 1.0,
+    "coverage_without_review": 1.0,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.0,
+    "missing_rate": 0.0
+   },
+   "date": {
+    "n": 60,
+    "counts": {
+     "correct_unflagged": 38,
+     "correct_flagged": 22,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 0
+    },
+    "value_accuracy": 1.0,
+    "coverage_without_review": 0.633,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.367,
+    "missing_rate": 0.0
+   },
+   "invoice_number": {
+    "n": 60,
+    "counts": {
+     "correct_unflagged": 60,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 0
+    },
+    "value_accuracy": 1.0,
+    "coverage_without_review": 1.0,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.0,
+    "missing_rate": 0.0
+   },
+   "tax": {
+    "n": 59,
+    "counts": {
+     "correct_unflagged": 59,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 0,
+     "missing": 0
+    },
+    "value_accuracy": 1.0,
+    "coverage_without_review": 1.0,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.0,
+    "missing_rate": 0.0
+   },
+   "total": {
+    "n": 60,
+    "counts": {
+     "correct_unflagged": 53,
+     "correct_flagged": 6,
+     "wrong_unflagged": 1,
+     "wrong_flagged": 0,
+     "missing": 0
+    },
+    "value_accuracy": 0.983,
+    "coverage_without_review": 0.883,
+    "precision_unflagged": 0.981,
+    "silent_error_rate": 0.017,
+    "review_rate": 0.1,
+    "missing_rate": 0.0
+   },
+   "vendor": {
+    "n": 60,
+    "counts": {
+     "correct_unflagged": 59,
+     "correct_flagged": 0,
+     "wrong_unflagged": 0,
+     "wrong_flagged": 1,
+     "missing": 0
+    },
+    "value_accuracy": 0.983,
+    "coverage_without_review": 0.983,
+    "precision_unflagged": 1.0,
+    "silent_error_rate": 0.0,
+    "review_rate": 0.017,
+    "missing_rate": 0.0
+   }
+  }
+ },
+ "truth_corrections_applied": [
+  {
+   "dataset": "voxel51",
+   "split": "fresh",
+   "doc": "batch1-0561.jpg",
+   "field": "tax",
+   "from": 10.0,
+   "to": null,
+   "why": "the annotation's tax is the VAT rate '10%'; the parser read it as the amount 10.00"
+  }
+ ],
+ "rows": [
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "vendor",
+   "want": "Velasquez, Ward and Ballard",
+   "got": "Velasquez, Ward and Ballard",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "customer",
+   "want": "Lewis Group",
+   "got": "Lewis Group",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.782,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "invoice_number",
+   "want": "71748307",
+   "got": "71748307",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "date",
+   "want": "2011-12-24",
+   "got": "2011-12-24",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "tax",
+   "want": 143.35,
+   "got": 143.35,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0661.jpg",
+   "field": "total",
+   "want": 1576.9,
+   "got": 1576.9,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "vendor",
+   "want": "Spencer-Potter",
+   "got": "Spencer-Potter",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "customer",
+   "want": "Salazar Inc",
+   "got": "Salazar Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.796,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "invoice_number",
+   "want": "69990274",
+   "got": "69990274",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.997,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "date",
+   "want": "2019-07-21",
+   "got": "2019-07-21",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.884,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "tax",
+   "want": 39.49,
+   "got": 39.49,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1214.jpg",
+   "field": "total",
+   "want": 434.42,
+   "got": 434.42,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "vendor",
+   "want": "Curry Inc",
+   "got": "Curry Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "customer",
+   "want": "Tapia Inc",
+   "got": "Tapia Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "invoice_number",
+   "want": "12335640",
+   "got": "12335640",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "date",
+   "want": "2018-12-31",
+   "got": "2018-12-31",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "tax",
+   "want": 35.19,
+   "got": 35.19,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0910.jpg",
+   "field": "total",
+   "want": 387.09,
+   "got": 387.09,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "vendor",
+   "want": "Curtis, Snyder and Cohen",
+   "got": "Curtis, Snyder and Cohen",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "customer",
+   "want": "Wyatt-Keith",
+   "got": "Wyatt-Keith",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.768,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "invoice_number",
+   "want": "15829892",
+   "got": "15829892",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "date",
+   "want": "2021-02-01",
+   "got": "2021-02-01",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.539,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "tax",
+   "want": 536.59,
+   "got": 536.59,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1102.jpg",
+   "field": "total",
+   "want": 5902.45,
+   "got": 5902.45,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "vendor",
+   "want": "Walton PLC",
+   "got": "Walton PLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "customer",
+   "want": "Mitchell and Sons",
+   "got": "Mitchell and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "invoice_number",
+   "want": "36033621",
+   "got": "36033621",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.996,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "date",
+   "want": "2017-04-18",
+   "got": "2017-04-18",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "tax",
+   "want": 22.16,
+   "got": 22.16,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0052.jpg",
+   "field": "total",
+   "want": 243.71,
+   "got": 243.71,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "vendor",
+   "want": "Martin, Graham and Newman",
+   "got": "Martin, Graham and Newman",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.784,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "customer",
+   "want": "Jennings, Baldwin and Collins",
+   "got": "Jennings, Baldwin and Collins",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.796,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "invoice_number",
+   "want": "60665075",
+   "got": "60665075",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "date",
+   "want": "2018-01-15",
+   "got": "2018-01-15",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.857,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "tax",
+   "want": 7664.98,
+   "got": 7664.98,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0062.jpg",
+   "field": "total",
+   "want": 84314.78,
+   "got": 84314.78,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "vendor",
+   "want": "Weaver-Barber",
+   "got": "Weaver-Barber",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "customer",
+   "want": "Scott Ltd",
+   "got": "Scott Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.763,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "invoice_number",
+   "want": "11556735",
+   "got": "11556735",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.992,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "date",
+   "want": "2014-03-07",
+   "got": "2014-03-07",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "tax",
+   "want": 35.33,
+   "got": 35.33,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0505.jpg",
+   "field": "total",
+   "want": 388.63,
+   "got": 388.63,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "vendor",
+   "want": "Johnson, Miller and Stanley",
+   "got": "Johnson, Miller and Stanley",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "customer",
+   "want": "Brown-Schmitt",
+   "got": "Brown-Schmitt",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "invoice_number",
+   "want": "56576694",
+   "got": "56576694",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.98,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "date",
+   "want": "2017-11-11",
+   "got": "2017-11-11",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "tax",
+   "want": 2.43,
+   "got": 2.43,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1454.jpg",
+   "field": "total",
+   "want": 26.75,
+   "got": 26.75,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "vendor",
+   "want": "Davila, Reed and Wright",
+   "got": "Davila, Reed and Wright",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "customer",
+   "want": "Moore, Guerrero and Jacobson",
+   "got": "Moore, Guerrero and Jacobson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.797,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "invoice_number",
+   "want": "64603610",
+   "got": "64603610",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "date",
+   "want": "2013-12-29",
+   "got": "2013-12-29",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "tax",
+   "want": 746.37,
+   "got": 746.37,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0440.jpg",
+   "field": "total",
+   "want": 8210.08,
+   "got": 8210.08,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "vendor",
+   "want": "Dixon, Allison and Burton",
+   "got": "Dixon, Allison and Burton",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "customer",
+   "want": "Chavez-Morales",
+   "got": "Chavez-Morales",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "invoice_number",
+   "want": "11324589",
+   "got": "11324589",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "date",
+   "want": "2019-01-02",
+   "got": "2019-01-02",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.526,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "tax",
+   "want": 1002.91,
+   "got": 1002.91,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1437.jpg",
+   "field": "total",
+   "want": 11032.05,
+   "got": 11032.05,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "vendor",
+   "want": "Johnston, Byrd and Hendrix",
+   "got": "Johnston, Byrd and Hendrix",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.795,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "customer",
+   "want": "May Inc",
+   "got": "May Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "invoice_number",
+   "want": "31470773",
+   "got": "31470773",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "date",
+   "want": "2012-03-05",
+   "got": "2012-03-05",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "tax",
+   "want": 50.9,
+   "got": 50.9,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1360.jpg",
+   "field": "total",
+   "want": 559.89,
+   "got": 559.89,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "vendor",
+   "want": "Saunders, Snyder and Rivera",
+   "got": "Saunders, Snyder and Rivera",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.789,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "customer",
+   "want": "Martinez, Ward and Martinez",
+   "got": "Martinez, Ward and Martinez",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "invoice_number",
+   "want": "64690034",
+   "got": "64690034",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.982,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "date",
+   "want": "2014-09-06",
+   "got": "2014-09-06",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.536,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "tax",
+   "want": 757.5,
+   "got": 757.5,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1320.jpg",
+   "field": "total",
+   "want": 8332.5,
+   "got": 8332.5,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "vendor",
+   "want": "Freeman and Sons",
+   "got": "Freeman and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "customer",
+   "want": "Houston Group",
+   "got": "Houston Group",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.777,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "invoice_number",
+   "want": "77833987",
+   "got": "77833987",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "date",
+   "want": "2013-05-20",
+   "got": "2013-05-20",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.889,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "tax",
+   "want": 11.78,
+   "got": 11.78,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1488.jpg",
+   "field": "total",
+   "want": 129.53,
+   "got": 129.53,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "vendor",
+   "want": "Johnson-Cain",
+   "got": "Johnson-Cain",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "customer",
+   "want": "West, Cooper and Welch",
+   "got": "West, Cooper and Welch",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.778,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "invoice_number",
+   "want": "52060328",
+   "got": "52060328",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "date",
+   "want": "2019-10-11",
+   "got": "2019-10-11",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "tax",
+   "want": 16.1,
+   "got": 16.1,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1264.jpg",
+   "field": "total",
+   "want": 177.1,
+   "got": 177.1,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "vendor",
+   "want": "Wilson Inc",
+   "got": "Wilson Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "customer",
+   "want": "Hunter-Miranda",
+   "got": "Hunter-Miranda",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "invoice_number",
+   "want": "77006579",
+   "got": "77006579",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.992,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "date",
+   "want": "2019-11-12",
+   "got": "2019-11-12",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.53,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "tax",
+   "want": 26.58,
+   "got": 26.58,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0725.jpg",
+   "field": "total",
+   "want": 292.4,
+   "got": 292.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "vendor",
+   "want": "Williams-Burns",
+   "got": "Williams-Burns",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "customer",
+   "want": "Richards-Lester",
+   "got": "Richards-Lester",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "invoice_number",
+   "want": "45234802",
+   "got": "45234802",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.994,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "date",
+   "want": "2013-09-06",
+   "got": "2013-09-06",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.509,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "tax",
+   "want": 157.4,
+   "got": 157.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0071.jpg",
+   "field": "total",
+   "want": 1731.35,
+   "got": 1731.35,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "vendor",
+   "want": "Mcintosh-Taylor",
+   "got": "Mcintosh-Taylor",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.785,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "customer",
+   "want": "Casey, Watkins and Delgado",
+   "got": "Casey, Watkins and Delgado",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.797,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "invoice_number",
+   "want": "57976720",
+   "got": "57976720",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "date",
+   "want": "2018-01-02",
+   "got": "2018-01-02",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "tax",
+   "want": 83.29,
+   "got": 83.29,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0932.jpg",
+   "field": "total",
+   "want": 916.21,
+   "got": 916.21,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "vendor",
+   "want": "Garrett, Gonzales and Hurley",
+   "got": "Garrett, Gonzales and Hurley",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.789,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "customer",
+   "want": "Holloway, Stanton and Dunn",
+   "got": "Holloway, Stanton and Dunn",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "invoice_number",
+   "want": "20434959",
+   "got": "20434959",
+   "method": "label",
+   "warning": null,
+   "confidence": 1.0,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "date",
+   "want": "2011-12-20",
+   "got": "2011-12-20",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "tax",
+   "want": 2.7,
+   "got": 2.7,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0031.jpg",
+   "field": "total",
+   "want": 29.67,
+   "got": 29.67,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "vendor",
+   "want": "Eaton, Thomas and Harrington",
+   "got": "Eaton, Thomas and Harrington",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.796,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "customer",
+   "want": "Wright-Johnson",
+   "got": "Wright-Johnson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "invoice_number",
+   "want": "67182330",
+   "got": "67182330",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "date",
+   "want": "2014-06-05",
+   "got": "2014-06-05",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.533,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "tax",
+   "want": 36.88,
+   "got": 36.88,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0755.jpg",
+   "field": "total",
+   "want": 405.67,
+   "got": 405.67,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "vendor",
+   "want": "Clark, Wolfe and Kelly",
+   "got": "Clark, Wolfe and Kelly",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "customer",
+   "want": "Bryant LLC",
+   "got": "Bryant LLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "invoice_number",
+   "want": "33907816",
+   "got": "33907816",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.997,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "date",
+   "want": "2013-02-11",
+   "got": "2013-02-11",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "tax",
+   "want": 2174.35,
+   "got": 2174.35,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1395.jpg",
+   "field": "total",
+   "want": 23917.86,
+   "got": 23917.86,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "vendor",
+   "want": "Morales-Wells",
+   "got": "Morales-Wells",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "customer",
+   "want": "Moreno PLC",
+   "got": "Moreno PLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.773,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "invoice_number",
+   "want": "66525131",
+   "got": "66525131",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "date",
+   "want": "2014-07-26",
+   "got": "2014-07-26",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.881,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "tax",
+   "want": 20.43,
+   "got": 20.43,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0569.jpg",
+   "field": "total",
+   "want": 224.75,
+   "got": 224.75,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "vendor",
+   "want": "Rose, Smith and Moreno",
+   "got": "Rose, Smith and Moreno",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "customer",
+   "want": "Williams-Jimenez",
+   "got": "Williams-Jimenez",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.783,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "invoice_number",
+   "want": "63246591",
+   "got": "63246591",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.992,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "date",
+   "want": "2020-01-07",
+   "got": "2020-01-07",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.536,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "tax",
+   "want": 1.8,
+   "got": 1.8,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0473.jpg",
+   "field": "total",
+   "want": 19.76,
+   "got": 19.76,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "vendor",
+   "want": "Rogers Group",
+   "got": "Rogers Group",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "customer",
+   "want": "George, Solis and Roberts",
+   "got": "George, Solis and Roberts",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "invoice_number",
+   "want": "53192110",
+   "got": "53192110",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.997,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "date",
+   "want": "2019-07-28",
+   "got": "2019-07-28",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "tax",
+   "want": 1.5,
+   "got": 1.5,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1115.jpg",
+   "field": "total",
+   "want": 16.47,
+   "got": 16.47,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "vendor",
+   "want": "Alexander-Valenzuela",
+   "got": "Prehistory to Now by",
+   "method": "label",
+   "warning": "2 different values found; chose the strongest label match",
+   "confidence": 0.717,
+   "outcome5": "wrong_flagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "customer",
+   "want": "Reyes-Sampson",
+   "got": "Reyes-Sampson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "invoice_number",
+   "want": "34855339",
+   "got": "34855339",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.996,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "date",
+   "want": "2020-03-09",
+   "got": "2020-03-09",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.536,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "tax",
+   "want": 8.66,
+   "got": 8.66,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0167.jpg",
+   "field": "total",
+   "want": 86.56,
+   "got": 95.22,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "wrong_unflagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "vendor",
+   "want": "Wilkerson Ltd",
+   "got": "Wilkerson Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "customer",
+   "want": "English-Brown",
+   "got": "English-Brown",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "invoice_number",
+   "want": "17619666",
+   "got": "17619666",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.963,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "date",
+   "want": "2020-03-09",
+   "got": "2020-03-09",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "tax",
+   "want": 3765.4,
+   "got": 3765.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0663.jpg",
+   "field": "total",
+   "want": 41419.4,
+   "got": 41419.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "vendor",
+   "want": "Wright, Pineda and Walker",
+   "got": "Wright, Pineda and Walker",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "customer",
+   "want": "Benjamin-Aguilar",
+   "got": "Benjamin-Aguilar",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "invoice_number",
+   "want": "95296819",
+   "got": "95296819",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.995,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "date",
+   "want": "2011-06-19",
+   "got": "2011-06-19",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "tax",
+   "want": 1610.11,
+   "got": 1610.11,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0449.jpg",
+   "field": "total",
+   "want": 17711.25,
+   "got": 17711.25,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "vendor",
+   "want": "Vasquez-Hogan",
+   "got": "Vasquez-Hogan",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "customer",
+   "want": "Compton-Hahn",
+   "got": "Compton-Hahn",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "invoice_number",
+   "want": "60358070",
+   "got": "60358070",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.987,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "date",
+   "want": "2019-03-29",
+   "got": "2019-03-29",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.866,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "tax",
+   "want": 790.46,
+   "got": 790.46,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0921.jpg",
+   "field": "total",
+   "want": 8695.03,
+   "got": 8695.03,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "vendor",
+   "want": "Sexton, Rivera and Pineda",
+   "got": "Sexton, Rivera and Pineda",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.795,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "customer",
+   "want": "Wright-Lopez",
+   "got": "Wright-Lopez",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "invoice_number",
+   "want": "98151772",
+   "got": "98151772",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "date",
+   "want": "2019-09-30",
+   "got": "2019-09-30",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.89,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "tax",
+   "want": 17.1,
+   "got": 17.1,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1231.jpg",
+   "field": "total",
+   "want": 188.09,
+   "got": 188.09,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "vendor",
+   "want": "Perez Ltd",
+   "got": "Perez Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "customer",
+   "want": "Diaz LLC",
+   "got": "Diaz LLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.787,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "invoice_number",
+   "want": "65428348",
+   "got": "65428348",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.99,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "date",
+   "want": "2017-07-27",
+   "got": "2017-07-27",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.891,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "tax",
+   "want": 61.1,
+   "got": 61.1,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0852.jpg",
+   "field": "total",
+   "want": 672.08,
+   "got": 672.08,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "vendor",
+   "want": "Murray-Blake",
+   "got": "Murray-Blake",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.793,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "customer",
+   "want": "Turner-Wilkins",
+   "got": "Turner-Wilkins",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "invoice_number",
+   "want": "83087619",
+   "got": "83087619",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "date",
+   "want": "2019-05-06",
+   "got": "2019-05-06",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "tax",
+   "want": 15.67,
+   "got": 15.67,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0525.jpg",
+   "field": "total",
+   "want": 172.41,
+   "got": 172.41,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "vendor",
+   "want": "Ramirez Ltd",
+   "got": "Ramirez Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "customer",
+   "want": "Hawkins-Watts",
+   "got": "Hawkins-Watts",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "invoice_number",
+   "want": "39080216",
+   "got": "39080216",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "date",
+   "want": "2017-09-26",
+   "got": "2017-09-26",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "tax",
+   "want": 21.31,
+   "got": 21.31,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1246.jpg",
+   "field": "total",
+   "want": 234.4,
+   "got": 234.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0561.jpg",
+   "field": "vendor",
+   "want": "Pace-Baker",
+   "got": "Pace-Baker",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0561.jpg",
+   "field": "customer",
+   "want": "Stanley, Cooper and Koch",
+   "got": "Stanley, Cooper and Koch",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0561.jpg",
+   "field": "invoice_number",
+   "want": "34977445",
+   "got": "34977445",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0561.jpg",
+   "field": "date",
+   "want": "2011-12-04",
+   "got": "2011-12-04",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0561.jpg",
+   "field": "total",
+   "want": 15094.83,
+   "got": 15094.83,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "vendor",
+   "want": "Mason-Cross",
+   "got": "Mason-Cross",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "customer",
+   "want": "Short-Gonzalez",
+   "got": "Short-Gonzalez",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "invoice_number",
+   "want": "89098949",
+   "got": "89098949",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.989,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "date",
+   "want": "2018-11-18",
+   "got": "2018-11-18",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.897,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "tax",
+   "want": 2433.15,
+   "got": 2433.15,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1118.jpg",
+   "field": "total",
+   "want": 26764.68,
+   "got": 26764.68,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "vendor",
+   "want": "Bailey Inc",
+   "got": "Bailey Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "customer",
+   "want": "Chen-Higgins",
+   "got": "Chen-Higgins",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "invoice_number",
+   "want": "66002809",
+   "got": "66002809",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.997,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "date",
+   "want": "2017-11-07",
+   "got": "2017-11-07",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.525,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "tax",
+   "want": 51.75,
+   "got": 51.75,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0968.jpg",
+   "field": "total",
+   "want": 569.21,
+   "got": 569.21,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "vendor",
+   "want": "Curtis-Lloyd",
+   "got": "Curtis-Lloyd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "customer",
+   "want": "Conner, Lucas and Mullen",
+   "got": "Conner, Lucas and Mullen",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "invoice_number",
+   "want": "50357965",
+   "got": "50357965",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "date",
+   "want": "2015-02-06",
+   "got": "2015-02-06",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.516,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "tax",
+   "want": 35.19,
+   "got": 35.19,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0478.jpg",
+   "field": "total",
+   "want": 387.11,
+   "got": 387.11,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "vendor",
+   "want": "Dalton, Chambers and Howard",
+   "got": "Dalton, Chambers and Howard",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "customer",
+   "want": "Tanner Inc",
+   "got": "Tanner Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.786,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "invoice_number",
+   "want": "58379529",
+   "got": "58379529",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "date",
+   "want": "2011-05-31",
+   "got": "2011-05-31",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.87,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "tax",
+   "want": 266.79,
+   "got": 266.79,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0030.jpg",
+   "field": "total",
+   "want": 2934.7,
+   "got": 2934.7,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "vendor",
+   "want": "Ortega, Carey and Morris",
+   "got": "Ortega, Carey and Morris",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "customer",
+   "want": "Khan, Moore and Peterson",
+   "got": "Khan, Moore and Peterson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "invoice_number",
+   "want": "94588842",
+   "got": "94588842",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "date",
+   "want": "2011-06-02",
+   "got": "2011-06-02",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.526,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "tax",
+   "want": 102.18,
+   "got": 102.18,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1362.jpg",
+   "field": "total",
+   "want": 1124.0,
+   "got": 1124.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "vendor",
+   "want": "White and Sons",
+   "got": "White and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.772,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "customer",
+   "want": "Butler LLC",
+   "got": "Butler LLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "invoice_number",
+   "want": "13865937",
+   "got": "13865937",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "date",
+   "want": "2014-10-05",
+   "got": "2014-10-05",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.517,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "tax",
+   "want": 32.66,
+   "got": 32.66,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0446.jpg",
+   "field": "total",
+   "want": 359.26,
+   "got": 359.26,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "vendor",
+   "want": "Miles Ltd",
+   "got": "Miles Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "customer",
+   "want": "Davis and Sons",
+   "got": "Davis and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "invoice_number",
+   "want": "99004300",
+   "got": "99004300",
+   "method": "label",
+   "warning": null,
+   "confidence": 1.0,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "date",
+   "want": "2012-09-17",
+   "got": "2012-09-17",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "tax",
+   "want": 675.0,
+   "got": 675.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1318.jpg",
+   "field": "total",
+   "want": 7425.0,
+   "got": 7425.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "vendor",
+   "want": "Drake Group",
+   "got": "Drake Group",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.787,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "customer",
+   "want": "Strickland, Ferguson and Ellis",
+   "got": "Strickland, Ferguson and Ellis",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "invoice_number",
+   "want": "22488149",
+   "got": "22488149",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "date",
+   "want": "2020-12-29",
+   "got": "2020-12-29",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.895,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "tax",
+   "want": 268.49,
+   "got": 268.49,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1300.jpg",
+   "field": "total",
+   "want": 2953.35,
+   "got": 2953.35,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "vendor",
+   "want": "Martin, Johnson and Delgado",
+   "got": "Martin, Johnson and Delgado",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.791,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "customer",
+   "want": "Williams-Lewis",
+   "got": "Williams-Lewis",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "invoice_number",
+   "want": "52574707",
+   "got": "52574707",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.994,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "date",
+   "want": "2019-04-12",
+   "got": "2019-04-12",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "tax",
+   "want": 65.51,
+   "got": 65.51,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0819.jpg",
+   "field": "total",
+   "want": 720.57,
+   "got": 720.57,
+   "method": "label-row",
+   "warning": "3 values on the 'Total' row and no column title; took the last",
+   "confidence": 0.95,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "vendor",
+   "want": "Edwards, Smith and Foster",
+   "got": "Edwards, Smith and Foster",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "customer",
+   "want": "Chapman, Baker and Allison",
+   "got": "Chapman, Baker and Allison",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "invoice_number",
+   "want": "49848653",
+   "got": "49848653",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "date",
+   "want": "2018-05-15",
+   "got": "2018-05-15",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "tax",
+   "want": 14.72,
+   "got": 14.72,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0152.jpg",
+   "field": "total",
+   "want": 161.94,
+   "got": 161.94,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "vendor",
+   "want": "Williams Ltd",
+   "got": "Williams Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "customer",
+   "want": "King-Johnson",
+   "got": "King-Johnson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "invoice_number",
+   "want": "51300355",
+   "got": "51300355",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "date",
+   "want": "2012-03-28",
+   "got": "2012-03-28",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "tax",
+   "want": 51.89,
+   "got": 51.89,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0230.jpg",
+   "field": "total",
+   "want": 570.82,
+   "got": 570.82,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "vendor",
+   "want": "Navarro Inc",
+   "got": "Navarro Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "customer",
+   "want": "Dawson Inc",
+   "got": "Dawson Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "invoice_number",
+   "want": "87519797",
+   "got": "87519797",
+   "method": "label",
+   "warning": null,
+   "confidence": 1.0,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "date",
+   "want": "2013-05-13",
+   "got": "2013-05-13",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.855,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "tax",
+   "want": 37.32,
+   "got": 37.32,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1359.jpg",
+   "field": "total",
+   "want": 410.56,
+   "got": 410.56,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "vendor",
+   "want": "Aguilar-Thompson",
+   "got": "Aguilar-Thompson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.79,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "customer",
+   "want": "Mcintyre, Becker and Moore",
+   "got": "Mcintyre, Becker and Moore",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "invoice_number",
+   "want": "46915335",
+   "got": "46915335",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "date",
+   "want": "2020-07-08",
+   "got": "2020-07-08",
+   "method": "label-row",
+   "warning": "ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+   "confidence": 0.54,
+   "outcome5": "correct_flagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "tax",
+   "want": 2.0,
+   "got": 2.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0407.jpg",
+   "field": "total",
+   "want": 22.0,
+   "got": 22.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "vendor",
+   "want": "Rodriguez-Jackson",
+   "got": "Rodriguez-Jackson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.795,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "customer",
+   "want": "Williams, Fletcher and Taylor",
+   "got": "Williams, Fletcher and Taylor",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "invoice_number",
+   "want": "24048799",
+   "got": "24048799",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.994,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "date",
+   "want": "2014-05-21",
+   "got": "2014-05-21",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.899,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "tax",
+   "want": 0.5,
+   "got": 0.5,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1067.jpg",
+   "field": "total",
+   "want": 5.45,
+   "got": 5.45,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "vendor",
+   "want": "Thomas Inc",
+   "got": "Thomas Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "customer",
+   "want": "Clark, Greene and Lewis",
+   "got": "Clark, Greene and Lewis",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.782,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "invoice_number",
+   "want": "46939079",
+   "got": "46939079",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.976,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "date",
+   "want": "2018-04-26",
+   "got": "2018-04-26",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "tax",
+   "want": 3.88,
+   "got": 3.88,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1419.jpg",
+   "field": "total",
+   "want": 42.68,
+   "got": 42.68,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "vendor",
+   "want": "Peterson LLC",
+   "got": "Peterson LLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.787,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "customer",
+   "want": "Williams, Yang and Jackson",
+   "got": "Williams, Yang and Jackson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "invoice_number",
+   "want": "23385207",
+   "got": "23385207",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.994,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "date",
+   "want": "2012-06-23",
+   "got": "2012-06-23",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.892,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "tax",
+   "want": 24.0,
+   "got": 24.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0356.jpg",
+   "field": "total",
+   "want": 264.0,
+   "got": 264.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "vendor",
+   "want": "Ramos-Holt",
+   "got": "Ramos-Holt",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "customer",
+   "want": "Bates LLC",
+   "got": "Bates LLC",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.792,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "invoice_number",
+   "want": "58031199",
+   "got": "58031199",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "date",
+   "want": "2017-11-11",
+   "got": "2017-11-11",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "tax",
+   "want": 762.72,
+   "got": 762.72,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1416.jpg",
+   "field": "total",
+   "want": 8389.96,
+   "got": 8389.96,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "vendor",
+   "want": "Ramos Inc",
+   "got": "Ramos Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "customer",
+   "want": "Wilson-Gibson",
+   "got": "Wilson-Gibson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "invoice_number",
+   "want": "25681210",
+   "got": "25681210",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.989,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "date",
+   "want": "2016-08-21",
+   "got": "2016-08-21",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.87,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "tax",
+   "want": 4973.17,
+   "got": 4973.17,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1315.jpg",
+   "field": "total",
+   "want": 54704.84,
+   "got": 54704.84,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "vendor",
+   "want": "Schultz, Lopez and Smith",
+   "got": "Schultz, Lopez and Smith",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.794,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "customer",
+   "want": "David-Rhodes",
+   "got": "David-Rhodes",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "invoice_number",
+   "want": "68043569",
+   "got": "68043569",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "date",
+   "want": "2011-09-09",
+   "got": "2011-09-09",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "tax",
+   "want": 88.16,
+   "got": 88.16,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0794.jpg",
+   "field": "total",
+   "want": 969.8,
+   "got": 969.8,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "vendor",
+   "want": "Lee and Sons",
+   "got": "Lee and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.796,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "customer",
+   "want": "Green Ltd",
+   "got": "Green Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.78,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "invoice_number",
+   "want": "47703225",
+   "got": "47703225",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "date",
+   "want": "2018-06-18",
+   "got": "2018-06-18",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.879,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "tax",
+   "want": 5121.69,
+   "got": 5121.69,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1032.jpg",
+   "field": "total",
+   "want": 56338.59,
+   "got": 56338.59,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "vendor",
+   "want": "Taylor, Chen and Hooper",
+   "got": "Taylor, Chen and Hooper",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.793,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "customer",
+   "want": "Porter-Martinez",
+   "got": "Porter-Martinez",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "invoice_number",
+   "want": "14845988",
+   "got": "14845988",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "date",
+   "want": "2017-10-25",
+   "got": "2017-10-25",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.86,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "tax",
+   "want": 150.59,
+   "got": 150.59,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0305.jpg",
+   "field": "total",
+   "want": 1656.47,
+   "got": 1656.47,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "vendor",
+   "want": "Massey-Guzman",
+   "got": "Massey-Guzman",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "customer",
+   "want": "Murphy, Fleming and Bentley",
+   "got": "Murphy, Fleming and Bentley",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.793,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "invoice_number",
+   "want": "77205533",
+   "got": "77205533",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "date",
+   "want": "2011-11-29",
+   "got": "2011-11-29",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.859,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "tax",
+   "want": 31.0,
+   "got": 31.0,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1101.jpg",
+   "field": "total",
+   "want": 340.99,
+   "got": 340.99,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "vendor",
+   "want": "Adams-Johnson",
+   "got": "Adams-Johnson",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "customer",
+   "want": "Boyer, Wilson and Ortiz",
+   "got": "Boyer, Wilson and Ortiz",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.788,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "invoice_number",
+   "want": "64770456",
+   "got": "64770456",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.995,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "date",
+   "want": "2011-10-13",
+   "got": "2011-10-13",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "tax",
+   "want": 213.55,
+   "got": 213.55,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1358.jpg",
+   "field": "total",
+   "want": 2349.03,
+   "got": 2349.03,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "vendor",
+   "want": "Garcia, Powell and Osborne",
+   "got": "Garcia, Powell and Osborne",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "customer",
+   "want": "Le and Sons",
+   "got": "Le and Sons",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.794,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "invoice_number",
+   "want": "64103969",
+   "got": "64103969",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.993,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "date",
+   "want": "2015-11-28",
+   "got": "2015-11-28",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.855,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "tax",
+   "want": 15.4,
+   "got": 15.4,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1336.jpg",
+   "field": "total",
+   "want": 169.37,
+   "got": 169.37,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "vendor",
+   "want": "Roberts, Gonzalez and Davis",
+   "got": "Roberts, Gonzalez and Davis",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.798,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "customer",
+   "want": "Young Group",
+   "got": "Young Group",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.776,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "invoice_number",
+   "want": "36793561",
+   "got": "36793561",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.969,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "date",
+   "want": "2012-10-29",
+   "got": "2012-10-29",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.861,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "tax",
+   "want": 61.44,
+   "got": 61.44,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-1178.jpg",
+   "field": "total",
+   "want": 675.82,
+   "got": 675.82,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "vendor",
+   "want": "Davis-Obrien",
+   "got": "Davis-Obrien",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.8,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "customer",
+   "want": "Taylor Ltd",
+   "got": "Taylor Ltd",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.786,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "invoice_number",
+   "want": "74322107",
+   "got": "74322107",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.999,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "date",
+   "want": "2016-02-02",
+   "got": "2016-02-02",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.888,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "tax",
+   "want": 6.2,
+   "got": 6.2,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0739.jpg",
+   "field": "total",
+   "want": 68.16,
+   "got": 68.16,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "vendor",
+   "want": "Mcdowell, Odom and Crosby",
+   "got": "Mcdowell, Odom and Crosby",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.783,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "customer",
+   "want": "Rodriguez-Sherman",
+   "got": "Rodriguez-Sherman",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.766,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "invoice_number",
+   "want": "73144550",
+   "got": "73144550",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.991,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "date",
+   "want": "2012-01-31",
+   "got": "2012-01-31",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "tax",
+   "want": 5.76,
+   "got": 5.76,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0128.jpg",
+   "field": "total",
+   "want": 63.32,
+   "got": 63.32,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "vendor",
+   "want": "Ingram-Mcclain",
+   "got": "Ingram-Mcclain",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "customer",
+   "want": "Owen Inc",
+   "got": "Owen Inc",
+   "method": "label-below",
+   "warning": null,
+   "confidence": 0.799,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "invoice_number",
+   "want": "49153414",
+   "got": "49153414",
+   "method": "label",
+   "warning": null,
+   "confidence": 0.998,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "date",
+   "want": "2019-03-25",
+   "got": "2019-03-25",
+   "method": "label-row",
+   "warning": null,
+   "confidence": 0.9,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "tax",
+   "want": 4727.1,
+   "got": 4727.1,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  },
+  {
+   "doc": "batch1-0178.jpg",
+   "field": "total",
+   "want": 51998.08,
+   "got": 51998.08,
+   "method": "label-row-column",
+   "warning": null,
+   "confidence": 0.95,
+   "outcome5": "correct_unflagged"
+  }
+ ],
+ "tasks": {
+  "n": 20,
+  "outcomes": {
+   "correct": 14,
+   "silent_wrong": 2,
+   "useful_abstention": 4
+  },
+  "items": [
+   {
+    "kind": "set",
+    "form": "threshold",
+    "request": "Find invoices above $570",
+    "expected_docs": 29,
+    "state": "succeeded",
+    "seconds": 0.24,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 29,
+    "expected": 29,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "threshold-below",
+    "request": "Find invoices below $570",
+    "expected_docs": 31,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 31,
+    "expected": 31,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "range",
+    "request": "Find invoices between $190 and $7,420",
+    "expected_docs": 29,
+    "state": "succeeded",
+    "seconds": 0.25,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 29,
+    "expected": 29,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "count",
+    "form": "count",
+    "request": "how many invoices are above $570?",
+    "expected_value": 29,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "records": 29,
+    "stated": 29,
+    "outcome": "correct"
+   },
+   {
+    "kind": "sum",
+    "form": "sum-threshold",
+    "request": "What is the total of invoices above $570?",
+    "expected_value": 449102.48,
+    "expected_count": 29,
+    "expected_unit": null,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "result": null,
+    "by_unit": null,
+    "used": null,
+    "missing": null,
+    "missing_disclosed": true,
+    "calculation_source": "structured",
+    "outcome": "silent_wrong"
+   },
+   {
+    "kind": "sum",
+    "form": "sum-all",
+    "request": "What is the total of all invoices?",
+    "expected_value": 455983.83,
+    "expected_count": 60,
+    "expected_unit": "USD",
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-0819.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-0755.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-0561.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-0505.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-0449.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last"
+    ],
+    "result": 455992.49,
+    "by_unit": null,
+    "used": 60,
+    "missing": null,
+    "missing_disclosed": true,
+    "calculation_source": "parsed from answer text (no structured calculation in this version)",
+    "outcome": "silent_wrong"
+   },
+   {
+    "kind": "export",
+    "form": "export-csv",
+    "request": "Export invoices above $570 to CSV",
+    "expected_rows": 29,
+    "state": "succeeded",
+    "seconds": 0.26,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "file": "inklight-filter-2026-10-24.csv",
+    "columns": [
+     "document",
+     "invoice_number",
+     "vendor",
+     "date",
+     "total",
+     "invoice_number_confidence",
+     "vendor_confidence",
+     "date_confidence",
+     "total_confidence",
+     "pages",
+     "warnings"
+    ],
+    "rows_exported": 29,
+    "rows_expected": 29,
+    "missing_rows": [],
+    "extra_rows": [],
+    "wrong_values": [],
+    "wrong_values_flagged_in_file": 0,
+    "correct_values_flagged_in_file": 3,
+    "outcome": "correct"
+   },
+   {
+    "kind": "unsupported",
+    "form": "paid-late",
+    "request": "Find invoices paid late",
+    "phrase": "paid late",
+    "state": "partial",
+    "seconds": 0.24,
+    "not_understood": [
+     "paid late"
+    ],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "outcome": "useful_abstention"
+   },
+   {
+    "kind": "unsupported",
+    "form": "last-month",
+    "request": "Find invoices from last month",
+    "phrase": "last month",
+    "state": "partial",
+    "seconds": 0.23,
+    "not_understood": [
+     "last month"
+    ],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "outcome": "useful_abstention"
+   },
+   {
+    "kind": "unsupported",
+    "form": "top-n",
+    "request": "Show the top 5 invoices by total",
+    "phrase": "top 5",
+    "state": "partial",
+    "seconds": 0.24,
+    "not_understood": [
+     "top 5"
+    ],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "outcome": "useful_abstention"
+   },
+   {
+    "kind": "unsupported",
+    "form": "month-no-year",
+    "request": "Find invoices from March",
+    "phrase": "march",
+    "state": "partial",
+    "seconds": 0.24,
+    "not_understood": [
+     "from March"
+    ],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "outcome": "useful_abstention"
+   },
+   {
+    "kind": "set",
+    "form": "vendor",
+    "request": "Find invoices from Adams-Johnson",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.25,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "vendor-or",
+    "request": "Find invoices from Adams-Johnson or Aguilar-Thompson",
+    "expected_docs": 2,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 2,
+    "expected": 2,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "vendor+threshold",
+    "request": "Find invoices from Adams-Johnson above $570",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.24,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "possessive",
+    "request": "Show Adams-Johnson's invoices",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "possessive-lower",
+    "request": "show adams-johnson's invoices",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.25,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "possessive-curly",
+    "request": "Show Adams-Johnson\u2019s invoices",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "possessive-start",
+    "request": "Adams-Johnson's invoices above $570",
+    "expected_docs": 1,
+    "state": "succeeded",
+    "seconds": 0.24,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 1,
+    "expected": 1,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "set",
+    "form": "year",
+    "request": "Find invoices in 2016",
+    "expected_docs": 2,
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "returned": 2,
+    "expected": 2,
+    "missing_docs": [],
+    "extra_docs": [],
+    "outcome": "correct"
+   },
+   {
+    "kind": "sum",
+    "form": "average-year",
+    "request": "What is the average total of invoices from 2016?",
+    "expected_value": 27386.5,
+    "expected_count": 2,
+    "expected_unit": "USD",
+    "state": "succeeded",
+    "seconds": 0.23,
+    "not_understood": [],
+    "warnings": [
+     "batch1-1488.jpg \u00b7 total: 3 values on the 'Total' row and no column title; took the last",
+     "batch1-1437.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1395.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1362.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1360.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order",
+     "batch1-1320.jpg \u00b7 date: ambiguous date, read month-first (MM/DD); set [extraction] day_first if your documents use the other order"
+    ],
+    "result": 27386.5,
+    "by_unit": null,
+    "used": 2,
+    "missing": null,
+    "missing_disclosed": true,
+    "calculation_source": "parsed from answer text (no structured calculation in this version)",
+    "outcome": "correct"
+   }
+  ]
+ }
+}

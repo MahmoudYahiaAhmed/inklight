@@ -71,7 +71,7 @@ def test_pilot_evaluation_and_vendor_groups_keep_arabic_names_apart():
 
 def test_historical_scores_are_unchanged_by_the_new_normalisation():
     """Every saved prediction rescored with the new comparison gives the stored outcome."""
-    files = sorted((ROOT / "bench" / "results" / "external" / "rescored").glob("*.json"))
+    files = sorted((ROOT / "evaluation" / "results" / "external" / "rescored").glob("*.json"))
     assert files
     checked = 0
     for f in files:

@@ -1,0 +1,1084 @@
+{
+ "label": "AUTOMATED USE-CASE EVALUATION",
+ "split": "fresh",
+ "brain": "auto",
+ "ocr_mode": "auto",
+ "build": {
+  "inklight_file": "~\\inklight\\src\\inklight\\__init__.py",
+  "version": "0.1.1.dev0",
+  "git_commit_if_source_tree": "6b4cc12a8edef38dbfc55c93fa980762a9447b90"
+ },
+ "run_label": "",
+ "evidence": "live",
+ "documents": {
+  "f-r32-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/32",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "report",
+    "mean_conf": 0.9983,
+    "sources": {
+     "hybrid": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "a1ea495080ab0146"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who would represent Brazil at the meeting?",
+     "answer": "Mrs. Helene Lobato da Jornada",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.14,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which meeting of the Security Council is mentioned?",
+     "answer": "9299th",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the invoice total?",
+     "answer": "that letter constitutes adequate\nprovisional credentials.\n*2",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-r32-en.pdf** (report, 1 page)\n  - Report of the Secretary-General (f-r32-en.pdf p.1)\n  - Pursuant to rule 15 of the provisional rules of procedure of the Security Council, (f-r32-en.pdf p.1)\n  - the Secretary-General wishes to report that he has received a letter dated 29 March (f-r32-en.pdf p.1)\n  - 2023 from the Chargé d’affaires a.i. of the Permanent Mission of Brazil to the United (f-r32-en.pdf p.1)\n  - In the opinion of the Secr"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2024-01-02",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "613c6deb52a94f9a"
+   }
+  },
+  "f-r32-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/32",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "letter",
+    "mean_conf": 0.916,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "221c167f6229de5c"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من ستمثل البرازيل في الجلسة؟",
+     "answer": "تُفيد بأن السيدة هيلينا لوباتو دا جورنادا، السكرتيرة الثانية بوزارة خارجية البرازيل، ستمثل البرازيل في جلسة",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما رقم جلسة مجلس الأمن المذكورة؟",
+     "answer": "وثائق تفويض ممثلة البرازيل في مجلس الأمن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما قيمة الضريبة؟",
+     "answer": "The closest passage is:\n“الأمم المتحدة\n\nجلس الأمن\nS/2024/32\nDistr.: General\n2 January 2024\nArabic\nOriginal: English\nوثائق تفويض ممثلة البرازيل في مجلس الأمن\nتقرير الأمين العام\nعملاً بالمادة 15 من النظ",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-r32-ar.pdf** (letter, 1 page)\n  - وثائق تفويض ممثلة البرازيل في مجلس الأمن (f-r32-ar.pdf p.1)\n  - عملاً بالمادة 15 من النظام الداخلي المؤقت لمجلس الأمن، يودّ الأمين العام الإبلاغ بأنه تلقى (f-r32-ar.pdf p.1)\n  - رسالة مؤرخة 29 آذار/مارس 2023 من القائم بالأعمال بالنيابة للبعثة الدائمة للرازيل لدى الأمم المتحدة (f-r32-ar.pdf p.1)\n  - تُفيد بأن السيدة هيلينا لوباتو دا جورنادا، السكرتيرة الثانية بوزارة خارجية البرازيل، ستمثل البرازيل في "
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2023-03-29",
+     "outcome": "silent_wrong",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "4bea9c590b894186"
+   }
+  },
+  "f-r40-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/40",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "report",
+    "mean_conf": 0.9998,
+    "sources": {
+     "hybrid": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "4dcb42913075cf08"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Which country's alternate representatives are reported?",
+     "answer": "Mozambique",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    },
+    {
+     "q": "What is the date of the letter the Secretary-General received?",
+     "answer": "27 February\n2023",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the governing law?",
+     "answer": "that letter constitutes adequate\nprovisional credentials",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-r40-en.pdf** (report, 1 page)\n  - Credentials of the alternate representatives of Mozambique (f-r40-en.pdf p.1)\n  - Report of the Secretary-General (f-r40-en.pdf p.1)\n  - Pursuant to rule 15 of the provisional rules of procedure of the Security Council, (f-r40-en.pdf p.1)\n  - the Secretary-General wishes to report that he has received a letter dated 27 February (f-r40-en.pdf p.1)\n  - Mavale have been appointed alternate representativ"
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2024-01-02",
+     "outcome": "correct_flagged",
+     "warning": "inferred (first-date); no label found"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "c570404eab9f4ccc"
+   }
+  },
+  "f-r40-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "report",
+   "genuine": true,
+   "group": "un-S/2024/40",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "letter",
+    "mean_conf": 0.9184,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "fe8ac51127cada58"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "ممثلو أي بلد المناوبون؟",
+     "answer": "وثائق تفويض الممثلين المناوبين لموزامبيق في مجلس الأمن",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما تاريخ الرسالة التي تلقاها الأمين العام؟",
+     "answer": "وبرى الأمين العام أن تلك الرسالة تشكل وثائق تفويض مؤقتة وافية بالغرض.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "The closest passage is:\n“الأمم المتحدة\n\nجلس الأمن\nS/2024/40\nDistr.: General\n2 January 2024\nArabic\nOriginal: English\nوثائق تفويض الممثلين المناوبين لموزامبيق في مجلس الأمن\nتقرير الأمين العام\nعملا بالما",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 3,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-r40-ar.pdf** (letter, 1 page)\n  - وثائق تفويض الممثلين المناوبين لموزامبيق في مجلس الأمن (f-r40-ar.pdf p.1)\n  - عملا بالمادة 15 من النظام الداخلي المؤقت لمجلس الأمن، يود الأمين العام الإبلاغ بأنه تلقى (f-r40-ar.pdf p.1)\n  - رسالة مؤرخة 27 شباط/فبراير 2023 من نائب الممثل والقائم بالأعمال بالنيابة للبعثة الدائمة لموزامبيق لدى (f-r40-ar.pdf p.1)\n  - الأمم المتحدة تقيد بأن السيدة بولينا فيليسيانو فرانسيسكو أبدالا، والسيد لوسيانو أمانديو "
+   },
+   "fields": [
+    {
+     "field": "date",
+     "value": "2023-02-27",
+     "outcome": "silent_wrong",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "date"
+    ],
+    "review_id": "eaf42ab6302942c7"
+   }
+  },
+  "f-l35-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2024/35",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "letter",
+    "mean_conf": 0.9996,
+    "sources": {
+     "hybrid": 1,
+     "text": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "c40d36e30b81ccea"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who signed the letter?",
+     "answer": "Sidi Mohamed Laghdaf",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.07,
+     "onnx": {
+      "embedder": 2,
+      "reader": 5
+     },
+     "excerpt_preserved": true
+    },
+    {
+     "q": "With which country does the statement express solidarity?",
+     "answer": "the Federal Republic\nof Somalia",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.553,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.08,
+     "onnx": {
+      "embedder": 2,
+      "reader": 5
+     },
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the contract term?",
+     "answer": "S/2024/35\nAnnex to the letter dated 9 January 2024",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-l35-en.pdf** (letter, 2 pages)\n  - Letter dated 9 January 2024 from the Permanent Representative (f-l35-en.pdf p.1)\n  - Organization of Islamic Cooperation (OIC), I have the honour to transmit herewith (f-l35-en.pdf p.1)\n  - the OIC General Secretariat statement expressing solidarity with the Federal Republic (f-l35-en.pdf p.1)\n  - The General Secretariat renewed the solidarity of OIC with the Federal Republic (f-l35-en.pdf p.2)\n  - "
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2024-01-09",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "daeb1373b8d145ee"
+   }
+  },
+  "f-l35-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2024/35",
+   "ingest": {
+    "pages": 2,
+    "doc_type": "letter",
+    "mean_conf": 0.9501,
+    "sources": {
+     "ocr": 2
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "cf847ebafe27a675"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "answer": "رسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى رئيس مجلس الأمن من الممثل",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "مع أي بلد يعرب البيان عن التضامن؟",
+     "answer": "أن أحيل طيه بيان الأمانة العامة لمنظمة التعاون الإسلامي، الصادر في 4 كانون الثاني/يناير 2024،",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": "answering",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الإيصال؟",
+     "answer": "The closest passage is:\n“الأمم المتحدة\n\nجلس الأمن\nS/2024/35\nDistr.: General\n9 January 2024\nArabic\nOriginal: English\nرسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى رئيس مجلس الأمن من الممثل\nالدائم لمو",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-l35-ar.pdf** (letter, 2 pages)\n  - رسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى رئيس مجلس الأمن من الممثل (f-l35-ar.pdf p.1)\n  - بصفتي رئيس مجلس وزراء الخارجية للدول الأعضاء في منظمة التعاون الإسلامي، يشرفني (f-l35-ar.pdf p.1)\n  - أن أحيل طيه بيان الأمانة العامة لمنظمة التعاون الإسلامي، الصادر في 4 كانون الثاني/يناير 2024، (f-l35-ar.pdf p.1)\n  - وأرجو ممتنا تعميم هذه الرسالة ومرفقها باعتبارهما وثيقة من وثائق مجلس الأمن. (f-l35-ar."
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2024-01-09",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "c718a8e615764061"
+   }
+  },
+  "f-l43-en": {
+   "lang": "en",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2024/43",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "letter",
+    "mean_conf": 0.9999,
+    "sources": {
+     "hybrid": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "fb612578ebc19711"
+   },
+   "text_has_answers": [
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "Who is the President of the Security Council who signed the letter?",
+     "answer": "Nicolas de Rivière",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.04,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    },
+    {
+     "q": "Which commission does the support team assist?",
+     "answer": "Cameroon-Nigeria Mixed Commission",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.6,
+     "brain": "embedder+reader (planner: rules)",
+     "seconds": 0.03,
+     "onnx": {
+      "embedder": 2,
+      "reader": 2
+     },
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "What is the VAT amount?",
+     "answer": "Please recycle",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "Summarize this document",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-l43-en.pdf** (letter, 1 page)\n  - Letter dated 9 January 2024 from the President of the (f-l43-en.pdf p.1)\n  - Security Council addressed to the Secretary-General (f-l43-en.pdf p.1)\n  - I have the honour to inform you that your letter dated 15 December 2023 (f-l43-en.pdf p.1)\n  - (S/2024/42) concerning your intention to continue the activities of the United Nations (f-l43-en.pdf p.1)\n  - support team to the Cameroon-Nigeria Mixed Com"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2024-01-09",
+     "outcome": "correct_flagged",
+     "warning": "2 different values found; chose the strongest label match"
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "29a20cbf73f24756"
+   }
+  },
+  "f-l43-ar": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "letter",
+   "genuine": true,
+   "group": "un-S/2024/43",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "letter",
+    "mean_conf": 0.9186,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "broken Arabic text layer"
+    ],
+    "text_sha": "ecdb58fd8890550f"
+   },
+   "text_has_answers": [
+    false,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من وقّع الرسالة؟",
+     "answer": "رسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى الأمين العام من رئيس",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "wrong_flagged",
+     "cited_passage_supports": false,
+     "cited_page": 1,
+     "retrieval_has_answer": false,
+     "first_failing_stage": "ingestion/OCR",
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما اللجنة التي يدعمها الفريق؟",
+     "answer": "باعتزامكم مواصلة أنشطة فريق الأمم المتحدة لدعم لجنة الكاميرون ونيجيريا المختلطة بتمويل من الميزانية",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما اسم المستأجر؟",
+     "answer": "The closest passage is:\n“الأمم المتحدة\n\nجلس الأمن\nS/2024/43\nDistr.: General\n10 January 2024\nArabic\nOriginal: French\nرسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى الأمين العام من رئيس\nمجلس الأمن\nيشرف",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 2,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": true,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**f-l43-ar.pdf** (letter, 1 page)\n  - رسالة مؤرخة 9 كانون الثاني/يناير 2024 موجهة إلى الأمين العام من رئيس (f-l43-ar.pdf p.1)\n  - يشرفني أن أبلغكم أن رسالتكم المؤرخة 15 كانون الأول/ديسمبر S/2024/4 2023)، المتعلقة (f-l43-ar.pdf p.1)\n  - باعتزامكم مواصلة أنشطة فريق الأمم المتحدة لدعم لجنة الكاميرون ونيجيريا المختلطة بتمويل من الميزانية (f-l43-ar.pdf p.1)\n  - العادية، قد عُرضت على أعضاء مجلس الأمن. (f-l43-ar.pdf p.1)\n  - وهم يحيطون علماً با"
+   },
+   "fields": [
+    {
+     "field": "letter_date",
+     "value": "2024-01-09",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "letter_date"
+    ],
+    "review_id": "be444d9f22b34c98"
+   }
+  },
+  "f-syn-lease2-digital": {
+   "lang": "ar",
+   "modality": "digital",
+   "type": "contract",
+   "genuine": false,
+   "group": "syn-lease2",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "contract",
+    "mean_conf": 0.9737,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "right-to-left text in visual order"
+    ],
+    "text_sha": "f9956c05b32945b9"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من المستأجر؟",
+     "answer": "المستأجر: السيد فهد ناصر العتيبي.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "كم الأجرة الشهرية؟",
+     "answer": "الأجرة الشهرية خمسة آلاف ريال سعودي (5,000 ر.س) تُسدد في الخامس من كل شهر.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما المحكمة المختصة؟",
+     "answer": "تختص المحكمة التجارية في جدة بالفصل في أي نزاع.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "محل تجاري رقم ٤ في مركز البحر، طريق الكورنيش، جدة.",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": false,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-lease2-digital.pdf** (contract, 1 page)\n  - خُرر هذا العقد في مدينة جدة بتاريخ ١٠ أيار/مايو ٢٠٢٤ بين: (syn-ar-lease2-digital.pdf p.1)\n  - المؤجر: شركة الريم للاستثمار العقاري. (syn-ar-lease2-digital.pdf p.1)\n  - المادة الأولى: العين المؤجرة (syn-ar-lease2-digital.pdf p.1)\n  - محل تجاري رقم ٤ في مركز البحر، طريق الكورنيش، جدة. (syn-ar-lease2-digital.pdf p.1)\n  - مدة العقد ثلاث سنوات تبدأ من ١ حزيران/يونيو ٢٠٢٤. (syn-ar-lease2-dig"
+   },
+   "fields": [
+    {
+     "field": "monthly_rent",
+     "value": "5000.0",
+     "outcome": "correct",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "monthly_rent"
+    ],
+    "review_id": "4836b9a716e04cac"
+   }
+  },
+  "f-syn-lease2-scan": {
+   "lang": "ar",
+   "modality": "scan",
+   "type": "contract",
+   "genuine": false,
+   "group": "syn-lease2",
+   "ingest": {
+    "pages": 1,
+    "doc_type": "contract",
+    "mean_conf": 0.9567,
+    "sources": {
+     "ocr": 1
+    },
+    "notes": [
+     "order=model"
+    ],
+    "text_sha": "9dfc4f1e64f6f256"
+   },
+   "text_has_answers": [
+    true,
+    true,
+    true
+   ],
+   "qa": [
+    {
+     "q": "من المستأجر؟",
+     "answer": "المستأجر: السيد فهد ناصر العتيبي.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "كم الأجرة الشهرية؟",
+     "answer": "الأجرة الشهرية خمسة آلاف ريل سعودي (5.000 ر.س) تُسدد في الخامس من كل شهر.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    },
+    {
+     "q": "ما المحكمة المختصة؟",
+     "answer": "تختص المحكمة التجارية في جدة بالفصل في أي نزاع.",
+     "state": "succeeded",
+     "intent": "ask",
+     "outcome": "correct_flagged",
+     "cited_passage_supports": true,
+     "cited_page": 1,
+     "retrieval_has_answer": true,
+     "first_failing_stage": null,
+     "confidence": 0.29,
+     "brain": "rules (planner: rules)",
+     "seconds": 0.0,
+     "onnx": {},
+     "excerpt_preserved": true
+    }
+   ],
+   "missing": [
+    {
+     "q": "ما رقم الفاتورة؟",
+     "answer": "محل تجاري رقم ٤ في مركز البحر، طريق الكورنيش، جدة.",
+     "state": "succeeded",
+     "outcome": "abstained_or_flagged"
+    }
+   ],
+   "summary": {
+    "request": "لخص هذه الوثيقة",
+    "intent": "summarize",
+    "state": "succeeded",
+    "key_facts_covered": 1,
+    "key_facts": 3,
+    "sentences": 5,
+    "sentences_found_in_document": 5,
+    "language_matches": false,
+    "seconds": 0.0,
+    "onnx": {},
+    "answer": "Extractive summary (sentences quoted from the documents):\n\n**syn-ar-lease2-scan.jpg** (contract, 1 page)\n  - خرر هذا العقد في مدينة جدة بتاريخ ١٠ أيار/مايو ٢٠٢٤ بين: (syn-ar-lease2-scan.jpg p.1)\n  - المؤجر: شركة الريم للاستثمار العقاري. (syn-ar-lease2-scan.jpg p.1)\n  - المادة الأولى: العين المؤجرة (syn-ar-lease2-scan.jpg p.1)\n  - محل تجاري رقم ٤ في مركز البحر، طريق الكورنيش، جدة. (syn-ar-lease2-scan.jpg p.1)\n  - مدة العقد ثلاث سنوات تبدأ من ١ حزيران/يونيو ٢٠٢٤. (syn-ar-lease2-scan.jpg p.1)"
+   },
+   "fields": [
+    {
+     "field": "monthly_rent",
+     "value": "-5000.0",
+     "outcome": "silent_wrong",
+     "warning": null
+    }
+   ],
+   "review": {
+    "ok": true,
+    "fields": [
+     "monthly_rent"
+    ],
+    "review_id": "9a03cb1f718c457b"
+   }
+  }
+ },
+ "library_tasks": [
+  {
+   "id": "fresh-find-en",
+   "kind": "find",
+   "request": "Which document reports the credentials of the representative of Brazil?",
+   "state": "partial",
+   "intent": "extract",
+   "answer": "PARTIAL RESULT, not the complete answer to your request.\nUnderstood as: documents: reports; columns: date\nNot applied: “credentials”; “representative”; “Brazil”\nThe documents below match only the parts that were applied.\n\nExtracted date from 2 document(s):\n\ndocument | date\nf-r32-en.pdf | 2024-01-02\nf-r40-en.pdf | 2024-01-02",
+   "seconds": 0.01,
+   "first_source": "f-r32-en",
+   "correct": true
+  },
+  {
+   "id": "fresh-find-ar",
+   "kind": "find",
+   "request": "ما الوثيقة التي تتضمن وثائق تفويض الممثلين المناوبين لموزامبيق؟",
+   "state": "succeeded",
+   "intent": "ask",
+   "answer": "وثائق تفويض الممثلين المناوبين لموزامبيق في مجلس الأمن",
+   "seconds": 0.01,
+   "first_source": "f-r40-ar",
+   "correct": true
+  },
+  {
+   "id": "fresh-compare-letters",
+   "kind": "compare",
+   "request": "Compare the letter dates of these documents",
+   "state": "succeeded",
+   "intent": "compare",
+   "answer": "**f-l35-en.pdf vs f-l43-en.pdf** — text similarity 24%\nField differences: none among the compared fields\nChanged figures: 35 → 43 (in “s/2024/35”); 9 → 10 (in “9 january 2024”); 35 → 43 (in “s/2024/35”)\nLines only in f-l35-en.pdf (35):\n  - s/2024/35\n  - 9 january 2024\n  - original: english\n  - letter dated 9 january 2024 from the permanent representative\n  - of mauritania to the united nations add",
+   "seconds": 0.04,
+   "correct": true
+  },
+  {
+   "id": "fresh-unsupported",
+   "kind": "unsupported",
+   "request": "Translate this report into Spanish",
+   "state": "unsupported",
+   "intent": "ask",
+   "answer": "Understood as: documents: reports\n\nNothing was run, to avoid guessing what you meant:\n- translation is not something Inklight does: it reads, searches, answers from and extracts documents",
+   "seconds": 0.0,
+   "correct": true
+  }
+ ],
+ "ingest": {
+  "seconds": 3.0,
+  "failed": [],
+  "onnx": {
+   "ocr": 165,
+   "embedder": 2
+  }
+ },
+ "review_export": {
+  "rows": 10,
+  "arabic_values": 0,
+  "documents": 10
+ },
+ "brain_usage": {
+  "reader": {
+   "loaded": true,
+   "inference_calls": 46,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": true,
+   "inference_calls": 22,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ },
+ "replay_misses": 0,
+ "onnx_total": {
+  "ocr": 165,
+  "embedder": 22,
+  "reader": 46
+ }
+}

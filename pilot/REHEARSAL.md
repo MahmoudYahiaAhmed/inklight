@@ -18,7 +18,7 @@ Its documents and reviews stay out of the scored pilot.
 | Invoices | 5–10 genuine invoices with permission recorded, from at least 3 vendors and 2 layouts. Include at least one scan or photo. If the pilot will contain Arabic invoices, include one. |
 | People | Reviewer A (reviews every invoice) and reviewer B (types 2 invoices by hand, before A sees them) |
 | Screen | at least 1100 px wide, so the page and the fields sit side by side |
-| Build | the frozen pilot baseline (baseline 4, `f4ebb5a`, installed in `C:/Users/pc/inklight-pilot-b4`) |
+| Build | the frozen pilot baseline (baseline 4, `f4ebb5a`, installed in `~/inklight-pilot-b4`) |
 | A stopwatch | a phone is fine: it is the independent check on the recorded times |
 
 ## Setup (coordinator)

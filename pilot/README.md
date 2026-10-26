@@ -171,7 +171,7 @@ what to change, and report every access in the write-up.
 
 ## 5. What has been checked so far (not pilot results)
 
-**Rehearsal on synthetic invoices** (`results/dryrun-synthetic/`): 60 Voxel51 *development* invoices, the
+**Rehearsal on synthetic invoices** (`evaluation/results/pilot/dryrun-synthetic/`): 60 Voxel51 *development* invoices, the
 frozen environment and config of **baseline 1** (`aaa8c31`), and a **scripted** reviewer that takes final values from the dataset
 annotations.
 - The run completed: intake 60/60, 75 approved reviews (15 entered both ways), 450 exported rows.
@@ -183,7 +183,7 @@ annotations.
   total, so a human reviewer looking at the page would approve Inklight's value instead.
 - Timings are 0 s and agreement is perfect by construction. Neither means anything for real reviewers.
 
-**Latency of the second OCR reading** (`results/latency-dev/latency.json`): development splits only, the
+**Latency of the second OCR reading** (`evaluation/results/pilot/latency-dev/latency.json`): development splits only, the
 frozen environment of **baseline 1** (baseline 2 changes no OCR or extraction code path that this measures), 3 alternating repeats, AMD Zen 4 laptop CPU.
 
 | Dev data | Extraction per document, median (on / off) | p90 (on / off) | Mean (on / off) | Second readings per 60 documents | OCR ingest per document |
