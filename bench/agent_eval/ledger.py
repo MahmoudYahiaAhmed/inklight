@@ -129,7 +129,21 @@ def main() -> None:
                 "reference_disputed": bool(j.get("reference_disputed")),
                 "uncertain": bool(j.get("uncertain")),
             }
-            o, fa = amended, j["first_attempt"]
+            review = judging / case / "review.json"  # a separate reviewer's decision, when the case was reviewed
+            if review.exists():
+                rv = load(review)
+                row |= {
+                    "reviewed": True,
+                    "reviewer_agrees": bool(rv.get("agree")),
+                    "outcome_judge": amended,
+                    "first_attempt_judge": j["first_attempt"],
+                    "error_source": rv.get("error_source"),
+                    "review_uncertain": bool(rv.get("uncertain")),
+                }
+                amended = rv.get("reviewed_outcome") or amended
+                row["outcome"] = amended
+                row["first_attempt"] = rv.get("reviewed_first_attempt") or j["first_attempt"]
+            o, fa = amended, row["first_attempt"]
             first_done = fa == "correct" or (o == "correct_abstention" and fa == "abstained")
             row |= {
                 "tool_completed": o in BY_TOOL,
@@ -184,6 +198,10 @@ def summary(rows: list[dict], label: str) -> str:
     row("correct abstention by the tool", lambda r: r.get("outcome") == "correct_abstention")
     row("wrong abstention", lambda r: r.get("wrong_abstention"))
     row("silent wrong (as handed over)", lambda r: r.get("silent_wrong"))
+    row(
+        "  of which the person's reading was wrong too (reviewed: person or both)",
+        lambda r: r.get("silent_wrong") and r.get("error_source") in ("person", "both"),
+    )
     row("overstated completion", lambda r: r.get("overstated"))
     row(
         "honest partial / wrong with relevant warning",
@@ -202,6 +220,9 @@ def summary(rows: list[dict], label: str) -> str:
         lambda r: r.get("deliverable") == "export" and r.get("export_from_tool") and r.get("export_judged") == "yes",
     )
     row("judgment amended", lambda r: r.get("judgment_amended"))
+    row("reviewed by a separate reviewer", lambda r: r.get("reviewed"))
+    row("  reviewer disagreed with the judge", lambda r: r.get("reviewed") and not r.get("reviewer_agrees"))
+    row("  still uncertain after review", lambda r: r.get("review_uncertain"))
     lines.append("")
     for a in arms:
         rs = [r for r in scored if r["arm"] == a]

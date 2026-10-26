@@ -1,0 +1,734 @@
+{
+ "config": "configs\\arm-A2.toml",
+ "cold": {
+  "seconds": 35.57,
+  "documents": {
+   "control-two-companies.pdf": {
+    "seconds": 1.14,
+    "failed": []
+   },
+   "g01-01.pdf": {
+    "seconds": 3.01,
+    "failed": []
+   },
+   "g02-01.pdf": {
+    "seconds": 0.44,
+    "failed": []
+   },
+   "g02-02.pdf": {
+    "seconds": 2.78,
+    "failed": []
+   },
+   "g02-03.pdf": {
+    "seconds": 0.26,
+    "failed": []
+   },
+   "g03-01.pdf": {
+    "seconds": 2.2,
+    "failed": []
+   },
+   "g04-01.pdf": {
+    "seconds": 1.65,
+    "failed": []
+   },
+   "g04-02.pdf": {
+    "seconds": 0.24,
+    "failed": []
+   },
+   "g05-01.pdf": {
+    "seconds": 0.52,
+    "failed": []
+   },
+   "g06-01.pdf": {
+    "seconds": 5.56,
+    "failed": []
+   },
+   "g06-02.pdf": {
+    "seconds": 0.33,
+    "failed": []
+   },
+   "g07-01.pdf": {
+    "seconds": 2.3,
+    "failed": []
+   },
+   "g07-02.pdf": {
+    "seconds": 3.92,
+    "failed": []
+   },
+   "g08-01.jpg": {
+    "seconds": 0.1,
+    "failed": []
+   },
+   "g09-01.pdf": {
+    "seconds": 1.83,
+    "failed": []
+   },
+   "g09-02.pdf": {
+    "seconds": 6.16,
+    "failed": []
+   },
+   "g10-01.pdf": {
+    "seconds": 1.04,
+    "failed": []
+   },
+   "g10-02.pdf": {
+    "seconds": 0.12,
+    "failed": []
+   },
+   "g11-01.jpg": {
+    "seconds": 0.19,
+    "failed": []
+   },
+   "g12-01.jpg": {
+    "seconds": 0.18,
+    "failed": []
+   },
+   "g13-01.jpg": {
+    "seconds": 0.21,
+    "failed": []
+   },
+   "g14-01.jpg": {
+    "seconds": 0.15,
+    "failed": []
+   },
+   "g15-01.pdf": {
+    "seconds": 0.32,
+    "failed": []
+   },
+   "g15-02.pdf": {
+    "seconds": 0.3,
+    "failed": []
+   },
+   "g16-01.pdf": {
+    "seconds": 0.43,
+    "failed": []
+   },
+   "g16-02.pdf": {
+    "seconds": 0.17,
+    "failed": []
+   }
+  },
+  "peak_mb": 641.4
+ },
+ "warm": {
+  "seconds": 33.35,
+  "documents": {
+   "control-two-companies.pdf": {
+    "seconds": 0.05,
+    "failed": []
+   },
+   "g01-01.pdf": {
+    "seconds": 2.99,
+    "failed": []
+   },
+   "g02-01.pdf": {
+    "seconds": 0.4,
+    "failed": []
+   },
+   "g02-02.pdf": {
+    "seconds": 2.66,
+    "failed": []
+   },
+   "g02-03.pdf": {
+    "seconds": 0.25,
+    "failed": []
+   },
+   "g03-01.pdf": {
+    "seconds": 2.12,
+    "failed": []
+   },
+   "g04-01.pdf": {
+    "seconds": 1.63,
+    "failed": []
+   },
+   "g04-02.pdf": {
+    "seconds": 0.22,
+    "failed": []
+   },
+   "g05-01.pdf": {
+    "seconds": 0.49,
+    "failed": []
+   },
+   "g06-01.pdf": {
+    "seconds": 5.33,
+    "failed": []
+   },
+   "g06-02.pdf": {
+    "seconds": 0.28,
+    "failed": []
+   },
+   "g07-01.pdf": {
+    "seconds": 2.17,
+    "failed": []
+   },
+   "g07-02.pdf": {
+    "seconds": 4.22,
+    "failed": []
+   },
+   "g08-01.jpg": {
+    "seconds": 0.2,
+    "failed": []
+   },
+   "g09-01.pdf": {
+    "seconds": 1.75,
+    "failed": []
+   },
+   "g09-02.pdf": {
+    "seconds": 5.58,
+    "failed": []
+   },
+   "g10-01.pdf": {
+    "seconds": 1.0,
+    "failed": []
+   },
+   "g10-02.pdf": {
+    "seconds": 0.12,
+    "failed": []
+   },
+   "g11-01.jpg": {
+    "seconds": 0.18,
+    "failed": []
+   },
+   "g12-01.jpg": {
+    "seconds": 0.17,
+    "failed": []
+   },
+   "g13-01.jpg": {
+    "seconds": 0.21,
+    "failed": []
+   },
+   "g14-01.jpg": {
+    "seconds": 0.12,
+    "failed": []
+   },
+   "g15-01.pdf": {
+    "seconds": 0.32,
+    "failed": []
+   },
+   "g15-02.pdf": {
+    "seconds": 0.29,
+    "failed": []
+   },
+   "g16-01.pdf": {
+    "seconds": 0.44,
+    "failed": []
+   },
+   "g16-02.pdf": {
+    "seconds": 0.17,
+    "failed": []
+   }
+  },
+  "peak_mb": 655.4
+ },
+ "documents": {
+  "g16-02.pdf": {
+   "pages": 2,
+   "doc_type": "letter",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "text"
+   ],
+   "ocr_ms": [
+    69.0772999996625,
+    42.20369999984541
+   ],
+   "mean_conf": 0.9969,
+   "structure": null
+  },
+  "g16-01.pdf": {
+   "pages": 2,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    115.16870000014023,
+    70.5244999999195
+   ],
+   "mean_conf": 0.9689,
+   "structure": null
+  },
+  "g15-02.pdf": {
+   "pages": 3,
+   "doc_type": "report",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "text",
+    "text"
+   ],
+   "ocr_ms": [
+    48.69669999970938,
+    61.050799999975425,
+    109.15179999938118
+   ],
+   "mean_conf": 0.9999,
+   "structure": null
+  },
+  "g15-01.pdf": {
+   "pages": 2,
+   "doc_type": "letter",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "hybrid"
+   ],
+   "ocr_ms": [
+    77.03529999889724,
+    89.14039999945089
+   ],
+   "mean_conf": 0.9397,
+   "structure": null
+  },
+  "g14-01.jpg": {
+   "pages": 1,
+   "doc_type": "receipt",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    96.26589999970747
+   ],
+   "mean_conf": 0.8884,
+   "structure": null
+  },
+  "g13-01.jpg": {
+   "pages": 1,
+   "doc_type": "invoice",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    151.7457000009017
+   ],
+   "mean_conf": 0.9758,
+   "structure": null
+  },
+  "g12-01.jpg": {
+   "pages": 1,
+   "doc_type": "invoice",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    121.82059999940975
+   ],
+   "mean_conf": 0.8098,
+   "structure": null
+  },
+  "g11-01.jpg": {
+   "pages": 1,
+   "doc_type": "receipt",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    113.98280000048544
+   ],
+   "mean_conf": 0.9258,
+   "structure": null
+  },
+  "g10-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    114.08509999910166
+   ],
+   "mean_conf": 0.7325,
+   "structure": null
+  },
+  "g10-01.pdf": {
+   "pages": 3,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "hybrid",
+    "hybrid"
+   ],
+   "ocr_ms": [
+    424.9229999995805,
+    293.05979999935516,
+    229.69640000064828
+   ],
+   "mean_conf": 0.8231,
+   "structure": null
+  },
+  "g09-02.pdf": {
+   "pages": 17,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    474.361399999907,
+    431.70980000013515,
+    300.5732999999964,
+    331.17630000106146,
+    346.578399999089,
+    333.53099999931146,
+    391.03700000032404,
+    345.40240000023914,
+    202.8000999998767,
+    304.3087000005471,
+    258.87910000164993,
+    271.6045999995913,
+    273.1883000005837,
+    279.9248000001171,
+    317.22310000077414,
+    190.39100000009057,
+    290.4359999984081
+   ],
+   "mean_conf": 0.7799,
+   "structure": null
+  },
+  "g09-01.pdf": {
+   "pages": 6,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    277.3269999997865,
+    280.6992000005266,
+    271.4064000001599,
+    288.5019999994256,
+    280.6663000001208,
+    223.88430000228254
+   ],
+   "mean_conf": 0.9276,
+   "structure": null
+  },
+  "g08-01.jpg": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    60.860600000523846
+   ],
+   "mean_conf": 0.8882,
+   "structure": null
+  },
+  "g07-02.pdf": {
+   "pages": 7,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    656.0580000004848,
+    582.7184000008856,
+    647.1154000018942,
+    594.6285000009084,
+    586.5353999997751,
+    462.0051000001695,
+    368.5014999991836
+   ],
+   "mean_conf": 0.8423,
+   "structure": null
+  },
+  "g07-01.pdf": {
+   "pages": 5,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    411.5547000010338,
+    396.18309999968915,
+    478.28950000075565,
+    488.02940000041417,
+    315.78559999979916
+   ],
+   "mean_conf": 0.9299,
+   "structure": null
+  },
+  "g06-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    269.95499999975436
+   ],
+   "mean_conf": 0.639,
+   "structure": null
+  },
+  "g06-01.pdf": {
+   "pages": 15,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    555.3199000005407,
+    465.51369999997405,
+    332.94500000010885,
+    400.937100000192,
+    370.9864000002199,
+    393.3065000001079,
+    369.684999997844,
+    320.06729999920935,
+    284.84819999903266,
+    293.9946000005875,
+    280.1839999992808,
+    290.1863000006415,
+    300.45310000241443,
+    165.08760000033362,
+    279.2791000010766
+   ],
+   "mean_conf": 0.8118,
+   "structure": null
+  },
+  "g05-01.pdf": {
+   "pages": 2,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    201.98329999948328,
+    277.0796999984668
+   ],
+   "mean_conf": 0.8795,
+   "structure": null
+  },
+  "g04-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    206.4609000017299
+   ],
+   "mean_conf": 0.3384,
+   "structure": null
+  },
+  "g04-01.pdf": {
+   "pages": 4,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    450.83160000103817,
+    347.82560000257945,
+    374.36299999990297,
+    361.75680000087596
+   ],
+   "mean_conf": 0.8763,
+   "structure": null
+  },
+  "g03-01.pdf": {
+   "pages": 5,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    505.81489999967744,
+    435.66569999984495,
+    387.2202999991714,
+    351.96219999943423,
+    320.9392000017033
+   ],
+   "mean_conf": 0.8333,
+   "structure": null
+  },
+  "g02-03.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    229.60869999951683
+   ],
+   "mean_conf": 0.7109,
+   "structure": null
+  },
+  "g02-02.pdf": {
+   "pages": 9,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    413.8883000014175,
+    349.32060000028287,
+    273.9873999989868,
+    248.14509999850998,
+    273.9276999991489,
+    273.8083000022016,
+    244.95030000161933,
+    241.1486999999397,
+    212.80730000034964
+   ],
+   "mean_conf": 0.8339,
+   "structure": null
+  },
+  "g02-01.pdf": {
+   "pages": 2,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    157.59049999996932,
+    225.04189999926894
+   ],
+   "mean_conf": 0.7709,
+   "structure": null
+  },
+  "g01-01.pdf": {
+   "pages": 9,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    270.0440999988132,
+    495.8333999993556,
+    362.7359999991313,
+    300.43430000023363,
+    266.493500001161,
+    280.33940000022994,
+    313.99530000089726,
+    304.8476000003575,
+    274.8364999970363
+   ],
+   "mean_conf": 0.8275,
+   "structure": null
+  },
+  "control-two-companies.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "text"
+   ],
+   "ocr_ms": [
+    34.48440000011033
+   ],
+   "mean_conf": 1.0,
+   "structure": null
+  }
+ },
+ "brain": {
+  "reader": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ }
+}

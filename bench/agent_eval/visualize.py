@@ -2,11 +2,11 @@
 cited regions drawn on them, and an index.html with the request, what the tool answered (first and last action), its
 warnings, what the person handed over, and the judge's verdict and explanation.
 
-    EVAL_PYTHON bench/agent_eval/visualize.py EVAL_DIR OUT_DIR
+    EVAL_PYTHON bench/agent_eval/visualize.py EVAL_DIR OUT_DIR [--judging SUBDIR]
 
-Boxes are drawn in the page image's frame: Inklight's boxes are in the frame Indra read (200 dpi for PDFs, the
-image's own pixels for photos) and the page images are 150 dpi, so PDF boxes are scaled by 150/200. On pages Indra
-rotated, the box may not line up, since its frame differs.
+Inklight's boxes are in the page's stored (upright) frame; each is mapped onto the page as the file shows it with
+inklight.frames.to_original (the page's rotation and size come from the arm's library) and scaled to the page image.
+Run with an environment whose inklight has frames.py.
 """
 
 from __future__ import annotations
@@ -18,13 +18,31 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-PDF_SCALE = 150 / 200
+from inklight import DocumentAgent
+from inklight.config import load_settings
+from inklight.frames import original_size, to_original
+
+_GEOMETRY: dict[str, dict[tuple[str, int], tuple[int, float, float]]] = {}
+
+
+def geometry(eval_dir: Path, arm: str) -> dict[tuple[str, int], tuple[int, float, float]]:
+    """(document name, page) -> (rotation, stored width, stored height), from the arm's library."""
+    if arm not in _GEOMETRY:
+        config = eval_dir / "configs" / f"arm-{arm}.toml"
+        found: dict[tuple[str, int], tuple[int, float, float]] = {}
+        if config.exists():
+            with DocumentAgent(load_settings(config)) as agent:
+                for d in agent.library.documents():
+                    for p in agent.library.pages(d.id):
+                        found[(d.name, p.number)] = (p.rotation, float(p.width or 0), float(p.height or 0))
+        _GEOMETRY[arm] = found
+    return _GEOMETRY[arm]
 
 
 def main() -> None:
     eval_dir, out = Path(sys.argv[1]), Path(sys.argv[2])
     out.mkdir(parents=True, exist_ok=True)
-    judging = eval_dir / "judging"
+    judging = eval_dir / (sys.argv[sys.argv.index("--judging") + 1] if "--judging" in sys.argv else "judging")
     mapping = (
         json.loads((judging / "_map.json").read_text(encoding="utf-8")) if (judging / "_map.json").exists() else {}
     )
@@ -58,10 +76,13 @@ def main() -> None:
                 continue
             img = Image.open(png).convert("RGB")
             draw = ImageDraw.Draw(img)
-            scale = PDF_SCALE if str(name).lower().endswith(".pdf") else 1.0
+            rotation, w, h = geometry(eval_dir, info["arm"]).get((str(name), page), (0, 0.0, 0.0))
+            ow, _ = original_size(rotation, w, h) if w else (img.width, img.height)
+            scale = img.width / ow if ow else 1.0
             for b in bxs:
                 if b:
-                    x0, y0, x1, y1 = (v * scale for v in b)
+                    shown = to_original(tuple(b), rotation, w, h) if w else tuple(b)
+                    x0, y0, x1, y1 = (v * scale for v in shown)
                     draw.rectangle([x0, y0, x1, y1], outline=(220, 0, 0), width=4)
             target = out / f"{info['task']}-{info['arm']}-{stem}-p{page}.png"
             img.thumbnail((1100, 1500))
@@ -77,7 +98,8 @@ def main() -> None:
         "img{max-width:100%;border:1px solid #ddd;margin:4px 0} .ok{color:#0a7d2c} .bad{color:#b00020} "
         ".mid{color:#a65e00} [dir=auto]{unicode-bidi:plaintext}</style>",
         "<h1>Inklight agent-run evaluation — every user-agent run</h1>",
-        "<p>Red boxes: the regions Inklight cited. Arm A: structure off. Arm B: Docling structure. "
+        "<p>Red boxes: the regions Inklight cited. Arms A/B: the evaluated build (3f1ec75); A2/B2: the corrected "
+        "build (d9e0496). A and A2: structure off; B and B2: Docling structure. "
         "Private documents: do not share this folder.</p>",
     ]
     good = {"correct_complete", "correct_after_clarification", "correct_abstention", "correct_clarification_request"}

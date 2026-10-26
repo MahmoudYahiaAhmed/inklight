@@ -1,0 +1,30 @@
+[
+ {
+  "task": "C-01",
+  "pass": false,
+  "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+  "state": "succeeded",
+  "seconds": 0.54
+ },
+ {
+  "task": "C-02",
+  "pass": false,
+  "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+  "state": "succeeded",
+  "seconds": 0.56
+ },
+ {
+  "task": "C-03",
+  "pass": false,
+  "answer": "“Supplier” is printed 2 times with different values:\n- 1: under “he following companies were registered in the supplier list.”, page 1\n- 2: under “Supplier 1 Alpha Ltd Registered by the procurement office.”, page 1",
+  "state": "succeeded",
+  "seconds": 0.56
+ },
+ {
+  "task": "C-04",
+  "pass": false,
+  "answer": "I couldn't find supporting evidence for the company in the processed text of this document.",
+  "state": "succeeded",
+  "seconds": 0.57
+ }
+]

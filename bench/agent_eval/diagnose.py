@@ -1,6 +1,7 @@
 """Stage diagnosis: where, in the pipeline, each task's reference values were lost.
 
     EVAL_PYTHON bench/agent_eval/diagnose.py EVAL_DIR ARM OUT.jsonl [--runs RUNS_SUBDIR] [--ingest INGEST.json]
+        [--from-arm ARM]  (replay another arm's logged first actions)  [--keep-answers]  (private output only)
 
 Replays the first action of every scored task exactly as the user agent sent it (same request, same files), in
 process, against the arm's existing library, and records for each reference value:
@@ -84,10 +85,11 @@ def main() -> None:
     amend = eval_dir / "amendment" / "refs_corrected.json"
     if amend.exists():
         refs.update({r["task_id"]: r for r in json.loads(amend.read_text(encoding="utf-8"))})
+    source_arm = sys.argv[sys.argv.index("--from-arm") + 1] if "--from-arm" in sys.argv else arm
     agent = DocumentAgent(load_settings(eval_dir / "configs" / f"arm-{arm}.toml"))
     rows = []
     for task_id in sorted(tasks):
-        log = runs / f"arm-{arm}" / task_id / "transcript.jsonl"
+        log = runs / f"arm-{source_arm}" / task_id / "transcript.jsonl"
         if not log.exists():
             continue
         first = json.loads(log.read_text(encoding="utf-8").splitlines()[0])
@@ -173,6 +175,7 @@ def main() -> None:
                 "arm": arm,
                 "replayed": True,
                 "replay_matches_log": result.answer == logged,
+                "answer": result.answer if "--keep-answers" in sys.argv else None,
                 "task_type": tasks[task_id]["task_type"],
                 "intent": result.plan.intent.value if getattr(result, "plan", None) else None,
                 "interpretation": list(result.interpretation),

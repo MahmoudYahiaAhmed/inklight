@@ -1,0 +1,22 @@
+{
+ "rerun_of": "the agent-run evaluation of 3f1ec75 (unchanged, frozen)",
+ "corrected_commit": "d9e0496",
+ "wheel": "inklight-0.1.1.dev0-py3-none-any.whl",
+ "wheel_sha256": "b3e7ff25dbfc4cfc03f029c92a38430bafa4dba7d2583165cf543d6450a1790b",
+ "superseded": {
+  "commit": "a7ec8ee",
+  "wheel_sha256": "19fbb756bcd710d88626c54342187b4c22738916c380bad518266ddad96a62f8",
+  "why": "its CLI path still narrowed explicitly passed files; 26 user-agent runs of arm A2 on it are kept privately, not scored; libraries ingested by it are reused (ingestion code identical in d9e0496)"
+ },
+ "dependencies": "identical to the baseline environment except inklight (pip freeze compared: constraints-baseline.txt == constraints-rerun.txt)",
+ "models": "same snapshots as the baseline (provenance.json): Indra bd02167f, Heron ONNX 40bde044, TableFormer fc0f2d45; brain rules; no download",
+ "arms": {
+  "A2": "structure none",
+  "B2": "structure docling, TableFormer accurate"
+ },
+ "other_settings": "identical to A/B except the library home",
+ "libraries": "fresh, isolated homes; cold = first ingest in a fresh process with model weights on the local disk cache; warm = re-ingest with force in the same process",
+ "machine": "same as baseline (AMD Ryzen 7 8700F, 16 threads, 31.6 GB, CPU only, Windows 11)",
+ "judging": "baseline A/B and rerun A2/B2 cases bundled together, arm names redacted, random ids, mixed batches; judge_brief_v2.md; corrected references (AM-1); 8 judges; separate reviewers (reviewer_brief.md) on 92 cases",
+ "all_documents_now_development_data": true
+}

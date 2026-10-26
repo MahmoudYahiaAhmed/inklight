@@ -1,6 +1,7 @@
 """Build blinded judging cases from user-agent runs, then run the deterministic checks on each.
 
-    python bench/agent_eval/bundle.py EVAL_DIR ARM[,ARM...] TASKS_JSON [--seed N]
+    python bench/agent_eval/bundle.py EVAL_DIR ARM[,ARM...] TASKS_JSON [--seed N] [--judging SUBDIR] [--blind]
+        [--corrected]   (--blind removes arm names from what judges read; --corrected uses the amended references)
 
 For every (arm, task) with a run, creates EVAL_DIR/judging/<case_id>/ with task.json, reference.json, transcript.md
 (every action and exactly what the tool showed), transcript.jsonl, final.json, export/ (the files the user handed over
@@ -12,10 +13,13 @@ from __future__ import annotations
 
 import json
 import random
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+_ARM = re.compile(r"arm-[A-Za-z0-9-]+")
 
 
 def render(transcript: Path) -> str:
@@ -38,7 +42,10 @@ def main() -> None:
     refs = {}
     for f in (eval_dir / "frozen").glob("refs_*.json"):
         refs.update({r["task_id"]: r for r in json.loads(f.read_text(encoding="utf-8"))})
-    judging = eval_dir / "judging"
+    corrected = eval_dir / "amendment" / "refs_corrected.json"
+    if "--corrected" in sys.argv and corrected.exists():  # the amended references (amendment/amendment.json)
+        refs.update({r["task_id"]: r for r in json.loads(corrected.read_text(encoding="utf-8"))})
+    judging = eval_dir / (sys.argv[sys.argv.index("--judging") + 1] if "--judging" in sys.argv else "judging")
     judging.mkdir(exist_ok=True)
     mapping_file = judging / "_map.json"
     mapping = json.loads(mapping_file.read_text(encoding="utf-8")) if mapping_file.exists() else {}
@@ -75,6 +82,10 @@ def main() -> None:
                 stem = Path(doc).stem
                 pages += sorted(str(p).replace("\\", "/") for p in (eval_dir / "work" / "pages" / stem).glob("p*.png"))
             (case / "pages.txt").write_text("\n".join(pages), encoding="utf-8")
+            if "--blind" in sys.argv:  # file paths name the arm ("runs/arm-B2/..."): judges must not see it
+                for f in [case / "transcript.md", case / "transcript.jsonl", case / "final.json"]:
+                    if f.exists():
+                        f.write_text(_ARM.sub("arm-X", f.read_text(encoding="utf-8")), encoding="utf-8")
             mapping[case_id] = {"arm": arm, "task": task_id}
             subprocess.run([sys.executable, str(Path(__file__).with_name("check.py")), str(case)], capture_output=True)
     mapping_file.write_text(json.dumps(mapping, indent=1), encoding="utf-8")

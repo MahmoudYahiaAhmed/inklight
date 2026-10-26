@@ -205,8 +205,11 @@ Structure was not run on that corpus: it would need the documents to be processe
   cannot fix what was misread; Inklight flags it by Indra's line confidence.
 - **Indra gives lines, not words.** A line spanning two table cells, such as an Arabic label and an English value
   read as one line, lands in one cell.
-- **Pages Indra rotated** (90° or 270°) keep Indra's own layout. Their boxes are in the upright frame, Docling's are
-  not.
+- **Pages Indra read turned** (90°, 180° or 270°) are given to Docling turned upright, so its boxes share the upright
+  frame of Indra's lines (`inklight/frames.py`; recorded per document as `rotated_pages_structured`). A library
+  structured before this change keeps Indra's layout on those pages until `inklight reindex`. A page whose frames
+  still do not match is listed in `rotated_pages_kept` and keeps Indra's layout. On the evaluation's registers,
+  structure on turned pages did not improve task completion (docs/AGENT_EVALUATION.md, AM-1).
 - **Docling's HTML export leaves out text inside pictures**; there is no option for it. The Markdown export
   (pictures traversed), the JSON, and Inklight's own blocks keep that text. The CLI warns, and the server sets an
   `X-Inklight-Note` header.

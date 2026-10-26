@@ -1,0 +1,1429 @@
+{
+ "config": "configs\\arm-B2.toml",
+ "cold": {
+  "seconds": 121.81,
+  "documents": {
+   "control-two-companies.pdf": {
+    "seconds": 18.31,
+    "failed": []
+   },
+   "g01-01.pdf": {
+    "seconds": 8.86,
+    "failed": []
+   },
+   "g02-01.pdf": {
+    "seconds": 1.37,
+    "failed": []
+   },
+   "g02-02.pdf": {
+    "seconds": 7.21,
+    "failed": []
+   },
+   "g02-03.pdf": {
+    "seconds": 0.88,
+    "failed": []
+   },
+   "g03-01.pdf": {
+    "seconds": 3.92,
+    "failed": []
+   },
+   "g04-01.pdf": {
+    "seconds": 3.29,
+    "failed": []
+   },
+   "g04-02.pdf": {
+    "seconds": 0.79,
+    "failed": []
+   },
+   "g05-01.pdf": {
+    "seconds": 1.52,
+    "failed": []
+   },
+   "g06-01.pdf": {
+    "seconds": 12.05,
+    "failed": []
+   },
+   "g06-02.pdf": {
+    "seconds": 0.9,
+    "failed": []
+   },
+   "g07-01.pdf": {
+    "seconds": 4.15,
+    "failed": []
+   },
+   "g07-02.pdf": {
+    "seconds": 9.45,
+    "failed": []
+   },
+   "g08-01.jpg": {
+    "seconds": 0.43,
+    "failed": []
+   },
+   "g09-01.pdf": {
+    "seconds": 7.42,
+    "failed": []
+   },
+   "g09-02.pdf": {
+    "seconds": 25.82,
+    "failed": []
+   },
+   "g10-01.pdf": {
+    "seconds": 2.48,
+    "failed": []
+   },
+   "g10-02.pdf": {
+    "seconds": 0.74,
+    "failed": []
+   },
+   "g11-01.jpg": {
+    "seconds": 0.81,
+    "failed": []
+   },
+   "g12-01.jpg": {
+    "seconds": 1.09,
+    "failed": []
+   },
+   "g13-01.jpg": {
+    "seconds": 2.92,
+    "failed": []
+   },
+   "g14-01.jpg": {
+    "seconds": 0.53,
+    "failed": []
+   },
+   "g15-01.pdf": {
+    "seconds": 1.96,
+    "failed": []
+   },
+   "g15-02.pdf": {
+    "seconds": 2.69,
+    "failed": []
+   },
+   "g16-01.pdf": {
+    "seconds": 1.17,
+    "failed": []
+   },
+   "g16-02.pdf": {
+    "seconds": 1.07,
+    "failed": []
+   }
+  },
+  "peak_mb": 2585.7
+ },
+ "warm": {
+  "seconds": 102.15,
+  "documents": {
+   "control-two-companies.pdf": {
+    "seconds": 1.01,
+    "failed": []
+   },
+   "g01-01.pdf": {
+    "seconds": 8.41,
+    "failed": []
+   },
+   "g02-01.pdf": {
+    "seconds": 1.22,
+    "failed": []
+   },
+   "g02-02.pdf": {
+    "seconds": 6.35,
+    "failed": []
+   },
+   "g02-03.pdf": {
+    "seconds": 0.88,
+    "failed": []
+   },
+   "g03-01.pdf": {
+    "seconds": 4.09,
+    "failed": []
+   },
+   "g04-01.pdf": {
+    "seconds": 2.99,
+    "failed": []
+   },
+   "g04-02.pdf": {
+    "seconds": 0.77,
+    "failed": []
+   },
+   "g05-01.pdf": {
+    "seconds": 1.27,
+    "failed": []
+   },
+   "g06-01.pdf": {
+    "seconds": 11.34,
+    "failed": []
+   },
+   "g06-02.pdf": {
+    "seconds": 0.82,
+    "failed": []
+   },
+   "g07-01.pdf": {
+    "seconds": 4.06,
+    "failed": []
+   },
+   "g07-02.pdf": {
+    "seconds": 9.36,
+    "failed": []
+   },
+   "g08-01.jpg": {
+    "seconds": 0.43,
+    "failed": []
+   },
+   "g09-01.pdf": {
+    "seconds": 4.94,
+    "failed": []
+   },
+   "g09-02.pdf": {
+    "seconds": 27.07,
+    "failed": []
+   },
+   "g10-01.pdf": {
+    "seconds": 2.34,
+    "failed": []
+   },
+   "g10-02.pdf": {
+    "seconds": 0.64,
+    "failed": []
+   },
+   "g11-01.jpg": {
+    "seconds": 0.64,
+    "failed": []
+   },
+   "g12-01.jpg": {
+    "seconds": 0.77,
+    "failed": []
+   },
+   "g13-01.jpg": {
+    "seconds": 2.88,
+    "failed": []
+   },
+   "g14-01.jpg": {
+    "seconds": 0.48,
+    "failed": []
+   },
+   "g15-01.pdf": {
+    "seconds": 2.01,
+    "failed": []
+   },
+   "g15-02.pdf": {
+    "seconds": 4.97,
+    "failed": []
+   },
+   "g16-01.pdf": {
+    "seconds": 1.2,
+    "failed": []
+   },
+   "g16-02.pdf": {
+    "seconds": 1.17,
+    "failed": []
+   }
+  },
+  "peak_mb": 2614.5
+ },
+ "documents": {
+  "g16-02.pdf": {
+   "pages": 2,
+   "doc_type": "letter",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "text"
+   ],
+   "ocr_ms": [
+    72.5254999988465,
+    47.248800001398195
+   ],
+   "mean_conf": 0.9969,
+   "structure": {
+    "items": 22,
+    "tables": 1,
+    "pictures": 5,
+    "orphan_lines": 7,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.97,
+    "load_seconds": 0.0,
+    "cells_delivered": 64,
+    "pages_structured": [
+     1,
+     2
+    ]
+   }
+  },
+  "g16-01.pdf": {
+   "pages": 2,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    127.75840000085736,
+    75.21439999982249
+   ],
+   "mean_conf": 0.9689,
+   "structure": {
+    "items": 20,
+    "tables": 0,
+    "pictures": 4,
+    "orphan_lines": 7,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.65,
+    "load_seconds": 0.0,
+    "cells_delivered": 51,
+    "pages_structured": [
+     1,
+     2
+    ]
+   }
+  },
+  "g15-02.pdf": {
+   "pages": 3,
+   "doc_type": "report",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "text",
+    "text"
+   ],
+   "ocr_ms": [
+    57.493100001011044,
+    79.21370000076422,
+    103.41220000100293
+   ],
+   "mean_conf": 0.9999,
+   "structure": {
+    "items": 21,
+    "tables": 3,
+    "pictures": 6,
+    "orphan_lines": 20,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 4.63,
+    "load_seconds": 0.0,
+    "cells_delivered": 112,
+    "pages_structured": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "g15-01.pdf": {
+   "pages": 2,
+   "doc_type": "letter",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "hybrid"
+   ],
+   "ocr_ms": [
+    80.89360000030865,
+    92.82299999995303
+   ],
+   "mean_conf": 0.9397,
+   "structure": {
+    "items": 25,
+    "tables": 2,
+    "pictures": 6,
+    "orphan_lines": 10,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 1.65,
+    "load_seconds": 0.0,
+    "cells_delivered": 99,
+    "pages_structured": [
+     1,
+     2
+    ]
+   }
+  },
+  "g14-01.jpg": {
+   "pages": 1,
+   "doc_type": "receipt",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    120.66159999994852
+   ],
+   "mean_conf": 0.8884,
+   "structure": {
+    "items": 24,
+    "tables": 0,
+    "pictures": 1,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.32,
+    "load_seconds": 0.0,
+    "cells_delivered": 34,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g13-01.jpg": {
+   "pages": 1,
+   "doc_type": "invoice",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    184.70519999937096
+   ],
+   "mean_conf": 0.9758,
+   "structure": {
+    "items": 24,
+    "tables": 2,
+    "pictures": 1,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 2.61,
+    "load_seconds": 0.0,
+    "cells_delivered": 71,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g12-01.jpg": {
+   "pages": 1,
+   "doc_type": "invoice",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    171.23930000070686
+   ],
+   "mean_conf": 0.8098,
+   "structure": {
+    "items": 46,
+    "tables": 0,
+    "pictures": 3,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.52,
+    "load_seconds": 0.0,
+    "cells_delivered": 48,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g11-01.jpg": {
+   "pages": 1,
+   "doc_type": "receipt",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    137.18640000024607
+   ],
+   "mean_conf": 0.9258,
+   "structure": {
+    "items": 50,
+    "tables": 0,
+    "pictures": 1,
+    "orphan_lines": 2,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.41,
+    "load_seconds": 0.0,
+    "cells_delivered": 50,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g10-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    147.57590000226628
+   ],
+   "mean_conf": 0.7325,
+   "structure": {
+    "items": 13,
+    "tables": 0,
+    "pictures": 1,
+    "orphan_lines": 1,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.47,
+    "load_seconds": 0.0,
+    "cells_delivered": 14,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g10-01.pdf": {
+   "pages": 3,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "hybrid",
+    "hybrid",
+    "hybrid"
+   ],
+   "ocr_ms": [
+    451.8028999991657,
+    302.54250000052707,
+    260.92049999897426
+   ],
+   "mean_conf": 0.8231,
+   "structure": {
+    "items": 185,
+    "tables": 0,
+    "pictures": 9,
+    "orphan_lines": 10,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 1.25,
+    "load_seconds": 0.0,
+    "cells_delivered": 198,
+    "pages_structured": [
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "g09-02.pdf": {
+   "pages": 17,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    578.1093000014152,
+    501.6986000000543,
+    368.24430000069697,
+    376.37740000081976,
+    390.5858000016451,
+    379.6281999984785,
+    442.5278000007893,
+    395.75609999883454,
+    239.00090000097407,
+    350.48790000109875,
+    312.2751999990214,
+    326.02850000148464,
+    324.4833999997354,
+    340.2239000006375,
+    367.8697999994256,
+    215.00949999972363,
+    311.73629999921104
+   ],
+   "mean_conf": 0.7799,
+   "structure": {
+    "items": 168,
+    "tables": 2,
+    "pictures": 43,
+    "orphan_lines": 121,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     17
+    ],
+    "foreign_tokens": 4,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 20.55,
+    "load_seconds": 0.0,
+    "cells_delivered": 822,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17
+    ]
+   }
+  },
+  "g09-01.pdf": {
+   "pages": 6,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    338.9091999988523,
+    308.0576000002111,
+    314.99859999985347,
+    314.9690999989616,
+    294.2028000006758,
+    240.58740000054968
+   ],
+   "mean_conf": 0.9276,
+   "structure": {
+    "items": 154,
+    "tables": 2,
+    "pictures": 19,
+    "orphan_lines": 80,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 2,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 3.01,
+    "load_seconds": 0.0,
+    "cells_delivered": 235,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   }
+  },
+  "g08-01.jpg": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    67.28390000080253
+   ],
+   "mean_conf": 0.8882,
+   "structure": {
+    "items": 14,
+    "tables": 0,
+    "pictures": 4,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.32,
+    "load_seconds": 0.0,
+    "cells_delivered": 15,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g07-02.pdf": {
+   "pages": 7,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    737.9006999981357,
+    669.0429999980552,
+    677.5117999995928,
+    687.101900001835,
+    664.3212999988464,
+    553.2589000004009,
+    542.5187000000733
+   ],
+   "mean_conf": 0.8423,
+   "structure": {
+    "items": 106,
+    "tables": 1,
+    "pictures": 23,
+    "orphan_lines": 55,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 4.65,
+    "load_seconds": 0.0,
+    "cells_delivered": 408,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ]
+   }
+  },
+  "g07-01.pdf": {
+   "pages": 5,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    459.3781999992643,
+    429.34169999989535,
+    516.3385999985621,
+    476.2138000005507,
+    343.0042999998477
+   ],
+   "mean_conf": 0.9299,
+   "structure": {
+    "items": 120,
+    "tables": 0,
+    "pictures": 24,
+    "orphan_lines": 45,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 2,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 1.72,
+    "load_seconds": 0.0,
+    "cells_delivered": 400,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  "g06-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    314.4542999998521
+   ],
+   "mean_conf": 0.639,
+   "structure": {
+    "items": 22,
+    "tables": 0,
+    "pictures": 4,
+    "orphan_lines": 1,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1
+    ],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.49,
+    "load_seconds": 0.0,
+    "cells_delivered": 20,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g06-01.pdf": {
+   "pages": 15,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    534.5330000009199,
+    477.96759999891947,
+    349.88030000022263,
+    418.79960000005667,
+    408.20350000012695,
+    419.96759999892674,
+    398.626800000784,
+    360.8080999993035,
+    327.1766000007119,
+    332.06990000235237,
+    337.25780000077066,
+    324.61310000053345,
+    346.8500999988464,
+    198.73109999934968,
+    329.0947999985292
+   ],
+   "mean_conf": 0.8118,
+   "structure": {
+    "items": 228,
+    "tables": 1,
+    "pictures": 32,
+    "orphan_lines": 38,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     15
+    ],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 5.49,
+    "load_seconds": 0.0,
+    "cells_delivered": 782,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ]
+   }
+  },
+  "g05-01.pdf": {
+   "pages": 2,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    213.09169999949518,
+    289.70550000030926
+   ],
+   "mean_conf": 0.8795,
+   "structure": {
+    "items": 18,
+    "tables": 0,
+    "pictures": 2,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.75,
+    "load_seconds": 0.0,
+    "cells_delivered": 25,
+    "pages_structured": [
+     1,
+     2
+    ]
+   }
+  },
+  "g04-02.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    239.4070999998803
+   ],
+   "mean_conf": 0.3384,
+   "structure": {
+    "items": 13,
+    "tables": 0,
+    "pictures": 1,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.52,
+    "load_seconds": 0.0,
+    "cells_delivered": 12,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g04-01.pdf": {
+   "pages": 4,
+   "doc_type": "contract",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    453.12099999955535,
+    328.7121000003026,
+    385.6867999993483,
+    371.38149999918824
+   ],
+   "mean_conf": 0.8763,
+   "structure": {
+    "items": 136,
+    "tables": 0,
+    "pictures": 9,
+    "orphan_lines": 12,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 1.34,
+    "load_seconds": 0.0,
+    "cells_delivered": 304,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4
+    ]
+   }
+  },
+  "g03-01.pdf": {
+   "pages": 5,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    562.2092999992674,
+    483.9843999980076,
+    411.69859999990877,
+    387.44519999909244,
+    357.8183999998146
+   ],
+   "mean_conf": 0.8333,
+   "structure": {
+    "items": 100,
+    "tables": 0,
+    "pictures": 17,
+    "orphan_lines": 18,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1,
+     2
+    ],
+    "foreign_tokens": 1,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 1.79,
+    "load_seconds": 0.0,
+    "cells_delivered": 365,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   }
+  },
+  "g02-03.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr"
+   ],
+   "ocr_ms": [
+    284.8208999985218
+   ],
+   "mean_conf": 0.7109,
+   "structure": {
+    "items": 21,
+    "tables": 0,
+    "pictures": 1,
+    "orphan_lines": 1,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [
+     1
+    ],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.58,
+    "load_seconds": 0.0,
+    "cells_delivered": 23,
+    "pages_structured": [
+     1
+    ]
+   }
+  },
+  "g02-02.pdf": {
+   "pages": 9,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    430.48019999969256,
+    371.8689999996059,
+    284.9441000016668,
+    275.94720000070083,
+    283.15960000236373,
+    281.8388999985473,
+    262.29349999903206,
+    252.17809999958263,
+    233.5800000000745
+   ],
+   "mean_conf": 0.8339,
+   "structure": {
+    "items": 85,
+    "tables": 1,
+    "pictures": 18,
+    "orphan_lines": 71,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 2,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 3.52,
+    "load_seconds": 0.0,
+    "cells_delivered": 525,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ]
+   }
+  },
+  "g02-01.pdf": {
+   "pages": 2,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    210.4282999998759,
+    281.80739999970683
+   ],
+   "mean_conf": 0.7709,
+   "structure": {
+    "items": 15,
+    "tables": 0,
+    "pictures": 2,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.7,
+    "load_seconds": 0.0,
+    "cells_delivered": 26,
+    "pages_structured": [
+     1,
+     2
+    ]
+   }
+  },
+  "g01-01.pdf": {
+   "pages": 9,
+   "doc_type": "certificate",
+   "status": "ready",
+   "page_sources": [
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr",
+    "ocr"
+   ],
+   "ocr_ms": [
+    315.5837000003885,
+    500.6685999996989,
+    376.92389999938314,
+    288.11839999980293,
+    280.53429999908985,
+    289.0940999996019,
+    321.9170000002123,
+    307.9930999974749,
+    276.1405000001105
+   ],
+   "mean_conf": 0.8275,
+   "structure": {
+    "items": 205,
+    "tables": 1,
+    "pictures": 12,
+    "orphan_lines": 41,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 5.28,
+    "load_seconds": 0.0,
+    "cells_delivered": 534,
+    "pages_structured": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ]
+   }
+  },
+  "control-two-companies.pdf": {
+   "pages": 1,
+   "doc_type": "unknown",
+   "status": "ready",
+   "page_sources": [
+    "text"
+   ],
+   "ocr_ms": [
+    40.495700000974466
+   ],
+   "mean_conf": 1.0,
+   "structure": {
+    "items": 7,
+    "tables": 2,
+    "pictures": 0,
+    "orphan_lines": 0,
+    "rotated_pages_kept": [],
+    "rotated_pages_structured": [],
+    "foreign_tokens": 0,
+    "components": {
+     "docling": "2.142.1",
+     "docling_core": "2.104.0",
+     "layout": "Heron (onnx)",
+     "tables": "TableFormer (accurate), cell matching on the given text cells",
+     "ocr": "none in Docling: Indra's stored lines are its text cells (OcrMode.FULL_PAGE)",
+     "indra_ocr": "1.1.2"
+    },
+    "seconds": 0.95,
+    "load_seconds": 0.0,
+    "cells_delivered": 13,
+    "pages_structured": [
+     1
+    ]
+   }
+  }
+ },
+ "brain": {
+  "reader": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "embedder": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  },
+  "writer": {
+   "loaded": false,
+   "inference_calls": 0,
+   "fallback_reason": null
+  }
+ }
+}

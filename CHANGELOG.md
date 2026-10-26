@@ -104,6 +104,20 @@ The fixes:
   - Arabic names are not detected, so Arabic copies of a label are listed, not chosen between.
   - In plain text, a value cited beside another field's label is flagged, not corrected.
 
+### Fixed after the agent-run evaluation (amendment AM-1)
+- **A form label is no longer returned as a value.** A register's numbered field names ("١- نوع الشركة" over
+  "(ب) ٢- عنوان الشركة") were read as each other's values. List markers are stripped from labels, a numbered field
+  name or "Label: value" line is never another label's value, a field with no readable value is declined with its
+  page, and every answer path declines an answer that is one of the page's field names.
+- **Several candidates are listed, not silently chosen**: the same heading in two tables, the same field on two
+  pages or in two documents (label path, table path, field shortcut). A question naming one gets that one.
+- **The documents you pass are kept**: a type word in the request ("the contract", "the letters") no longer drops
+  files the user chose (`DocumentAgent.ask` and `inklight ask FILE FILE ...`); "only the contracts" still narrows.
+  Fixes the false "Comparison needs at least two documents".
+- **Rotated pages get structure**: Docling is given pages Indra read turned (90/180/270) turned upright; one
+  coordinate transform (`inklight.frames`) links stored boxes, table cells and citations shown on the page.
+- Measured on the same workload: failures safer, task completion unchanged (docs/AGENT_EVALUATION.md, AM-1).
+
 ### Evaluated: agent-run workflows on real documents (no code change)
 - 38 tasks on 25 documents (mostly scanned Egyptian registers, tax cards and VAT certificates), run by a user agent
   through the CLI with structure off and on, judged blind. The tool completed 2 of 76 runs; Docling and the small

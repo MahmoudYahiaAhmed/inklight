@@ -1,0 +1,15 @@
+2026-10-26T08:04:01+03:00 ingest attempt 1 failed in all arms before any document was read: DocumentAgent.add has no force argument (harness bug). Fixed: use agent.library.add(force=...). Rerun.
+2026-10-26T05:20:16.397678+00:00 dev arm A: ik.py crashed printing Arabic to a cp1252 console (UnicodeEncodeError) after the command had run and been logged; the action counted (A1-01 action 1). Fix: stdout reconfigured to UTF-8. No product, task, reference or scoring change. New ik.py sha256 83bcd4079c93be3c9c88288ccc05489f295e2c466ff02b8bf88ffd722d3db420
+2026-10-26T08:27:01+03:00 dev judging complete: 12 judgments (judge agent aa36760c)
+2026-10-26T08:46:21+03:00 bundled arm A reserved cases for judging (seed 11)
+2026-10-26T08:50:50+03:00 judge set 2 done (16). Disputed reference: A2-05 (case-e7eef1) — judge says capital now fully paid (p6 amendment [1] 2022/06/06, p7); reference expects founding 10% paid. Needs adjudication; frozen reference unchanged.
+2026-10-26T08:51:12+03:00 judge set 1 done (16). Adjudication recorded in runs/adjudication.json (A2-05 verified on p7).
+2026-10-26T09:06:51+03:00 user-agent runs complete (A, B: 38 tasks each). Starting controls A,B then small-models subset.
+2026-10-26T09:07:43+03:00 controls + B-models subset done; bundled arm B reserved (seed 23) and CTRL A,B (seed 31)
+2026-10-26T09:11:37+03:00 all judging complete (98 cases)
+2026-10-26T15:56:29+03:00 RERUN setup: corrected build a7ec8ee, wheel2 sha256 19fbb756bcd710d88626c54342187b4c22738916c380bad518266ddad96a62f8, venv2 with deps identical to the baseline venv (constraints-baseline.txt == constraints-rerun.txt). Arms A2 (structure none) and B2 (docling accurate), configs identical to A/B except home. ik.py: an arm may name its venv in configs/arm-X.venv (harness change, no effect on baseline arms). All documents are now development data. Baseline venv, homes and runs untouched.
+2026-10-26T16:04:15+03:00 RERUN user-agent runs start: arms A2 then B2, inputs/rerun_batch1-3.json (all 38 tasks, same requests and user_intent).
+2026-10-26T16:23:16+03:00 RERUN restarted: A2 batches 1-2 had run on a7ec8ee, whose CLI path still narrowed explicitly passed files by a request type word (A2-04 failed 'needs at least two documents'). Fixed in d9e0496 (CLI only; ingestion unchanged, so the A2/B2 libraries ingested by a7ec8ee stay). wheel3 sha256 b3e7ff25dbfc4cfc03f029c92a38430bafa4dba7d2583165cf543d6450a1790b installed in venv2 (deps unchanged). Superseded runs kept in runs/superseded-A2-build-a7ec8ee, not scored.
+2026-10-26T17:13:03+03:00 RERUN user-agent runs complete (A2, B2: 38 each). Controls A2,B2 next.
+2026-10-26T17:14:04+03:00 judging2: all four arms (A,B baseline; A2,B2 rerun) judged together under judge_brief_v2.md, blinded (arm names redacted, random ids, mixed chunks), corrected references (AM-1).
+2026-10-26T17:18:59+03:00 AM-1 relationships text of A2-05 and A1-06 corrected to the current position (answer fields unchanged; noted by a v2 judge).

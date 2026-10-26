@@ -44,7 +44,9 @@ def main() -> None:
         return
     command = rest[0]
     config = EVAL / "configs" / f"arm-{ns.arm}.toml"
-    args = [str(CLI), *rest, "-c", str(config)]
+    venv = EVAL / "configs" / f"arm-{ns.arm}.venv"  # an arm of a later build names its own environment
+    cli = EVAL / venv.read_text(encoding="utf-8").strip() / "Scripts" / "inklight.exe" if venv.exists() else CLI
+    args = [str(cli), *rest, "-c", str(config)]
     if command == "ask":
         args.append("--json")
         out_dir = folder / "outputs"
