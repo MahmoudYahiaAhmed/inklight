@@ -301,8 +301,11 @@ def test_a_port_in_use_fails_before_the_tunnel(settings, monkeypatch):
 
 
 def test_serve_help_describes_share():
-    result = CliRunner().invoke(cli_app, ["serve", "--help"], env={"COLUMNS": "200"})
-    assert "--share" in result.output and "Cloudflare" in result.output
+    import re
+
+    result = CliRunner().invoke(cli_app, ["serve", "--help"], env={"COLUMNS": "200", "NO_COLOR": "1", "TERM": "dumb"})
+    text = re.sub(r"\x1b\[[0-9;]*m", "", result.output)  # CI forces colour; the codes split option names
+    assert "--share" in text and "Cloudflare" in text
 
 
 def test_the_page_asks_for_progress_when_the_server_says_streams_are_held_back():
