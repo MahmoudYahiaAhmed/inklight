@@ -263,6 +263,11 @@ class AgentResult(Frozen):
         description="A field compared across documents: field, values (one per document, with source), and "
         "verdict: matches | differs | cannot determine.",
     )
+    scope: dict[str, Any] | None = Field(
+        None,
+        description="Set when some selected documents could not be read: requested (the selection as given), used "
+        "(the ids read) and unavailable (doc_id, document, status: failed | pending | missing, error).",
+    )
 
     @property
     def outcome_label(self) -> str:

@@ -16,6 +16,7 @@ const OUTCOMES = {
   unsupported: ["failed", "Not supported", "This request is not something Ask can do."],
   failed: ["failed", "Failed", "An error stopped the request."],
 };
+const STATUS = { failed: "import failed", pending: "still being read", missing: "no longer in the library" };
 const EXAMPLES = ["What is the registration number?", "ما اسم الشركة؟", "Compare the registration number in these documents"];
 const ask = { job: null, results: [], error: null, text: "" };
 
@@ -28,6 +29,10 @@ registerOp("ask", {
     const n = scopeIds().length;
     body.append(h("div", { class: "scope-box" }, h("b", {}, store.selected.size ? `${n} selected document${n === 1 ? "" : "s"}` : "All documents"),
       h("span", { class: "muted" }, store.selected.size ? "" : " (tick documents in the library to narrow it)")));
+    const notReady = store.selected.size ? store.docs.filter((d) => store.selected.has(d.id) && d.status !== "ready") : [];
+    if (notReady.length) body.append(h("div", { class: "scope-warn", role: "note" },
+      `${notReady.length} of them cannot be read yet: `, ...notReady.flatMap((d, i) => [i ? ", " : "", h("bdi", {}, d.name), ` (${STATUS[d.status] || d.status})`]),
+      ". An answer will cover only the others, and says so. Asking does not retry an import."));
     const input = h("textarea", { rows: "2", maxlength: "4000", placeholder: "Ask about the documents", "aria-label": "Your question", dir: "auto" }, ask.text);
     input.addEventListener("input", () => { ask.text = input.value; });
     input.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
@@ -65,11 +70,12 @@ function stop() {
 
 function resultCard(r) {
   const [cls, label, help] = OUTCOMES[r.outcome] || ["raw", r.outcome, ""];
-  const parts = r.answer.split("\n\n").filter((p) => !p.startsWith("Understood as"));
+  const parts = r.answer.split("\n\n").filter((p) => !p.startsWith("Understood as") && !(r.scope && /^(INCOMPLETE SCOPE|NOT ANSWERED)/.test(p)));
   return h("div", { class: "card" },
     h("div", { class: "card-head" }, h("span", { class: `label ${cls}` }, label)),
     h("p", { class: "muted" }, help),
     h("div", { class: "card-title", dir: "auto" }, r.request),
+    coverage(r),
     r.comparison ? comparison(r) : h("pre", { class: "text-out", dir: "auto" }, parts.join("\n\n")),
     candidates(r),
     r.records.length ? h("div", { class: "next" }, h("button", { class: "btn small", type: "button", onclick: () => csv(r.records) }, "Download values (.csv)")) : null,
@@ -80,6 +86,17 @@ function resultCard(r) {
     r.warnings.length ? h("div", {}, ...r.warnings.map((w) => h("div", { class: "warn" }, `⚠ ${w}`))) : null,
     h("details", { class: "trace" }, h("summary", {}, `How it was done · ${r.trace.length} steps`),
       ...r.trace.map((t) => h("div", { class: "trace-row" }, String(t.index + 1), t.tool, t.status, `${Math.round(t.duration_ms)} ms`, t.error || t.summary))));
+}
+
+// A result from part of the selection says which documents it could not read, before the answer.
+function coverage(r) {
+  const s = r.scope;
+  if (!s?.unavailable?.length) return null;
+  const total = s.used.length + s.unavailable.length;
+  return h("div", { class: "scope-warn", role: "note" },
+    h("b", {}, s.used.length ? `Covers ${s.used.length} of ${total} selected documents.` : `None of the ${total} selected documents could be read.`),
+    h("ul", {}, ...s.unavailable.map((u) => h("li", {}, h("bdi", {}, u.document), ` · ${STATUS[u.status] || u.status}`, u.error ? h("span", { class: "muted" }, ` · ${u.error}`) : null))),
+    s.used.length ? h("span", { class: "muted" }, "Not read, so nothing in this answer applies to them.") : null);
 }
 
 function candidates(r) {
@@ -103,7 +120,7 @@ function comparison(r) {
       h("thead", {}, h("tr", {}, ...["document", c.field, "where"].map((x) => h("th", { dir: "auto" }, x)))),
       h("tbody", {}, ...c.values.map((v) => h("tr", {},
         h("td", { dir: "auto" }, v.document),
-        h("td", { dir: "auto", class: v.status === "found" ? "" : "none" }, v.status === "found" ? v.value : v.status === "several candidates" ? `several: ${v.candidates.join(", ")}` : "not found",
+        h("td", { dir: "auto", class: v.status === "found" ? "" : "none" }, v.status === "found" ? v.value : v.status === "several candidates" ? `several: ${v.candidates.join(", ")}` : v.status === "not available" ? `not available: ${v.reason}` : "not found",
           ...(v.warnings || []).map((w) => h("div", { class: "warn" }, `⚠ ${w}`))),
         h("td", {}, v.source ? h("button", { class: "btn small", type: "button", onclick: () => openDoc(v.source.doc_id, v.source.page, v.source.bbox ? [{ page: v.source.page, bbox: v.source.bbox, kind: "evidence", label: "Source" }] : []) }, `page ${v.source.page}`) : "—")))))),
     h("p", {}, h("span", { class: `label ${verdict}` }, c.verdict)));

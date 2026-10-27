@@ -19,6 +19,7 @@ from ..schemas import ExtractedValue, Record, Source
 from ..textnorm import fold
 from .answer import norm
 from .context import ToolContext
+from .coverage import unavailable_reason
 from .expr import evaluate, leaves
 from .plan import Condition, Group
 
@@ -264,6 +265,17 @@ def _aggregate(op: str, values: list[Decimal]) -> Decimal:
 
 def compare_documents(ctx: ToolContext, fields: list[str]) -> str:
     docs = ctx.docs()
+    s = ctx.scratch
+    if len(docs) < 2 and docs and len(docs) + len(s.unavailable) >= 2:
+        # Two documents were selected but one cannot be read: say so, rather than "select two documents".
+        named = _named_field(ctx.plan.query)
+        if named and not fields:
+            return _compare_field(ctx, docs, named)
+        s.answer = (
+            f"Not compared: only {len(docs)} of the {len(docs) + len(s.unavailable)} selected documents can be read."
+        )
+        s.partial = True
+        return "comparison: not enough readable documents"
     if len(docs) < 2:
         raise ToolError(
             "Comparison needs at least two documents: select them (Ctrl/⌘-click in the workspace) or give each file"
@@ -563,6 +575,8 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
             values.append(entry)
     finally:
         ctx.scratch = saved
+    for item in ctx.scratch.unavailable:
+        values.append({**_entry_of(item), "status": "not available", "reason": unavailable_reason(item)})
     found = [v for v in values if v["status"] == "found"]
     flagged = [v for v in found if v.get("warnings")]
     if len(found) == len(values):
@@ -581,6 +595,8 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
         if v["status"] == "found":
             doubt = " ⚠ " + "; ".join(v["warnings"]) if v.get("warnings") else ""
             lines.append(f"- {v['document']}: {v['value']} (page {v['source']['page']}){doubt}")
+        elif v["status"] == "not available":
+            lines.append(f"- {v['document']}: not compared: {v['reason']}")
         elif v["status"] == "several candidates":
             lines.append(f"- {v['document']}: several candidates ({', '.join(v['candidates'][:4])}) — choose one")
         else:
@@ -590,6 +606,8 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
         "differs": "the values read are different",
         "cannot determine": "a value was read with low confidence; check the documents yourself"
         if flagged and len(found) == len(values)
+        else "not every selected document could be read"
+        if any(v["status"] == "not available" for v in values)
         else "a value could not be read in every document; check the documents yourself",
     }[verdict]
     lines.append(f"Result: {verdict} — {why}. Check the cited places: OCR can misread a value.")
@@ -601,6 +619,10 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
     if verdict == "cannot determine":
         s.partial = True
     return f"field comparison: {verdict}"
+
+
+def _entry_of(item: dict[str, Any]) -> dict[str, Any]:
+    return {"doc_id": item["doc_id"], "document": item["document"], "value": None, "source": None}
 
 
 _LOW_OCR = 0.85  # the same bar extraction uses for "low OCR confidence"

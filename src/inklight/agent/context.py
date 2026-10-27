@@ -31,6 +31,8 @@ class Policy:
 class Scratch:
     doc_ids: list[str] = field(default_factory=list)
     explicit: bool = False  # the person chose these documents (files or ids), rather than the whole library
+    requested: list[str] = field(default_factory=list)  # the selection as given, before readiness was checked
+    unavailable: list[dict[str, Any]] = field(default_factory=list)  # selected but not ready: never read
     hits: list[SearchHit] = field(default_factory=list)
     records: list[Record] = field(default_factory=list)
     excluded: list[Record] = field(default_factory=list)

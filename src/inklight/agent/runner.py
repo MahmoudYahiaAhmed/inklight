@@ -10,6 +10,7 @@ import uuid
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import fields, replace
+from typing import Any
 
 from pydantic import ValidationError
 
@@ -86,6 +87,8 @@ class Runner:
                 + "; ".join(f"“{x}”" for x in plan.not_understood)
                 + ". The result ignores these parts of your request: check it, or rephrase."
             )
+        if ctx.scratch.unavailable and not ctx.scratch.doc_ids and state != TaskState.CANCELLED:
+            state = TaskState.FAILED  # every selected document is unreadable: nothing was answered
         # A task that ignored part of the request, or could only do part of the job, did not succeed.
         if state == TaskState.SUCCEEDED and (plan.not_understood or ctx.scratch.partial):
             state = TaskState.PARTIAL
@@ -116,6 +119,7 @@ class Runner:
             outcome=result_outcome(plan, s, state, trace),
             candidates=tuple(s.candidates[:12]),
             comparison=s.comparison,
+            scope=_scope(s),
         )
 
     def _run_step(self, pool: ThreadPoolExecutor, ctx: ToolContext, index: int, name: str, raw_args: dict) -> TraceStep:
@@ -237,6 +241,8 @@ def result_outcome(plan: Plan, s: Scratch, state: TaskState, trace: list[TraceSt
         return "failed"
     if state == TaskState.UNSUPPORTED:
         return "unsupported"
+    if s.unavailable and s.outcome != "ambiguous":
+        return "partial"  # drawn from part of the selection: whatever it says may not hold for the rest
     if s.outcome:
         return s.outcome
     if s.answer.startswith(_DECLINED) or s.answer.startswith(_CLOSEST):
@@ -256,6 +262,13 @@ def result_outcome(plan: Plan, s: Scratch, state: TaskState, trace: list[TraceSt
     return "proposed"
 
 
+def _scope(s: Scratch) -> dict[str, Any] | None:
+    """The selection as given, what was read, and what could not be (only when they differ)."""
+    if not s.unavailable:
+        return None
+    return {"requested": list(s.requested), "used": list(s.doc_ids), "unavailable": list(s.unavailable)}
+
+
 def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
     """Plain statements of what was checked — provenance, interpretation and evidence are different things."""
     out = [
@@ -271,6 +284,10 @@ def _checks(plan: Plan, s: Scratch, state: TaskState) -> tuple[str, ...]:
     else:
         out.append("interpretation: no conditions in the request")
     out.append(f"evidence: heuristic score {s.confidence:.2f} (labels, OCR confidence, arithmetic checks)")
+    if s.unavailable:
+        out.append(
+            f"scope: {len(s.doc_ids)} of {len(s.doc_ids) + len(s.unavailable)} selected document(s) could be read"
+        )
     if state == TaskState.PARTIAL and s.partial:
         out.append("result: only part of the job could be done (see warnings)")
     for note in dict.fromkeys(s.models_skipped):

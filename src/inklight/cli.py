@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
@@ -251,6 +251,10 @@ def ask(
     yes: Annotated[bool, typer.Option("--yes", "-y", help="Allow writing results without asking.")] = False,
     as_json: Annotated[bool, typer.Option("--json", help="Print the full result as JSON.")] = False,
     trace: Annotated[bool, typer.Option("--trace", help="Show the execution trace.")] = False,
+    doc: Annotated[
+        list[str] | None,
+        typer.Option("--doc", "-d", help="A library document (id or file name) to ask about; repeat for several."),
+    ] = None,
     brain: BrainOpt = None,
     config: ConfigOpt = None,
 ) -> None:
@@ -281,6 +285,11 @@ def ask(
             with console.status("Thinking…", spinner="dots", spinner_style=CYAN) if not as_json else _null():
                 # The files named on the command line are the person's choice of documents (explicit scope).
                 result = agent.run_plan(agent.plan(request), ids, report=report, policy=policy, explicit=True)
+        elif doc:
+            # Library documents as they are: one that failed or is still being read is reported, not re-read.
+            ids = _library_ids(agent, doc)
+            with console.status("Thinking…", spinner="dots", spinner_style=CYAN) if not as_json else _null():
+                result = agent.ask(request, doc_ids=ids, policy=policy)
         else:
             with console.status("Thinking…", spinner="dots", spinner_style=CYAN) if not as_json else _null():
                 result = agent.ask(request, policy=policy)
@@ -292,6 +301,20 @@ def ask(
         result_panel(result, show_trace=trace)
     if not result.ok:
         raise typer.Exit(2)
+
+
+def _library_ids(agent: Any, refs: list[str]) -> list[str]:
+    """Library document ids for each id or file name given, in order; an unknown one is an error."""
+    docs = agent.library.documents()
+    ids = []
+    for ref in refs:
+        match = [d.id for d in docs if d.id == ref] or [d.id for d in docs if d.name == ref]
+        if not match:
+            raise InputRejected(f"No library document {ref!r} (see `inklight docs`)")
+        if len(match) > 1:
+            raise InputRejected(f"Several library documents are named {ref!r}: give its id (see `inklight docs`)")
+        ids.append(match[0])
+    return ids
 
 
 class _null:

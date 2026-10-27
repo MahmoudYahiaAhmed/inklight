@@ -5,6 +5,7 @@ from __future__ import annotations
 from ..schemas import Record, Source, TaskState
 from .answer import norm
 from .context import ToolContext
+from .coverage import coverage_line
 from .expr import describe
 from .plan import Intent, Plan
 
@@ -139,6 +140,9 @@ def compose(ctx: ToolContext, plan: Plan, state: TaskState) -> str:
     if cited and not s.sources and plan.intent == Intent.ASK:
         text = _unverified(ctx, text)
     _flag_injections(ctx)
+    if s.unavailable:
+        line = coverage_line(len(s.doc_ids), s.unavailable)
+        text = line if not s.doc_ids else f"{line}\n\n{text}"
     text = _with_interpretation(plan, text)
     if s.files:
         text += "\n\nSaved: " + ", ".join(s.files)

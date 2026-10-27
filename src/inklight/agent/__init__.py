@@ -22,8 +22,9 @@ from ..errors import InklightError, InputRejected
 from ..extract import resolve_field
 from ..library import IngestReport, Library, Progress
 from ..review import Mode, Review, ReviewStore
-from ..schemas import AgentResult, ExtractedValue, Record, TaskState
+from ..schemas import AgentResult, DocStatus, ExtractedValue, Record, TaskState
 from .context import Policy, Scratch, ToolContext
+from .coverage import unavailable_warning
 from .plan import Intent, Plan
 from .planner import make_plan, steps_for
 from .runner import Runner
@@ -152,12 +153,21 @@ class DocumentAgent:
         save: bool = True,
         explicit: bool = False,
     ) -> AgentResult:
-        scratch = Scratch(doc_ids=list(doc_ids), explicit=explicit)
+        ready, unavailable = self._readiness(doc_ids)
+        requested = list(dict.fromkeys(doc_ids))  # the selection as given, once each
+        scratch = Scratch(doc_ids=ready, explicit=explicit, requested=requested, unavailable=unavailable)
         if report:
             for path, error in report.failed:
                 scratch.warn(f"Skipped {Path(path).name}: {error}")
+                scratch.unavailable.append(
+                    {"doc_id": None, "document": Path(path).name, "status": "failed", "error": str(error)}
+                )
             scratch.warnings.extend(report.warnings)
-        if not doc_ids:
+        for item in scratch.unavailable[: len(unavailable)]:
+            scratch.warn(unavailable_warning(item))
+        if scratch.unavailable:
+            scratch.partial = True  # an answer from part of the selection is not an answer for all of it
+        if not doc_ids and not scratch.unavailable:
             scratch.warn("No documents in scope. Add some with `inklight process <folder>` or pass files=.")
         event = self._start(cancel)  # close() cancels tasks still running and waits for them
         try:
@@ -176,6 +186,23 @@ class DocumentAgent:
             return result
         finally:
             self._finish(event)
+
+    def _readiness(self, doc_ids: list[str]) -> tuple[list[str], list[dict[str, Any]]]:
+        """Split a selection into the documents that can be read now and those that cannot (failed, still being read,
+        or no longer in the library). Nothing is re-processed here: asking a question never retries an import."""
+        ready: list[str] = []
+        unavailable: list[dict[str, Any]] = []
+        for doc_id in dict.fromkeys(doc_ids):
+            doc = self.library.get(doc_id)
+            if doc is not None and doc.status == DocStatus.READY:
+                ready.append(doc_id)
+            elif doc is None:
+                unavailable.append({"doc_id": doc_id, "document": doc_id, "status": "missing", "error": None})
+            else:
+                unavailable.append(
+                    {"doc_id": doc_id, "document": doc.name, "status": doc.status.value, "error": doc.error}
+                )
+        return ready, unavailable
 
     async def ask_async(self, request: str, files: Iterable[str | Path] | None = None, **kw: Any) -> AgentResult:
         return await asyncio.to_thread(self.ask, request, files, **kw)

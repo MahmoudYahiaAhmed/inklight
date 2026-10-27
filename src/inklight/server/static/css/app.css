@@ -400,6 +400,10 @@ label { display: grid; gap: 5px; font-size: 12.5px; color: var(--muted); }
   display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .scope-box::before { content: "SCOPE"; font: 600 9.5px var(--mono); letter-spacing: .12em; color: var(--faint); }
 .scope-box b { font-weight: 600; }
+.scope-warn { border: 1px solid var(--check); border-inline-start-width: 3px; border-radius: var(--r-s); padding: 9px 11px; margin-block: 8px;
+  background: var(--check-soft); font-size: 12.5px; line-height: 1.5; }
+.scope-warn ul { margin: 4px 0; padding-inline-start: 18px; }
+.scope-warn b { font-weight: 600; }
 .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .row .grow { flex: 1; min-width: 140px; }
 .next { display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
