@@ -26,12 +26,14 @@ TERMINAL = {"completed", "partial", "failed", "cancelled"}
 
 
 class Jobs:
-    def __init__(self) -> None:
+    def __init__(self, runner: threading.Lock | threading.BoundedSemaphore | None = None) -> None:
         self._jobs: OrderedDict[str, dict[str, Any]] = OrderedDict()
         self._cancel: dict[str, threading.Event] = {}
         self._paths: dict[str, list[Path]] = {}
         self._changed = threading.Condition()
-        self._runner = threading.Lock()  # one import reads at a time
+        # One import reads at a time. A public demo passes one runner shared by every visitor's jobs, so the OCR
+        # never reads more files at once than the server allows.
+        self._runner = runner or threading.Lock()
 
     # -- reading --------------------------------------------------------------
 
@@ -50,6 +52,11 @@ class Jobs:
             self._changed.wait_for(lambda: self._jobs.get(job_id, {}).get("version", version + 1) > version, timeout)
             job = self._jobs.get(job_id)
             return copy.deepcopy(job) if job else None
+
+    def active(self) -> int:
+        """Jobs queued or running."""
+        with self._changed:
+            return sum(1 for j in self._jobs.values() if j["state"] not in TERMINAL)
 
     def path(self, job_id: str, index: int) -> Path | None:
         paths = self._paths.get(job_id, [])
@@ -107,7 +114,7 @@ class Jobs:
         return self.snapshot(job_id) or job
 
     @property
-    def runner(self) -> threading.Lock:
+    def runner(self) -> threading.Lock | threading.BoundedSemaphore:
         """Held while a library reads files; an import outside the jobs takes it too, so reads never overlap."""
         return self._runner
 

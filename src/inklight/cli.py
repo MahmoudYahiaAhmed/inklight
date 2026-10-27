@@ -15,7 +15,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeEl
 from rich.text import Text
 
 from . import __version__, build_commit
-from ._brand import CYAN, HOME_ENV, NAME, TAGLINE
+from ._brand import CYAN, NAME, TAGLINE
 from .cli_render import (
     banner,
     console,
@@ -511,38 +511,75 @@ def watch(
 
 @app.command(rich_help_panel="Workspace")
 def serve(
-    host: Annotated[str, typer.Option(help="Bind address. Keep 127.0.0.1 unless you add auth.")] = "127.0.0.1",
+    host: Annotated[
+        str, typer.Option(help="Address to listen on. 127.0.0.1: this computer only. 0.0.0.0: every interface.")
+    ] = "127.0.0.1",
     port: int = 8765,
+    public_url: Annotated[
+        str | None,
+        typer.Option(help="The address visitors open (server IP, domain or reverse-proxy URL); its host is accepted."),
+    ] = None,
+    allowed_host: Annotated[
+        list[str] | None, typer.Option(help="Another host name browsers may use (repeatable).")
+    ] = None,
+    demo: Annotated[
+        bool, typer.Option("--demo", help="Public demo: each visitor gets a temporary library of their own.")
+    ] = False,
+    demo_dir: Annotated[str | None, typer.Option(help="Folder for the demo's temporary libraries.")] = None,
+    demo_minutes: Annotated[int | None, typer.Option(min=5, max=1440, help="Lifetime of a demo session.")] = None,
+    no_token: Annotated[
+        bool, typer.Option("--no-token", help="Serve a private workspace on a network without a token.")
+    ] = False,
+    trusted_proxy: Annotated[
+        list[str] | None, typer.Option(help="Reverse proxy address whose X-Forwarded headers are trusted.")
+    ] = None,
     open_browser: Annotated[bool, typer.Option("--open/--no-open")] = True,
     config: ConfigOpt = None,
 ) -> None:
-    """Start the local web workspace."""
+    """Start the web workspace: on this computer (default), as a private workspace on a network, or as a demo."""
     import threading
     import webbrowser
 
     import uvicorn
 
     from .server import create_app
+    from .server.launch import plan
 
     settings = _settings(config)
-    if host not in ("127.0.0.1", "localhost", "::1"):
-        err.print(
-            Text(
-                "⚠ Binding to a non-local address exposes your documents to the network. "
-                "Set INKLIGHT_SERVER_TOKEN to require a token.",
-                "warn",
-            )
+    try:
+        launch = plan(
+            settings,
+            host=host,
+            port=port,
+            public_url=public_url,
+            allowed_hosts=allowed_host,
+            demo=demo,
+            demo_dir=demo_dir,
+            demo_minutes=demo_minutes,
+            no_token=no_token,
+            trusted_proxies=trusted_proxy,
+            open_browser=open_browser,
         )
+    except InklightError as exc:
+        _fail(exc)
     banner()
-    shown = "127.0.0.1" if host in ("0.0.0.0", "::") else host  # noqa: S104 - display only, not a bind
-    url = f"http://{shown}:{port}"
-    console.print(Text.assemble(("  workspace  ", "muted"), (url, "brand")))
-    # The library lives in the Inklight home, not in the Python environment: every installation shares it.
-    home = (str(settings.home), "")
-    console.print(Text.assemble(("  library    ", "muted"), home, (f"  ({HOME_ENV} to change)", "muted")))
-    if open_browser:
+    for label, text in launch.lines:
+        style = "brand" if label == "workspace" else ""
+        console.print(Text.assemble((f"  {label:<11}", "muted"), (text, style)))
+    for warning in launch.warnings:
+        err.print(Text(f"⚠ {warning}", "warn"))
+    if launch.open_url:
+        url = launch.open_url
         threading.Timer(1.2, lambda: webbrowser.open(url)).start()
-    uvicorn.run(create_app(settings), host=host, port=port, log_level="warning")
+    app_ = create_app(settings, hosting=launch.hosting)
+    uvicorn.run(
+        app_,
+        host=host,
+        port=port,
+        log_level="warning",
+        proxy_headers=launch.proxy_ips is not None,
+        forwarded_allow_ips=launch.proxy_ips,
+    )
 
 
 @app.command(rich_help_panel="Experimental")

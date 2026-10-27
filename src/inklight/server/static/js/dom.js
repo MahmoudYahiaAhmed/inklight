@@ -14,18 +14,43 @@ export function h(tag, attrs = {}, ...children) {
   return el;
 }
 
-// Optional server token (INKLIGHT_SERVER_TOKEN): open the workspace at /#token=… (the fragment never reaches logs).
-export const TOKEN = new URLSearchParams(location.hash.slice(1)).get("token") || "";
-export const withToken = (url) => (TOKEN ? `${url}${url.includes("?") ? "&" : "?"}token=${encodeURIComponent(TOKEN)}` : url);
+// Requests go to paths relative to the page, so the workspace works at a reverse proxy's prefix
+// (https://example.org/inklight/) as well as at the root.
+export const withToken = (path) => path.replace(/^\//, "");
+
+// A private workspace's token (INKLIGHT_SERVER_TOKEN): given once as #token=… or typed when asked, kept for this tab
+// only and removed from the address bar. It goes in a header; the server answers with a cookie that previews and
+// progress streams carry, so the token itself never appears in a URL or a log.
+const TOKEN_KEY = "inklight.token";
+function readToken() {
+  const given = new URLSearchParams(location.hash.slice(1)).get("token");
+  if (given) {
+    try { sessionStorage.setItem(TOKEN_KEY, given); } catch (_) { /* storage blocked: kept for this page only */ }
+    history.replaceState(null, "", location.pathname + location.search);
+    return given;
+  }
+  try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (_) { return ""; }
+}
+let TOKEN = readToken();
 const HEADERS = () => ({ "X-Inklight": "1", ...(TOKEN ? { "X-Inklight-Token": TOKEN } : {}) });
+
+function askForToken() {
+  const typed = window.prompt(TOKEN ? "That access token was not accepted. Enter the workspace's access token:"
+                                    : "This Inklight workspace needs its access token:");
+  if (!typed) return false;
+  TOKEN = typed.trim();
+  try { sessionStorage.setItem(TOKEN_KEY, TOKEN); } catch (_) { /* kept for this page only */ }
+  return true;
+}
 
 export async function api(path, opts = {}) {
   const headers = { ...HEADERS(), ...(opts.headers || {}) };
   if (opts.json !== undefined) { headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(opts.json); }
-  const res = await fetch(path, { ...opts, headers });
+  const res = await fetch(withToken(path), { ...opts, headers });
   if (!res.ok) {
     let detail = res.statusText;
     try { detail = (await res.json()).detail || detail; } catch (_) { /* not JSON */ }
+    if (res.status === 401 && detail === "Missing or wrong token" && askForToken()) return api(path, opts);
     throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
   }
   // A download wants the bytes as served (a JSON file included), not the parsed value: { raw: true } returns the
@@ -106,6 +131,7 @@ const listeners = new Set();
 export const store = {
   docs: [], selected: new Set(), open: null, pages: [], page: 1, structure: null, op: "text",
   marks: [], jobs: new Map(),
+  where: "on this computer",  // where documents are read: "on the server" when the workspace is hosted
 };
 export function changed(what) { for (const fn of listeners) fn(what); }
 export function onChange(fn) { listeners.add(fn); }

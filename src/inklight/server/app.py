@@ -4,7 +4,9 @@ Security model (local-first):
 * binds to localhost by default; a Host-header allow-list blocks DNS rebinding;
 * every mutating request needs the ``X-Inklight: 1`` header (no CORS is
   enabled, so other sites cannot send it: CSRF protection);
-* optional shared token via ``INKLIGHT_SERVER_TOKEN`` for non-local binds;
+* a shared token (``INKLIGHT_SERVER_TOKEN``) for a private workspace on a network; it gives access to one shared
+  library (hosting.py);
+* a public demo gives each visitor a temporary library of their own and never the owner's (demo.py);
 * uploads are size-limited, renamed, type-checked and stored under the home folder;
 * the agent may only write into the outputs folder, and only when the user ticks
   "allow saving" for that request.
@@ -13,14 +15,14 @@ Security model (local-first):
 from __future__ import annotations
 
 import contextlib
+import contextvars
 import hmac
 import json
 import mimetypes
-import os
 import re
 import secrets
 import threading
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
@@ -39,6 +41,8 @@ from ..errors import InklightError, InputRejected
 from ..safety import SUPPORTED_EXTENSIONS, safe_filename
 from ..structure.run import available as structure_available
 from . import review_api, workspace
+from .demo import DemoBusy, DemoSessions, Session
+from .hosting import LOCAL_HOSTS, DemoLimits, Hosting
 from .jobs import TERMINAL, Jobs
 from .render import preview_png, render_page
 
@@ -47,7 +51,9 @@ STATIC = Path(__file__).parent / "static"
 # registries map .js to text/plain, so the types are set here.
 mimetypes.add_type("text/javascript", ".js")
 mimetypes.add_type("text/css", ".css")
-LOCAL_HOSTS = {"127.0.0.1", "localhost", "[::1]", "::1"}
+DEMO_COOKIE = "inklight_demo"
+TOKEN_COOKIE = "inklight_access"  # noqa: S105 - a cookie name, not a secret
+_visitor: contextvars.ContextVar[Session | None] = contextvars.ContextVar("inklight_visitor", default=None)
 
 
 class AskBody(BaseModel):
@@ -81,9 +87,12 @@ def _discard(path: Path) -> None:
         path.parent.rmdir()  # only succeeds for an empty per-upload folder
 
 
-def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAPI:
-    owned = None if agent is not None else DocumentAgent(settings)  # an agent passed in belongs to the caller
-    state: dict[str, Any] = {"agent": agent or owned, "jobs": {}, "imports": Jobs(), "swapped": []}
+def create_app(settings: Settings, agent: DocumentAgent | None = None, hosting: Hosting | None = None) -> FastAPI:
+    hosting = hosting or Hosting.from_env()
+    # A public demo never opens the owner's library: every visitor gets a temporary one (demo.py).
+    demo = DemoSessions(settings, hosting.demo or DemoLimits(), hosting.demo_dir) if hosting.mode == "demo" else None
+    owned = None if agent is not None or demo is not None else DocumentAgent(settings)  # a passed agent is the caller's
+    state: dict[str, Any] = {"agent": agent or owned, "jobs": {}, "imports": Jobs(), "swapped": [], "demo": demo}
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -94,40 +103,148 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             extra.library.close()
         if owned is not None:
             owned.close()
+        if demo is not None:
+            demo.close()
 
     app = FastAPI(
         title=f"{NAME} API",
         version=__version__,
         description=TAGLINE,
         docs_url="/api/docs",
+        openapi_url="/api/openapi.json",  # under /api/, so the token and the demo session apply to it
         redoc_url=None,
         lifespan=lifespan,
     )
     app.state.inklight = state  # read-only introspection (tests, health checks)
     lock = threading.Lock()
-    token = os.environ.get("INKLIGHT_SERVER_TOKEN", "")
+    token = hosting.token
+    # What the access cookie holds: derived from the token, so the cookie never carries the token itself.
+    access_mark = hmac.new(token.encode("utf-8"), b"inklight-workspace-access", "sha256").hexdigest() if token else ""
+    limits = demo.settings.limits if demo is not None else settings.limits
     # Bound the whole upload before Starlette spools it to disk: per-file limit x a modest batch.
-    max_body = int(settings.limits.max_file_mb * 1024 * 1024 * min(settings.limits.max_files_per_task, 20))
-    extra_hosts = {h.strip() for h in os.environ.get("INKLIGHT_ALLOWED_HOSTS", "").split(",") if h.strip()}
+    max_body = int(limits.max_file_mb * 1024 * 1024 * min(limits.max_files_per_task, 20))
+    allowed_hosts = LOCAL_HOSTS | hosting.allowed_hosts
+    https_only = (hosting.public_url or "").startswith("https://")  # cookies Secure even if the proxy is not trusted
+
+    def visitor() -> Session:
+        session = _visitor.get()
+        if session is None:
+            raise HTTPException(401, "No demo session: reload the page")
+        return session
 
     def current() -> DocumentAgent:
-        return state["agent"]  # type: ignore[no-any-return]
+        return visitor().agent if demo is not None else state["agent"]  # type: ignore[no-any-return]
+
+    def imports() -> Jobs:
+        """Import jobs: the visitor's own in a demo, the server's otherwise."""
+        return visitor().jobs if demo is not None else state["imports"]  # type: ignore[no-any-return]
+
+    def asks() -> dict[str, threading.Event]:
+        return visitor().asks if demo is not None else state["jobs"]  # type: ignore[no-any-return]
+
+    def not_in_demo(what: str) -> None:
+        if demo is not None:
+            raise HTTPException(403, f"{what} is not available in the public demo")
+
+    @contextlib.contextmanager
+    def admitted(files: int) -> Iterator[None]:
+        """A public demo reads one file at a time for everyone; a full queue is refused, not left waiting."""
+        if demo is None:
+            yield
+            return
+        try:
+            with demo.admit(visitor(), files):
+                yield
+        except DemoBusy as exc:
+            raise HTTPException(exc.status, str(exc)) from exc
+
+    def in_worker(gate: threading.Lock | None, func: Any, *args: Any, **kwargs: Any) -> Any:
+        """Run ``func`` in the thread pool. In a demo the visitor's gate is released by that thread when it ends, not
+        by this request (which a closed connection can cancel first), and a shared slot bounds the work."""
+        if gate is None:
+            return run_in_threadpool(func, *args, **kwargs)
+
+        def run() -> Any:
+            try:
+                with demo.work:  # type: ignore[union-attr]
+                    return func(*args, **kwargs)
+            finally:
+                gate.release()
+
+        return run_in_threadpool(run)
 
     @app.middleware("http")
     async def guard(request: Request, call_next):  # type: ignore[no-untyped-def]
-        if _hostname(request.headers.get("host", "")) not in LOCAL_HOSTS | extra_hosts:
+        if _hostname(request.headers.get("host", "")).lower() not in allowed_hosts:
             return JSONResponse({"detail": "Host not allowed"}, status_code=403)
+        token_cookie = False
         if token and request.url.path.startswith("/api/"):
-            # Header for API calls; query param only because <img> previews cannot send headers.
-            given = request.headers.get("x-inklight-token") or request.query_params.get("token") or ""
-            if not hmac.compare_digest(given.encode("utf-8"), token.encode("utf-8")):
+            # The page sends the token in a header; previews and event streams (which cannot) send the cookie set
+            # by the first good request. The cookie holds a value derived from the token, and no URL ever holds
+            # either, so neither reaches a proxy's or server's access log.
+            given = request.headers.get("x-inklight-token", "")
+            if given:
+                if not hmac.compare_digest(given.encode("utf-8"), token.encode("utf-8")):
+                    return JSONResponse({"detail": "Missing or wrong token"}, status_code=401)
+                token_cookie = request.cookies.get(TOKEN_COOKIE) != access_mark
+            elif not hmac.compare_digest(request.cookies.get(TOKEN_COOKIE, "").encode(), access_mark.encode()):
                 return JSONResponse({"detail": "Missing or wrong token"}, status_code=401)
         length = request.headers.get("content-length", "")
         if length.isdigit() and int(length) > max_body:
             return JSONResponse({"detail": "Request body too large"}, status_code=413)
         if request.method not in ("GET", "HEAD", "OPTIONS") and request.headers.get("x-inklight") != "1":
             return JSONResponse({"detail": "Missing X-Inklight header"}, status_code=403)
-        response = await call_next(request)
+        if demo is not None and request.method in ("POST", "PUT", "PATCH") and not length.isdigit():
+            # A body without a declared size (chunked) could not be bounded before it is stored.
+            return JSONResponse({"detail": "A request body must declare its length"}, status_code=411)
+        new_key = None
+        bound = None
+        session: Session | None = None
+        if demo is not None and request.url.path.startswith("/api/"):
+            session = demo.get(request.cookies.get(DEMO_COOKIE))
+            if session is None:
+                if request.url.path != "/api/status":  # only loading the workspace starts a session
+                    return JSONResponse(
+                        {"detail": "Your demo session has ended (its files were deleted) or has not started. "
+                         "Reload the page to start a new one."},
+                        status_code=401,
+                    )  # fmt: skip
+                try:
+                    new_key, session = await run_in_threadpool(
+                        demo.create, request.client.host if request.client else "unknown"
+                    )
+                except DemoBusy as exc:
+                    return JSONResponse({"detail": str(exc)}, status_code=exc.status)
+            assert session is not None  # noqa: S101 - set just above, or the request returned
+            if not demo.allow(session, write=request.method not in ("GET", "HEAD", "OPTIONS")):
+                return JSONResponse({"detail": "Too many requests: wait a minute and try again."}, status_code=429)
+            bound = _visitor.set(session)
+        try:
+            if session is not None and demo is not None:
+                with demo.serving(session):
+                    response = await call_next(request)
+            else:
+                response = await call_next(request)
+        finally:
+            if bound is not None:
+                _visitor.reset(bound)
+        if new_key is not None and demo is not None:
+            response.set_cookie(
+                DEMO_COOKIE,
+                new_key,
+                max_age=demo.limits.minutes * 60,
+                httponly=True,
+                samesite="strict",
+                secure=https_only or request.url.scheme == "https",
+            )
+        if token_cookie:
+            response.set_cookie(
+                TOKEN_COOKIE,
+                access_mark,
+                httponly=True,
+                samesite="strict",
+                secure=https_only or request.url.scheme == "https",
+            )
         if not request.url.path.startswith("/api/"):
             response.headers["Cache-Control"] = "no-cache"  # revalidate the workspace's files after an upgrade
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -171,10 +288,29 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             "privacy": a.settings.privacy.model_dump(),
             "outputs": str(a.settings.outputs),
             "tools": DocumentAgent.tools(),
+            "hosting": hosting_status(),
+        }
+
+    def hosting_status() -> dict[str, Any]:
+        if demo is None:
+            return {"mode": hosting.mode, "shared_library": hosting.mode == "private"}
+        session = visitor()
+        return {
+            "mode": "demo",
+            "shared_library": False,
+            "expires_at": session.expires,
+            "minutes": demo.limits.minutes,
+            "limits": {
+                "max_documents": demo.limits.max_documents,
+                "max_file_mb": demo.limits.max_file_mb,
+                "max_pages": demo.limits.max_pages,
+                "max_files_per_upload": demo.limits.max_files_per_upload,
+            },
         }
 
     @app.post("/api/settings")
     def update_settings(body: SettingsBody) -> dict[str, Any]:
+        not_in_demo("Changing settings")
         changes: dict[str, Any] = {}
         if body.brain is not None:
             changes["brain"] = body.brain
@@ -203,7 +339,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         a = current()
         limit = int(a.settings.limits.max_file_mb * 1024 * 1024)
         if len(files) > a.settings.limits.max_files_per_task:
-            raise HTTPException(413, "Too many files in one upload")
+            raise HTTPException(413, f"Too many files in one upload (at most {a.settings.limits.max_files_per_task})")
         folder = a.settings.uploads
         folder.mkdir(parents=True, exist_ok=True)
         saved: list[Path] = []
@@ -255,16 +391,20 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         once, with a job to follow: /api/jobs/{id} and /api/jobs/{id}/events report each file and page as it is read.
         """
         a = current()
-        saved, rejected = await _save_uploads(files)
+        if demo is not None and not background:
+            raise HTTPException(400, "The public demo imports in the background (background=true)")
         if background:
-            job = state["imports"].start_import(
-                saved,
-                rejected,
-                a.library.add,
-                lambda report: _import_result(report, rejected),
-                on_error=_discard_all,
-            )
+            with admitted(len(files)):
+                saved, rejected = await _save_uploads(files)
+                job = imports().start_import(
+                    saved,
+                    rejected,
+                    a.library.add,
+                    lambda report: _import_result(report, rejected),
+                    on_error=_discard_all,
+                )
             return {"job": job}
+        saved, rejected = await _save_uploads(files)
         try:
             report = await run_in_threadpool(_add_exclusively, a, list[str | Path](saved)) if saved else None
         except Exception:
@@ -276,13 +416,17 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
     def _structured_library() -> Any:
         """A library over the same store, OCR engine and models, with document structure on (made once)."""
         a = current()
-        lib = state.get("structured")
+        holder: Any = visitor() if demo is not None else None
+        lib = holder.structured if holder is not None else state.get("structured")
         if lib is None or lib.store is not a.library.store:
             from ..library import Library
 
             settings = a.settings.with_overrides(structure={"engine": "inklight"})
             lib = Library(settings, store=a.library.store, engine=a.library.engine, brain=a.library.brain)
-            state["structured"] = lib
+            if holder is not None:
+                holder.structured = lib
+            else:
+                state["structured"] = lib
         return lib
 
     @app.post("/api/documents/{doc_id}/structure")
@@ -308,7 +452,8 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
                 "seconds": round(report.seconds, 2),
             }
 
-        job = state["imports"].start_import([path], [], lib.add, finish, kind="structure")
+        with admitted(0):  # the document is already counted; the import still takes a place in the queue
+            job = imports().start_import([path], [], lib.add, finish, kind="structure")
         return {"job": job}
 
     def _discard_all(paths: list[Path]) -> None:
@@ -316,31 +461,32 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             _discard(path)
 
     def _add_exclusively(a: DocumentAgent, paths: list[str | Path]) -> Any:
-        with state["imports"].runner:  # one library read at a time, background jobs included
+        with imports().runner:  # one library read at a time, background jobs included
             return a.library.add(paths)
 
     @app.get("/api/jobs")
     def jobs() -> list[dict[str, Any]]:
         """Recent imports, newest first, so a reloaded page can find one still running."""
-        return state["imports"].recent()  # type: ignore[no-any-return]
+        return imports().recent()
 
     @app.get("/api/jobs/{job_id}")
     def job(job_id: str) -> dict[str, Any]:
-        snap = state["imports"].snapshot(job_id)
+        snap = imports().snapshot(job_id)
         if snap is None:
             raise HTTPException(404, "Unknown job")
-        return snap  # type: ignore[no-any-return]
+        return snap
 
     @app.get("/api/jobs/{job_id}/events")
     async def job_events(job_id: str) -> StreamingResponse:
         """Server-sent events: the job's state each time it changes, until it ends."""
-        if state["imports"].snapshot(job_id) is None:
+        jobs = imports()  # the visitor's own jobs, taken now: the stream runs after this request's context
+        if jobs.snapshot(job_id) is None:
             raise HTTPException(404, "Unknown job")
 
         async def stream() -> AsyncIterator[str]:
             version = -1
             while True:
-                snap = await run_in_threadpool(state["imports"].wait, job_id, version, 5.0)
+                snap = await run_in_threadpool(jobs.wait, job_id, version, 5.0)
                 if snap is None:
                     return
                 if snap["version"] == version:
@@ -356,7 +502,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
     @app.get("/api/jobs/{job_id}/files/{index}/preview")
     def job_preview(job_id: str, index: int) -> Response:
         """The first page of a file in an import, as uploaded (before it is read), for the progress view."""
-        path = state["imports"].path(job_id, index)
+        path = imports().path(job_id, index)
         png = preview_png(path) if path is not None and path.exists() else None
         if png is None:
             raise HTTPException(404, "No preview available")
@@ -447,7 +593,11 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         page = pages.get(number)
         if page is None:
             raise HTTPException(404, "Unknown page")
-        png = render_page(Path(info.path), number, page, current().settings.ocr.dpi)
+        if demo is not None:
+            with demo.work:  # rendering is CPU work: bounded across every visitor
+                png = render_page(Path(info.path), number, page, current().settings.ocr.dpi)
+        else:
+            png = render_page(Path(info.path), number, page, current().settings.ocr.dpi)
         if png is None:
             raise HTTPException(404, "No preview available")
         return Response(png, media_type="image/png", headers={"Cache-Control": "private, max-age=600"})
@@ -457,33 +607,40 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
     @app.post("/api/ask")
     async def ask(body: AskBody) -> dict[str, Any]:
         a = current()
+        running = asks()
         cancel = threading.Event()
+        gate = visitor().asking if demo is not None else None
+        if gate is not None and not gate.acquire(blocking=False):
+            raise HTTPException(429, "One question at a time in the demo: wait for the current one to finish")
         if body.job_id:
-            state["jobs"][body.job_id] = cancel
-        policy = Policy(allow_write=body.allow_write, output_dir=a.settings.outputs)
+            running[body.job_id] = cancel
+        policy = Policy(allow_write=body.allow_write and demo is None, output_dir=a.settings.outputs)
         try:
-            result = await run_in_threadpool(
-                a.ask, body.request, None, doc_ids=body.doc_ids, policy=policy, cancel=cancel
+            result = await in_worker(
+                gate, a.ask, body.request, None, doc_ids=body.doc_ids, policy=policy, cancel=cancel
             )
         finally:
             if body.job_id:
-                state["jobs"].pop(body.job_id, None)
+                running.pop(body.job_id, None)
         return result.model_dump(mode="json")
 
     @app.post("/api/jobs/{job_id}/cancel")
     def cancel_job(job_id: str) -> dict[str, Any]:
         """Stop a running request (Ask), or an import before its next file."""
-        event = state["jobs"].get(job_id)
+        event = asks().get(job_id)
         if event is not None:
             event.set()
             return {"cancelled": True}
-        return {"cancelled": state["imports"].cancel(job_id)}
+        return {"cancelled": imports().cancel(job_id)}
 
     @app.post("/api/extract")
     async def extract(body: ExtractBody) -> dict[str, Any]:
         a = current()
         paths = [_doc(i).path for i in body.doc_ids]
-        records = await run_in_threadpool(a.extract, paths, body.fields)
+        gate = visitor().asking if demo is not None else None
+        if gate is not None and not gate.acquire(blocking=False):
+            raise HTTPException(429, "One request at a time in the demo: wait for the current one to finish")
+        records = await in_worker(gate, a.extract, paths, body.fields)
         return {"records": [r.model_dump(mode="json") for r in records]}
 
     @app.get("/api/search")
@@ -505,6 +662,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
 
     @app.get("/api/outputs/{name}")
     def output(name: str) -> FileResponse:
+        not_in_demo("Saved outputs")
         root = current().settings.outputs.resolve()
         target = (root / safe_filename(name)).resolve()
         if target.parent != root or not target.is_file():

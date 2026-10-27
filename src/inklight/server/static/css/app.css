@@ -507,3 +507,8 @@ dialog::backdrop { background: rgba(5, 8, 12, .55); backdrop-filter: blur(2px); 
   .mark, .stage i, .pick-box, .key { forced-color-adjust: none; border-color: CanvasText; }
   .doc.open::before, .op[aria-pressed="true"]::after { background: Highlight; }
 }
+
+/* Public demo notice: what happens to a visitor's files */
+.demo-note { position: fixed; z-index: 40; right: 16px; bottom: 16px; max-width: min(440px, calc(100vw - 32px));
+  padding: 10px 14px; background: var(--bg); color: var(--text); border: 1px solid var(--accent-line); border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .25); font-size: 13px; line-height: 1.45; }

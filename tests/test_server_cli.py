@@ -39,8 +39,16 @@ def test_token(monkeypatch, shared_agent):
     monkeypatch.setenv("INKLIGHT_ALLOWED_HOSTS", "testserver")
     c = TestClient(create_app(shared_agent.settings, agent=shared_agent))
     assert c.get("/api/status").status_code == 401
+    assert c.get("/api/status", params={"token": "t0k"}).status_code == 401  # never in a URL (logs)
+    non_ascii = {"X-Inklight-Token": "tök".encode()}
+    assert c.get("/api/status", headers=non_ascii).status_code == 401  # non-ASCII: 401 not 500
     assert c.get("/api/status", headers={"X-Inklight-Token": "t0k"}).status_code == 200
-    assert c.get("/api/status", params={"token": "tök"}).status_code == 401  # non-ASCII: 401 not 500
+    access = c.cookies.get("inklight_access")
+    assert access and "t0k" not in access  # previews and streams carry a value derived from the token
+    assert c.get("/api/documents").status_code == 200  # the cookie, no header
+    stranger = TestClient(create_app(shared_agent.settings, agent=shared_agent))
+    stranger.cookies.set("inklight_access", "0" * 64)
+    assert stranger.get("/api/documents").status_code == 401
 
 
 def test_testserver_host_not_allowed_by_default(shared_agent):

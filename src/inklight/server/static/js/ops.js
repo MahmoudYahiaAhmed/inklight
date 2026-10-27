@@ -40,7 +40,7 @@ export function startHint(what) {
   const lib = h("button", { class: "btn small quiet", type: "button", onclick: () => showView("library") }, "Go to the library");
   return h("div", { class: "hint-card" },
     h("span", {}, store.docs.length ? h("b", {}, "Open a document first. ") : h("b", {}, "The library is empty. "),
-      store.docs.length ? `Click a name in the library; ${what}` : `Add a PDF, scan or photo; it is read on this computer. Then ${what}`),
+      store.docs.length ? `Click a name in the library; ${what}` : `Add a PDF, scan or photo; it is read ${store.where}. Then ${what}`),
     h("div", { class: "row" }, store.docs.length ? lib : add));
 }
 

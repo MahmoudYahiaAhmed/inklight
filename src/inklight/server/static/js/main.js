@@ -4,7 +4,7 @@
 import "./fields.js";
 import "./review.js";
 import "./ask.js";
-import { $, announce, api, h, storageSet } from "./dom.js";
+import { $, announce, api, h, storageSet, store } from "./dom.js";
 import { loadDocs, recoverJobs, wireLibrary } from "./library.js";
 import { renderOps, selectOp, setStructureInstalled, wireOps } from "./ops.js";
 import { wireReview } from "./review.js";
@@ -23,9 +23,10 @@ async function loadStatus() {
     text.textContent = downloading ? `Downloading models ${Math.round((100 * downloading.done) / downloading.total)}%` : "Waiting for models";
     setTimeout(loadStatus, 1500);
   } else {
-    text.textContent = s.models.remote?.configured ? "Local + remote model" : "On this computer";
+    text.textContent = HOSTED[s.hosting?.mode]?.[0] ?? (s.models.remote?.configured ? "Local + remote model" : "On this computer");
   }
-  chip.title = s.models.remote?.configured ? "A remote model is configured for Ask" : "Documents and models stay on this computer";
+  chip.title = HOSTED[s.hosting?.mode]?.[1] ?? (s.models.remote?.configured ? "A remote model is configured for Ask" : "Documents and models stay on this computer");
+  showHosting(s.hosting);
   $("#set-brain").value = s.brain;
   $("#set-writer").checked = s.use_writer;
   $("#set-info").replaceChildren(
@@ -36,6 +37,27 @@ async function loadStatus() {
     h("div", {}, `Limits: ${s.limits.max_file_mb} MB per file · ${s.limits.max_pages} pages`),
     h("div", {}, `Library: ${s.stats.documents} documents · ${s.stats.pages} pages`),
     h("div", {}, `Version ${s.version} · ${s.commit}`));
+}
+
+// How the workspace is hosted, as the server reports it (local needs no note).
+const HOSTED = {
+  private: ["Private workspace", "A shared library on this server: everyone with the access token sees the same documents"],
+  demo: ["Public demo", "A temporary library for this browser only; it is deleted when the session ends"],
+};
+function showHosting(hosting) {
+  if (hosting?.mode && hosting.mode !== "local") {
+    store.where = "on the server";
+    $("#drop-help").textContent = "Drop files or choose · PDF, images, text · read on the server";
+    $("#guide-where").textContent = "on the server";
+  }
+  if (hosting?.mode !== "demo" || $("#demo-note")) return;
+  const until = new Date(hosting.expires_at * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const l = hosting.limits;
+  document.body.prepend(h("div", { id: "demo-note", class: "demo-note", role: "note" },
+    h("strong", {}, "Public demo. "),
+    `Your files stay in a temporary space for this browser only, and are deleted at ${until} (${hosting.minutes} minute${hosting.minutes === 1 ? "" : "s"} after you arrived) or when the server stops. Please do not upload private documents. `,
+    `Up to ${l.max_documents} documents, ${l.max_file_mb} MB and ${l.max_pages} pages each.`));
+  $("#open-settings").style.display = "none";  // the demo's settings are fixed
 }
 
 // Theme: follow the system, or keep light or dark (stored in this browser only). The button cycles the three.
@@ -79,7 +101,7 @@ function wire() {
 
 wire();
 selectOp("text");
-loadStatus().catch(() => {});
-loadDocs().then(renderOps).then(recoverJobs).catch((err) => {
+// The status comes first: it starts a demo session, and asks once for a private workspace's token.
+loadStatus().catch(() => {}).then(loadDocs).then(renderOps).then(recoverJobs).catch((err) => {
   $("#docs").replaceChildren(h("li", { class: "empty-lib" }, `The library could not be loaded: ${err.message}`));
 });
