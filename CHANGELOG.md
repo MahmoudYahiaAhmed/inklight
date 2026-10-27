@@ -30,6 +30,29 @@ All notable changes to this project are documented here. The format follows
 - A type word ("receipts") dropped documents the classifier could not type; they now stay in scope, with a warning,
   and the result is partial.
 - A file without a preview (a broken PDF) no longer shows the start guide while it is being read.
+- **Incomplete scope.** Asking about a selection that includes a document whose import failed, is still being read
+  or was removed answered from the others as if complete. Every selected document is now checked first: the
+  result is partial, starts with what it covers ("covers 1 of the 2 selected documents"), names each unreadable
+  document and why, and lists them in a new `scope` field (requested, used, unavailable). A comparison marks them
+  "not available" and cannot conclude; nothing is concluded when no selected document can be read. Asking never
+  retries an import. `inklight ask --doc NAME` asks about library documents as they are.
+- **Model download from two processes.** Two Inklight processes sharing the model cache (a second server, the CLI)
+  wrote to the same `<file>.part`; one could fail with `FileNotFoundError: …lm_cjk.npz.part` after the other moved
+  the finished file into place. A set is now downloaded under an OS file lock: the other process waits ("another
+  Inklight process is downloading them") and then uses the verified copy. The lock is released if its holder dies,
+  and the next download resumes the partial file.
+- **Step labels** in the operation panel were cut off with an ellipsis on narrower panels; they now wrap, and move
+  onto a second row with large text.
+- **How a document was read.** A `.txt` file was labelled "read by OCR": every page that was not a PDF text layer was
+  called OCR. The workspace (library, viewer, text and field panels, raw CSV), `inklight docs` and `/api/documents`
+  (`read_as`) now name the page sources: plain text, PDF text layer, OCR, or mixed.
+- **Field extraction and questions agreed less than they should.** Extraction read printed labels, not table cells,
+  so "registration number" came back empty where "What is the registration number?" read 47319 in a table. A field
+  is now read with the same routine a question and a comparison use: an empty field is read at its label or table
+  cell (cited, type-checked, never from a passage); a value read from the line layout across lines yields to the
+  table's own cell; several cells under one heading are listed as candidates, none chosen; any other difference
+  from a table cell is flagged. On the Voxel51 and CORD holdout splits the field results are unchanged (no
+  structure there).
 
 ### Evaluation
 - [Technical report](evaluation/REPORT.md) with current reruns, the 0.2 → 0.3 equivalence check and a sourced
