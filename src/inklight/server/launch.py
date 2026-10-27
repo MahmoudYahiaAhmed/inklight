@@ -1,7 +1,8 @@
 """What ``inklight serve`` binds, accepts and tells the person starting it. Pure: decided and tested without a server.
 
 Nothing here claims a server is reachable from elsewhere: a wildcard bind (0.0.0.0) is reported as the listening
-address, never as a browser address, and a public address is only ever the one the owner gave (``--public-url``).
+address, never as a browser address, and a public address is only ever the one the owner gave (``--public-url``) or
+the tunnel's own, once ``--share`` has checked it answers (``share.py``).
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from .hosting import (
 )
 
 TOKEN_ENV = "INKLIGHT_SERVER_TOKEN"  # noqa: S105 - the variable's name, not a secret
+SHARE_TOKEN_MIN = 16  # a shared workspace is on the internet: a short token could be guessed
 MAKE_TOKEN = 'python -c "import secrets; print(secrets.token_urlsafe(24))"'  # noqa: S105 - a command that makes one
 
 
@@ -53,8 +55,12 @@ def plan(
     open_browser: bool = True,
     env: dict[str, str] | None = None,
     addresses: list[str] | None = None,
+    share_url: str | None = None,
 ) -> Launch:
     env = dict(os.environ) if env is None else env
+    if share_url is not None:
+        return _shared(settings, port=port, share_url=share_url, demo=demo, demo_dir=demo_dir,
+                       demo_minutes=demo_minutes, allowed_hosts=allowed_hosts, env=env)  # fmt: skip
     token = env.get(TOKEN_ENV, "")
     public_url = public_url or env.get("INKLIGHT_PUBLIC_URL") or None
     local = is_local_bind(host)
@@ -163,6 +169,80 @@ def plan(
         lines.append(("proxy", f"X-Forwarded-For and -Proto are trusted from {', '.join(proxies)} only"))
     open_url = url if (open_browser and local and _has_display(env)) else None
     return Launch(hosting, lines, warnings, open_url, ",".join(proxies) or None)
+
+
+def check_share(*, host: str, public_url: str | None, demo: bool, no_token: bool,
+                trusted_proxies: list[str] | None, env: dict[str, str] | None = None) -> None:  # fmt: skip
+    """Refuse a ``--share`` that would expose more than asked, before anything is downloaded or started."""
+    env = dict(os.environ) if env is None else env
+    if not is_local_bind(host):
+        raise ConfigError("--share listens on 127.0.0.1 only (the tunnel connects to it there): leave out --host")
+    if public_url or env.get("INKLIGHT_PUBLIC_URL"):
+        raise ConfigError("--share makes its own public address: leave out --public-url (and INKLIGHT_PUBLIC_URL)")
+    if trusted_proxies:
+        raise ConfigError("--share trusts only the tunnel on this machine: leave out --trusted-proxy")
+    if demo:
+        return
+    if no_token:
+        raise ConfigError("--share puts your library on the internet, so it always needs a token: --no-token is "
+                          "refused. To let anyone try Inklight, use --share --demo (a temporary library per "
+                          "visitor).")  # fmt: skip
+    token = env.get(TOKEN_ENV, "")
+    if len(token) < SHARE_TOKEN_MIN:
+        problem = "is too short" if token else "is not set"
+        raise ConfigError(
+            f"--share puts your library on the internet, so it needs an access token, and {TOKEN_ENV} {problem} "
+            f"(at least {SHARE_TOKEN_MIN} characters).\n"
+            f"Make one with  {MAKE_TOKEN}\n"
+            f"and start with  {TOKEN_ENV}=<token> inklight serve --share\n"
+            "Visitors enter the token when the page asks; it is never put in the link. To let anyone try Inklight "
+            "without your library, use --share --demo."
+        )
+
+
+def _shared(settings: Settings, *, port: int, share_url: str, demo: bool, demo_dir: str | None,
+            demo_minutes: int | None, allowed_hosts: list[str] | None, env: dict[str, str]) -> Launch:  # fmt: skip
+    """``--share``: bound to 127.0.0.1, reached through a tunnel at ``share_url``. Accepted hosts: localhost and the
+    tunnel's exact host name. The tunnel is the only proxy, and it connects from this machine."""
+    url, tunnel_host = parse_public_url(share_url)
+    hosts = set(LOCAL_HOSTS) | {tunnel_host} | {host_name(h) for h in allowed_hosts or []}
+    limits = None
+    if demo:
+        limits = DemoLimits() if demo_minutes is None else DemoLimits(minutes=demo_minutes)
+    token = env.get(TOKEN_ENV, "")
+    hosting = Hosting(
+        mode="demo" if demo else "private",
+        token=token,
+        allowed_hosts=frozenset(hosts),
+        public_url=url,
+        demo=limits,
+        demo_dir=Path(demo_dir).expanduser() if demo_dir else None,
+        stream_progress=False,  # a quick tunnel holds event streams back
+    )
+    lines: list[tuple[str, str]] = [
+        ("public link", url),
+        ("", "through a Cloudflare quick tunnel; the link changes every time and stops when this command stops"),
+        ("listening", f"127.0.0.1:{port} (this machine only; the tunnel connects here)"),
+        ("hosts", f"localhost and {tunnel_host} only"),
+    ]
+    if demo:
+        lim = limits or DemoLimits()
+        folder = str(hosting.demo_dir) if hosting.demo_dir else "a new temporary folder, removed when the server stops"
+        lines.append(("mode", f"public demo: anyone with the link gets a temporary library of their own, deleted "
+                              f"{lim.minutes} minutes after it starts; the library at {settings.home} is not "
+                              "used"))  # fmt: skip
+        lines.append(("demo data", folder))
+        lines.append(("limits", f"{lim.max_documents} documents per visitor, {lim.max_file_mb:g} MB and "
+                                f"{lim.max_pages} pages each; one import is read at a time, {lim.queue} at most "
+                                "waiting"))  # fmt: skip
+        if token:
+            lines.append(("access", f"a token is required ({TOKEN_ENV})"))
+    else:
+        lines.append(("library", f"{settings.home}  (INKLIGHT_HOME to change)"))
+        lines.append(("access", "private workspace: everyone with the link and the token shares this one library"))
+        lines.append(("token", f"required ({TOKEN_ENV}); visitors enter it when the page asks. It is not in the "
+                               "link and not printed here."))  # fmt: skip
+    return Launch(hosting, lines, [], None, "127.0.0.1")
 
 
 def _has_display(env: dict[str, str]) -> bool:

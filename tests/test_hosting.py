@@ -143,7 +143,7 @@ def test_public_url_host_is_accepted_and_others_refused(settings):
     assert c.get("/api/status", headers={"X-Inklight-Token": "t"}).status_code == 200
     assert c.get("/", headers={"host": "evil.example"}).status_code == 403
     status = c.get("/api/status").json()["hosting"]
-    assert status == {"mode": "private", "shared_library": True}
+    assert status == {"mode": "private", "shared_library": True, "stream_progress": True}
 
 
 def test_private_workspace_rejects_requests_without_the_token(settings):

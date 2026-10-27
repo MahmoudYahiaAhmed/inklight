@@ -299,11 +299,16 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None, hosting: 
 
     def hosting_status() -> dict[str, Any]:
         if demo is None:
-            return {"mode": hosting.mode, "shared_library": hosting.mode == "private"}
+            return {
+                "mode": hosting.mode,
+                "shared_library": hosting.mode == "private",
+                "stream_progress": hosting.stream_progress,
+            }
         session = visitor()
         return {
             "mode": "demo",
             "shared_library": False,
+            "stream_progress": hosting.stream_progress,
             "expires_at": session.expires,
             "minutes": demo.limits.minutes,
             "limits": {

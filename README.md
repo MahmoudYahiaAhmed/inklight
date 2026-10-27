@@ -10,7 +10,7 @@ page, and export what you approved, on your own computer or on a server you run.
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="status" src="https://img.shields.io/badge/release-0.3.1-F5B544?style=flat-square&labelColor=0B0F14">
+  <img alt="status" src="https://img.shields.io/badge/release-0.3.2-F5B544?style=flat-square&labelColor=0B0F14">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
@@ -21,7 +21,7 @@ Everything Inklight shows is either **what was read** (text, boxes, tables and s
 place on the page) or **a value for you to check**. Documents are read where Inklight runs (your computer, or a
 server you host it on) and sent nowhere else.
 
-> **0.3.1.** For people who check results against the page: values are proposals to review, not facts, and
+> **0.3.2.** For people who check results against the page: values are proposals to review, not facts, and
 > Inklight is not suited to unattended processing. See
 > [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations).
 
@@ -43,6 +43,25 @@ extracted, it downloads the document structure models (384 MB). Each file is che
 interrupted download resumes, and after that everything works offline (set `INKLIGHT_OFFLINE=1` to make sure nothing
 is fetched). `inklight models pull --structure` fetches everything ahead of time; `inklight doctor` checks the
 installation. Without `[structure]` the install is smaller and everything except table extraction works.
+
+## Share a public link
+
+From Colab, a remote machine or your laptop, one command gives an `https://` link that works from anywhere. No port
+is opened and no account is needed:
+
+```bash
+export INKLIGHT_SERVER_TOKEN="$(python -c "import secrets; print(secrets.token_urlsafe(24))")"
+inklight serve --share
+```
+
+It prints `public link  https://<random words>.trycloudflare.com/` once that link answers from the internet. Visitors
+open it and enter the token when the page asks; the token is never in the link. Everyone with the link and the token
+shares your library. To let anyone try Inklight without your library, use `inklight serve --share --demo`: each
+visitor gets a temporary library of their own and no token is needed. Ctrl+C stops the server and the link.
+
+The link is a [Cloudflare quick tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/):
+Cloudflare carries the traffic, and Inklight fetches Cloudflare's `cloudflared` client once (a pinned version, its
+SHA-256 checked). Quick tunnels are meant for trying things out, not for production; the link changes every time.
 
 ## Host it on a machine
 

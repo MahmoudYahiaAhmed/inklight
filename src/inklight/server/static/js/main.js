@@ -45,6 +45,7 @@ const HOSTED = {
   demo: ["Public demo", "A temporary library for this browser only; it is deleted when the session ends"],
 };
 function showHosting(hosting) {
+  store.pollProgress = hosting?.stream_progress === false;
   if (hosting?.mode && hosting.mode !== "local") {
     store.where = "on the server";
     $("#drop-help").textContent = "Drop files or choose · PDF, images, text · read on the server";

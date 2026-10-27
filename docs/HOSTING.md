@@ -1,15 +1,62 @@
 # Hosting Inklight on a machine
 
-`inklight serve` has three modes:
+`inklight serve` has three modes, and `--share` gives either hosted mode a public link:
 
 | Mode | Command | Who uses it | Documents |
 |---|---|---|---|
 | **Local** (default) | `inklight serve` | you, on this computer | your library (`~/.inklight`) |
 | **Private workspace** | `inklight serve --host 0.0.0.0` with `INKLIGHT_SERVER_TOKEN` set | you or a trusted team | **one library shared by everyone who has the token** |
 | **Public demo** | `inklight serve --host 0.0.0.0 --demo` | anyone with the link | a temporary library per visitor, deleted after 60 minutes |
+| **Public link** | `inklight serve --share` (with the token) or `--share --demo` | anyone with the link (and the token) | as above |
 
 A token does not separate users: everyone with it sees, adds and deletes the same documents. To let strangers try
 Inklight, use the public demo, never a private workspace with a published token.
+
+## A public link: `--share`
+
+`inklight serve --share` gives a public `https://` link from wherever Inklight runs (Colab, a cloud machine behind
+NAT, a laptop), the way Gradio's `share=True` does. Nothing listens on the network: the server is bound to
+`127.0.0.1`, and a tunnel client connects out from the machine.
+
+```bash
+export INKLIGHT_SERVER_TOKEN="$(python -c "import secrets; print(secrets.token_urlsafe(24))")"
+inklight serve --share              # private workspace: your library, with the token
+inklight serve --share --demo       # public demo: a temporary library per visitor, no token
+```
+
+What happens, in order:
+
+1. The port is taken on `127.0.0.1` (a port in use fails here, before anything is fetched).
+2. The first time only, Cloudflare's tunnel client is downloaded: `cloudflared` 2026.10.0 from
+   `github.com/cloudflare/cloudflared/releases`, 20 to 55 MB depending on the platform. Its SHA-256 (and, on macOS,
+   that of the program inside the archive) must match the value pinned in Inklight, or it is deleted unused. It is
+   kept in the model cache (`~/.cache/inklight/tools`, `INKLIGHT_MODEL_CACHE`). With `INKLIGHT_OFFLINE=1` nothing is
+   fetched and `--share` stops. Supported: Linux (x86-64, ARM64), macOS, 64-bit Windows.
+3. `cloudflared` opens a [quick tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/)
+   and gets a random `https://<words>.trycloudflare.com` address.
+4. The workspace starts, accepting that exact host name (and localhost) and nothing else.
+5. The link is printed only after the workspace page has answered through Cloudflare several times in a row.
+
+**Who carries the traffic.** Cloudflare: visitors' requests and your documents' pages go through Cloudflare's network
+over HTTPS, then through the tunnel to this machine. No Cloudflare account is used. Quick tunnels are offered for
+testing and development, with no uptime guarantee and at most 200 requests in flight; the address changes each time
+and stops when the command stops. For a lasting address, use a domain and a reverse proxy (below).
+
+**Access.** A private workspace needs `INKLIGHT_SERVER_TOKEN` (at least 16 characters); `--no-token` is refused with
+`--share`. Visitors type the token when the page asks: it is never part of the link, never passed to `cloudflared`,
+and never printed. The access cookie is `Secure`. `--share --demo` uses the demo's sessions and limits; the tunnel is
+the only trusted proxy (it connects from this machine), so the limit on new sessions per address counts each
+visitor's own address, which a visitor cannot forge with an `X-Forwarded-For` header.
+
+**Progress.** Quick tunnels hold event streams back, so the page asks for an import's progress every second instead.
+
+**Stopping.** Ctrl+C (or closing the terminal) stops the server, then the tunnel, and says the link no longer works.
+`cloudflared` runs under a small guard process that ends it as soon as Inklight's end of a pipe closes, which happens
+however Inklight ends, `kill -9` included. A failed or stopped tunnel stops the server, with the tunnel's last output.
+`cloudflared` gets only the environment it needs (paths, proxy and certificate settings): not the token.
+
+`--share` cannot be combined with `--host`, `--public-url` or `--trusted-proxy`: it chooses those itself. A plain
+`inklight serve` never opens a tunnel.
 
 ## Private workspace
 
@@ -93,9 +140,22 @@ authority, for a test on one machine.
 
 ## Google Colab
 
-Not supported in 0.3.x. Colab shows a server from the notebook inside an iframe through its own proxy domain, and
-Inklight answers only for host names it was given and refuses to be framed, so `serve_kernel_port_as_iframe` shows
-"Host not allowed". Run Inklight on a machine you can open by IP address instead (above).
+Use `--share`: the link opens in its own browser tab, from any device. In a notebook cell:
+
+```python
+import getpass, os
+os.environ["INKLIGHT_SERVER_TOKEN"] = getpass.getpass("Choose an access token (16+ characters): ")
+!pip install -q "inklight[structure]"
+!inklight serve --share
+```
+
+The token is typed into a password box, so it is not saved in the notebook. Stopping the cell stops the server and
+the link. The documents are read on the Colab machine and are lost when its runtime ends. (For a demo, run
+`!inklight serve --share --demo` without the token.) Colab's own in-notebook views
+(`serve_kernel_port_as_iframe`, `serve_kernel_port_as_window`) are not supported: they reach the server through
+Colab's proxy domain, inside a frame, which Inklight refuses.
+
+This has not been checked on a real Colab runtime yet; it has been checked through real quick tunnels on Windows.
 
 ## First use and offline
 

@@ -7,7 +7,11 @@ import { $, announce, api, changed, errorBox, fill, h, onChange, plural, readAs,
 import { closeDoc, openDoc, processingTarget, showProcessing, stopProcessing } from "./viewer.js";
 
 const TERMINAL = new Set(["completed", "partial", "failed", "cancelled"]);
-const batch = { upload: null, job: null, source: null, dismissed: false };
+const batch = { upload: null, job: null, source: null, timer: null, dismissed: false };
+// Progress arrives as a stream; where a proxy or tunnel holds a stream back (a Cloudflare quick tunnel does), the
+// page asks for the job's state every second instead.
+const STREAM_WAIT_MS = 5000;
+const POLL_MS = 1000;
 
 export async function loadDocs() {
   store.docs = await api("/api/documents");
@@ -118,12 +122,10 @@ export function follow(job, { show = false } = {}) {
   renderBatch();
   if (TERMINAL.has(job.state)) return;
   closeFollow();
-  const source = new EventSource(withToken(`/api/jobs/${job.id}/events`));
-  batch.source = source;
   let showing = show;
-  source.onmessage = (e) => {
+  let heard = false;
+  const apply = (next) => {
     const prev = batch.job;
-    const next = JSON.parse(e.data);
     batch.job = next;
     remember(next);
     renderBatch();
@@ -131,6 +133,24 @@ export function follow(job, { show = false } = {}) {
     const active = next.active;
     if (showing && active !== null && active !== undefined) showFile(next, active);
     if (TERMINAL.has(next.state)) { closeFollow(); finished(next, showing); showing = false; }
+  };
+  const poll = () => {
+    closeFollow();
+    const tick = async () => {
+      batch.timer = null;
+      try { apply(await api(`/api/jobs/${job.id}`)); } catch { /* a dropped request: the next tick retries */ }
+      if (batch.job?.id === job.id && !TERMINAL.has(batch.job.state)) batch.timer = setTimeout(tick, POLL_MS);
+    };
+    tick();
+  };
+  if (store.pollProgress) { poll(); return; }
+  const source = new EventSource(withToken(`/api/jobs/${job.id}/events`));
+  batch.source = source;
+  // The server sends the job's state at once; nothing within a few seconds means the stream is held back.
+  batch.timer = setTimeout(() => { if (!heard) poll(); }, STREAM_WAIT_MS);
+  source.onmessage = (e) => {
+    heard = true;
+    apply(JSON.parse(e.data));
   };
   source.onerror = () => {
     // The browser reconnects by itself; if the job has ended meanwhile, read its final state once.
@@ -140,6 +160,7 @@ export function follow(job, { show = false } = {}) {
 
 function closeFollow() {
   if (batch.source) { batch.source.close(); batch.source = null; }
+  if (batch.timer) { clearTimeout(batch.timer); batch.timer = null; }
 }
 
 function reportChanges(prev, next) {

@@ -534,18 +534,36 @@ def serve(
         list[str] | None, typer.Option(help="Reverse proxy address whose X-Forwarded headers are trusted.")
     ] = None,
     open_browser: Annotated[bool, typer.Option("--open/--no-open")] = True,
+    share: Annotated[
+        bool,
+        typer.Option(
+            "--share",
+            help="Make a public https link through a Cloudflare quick tunnel (no account; downloads Cloudflare's "
+            "cloudflared once, pinned and checked). Needs INKLIGHT_SERVER_TOKEN, or --demo.",
+        ),
+    ] = False,
     config: ConfigOpt = None,
 ) -> None:
-    """Start the web workspace: on this computer (default), as a private workspace on a network, or as a demo."""
+    """Start the web workspace: on this computer (default), as a private workspace on a network, or as a demo.
+
+    --share gives a public https link from anywhere, Colab or a remote machine included, without opening a port."""
     import threading
     import webbrowser
 
     import uvicorn
 
     from .server import create_app
-    from .server.launch import plan
+    from .server.launch import check_share, plan
 
     settings = _settings(config)
+    if share:
+        try:
+            check_share(host=host, public_url=public_url, demo=demo, no_token=no_token, trusted_proxies=trusted_proxy)
+        except InklightError as exc:
+            _fail(exc)
+        _serve_shared(settings, port=port, demo=demo, demo_dir=demo_dir, demo_minutes=demo_minutes,
+                      allowed_hosts=allowed_host)  # fmt: skip
+        return
     try:
         launch = plan(
             settings,
@@ -580,6 +598,33 @@ def serve(
         proxy_headers=launch.proxy_ips is not None,
         forwarded_allow_ips=launch.proxy_ips,
     )
+
+
+def _serve_shared(settings: Settings, *, port: int, demo: bool, demo_dir: str | None, demo_minutes: int | None,
+                  allowed_hosts: list[str] | None) -> None:  # fmt: skip
+    from .server.share_serve import Output, serve_shared
+
+    banner()
+    with _progress() as bar:
+        task = bar.add_task("cloudflared (MB)", total=None, visible=False)
+
+        def progress(done: int, total: int) -> None:
+            bar.update(task, completed=done // 1_000_000, total=total // 1_000_000, visible=True)
+
+        def line(label: str, text: str) -> None:
+            bar.update(task, visible=False)
+            console.print(Text.assemble((f"  {label:<12}", "muted"), (text, "brand" if label == "public link" else "")))
+
+        out = Output(
+            say=lambda text: console.print(Text(text, "muted")),
+            line=line,
+            fail=lambda text: err.print(Text.assemble(("✗ ", "bad"), (text, ""))),
+            progress=progress,
+        )
+        ok = serve_shared(settings, out, port=port, demo=demo, demo_dir=demo_dir, demo_minutes=demo_minutes,
+                          allowed_hosts=allowed_hosts)  # fmt: skip
+    if not ok:
+        raise typer.Exit(1)
 
 
 @app.command(rich_help_panel="Experimental")

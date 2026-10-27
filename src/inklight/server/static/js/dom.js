@@ -132,6 +132,7 @@ export const store = {
   docs: [], selected: new Set(), open: null, pages: [], page: 1, structure: null, op: "text",
   marks: [], jobs: new Map(),
   where: "on this computer",  // where documents are read: "on the server" when the workspace is hosted
+  pollProgress: false,  // ask for an import's progress instead of streaming it (the server says so behind a tunnel)
 };
 export function changed(what) { for (const fn of listeners) fn(what); }
 export function onChange(fn) { listeners.add(fn); }

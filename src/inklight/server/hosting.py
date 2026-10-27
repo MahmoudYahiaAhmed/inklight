@@ -54,6 +54,7 @@ class Hosting:
     demo: DemoLimits | None = None
     demo_dir: Path | None = None  # None: a new temporary folder, removed when the server stops
     ip_hosts: bool = False  # on a network bind: any IP address is an accepted host (opening the server by its IP)
+    stream_progress: bool = True  # False behind a tunnel that holds event streams back: the page asks instead
     extra: dict[str, str] = field(default_factory=dict)
 
     @classmethod
