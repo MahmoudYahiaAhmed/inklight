@@ -1,11 +1,12 @@
-.venv
-.git
-.scratch-home
-.scratch-out
-bench
-tests
-examples
-docs
+# The image is built from an allow-list: only what `pip install .` needs. Libraries, documents, models, results,
+# virtual environments and caches never enter the build context.
+*
+!pyproject.toml
+!hatch_build.py
+!README.md
+!LICENSE
+!NOTICE
+!THIRD_PARTY_LICENSES.md
+!src/
 **/__pycache__
-dist
-build
+**/*.py[cod]

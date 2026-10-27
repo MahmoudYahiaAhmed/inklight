@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libglib2.0-0 &&
     && useradd --create-home --uid 10001 inklight
 
 WORKDIR /app
-COPY pyproject.toml README.md LICENSE THIRD_PARTY_LICENSES.md ./
+COPY pyproject.toml hatch_build.py README.md LICENSE NOTICE THIRD_PARTY_LICENSES.md ./
 COPY src ./src
 RUN pip install .
 
