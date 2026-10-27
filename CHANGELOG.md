@@ -5,6 +5,37 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-10-27
+
+The 0.3 line as a normal release: `pip install inklight` now installs it. Nothing in it is new accuracy work; results
+are proposals to check against the page, and Inklight is not suited to unattended processing (README, Limitations).
+
+### Hosting
+- **Accurate start-up summary.** A network bind no longer advertises `http://127.0.0.1:8765`. `inklight serve` shows
+  where it listens (`0.0.0.0` is reported as a bind address, not a browser address), the address visitors use (only
+  the one given with the new `--public-url`, marked as not checked), which host names it accepts, the library it opens
+  and the firewall/security-group rule other machines need. A browser is never opened for a network bind or on a
+  machine without a display.
+- **Private workspace.** A network bind now requires `INKLIGHT_SERVER_TOKEN` (or an explicit `--no-token`). The page
+  asks for the token, sends it in a header and gets an `HttpOnly` cookie derived from it for previews and progress
+  streams; the token is no longer accepted in URLs (`?token=`), so it stays out of proxy and server logs. It is never
+  printed. The summary and the workspace say that everyone with the token shares one library.
+- **Public demo** (`--demo`). Each visitor gets a session with a temporary library of their own (documents, index,
+  questions, reviews, exports, import jobs); ids from another session are unknown on every endpoint, and the owner's
+  library is never opened. Sessions and their files are deleted after 60 minutes (`--demo-minutes`) and when the
+  server stops; the page tells visitors when. Limits: 10 MB, 15 pages and 5 files per upload, 15 documents per
+  visitor (waiting files count), one import and one question at a time per visitor, one import read at a time for
+  everyone with at most 6 waiting ("The demo is busy" otherwise), two page renders or questions at once, 90 changes
+  and 600 requests a minute per visitor, 40 sessions, 12 new sessions per address (IPv6: per /64) per hour. The OCR engine and its models are
+  loaded once for all visitors. Settings, saved outputs, optional models and remote models are off.
+- **Reverse proxies.** The workspace's requests are relative to its page, so it works at a prefix
+  (`https://example.org/inklight/`). Forwarded headers are trusted only from `--trusted-proxy` addresses. Host checks
+  stay on: `--public-url` and `--allowed-host` name the accepted hosts.
+- **Deployment.** [docs/HOSTING.md](docs/HOSTING.md) covers the three modes, HTTPS, Docker and Google Colab;
+  [docs/deploy/](docs/deploy/) is a tested Docker Compose example with Caddy (automatic HTTPS) in front of a private
+  workspace (persistent volumes) and a public demo (memory-backed temporary storage), sharing one model cache. The
+  Docker image now needs a token for its default private workspace.
+
 ## [0.3.0b3] — 2026-10-27 — Developer beta
 
 A small patch to 0.3.0b2. Still a pre-release: install it with `pip install --pre "inklight[structure]"` or pin
