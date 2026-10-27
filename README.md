@@ -21,7 +21,7 @@ Everything Inklight shows is either **what was read** (text, boxes, tables and s
 place on the page) or **a value for you to check**. Documents are read on your computer and never uploaded.
 
 > **Developer beta (0.3.0b2).** For developers and careful users who check results against the page; see
-> [Limitations](#limitations). It is a pre-release, so pip needs `--pre` or the exact version; a plain
+> [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations). It is a pre-release, so pip needs `--pre` or the exact version; a plain
 > `pip install inklight` installs the older 0.1.0.
 
 ## Install and launch
@@ -95,7 +95,7 @@ The screenshots show synthetic documents and public UN letters, from the running
 
 ## Command line
 
-The examples use three synthetic documents from this repository's [examples/](examples/README.md) folder. They
+The examples use three synthetic documents from this repository's [examples/](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/examples/README.md) folder. They
 are not installed with the package; download them (on Windows PowerShell, type `curl.exe`):
 
 ```bash
@@ -131,8 +131,8 @@ with DocumentAgent(structure={"engine": "inklight"}) as agent:
 ```
 
 `DocumentAgent()` without `structure` reads text and fields; `tables()` then says how to turn structure on.
-[examples/quickstart.py](examples/quickstart.py) runs the same steps from a checkout.
-The HTTP API is documented at `/api/docs` while `inklight serve` runs, and in [docs/API.md](docs/API.md).
+[examples/quickstart.py](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/examples/quickstart.py) runs the same steps from a checkout.
+The HTTP API is documented at `/api/docs` while `inklight serve` runs, and in [docs/API.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/API.md).
 
 ## What is supported
 
@@ -184,28 +184,28 @@ file ─► Inklight OCR ─────────────► text lines w
 - **Your library** (documents read, reviews, exports) is stored in `~/.inklight`, outside the Python environment, so
   every installation opens the same library; `inklight serve` prints its folder. Set `INKLIGHT_HOME` to use another
   folder, for example a fresh one to try Inklight. Nothing is added to it until you import a document.
-- **Configuration**: `~/.inklight/config.toml` (see [config.example.toml](config.example.toml)) or environment
+- **Configuration**: `~/.inklight/config.toml` (see [config.example.toml](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/config.example.toml)) or environment
   variables such as `INKLIGHT_LIMITS__MAX_PAGES=50`. Security: text inside documents is treated as data, never as
-  instructions, and the workspace accepts requests only from this computer ([SECURITY.md](SECURITY.md)).
+  instructions, and the workspace accepts requests only from this computer ([SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md)).
 
 ## Evaluation
 
-**[Technical report](evaluation/REPORT.md)** ([printable HTML](evaluation/REPORT.html)): what Inklight 0.3 is, what
+**[Technical report](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/REPORT.md)** ([printable HTML](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/REPORT.html)): what Inklight 0.3 is, what
 was measured on the current build, a comparison with five document parsers using only their published numbers
 (Inklight has run no public parsing benchmark), selected examples and failures.
 
-The measurements behind earlier releases, with every failure, are in [evaluation/](evaluation/README.md): an
+The measurements behind earlier releases, with every failure, are in [evaluation/](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/evaluation/README.md): an
 agent-run workflow evaluation on scanned business documents (the tool completed at most 1 of 38 tasks), question
 answering on 90 documents, and external receipt and invoice datasets. They were taken before the OCR and structure
 models ran inside Inklight. The same models on 17 documents gave identical OCR, identical tables, and the same
-answers on the synthetic structure benchmark; see [CHANGELOG.md](CHANGELOG.md).
+answers on the synthetic structure benchmark; see [CHANGELOG.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CHANGELOG.md).
 
 ## License notice: read before commercial use
 
 Inklight's code is **Apache-2.0**. The **OCR model weights** (downloaded on first use, not bundled) use a **modified
 OpenRAIL-M license**. They are free for research, personal use, and organisations under $20M revenue and under $20M
 funding, and they restrict commercial use that competes with Datalab. Full audit:
-[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).
+[THIRD_PARTY_LICENSES.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/THIRD_PARTY_LICENSES.md).
 
 ## Development
 
@@ -215,4 +215,4 @@ pytest
 ruff check src tests && mypy src
 ```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
+See [CONTRIBUTING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CONTRIBUTING.md) and [CHANGELOG.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/CHANGELOG.md).
