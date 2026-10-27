@@ -79,7 +79,11 @@ export async function upload(files) {
       renderBatch();
     });
     batch.upload = null;
-    follow(res.job, { show: true });
+    if (res?.job) { follow(res.job, { show: true }); return; }
+    // A server started before Inklight was updated keeps its old code: it ignores background=true and answers only
+    // when every file is read, without a job. The files it read are in the library, so say so rather than fail.
+    if (Array.isArray(res?.documents)) { await staleServerResult(res); return; }
+    throw new Error("the server's answer did not describe an import");
   } catch (err) {
     batch.upload = null;
     batch.job = null;
@@ -177,7 +181,7 @@ function renderBatch(error) {
   if (batch.dismissed || (!up && !job && !error)) { el.classList.add("hidden"); return; }
   el.classList.remove("hidden");
   if (error) {
-    fill(el, errorBox(`Upload failed: ${error}. Nothing was imported; your files are unchanged.`),
+    fill(el, errorBox(`Upload failed: ${error}. Your original files are unchanged; the library shows what was imported.`),
       h("div", { class: "next" }, h("button", { class: "btn quiet small", type: "button", onclick: dismiss }, "Close")));
     return;
   }
@@ -254,6 +258,23 @@ function fileRow(job, f, i) {
     h("span", { class: `file-state ${f.state === "failed" ? "bad" : ""}` }, stageText(f, job.kind)),
     active ? h("div", { class: `meter ${known ? "" : "indeterminate"}`, role: "progressbar", "aria-label": `${f.name}: ${stageText(f, job.kind)}`,
       ...(known ? { "aria-valuenow": pct, "aria-valuemin": 0, "aria-valuemax": 100 } : {}) }, h("i", { style: known ? `width:${pct}%` : "" })) : null);
+}
+
+async function staleServerResult(res) {
+  await loadDocs();
+  const read = res.documents.length, failed = (res.failed || []).length;
+  const el = $("#batch");
+  el.classList.remove("hidden");
+  const [kind, word] = !failed ? ["raw", "done"] : read ? ["partial", "partly done"] : ["failed", "failed"];
+  fill(el,
+    h("div", { class: "batch-head" }, h("span", { class: `label ${kind}` }, word),
+      h("b", { class: "grow" }, `${plural(read, "document")} read${failed ? ` · ${failed} could not be read` : ""}`),
+      h("button", { class: "btn quiet small", type: "button", onclick: dismiss }, "Close")),
+    h("p", { class: "muted", role: "status" },
+      "This Inklight server was started before Inklight was updated, so it cannot report progress. Stop it and run ",
+      h("code", {}, "inklight serve"), " again."));
+  announce(`${plural(read, "document")} read. Restart inklight serve to see live progress.`);
+  if (read && !store.open) openDoc(res.documents[0].id, 1, [], { fresh: true });
 }
 
 function dismiss() {
