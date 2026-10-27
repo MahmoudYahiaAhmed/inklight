@@ -1,0 +1,176 @@
+{
+ "what": "Inklight 0.3.0b1 (models run inside Inklight) against 0.2 at 92623e6 (indra-ocr 1.1.2 + docling 2.142.1), same model files, same settings, CPU. Baseline: two runs, identical. Compared: OCR lines (text, box, confidence), page orientation, tables (rows, columns, cells, header flags), layout blocks (label, text, order, box), stored structure. Private documents are listed by kind only.",
+ "installed_wheel_vs_development_tree": "17/17 identical",
+ "documents": [
+  {
+   "document": "UN letter S/2025/455, Arabic",
+   "origin": "public",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.4,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "UN letter S/2025/455, English",
+   "origin": "public",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.8,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "broken PDF",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "identical",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": false,
+   "fails_the_same_way": true
+  },
+  {
+   "document": "private business scan 1 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private business scan 2 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "box positions only",
+   "max_box_deviation_px": 0.8,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private business scan 3 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.2,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private business scan 4 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private business scan 5 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "box positions only",
+   "max_box_deviation_px": 1.4,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private business scan 6 (PDF)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 5.2,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "private scan (image)",
+   "origin": "private",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "identical",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": true,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "invoice scan (image)",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "identical",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": true,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "receipt photo (image)",
+   "origin": "public",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "identical",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": true,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "registration card, Arabic scan",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "box positions only",
+   "max_box_deviation_px": 0.1,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "registration card, English, turned",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "registration card, mixed scan",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "box positions only",
+   "max_box_deviation_px": 0.1,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "report",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "blocks changed",
+   "max_box_deviation_px": 0.0,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  },
+  {
+   "document": "two tables",
+   "origin": "synthetic",
+   "ocr_identical": true,
+   "tables_identical": true,
+   "layout": "box positions only",
+   "max_box_deviation_px": 0.1,
+   "end_to_end_identical": false,
+   "fails_the_same_way": false
+  }
+ ]
+}

@@ -1,0 +1,67 @@
+{
+ "_note": "Externally reported results, quoted from primary sources accessed 2026-10-27. None of these systems was run for this report. Each value names who measured it. Inklight has not run any of these benchmarks.",
+ "parsebench_leaderboard": [
+  {
+   "system": "MinerU2.5-Pro (1.2B)",
+   "overall": 72.78,
+   "visual_grounding": 79.3
+  },
+  {
+   "system": "Chandra-OCR-2",
+   "overall": 70.1,
+   "visual_grounding": 51.2
+  },
+  {
+   "system": "PaddleOCR-VL-1.6",
+   "overall": 67.43,
+   "visual_grounding": 77.8
+  },
+  {
+   "system": "Docling-models",
+   "overall": 50.65,
+   "visual_grounding": 66.11
+  }
+ ],
+ "parsebench_source": {
+  "url": "https://raw.githubusercontent.com/run-llama/ParseBench/main/leaderboard.csv",
+  "measured_by": "LlamaIndex (benchmark owner)",
+  "conditions": "dataset version, system versions, options and hardware not stated on the leaderboard"
+ },
+ "ocria1": {
+  "parsebench_mean_4_dimensions": 0.87,
+  "next_best_same_table": 0.75,
+  "aggregation": "mean of tables, charts, text formatting and text content; visual grounding excluded because OCRia-1 outputs no boxes",
+  "olmocr_bench_official_overall": 84.6,
+  "speed": "2.17 pages/s at 1 request, 10.21 pages/s at 64 concurrent requests, one NVIDIA B200 GPU",
+  "weights": "not released; hosted through LlamaParse",
+  "source": "OCRia-1 Technical Report, LlamaIndex, October 2026, https://www.llamaindex.ai/ocria/ocria-1-technical-report.pdf",
+  "blog": "\"87.4 overall\" across text content, formatting, tables and charts; https://www.llamaindex.ai/blog/parse-ocria-1"
+ },
+ "heron": {
+  "params": "42.9M",
+  "map_doclaynet_test": 0.699,
+  "map_canonical_doclaynet": 0.776,
+  "cpu_s_per_image": 0.643,
+  "cpu": "AMD EPYC 7763, 4 threads, PyTorch",
+  "source": "Livathinos et al., Advanced Layout Analysis Models for Docling, arXiv:2509.11720, Table 3 and 5"
+ },
+ "tableformer": {
+  "teds_structure_pubtabnet": 96.75,
+  "teds_structure_fintabnet": 96.8,
+  "teds_with_content_pubtabnet": 93.6,
+  "source": "Nassar et al., TableFormer, arXiv:2203.01017 v2, Tables 2 and 4",
+  "caveat": "the shipped docling-models checkpoint is not stated to be the paper's model"
+ },
+ "indra_ocr": {
+  "params_all_default_models": "7.3M",
+  "download": "about 76 MB",
+  "omniparsebench_headline": 66.7,
+  "omniparsebench_arabic": 69.2,
+  "arabic_tests": 13,
+  "cpu_pages_per_s_4_cores": 6.2,
+  "cpu": "AMD EPYC 9004 (Genoa)",
+  "measured_by": "Datalab (vendor), on its own OmniParseBench",
+  "stated_not_for": "complex tables, handwriting, old or faded scans",
+  "source": "https://huggingface.co/datalab-to/indra-ocr and https://github.com/datalab-to/indra"
+ }
+}

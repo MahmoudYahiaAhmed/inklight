@@ -32,7 +32,8 @@ redesigned around operations, and the repository is cleaned up.
   - OCR: identical on every page (text, boxes, confidences, orientation).
   - The 3 image files: identical end to end, structure included.
   - Tables: identical on all 17 (rows, columns, cells, header flags).
-  - Layout on PDFs: some region boundaries and labels differ. Docling rendered PDF pages with its own C++
+  - Layout on PDFs differs on all 13 readable PDFs: on 5 only box positions moved (at most 1.4 px), on 8 some
+    blocks are labelled, merged or ordered differently. Docling rendered PDF pages with its own C++
     rasteriser (docling-parse), which is not reproduced bit for bit; the page images are prepared as before (a
     144 dpi render stored as JPEG, an area-average 72 dpi view) to stay as close as possible.
   - Text: no OCR line is lost or added by structure on any document, and the broken file fails the same way.

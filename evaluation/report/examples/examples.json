@@ -1,0 +1,352 @@
+{
+ "inklight_version": "0.3.0b1",
+ "brain": "rules",
+ "structure": "inklight",
+ "arabic_signer": {
+  "request": "من وقع الرسالة؟",
+  "state": "succeeded",
+  "outcome": "proposed",
+  "answer": "فاسيلي نيبينزيا\n\nEvidence: “(توقيع) فاسيلي نيبينزيا”",
+  "warnings": [],
+  "sources": [
+   {
+    "page": 1,
+    "bbox": [
+     342.2,
+     1890.5,
+     568.8,
+     1929.8
+    ],
+    "excerpt": "(توقيع) فاسيلي نيبينزيا"
+   }
+  ],
+  "crop": {
+   "image": "arabic-signer.png",
+   "page_rotation": 0,
+   "boxes_upright": [
+    [
+     342.2,
+     1890.5,
+     568.8,
+     1929.8
+    ]
+   ]
+  }
+ },
+ "tables": {
+  "file": "suppliers.pdf",
+  "tables": [
+   {
+    "index": 1,
+    "page": 1,
+    "header_rows": [
+     0
+    ],
+    "rows": [
+     [
+      "Company name",
+      "Company type"
+     ],
+     [
+      "Alpha Ltd",
+      "Limited company"
+     ]
+    ]
+   },
+   {
+    "index": 2,
+    "page": 1,
+    "header_rows": [
+     0
+    ],
+    "rows": [
+     [
+      "Company name",
+      "Company type"
+     ],
+     [
+      "Beta Ltd",
+      "Limited company"
+     ]
+    ]
+   }
+  ],
+  "page": "suppliers.png"
+ },
+ "turned_share": {
+  "request": "What is Laila Mansour's share?",
+  "state": "succeeded",
+  "outcome": "supported",
+  "answer": "40%\n\nEvidence: “Share: 40%” (table, page 1)",
+  "warnings": [],
+  "sources": [
+   {
+    "page": 1,
+    "bbox": [
+     1367.9,
+     903.5,
+     1434.9,
+     928.6
+    ],
+    "excerpt": "Share\n40%"
+   }
+  ],
+  "crop": {
+   "image": "turned-share.png",
+   "page_rotation": 90,
+   "boxes_upright": [
+    [
+     1367.9,
+     903.5,
+     1434.9,
+     928.6
+    ]
+   ]
+  }
+ },
+ "invoices": [
+  {
+   "file": "invoice_acme.pdf",
+   "invoice_number": {
+    "value": "INV-2041",
+    "source": {
+     "page": 1,
+     "bbox": [
+      200.4,
+      325.0,
+      667.6,
+      359.5
+     ],
+     "excerpt": "INVOICE #INV-2041"
+    }
+   },
+   "total": {
+    "value": 5616.0,
+    "source": {
+     "page": 1,
+     "bbox": [
+      201.2,
+      944.7,
+      443.0,
+      974.2
+     ],
+     "excerpt": "Total: $5,616.00"
+    }
+   }
+  },
+  {
+   "file": "invoice_globex.pdf",
+   "invoice_number": {
+    "value": "GX-7781",
+    "source": {
+     "page": 1,
+     "bbox": [
+      200.3,
+      324.9,
+      658.5,
+      359.8
+     ],
+     "excerpt": "INVOICE #GX-7781"
+    }
+   },
+   "total": {
+    "value": 2640.0,
+    "source": {
+     "page": 1,
+     "bbox": [
+      201.2,
+      944.8,
+      442.9,
+      973.7
+     ],
+     "excerpt": "Total: $2,640.00"
+    }
+   }
+  }
+ ],
+ "ambiguous": {
+  "request": "What is the company name?",
+  "state": "succeeded",
+  "outcome": "ambiguous",
+  "answer": "“Company name” has a different value in each of 2 tables:\n- Alpha Ltd: table on suppliers.pdf, page 1\n- Beta Ltd: table on suppliers.pdf, page 1",
+  "warnings": [
+   "Low confidence: “Company name” is a heading in 2 tables with different values and the question does not say which is meant; name the company, person or document."
+  ],
+  "sources": [
+   {
+    "page": 1,
+    "bbox": [
+     191.8,
+     561.5,
+     333.5,
+     592.2
+    ],
+    "excerpt": "Company name\nAlpha Ltd"
+   },
+   {
+    "page": 1,
+    "bbox": [
+     192.7,
+     901.6,
+     318.9,
+     926.3
+    ],
+    "excerpt": "Company name\nBeta Ltd"
+   }
+  ]
+ },
+ "review": {
+  "predicted": {
+   "company_name": "Golden Palm Trading",
+   "tax_office": "Dokki Tax Office"
+  },
+  "export": "review-export.csv"
+ },
+ "limit_turned_card_extract": {
+  "fields": {
+   "company_name": "Golden Palm Trading",
+   "registration_number": null
+  },
+  "tables": [
+   {
+    "index": 1,
+    "page": 1,
+    "header_rows": [
+     0
+    ],
+    "rows": [
+     [
+      "Company name",
+      "Company type",
+      "Registration number",
+      "Registration date"
+     ],
+     [
+      "Golden Palm Trading Co.",
+      "Limited liability company",
+      "47319",
+      "12/03/2024"
+     ]
+    ]
+   },
+   {
+    "index": 2,
+    "page": 1,
+    "header_rows": [
+     0
+    ],
+    "rows": [
+     [
+      "Name",
+      "Role",
+      "Share"
+     ],
+     [
+      "Samuel Reed",
+      "Manager 60%",
+      ""
+     ],
+     [
+      "Laila Mansour",
+      "Partner",
+      "40%"
+     ]
+    ]
+   },
+   {
+    "index": 3,
+    "page": 1,
+    "header_rows": [
+     0
+    ],
+    "rows": [
+     [
+      "Tax registration number",
+      "Tax office"
+     ],
+     [
+      "520-881-306",
+      "Dokki Tax Office"
+     ]
+    ]
+   }
+  ],
+  "registration_number_by_question": "47319\n\nEvidence: “Registration number: 47319” (table, page 1)"
+ },
+ "limit_arabic_letterhead": {
+  "query": "مجلس الأمن",
+  "first_hit": {
+   "page": 1,
+   "bbox": [
+    341.1,
+    194.9,
+    1364.8,
+    643.5
+   ],
+   "excerpt": "جلس الأمن\nرسالة مؤرخة 12 حزيران/يونيه 2025 موجهة إلى رئيسة مجلس الأمن من الممثل الدائم للاتحاد الروسي لدى الأمم المتحدة"
+  },
+  "line": {
+   "text": "جلس الأمن",
+   "conf": 0.8748,
+   "bbox": [
+    1110.3,
+    194.9,
+    1308.9,
+    269.6
+   ]
+  },
+  "crop": {
+   "image": "arabic-letterhead.png",
+   "page_rotation": 0,
+   "boxes_upright": [
+    [
+     1110.3,
+     194.9,
+     1308.9,
+     269.6
+    ]
+   ]
+  }
+ },
+ "limit_arabic_date": {
+  "request": "ما تاريخ الرسالة؟",
+  "state": "succeeded",
+  "outcome": "proposed",
+  "answer": "رسالة مؤرخة 12 حزيران/يونيه 2025 موجهة إلى رئيسة مجلس الأمن من الممثل الدائم للاتحاد الروسي لدى الأمم المتحدة",
+  "warnings": [
+   "Low confidence: the evidence only weakly supports this answer. Check the cited passage."
+  ],
+  "sources": [
+   {
+    "page": 1,
+    "bbox": [
+     341.1,
+     544.8,
+     1364.8,
+     643.5
+    ],
+    "excerpt": "رسالة مؤرخة 12 حزيران/يونيه 2025 موجهة إلى رئيسة مجلس الأمن من الممثل الدائم للاتحاد الروسي لدى الأمم المتحدة"
+   },
+   {
+    "page": 1,
+    "bbox": [
+     167.3,
+     121.4,
+     1355.8,
+     2110.6
+    ],
+    "excerpt": "وأرجو ممتنا تعميم هذه الرسالة باعتبارها وثيقة من وثائق مجلس الأمن.\n(توقيع) فاسيلي نيبينزيا\ng\nالرجاء إعادة استعمال الورق\nالأمم المتحدة\nS/2025/380\n23062"
+   },
+   {
+    "page": 1,
+    "bbox": [
+     332.3,
+     675.2,
+     1364.0,
+     1794.4
+    ],
+    "excerpt": "فيما يتصل بتقرير مجلس الأمن إلى الجمعية العامة لعام 2024، الذي اعتمده مجلس الأمن في 30 أيار /مايو 2025، أود موافاتكم بما يلي: تولى الاتحاد الروسي، بصفته رئيس مجلس الأمن لشهر تموز /يوليه 2024، مسؤولية صياغة مقدمة التقرير . وقد بذلنا قصارى جهدنا لتنظيم عملية التفاوض بطريقة شفافة وبناءة، مع الالتزام بالمواعيد، ومع مشاركة نشطة من جميع أعضاء المجلس، بغية إعداد عرض عام متسق وزاخر بالمعلومات عن عمل المجلس في عام 2024. وبالإضافة إلى ذلك، واصلنا في كانون الثاني/يناير الممارسة المتمثلة في إجراء المناقشات غير الرسمية المذكورة في مذكرة رئيسة مجلس الأمن (S/2024/507)، وقمنا، قبيل العمل على التقرير، بالاشتراك مع رئيس الجمعية العامة، بتنظيم جلسة التحاور ذات الصلة، التي تمكنت فيها جميع الدول الأعضاء من التعبير عن رائها بشأن الوثيقة. وقد يسرت هذه العملية التشاورية الواسعة النطاق التي أجرتها روسيا التوصل إلى توافق في الأراء بشأن نص المقدمة، الذي تمت الموافقة عليه بنجاح، في 10 شباط/فبراير 2025، في إطار إجراء عدم الاعتراض. ولم يبد أي وفد أي اعتراض. وبناءً على ذلك، اعتمد مجلس الأمن التقرير في مجموعه في 30 أيار/مايو، بما يتفق تماما مع الفقرة 151 من المذكرة المذكورة أعلاه (S/2024/507). وقد أحطنا علما بالشواغل التي أعرب عنها وفد سيراليون خلال اعتماد مجلس الأمن للتقرير، ولكننا نأسف لأنه لم يعرب عنها ضمن الجدول الزمني المحدد لمناقشة مقدمة التقرير. ولا يمكن لتنتقيح مقررات المجلس المتفق عليها تنقيحاً بأثر رجعي أن يكون مقبولاً، وهو أمر يتنافى مع منطق هذه الهيئة وممارستها وإجراءاتها. ولو جرى إرساء سابقة من هذا القبيل لأضر ذلك بالمبادئ الأساسية التي تستند إليها عملية صنع القرار في المجلس، ولعرّض ذلك بدوره سلطة المجلس التي تعود لثمانين عاما للخطر. ولذلك، فإن نعرب عن امتنائنا لجميع أعضاء المجلس على تفهمهم وروح التعاون التي أبدوها، وهو ما سمح لمجلس الأمن بتقديم تقريره إلى الجمعية العامة."
+   }
+  ]
+ }
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 770 160" width="770" height="160" role="img" aria-labelledby="t d"><title id="t">Internal improvement: structuring 6 synthetic documents</title><desc id="d">Seconds to add 6 documents with structure, from stored OCR</desc><style>
+svg{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
+.t1{fill:#17181a}.t2{fill:#55575c}.t3{fill:#7c7e83}.grid{stroke:#e4e4e1}.axis{stroke:#b9bab6}
+.c-ok{fill:#2a78d6}.c-okf{fill:#1baf7a}.c-wf{fill:#eda100}.c-sw{fill:#e34948}.c-miss{fill:url(#hatch)}
+.c-acc{fill:#0a8fb0}.c-mut{fill:#c9cac6}.hatch-l{stroke:#9b9c98}.hatch-b{fill:#f1f1ee}.gap{stroke:#fcfcfb}
+.box{fill:#fcfcfb;stroke:#c9cac6}.box-acc{fill:#e6f5f9;stroke:#0a8fb0}.line{stroke:#9b9c98}.bg{fill:#fcfcfb}
+@media (prefers-color-scheme:dark){
+.t1{fill:#ecedea}.t2{fill:#b9bab4}.t3{fill:#8e8f8a}.grid{stroke:#2c2d2f}.axis{stroke:#4a4b4e}
+.c-ok{fill:#3987e5}.c-okf{fill:#199e70}.c-wf{fill:#c98500}.c-sw{fill:#d55181}.c-acc{fill:#22b8d8}.c-mut{fill:#4a4b4e}
+.hatch-l{stroke:#77786f}.hatch-b{fill:#232426}.gap{stroke:#17181a}.box{fill:#1d1e20;stroke:#3a3b3e}
+.box-acc{fill:#0d2f38;stroke:#22b8d8}.line{stroke:#6b6c68}.bg{fill:#17181a}}
+@media print{.bg{fill:#fff}}
+</style>
+<defs><pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+<rect class="hatch-b" width="6" height="6"/><line class="hatch-l" x1="0" y1="0" x2="0" y2="6" stroke-width="2"/></pattern></defs><rect class="bg" width="770" height="160"/><text class="t1" x="20" y="28" font-size="15" font-weight="600">Internal improvement: structuring 6 synthetic documents</text><line class="axis" x1="210" y1="44" x2="210" y2="116"/><text class="t1" x="198" y="66" font-size="13" text-anchor="end">0.2 (docling runtime)</text><rect class="c-mut" x="210" y="52" width="419.6" height="20" rx="3"><title>0.2 (docling runtime): 18.1 s</title></rect><text class="t2" x="637.6" y="66" font-size="12">18.1 s</text><text class="t1" x="198" y="98" font-size="13" text-anchor="end">0.3.0b1 (inside Inklight)</text><rect class="c-acc" x="210" y="84" width="264.3" height="20" rx="3"><title>0.3.0b1 (inside Inklight): 11.4 s</title></rect><text class="t2" x="482.3" y="98" font-size="12">11.4 s</text><text class="t3" x="20" y="146" font-size="11">Same CPU (Ryzen 7 8700F), same OCR replayed, same answers. Peak memory 1242 → 1124 MB. Not comparable with any GPU throughput.</text></svg>
