@@ -253,7 +253,7 @@ function watchDownloads() {
     }
     try {
       const s = await api("/api/status");
-      const now = Object.entries(s.downloads || {}).filter(([, d]) => d.state === "downloading");
+      const now = Object.entries(s.downloads || {}).filter(([, d]) => d.state === "downloading" || d.state === "waiting");
       if (now.length || downloads.length) { downloads = now; renderBatch(); }
     } catch (_) { /* the next tick tries again */ }
   }, 1500);
@@ -262,6 +262,13 @@ function watchDownloads() {
 function downloadRows() {
   const mb = (n) => (n / 1e6).toFixed(0);
   return downloads.map(([key, d]) => {
+    if (d.state === "waiting") {
+      // Another Inklight process (a second server, the CLI) is downloading the same models: no bytes to show here.
+      return h("div", { class: "file" }, h("span", { class: "dot active", "aria-hidden": "true" }),
+        h("span", { class: "file-name" }, `Waiting for the ${MODEL_NAMES[key] || key} models`),
+        h("span", { class: "file-state" }, "another Inklight process is downloading them"),
+        h("div", { class: "meter indeterminate", role: "progressbar", "aria-label": "Waiting for a model download" }, h("i")));
+    }
     const pct = d.total ? Math.round((100 * d.done) / d.total) : 0;
     return h("div", { class: "file" }, h("span", { class: "dot active", "aria-hidden": "true" }),
       h("span", { class: "file-name" }, `Downloading the ${MODEL_NAMES[key] || key} models (first use)`),

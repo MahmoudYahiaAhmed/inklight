@@ -7,8 +7,10 @@ Each model set lists its files with their size and SHA-256. A set is found, in t
 3. the Hugging Face cache, when a copy of the same revision is already there (nothing is copied).
 
 Otherwise it is downloaded once into Inklight's cache: each file to ``<name>.part``, resumed after an interruption,
-checked against its hash, then moved into place. With ``INKLIGHT_OFFLINE=1`` (or ``HF_HUB_OFFLINE=1``) nothing is
-downloaded and a missing set is reported with the command that fetches it.
+checked against its hash, then moved into place. Only one process downloads a set at a time: a second server or CLI
+asking for the same set waits for the first (an OS file lock, released even if that process dies), then uses its
+copy, so two processes never write, delete or rename the same partial file. With ``INKLIGHT_OFFLINE=1`` (or
+``HF_HUB_OFFLINE=1``) nothing is downloaded and a missing set is reported with the command that fetches it.
 """
 
 from __future__ import annotations
@@ -16,11 +18,15 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import threading
+import time
 import urllib.request
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
+from typing import IO
 
 from .errors import ModelUnavailable
 
@@ -251,7 +257,9 @@ def ensure(model: ModelSet, local_dir: str | Path | None = None, progress: Progr
             f"The {model.title} models are not installed and Inklight is offline. "
             "Run `inklight models pull` once with network access."
         )
-    with _set_lock(model.key):  # one download of a set at a time (a preload and a request may both ask)
+    # One download of a set at a time: threads of this process (a preload and a request may both ask), then other
+    # processes sharing the cache (a second server, the CLI). Whoever waited finds the finished copy.
+    with _set_lock(model.key), _process_lock(model):
         found = locate(model, local_dir)
         return found if found is not None else _download(model, progress)
 
@@ -259,6 +267,70 @@ def ensure(model: ModelSet, local_dir: str | Path | None = None, progress: Progr
 def _set_lock(key: str) -> threading.Lock:
     with _LOCK:
         return _SET_LOCKS.setdefault(key, threading.Lock())
+
+
+LOCK_WAIT = 3600.0  # seconds to wait for another process's download of the same set before giving up
+_POLL = 0.5
+
+
+@contextmanager
+def _process_lock(model: ModelSet) -> Iterator[None]:
+    """Hold the cache's lock file for ``model`` while downloading it. The OS releases the lock when the holder
+    exits, so a killed download never blocks the next one, and its partial file is resumed by whoever goes next."""
+    path = cache_root() / ".locks" / f"{model.repo.replace('/', '--')}--{model.revision}.lock"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a+b") as handle:
+        deadline = time.monotonic() + LOCK_WAIT
+        waiting = False
+        while not _try_lock(handle):
+            if not waiting:
+                waiting = True
+                _set_status(model.key, "waiting", 0, model.size)  # another process is downloading this set
+            if time.monotonic() > deadline:
+                _clear_status(model.key)
+                raise ModelUnavailable(
+                    f"Another Inklight process has been downloading the {model.title} models for over "
+                    f"{LOCK_WAIT / 60:.0f} minutes. Let it finish, or stop it and run `inklight models pull`."
+                )
+            time.sleep(_POLL)
+        try:
+            yield
+        finally:
+            if waiting:
+                _clear_status(model.key)
+            _unlock(handle)
+
+
+def _try_lock(handle: IO[bytes]) -> bool:
+    """Take an exclusive lock on the first byte of ``handle`` without waiting; False if another process has it."""
+    try:
+        if sys.platform == "win32":
+            import msvcrt
+
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        return False
+    return True
+
+
+def _unlock(handle: IO[bytes]) -> None:
+    try:
+        if sys.platform == "win32":
+            import msvcrt
+
+            handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+    except OSError:
+        pass  # closing the handle releases it anyway
 
 
 def _download(model: ModelSet, progress: Progress | None) -> Path:

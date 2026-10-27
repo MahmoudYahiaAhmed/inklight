@@ -15,10 +15,12 @@ async function loadStatus() {
   $("#build").textContent = `Inklight ${s.version} · ${s.commit}`;
   setStructureInstalled(Boolean(s.structure?.installed));
   const downloading = Object.values(s.downloads || {}).find((d) => d.state === "downloading");
+  const waiting = Object.values(s.downloads || {}).some((d) => d.state === "waiting");
   const chip = $("#status-chip");
   const text = chip.querySelector("span");
-  if (downloading) {
-    text.textContent = `Downloading models ${Math.round((100 * downloading.done) / downloading.total)}%`;
+  if (downloading || waiting) {
+    // "waiting": another Inklight process is downloading the same models; this one has no bytes to count.
+    text.textContent = downloading ? `Downloading models ${Math.round((100 * downloading.done) / downloading.total)}%` : "Waiting for models";
     setTimeout(loadStatus, 1500);
   } else {
     text.textContent = s.models.remote?.configured ? "Local + remote model" : "On this computer";
