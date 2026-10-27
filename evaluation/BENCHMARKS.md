@@ -253,7 +253,7 @@ Build I's ONNX call counts on dev equal H's. H itself makes 210 more OCR calls t
 vs 1,235). These are second readings by the amount-consistency check, triggered by its format or magnitude
 signal, that agreed with the first reading and flagged nothing.
 
-Results: `evaluation/results/external/partial-I-*.json`, `provenance_partial.md`.
+Results: `partial-I-*.json` (archived at [`146d275`](https://github.com/MahmoudYahiaAhmed/inklight/tree/146d27556684cdd872b41e3de37d619092e1fe02/evaluation/results/external)), `provenance_partial.md`.
 
 ### Development split: baseline → fixes
 

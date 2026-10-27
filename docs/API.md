@@ -65,7 +65,7 @@ csv_text = agent.reviews.export("csv", actor="ana")       # approved reviews onl
 ```
 
 Predictions are frozen when a review opens; decisions are stored next to them, never over them; the
-history (`agent.reviews.events(review.id)`) is append-only. See [pilot/README.md](../pilot/README.md).
+history (`agent.reviews.events(review.id)`) is append-only. The archived invoice pilot ([pilot/README.md at `146d275`](https://github.com/MahmoudYahiaAhmed/inklight/blob/146d27556684cdd872b41e3de37d619092e1fe02/pilot/README.md)) used this to compare reviewed values with predictions.
 
 ## CLI
 

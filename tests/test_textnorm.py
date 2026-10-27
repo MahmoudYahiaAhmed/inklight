@@ -1,6 +1,5 @@
 """Comparison keys keep every script: different Arabic (and other non-Latin) names never compare equal."""
 
-import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -14,14 +13,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "bench"))
 import scoring  # noqa: E402
 import textnorm as bench_textnorm  # noqa: E402
-
-
-def _pilot(name):
-    spec = importlib.util.spec_from_file_location(f"pilot_{name}_tn", ROOT / "pilot" / f"{name}.py")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
 
 ARABIC_A, ARABIC_B = "شركة النور للتجارة", "مؤسسة الأمل"
 
@@ -61,17 +52,13 @@ def test_the_bench_copy_is_identical_to_the_product():
     assert body(ROOT / "bench" / "textnorm.py") == body(ROOT / "src" / "inklight" / "textnorm.py")
 
 
-def test_pilot_evaluation_and_vendor_groups_keep_arabic_names_apart():
-    evaluate, intake = _pilot("evaluate"), _pilot("intake")
-    assert not evaluate.same("vendor", ARABIC_A, ARABIC_B)
-    assert evaluate.same("vendor", "مُحَمَّد للتجارة", "محمد للتجارة")
-    assert intake.vendor_key(ARABIC_A) != intake.vendor_key(ARABIC_B)
-    assert intake.vendor_key("ACME Supplies, Ltd.") == intake.vendor_key("Acme Supplies Ltd")
-
-
 def test_historical_scores_are_unchanged_by_the_new_normalisation():
-    """Every saved prediction rescored with the new comparison gives the stored outcome."""
-    files = sorted((ROOT / "evaluation" / "results" / "external" / "rescored").glob("*.json"))
+    """Every stored prediction rescored with the new comparison gives the stored outcome.
+
+    The active tree keeps the 0.3 reruns and build H on the fresh split; the other archived runs (evaluation/ARCHIVE.md)
+    can be restored to check all 21,632 rows."""
+    external = ROOT / "evaluation" / "results" / "external"
+    files = sorted([*external.glob("v030-*.json"), *(external / "rescored").glob("*.json")])
     assert files
     checked = 0
     for f in files:
@@ -79,4 +66,4 @@ def test_historical_scores_are_unchanged_by_the_new_normalisation():
             again = scoring.outcome(row["field"], row["got"], row["want"], row["warning"], row["confidence"])
             assert again == row["outcome5"], (f.name, row["doc"], row["field"])
             checked += 1
-    assert checked > 10_000
+    assert checked > 2_500

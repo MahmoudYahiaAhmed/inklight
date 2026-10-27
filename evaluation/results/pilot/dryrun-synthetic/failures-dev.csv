@@ -1,3 +1,0 @@
-outcome,document,vendor_group,layout,field,predicted,predicted_raw,final,method,confidence,warning,review_id
-wrong_unflagged,synthetic-invoice/dev/2198e013a60770ef.jpg,jacobson wilson,voxel51-template,total,285.96,"$ 285,96",259.96,label-row-column,0.95,,e25396d2b43d49f5
-wrong_flagged,synthetic-invoice/dev/8ac1d599df643384.jpg,smith campbell and gonzales,voxel51-template,vendor,Prehistory to Now by,Prehistory to Now by,"Smith, Campbell and Gonzales",label,0.7,2 different values found; chose the strongest label match,0233b4133c17409a

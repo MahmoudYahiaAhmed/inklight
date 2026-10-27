@@ -3,8 +3,14 @@
 Produced by `bench/external.py` and summarised by `bench/summarize_external.py`. Methods and conclusions are in
 [evaluation/BENCHMARKS.md](../../../evaluation/BENCHMARKS.md#external-datasets).
 
+Only the 0.3 reruns (`v030-*`), build H on the fresh split (`rescored/fresh*-H-*`), the truth corrections and the
+provenance notes are in the active tree. The other runs below are archived at commit
+[`146d275`](https://github.com/MahmoudYahiaAhmed/inklight/tree/146d27556684cdd872b41e3de37d619092e1fe02/evaluation/results/external); see
+[../../ARCHIVE.md](../../ARCHIVE.md).
+
 | Prefix | Meaning |
 |---|---|
+| `v030-*` | the current build (0.3) on dev and holdout; `v030-prefix-*` the same run before one fix, for the report |
 | `base-*` | dev-split baseline, saved before any change (A = PyPI 0.1.0, B = `d0fac3d`) |
 | `fix1-C-*`, `fix2-D-*` | dev split after each round of fixes |
 | `final-*` | the planned holdout run (A, B) and build F (`05206d7`) on holdout and dev; see the execution history in evaluation/BENCHMARKS.md |

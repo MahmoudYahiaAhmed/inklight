@@ -59,5 +59,5 @@ python -I bench/usecases/summarize.py runs/dev-auto/usecases.json runs/dev-rules
 python -I bench/usecases/retrieval_ablation.py --library runs/dev-auto/home --models <models dir>
 ```
 
-`<models dir>` holds `indra/` (the OCR models) and `small/` (the reader and embedder), as written by
-`pilot/freeze.py freeze --models-out`. Run the scripts with the interpreter of the build you are measuring.
+`<models dir>` holds `indra/` (the OCR models) and `small/` (the reader and embedder). The archived
+`pilot/freeze.py freeze --models-out` wrote it (see [evaluation/ARCHIVE.md](../../evaluation/ARCHIVE.md)). Run the scripts with the interpreter of the build you are measuring.
