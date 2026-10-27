@@ -25,7 +25,7 @@ from .errors import InklightError, InputRejected, OCRError
 from .extract import classify
 from .ocr import OCREngine, PlainTextEngine, create_engine
 from .retrieval import Retriever
-from .safety import check_file, discover, injection_signals
+from .safety import check_file, discover, injection_signals, needs_ocr
 from .schemas import BBox, DocStatus, DocumentContent, DocumentInfo, PageContent, SearchHit
 from .store import Store
 
@@ -121,7 +121,7 @@ class Library:
         files, skipped = discover(list(paths), self.settings.limits.max_files_per_task)
         report = IngestReport(warnings=skipped)
         structured = self.settings.structure.enabled
-        if structured and files:
+        if structured and any(needs_ocr(f) for f in files):
             self._preload_structure()  # the structure models load while the OCR reads the first document
         # With structure on, document i is structured on one worker while the OCR reads document i+1.
         worker = ThreadPoolExecutor(max_workers=1, thread_name_prefix="inklight-structure") if structured else None

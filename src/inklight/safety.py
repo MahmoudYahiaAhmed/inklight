@@ -29,6 +29,11 @@ DOC_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".we
 SUPPORTED_EXTENSIONS = DOC_EXTENSIONS | TEXT_EXTENSIONS
 
 
+def needs_ocr(path: Path) -> bool:
+    """Whether reading this file can need the OCR (and structure) models: PDFs and images. Text files never do."""
+    return path.suffix.lower() in DOC_EXTENSIONS
+
+
 @dataclass(frozen=True)
 class CheckedFile:
     path: Path

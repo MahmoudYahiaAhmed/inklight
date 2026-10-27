@@ -121,7 +121,12 @@ def _ensure_models(settings) -> None:  # type: ignore[no-untyped-def]
 
 
 def _ingest_with_progress(agent, paths: list[str], password: str | None = None, force: bool = False):  # type: ignore[no-untyped-def]
-    _ensure_models(agent.settings)
+    from .safety import discover, needs_ocr
+
+    # Fetch models up front only for files that can need them: text files are read without any model.
+    files, _ = discover(list(paths), agent.settings.limits.max_files_per_task)
+    if any(needs_ocr(f) for f in files):
+        _ensure_models(agent.settings)
     with _progress() as bar:
         task = bar.add_task("Reading documents", total=None)
 
