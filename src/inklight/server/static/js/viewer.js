@@ -130,7 +130,8 @@ function drawMarks(p, overlay, img) {
     const [bx, by] = shown(bbox[2], bbox[3]);
     return [Math.min(ax, bx) / ow, Math.min(ay, by) / oh, Math.abs(bx - ax) / ow, Math.abs(by - ay) / oh];
   };
-  const style = ([x, y, w, hh]) => `left:${x * 100}%;top:${y * 100}%;width:${w * 100}%;height:${hh * 100}%`;
+  const pct = (v) => (Number.isFinite(Number(v)) ? Number(v) * 100 : 0);  // boxes are numbers; anything else is 0
+  const style = ([x, y, w, hh]) => `left:${pct(x)}%;top:${pct(y)}%;width:${pct(w)}%;height:${pct(hh)}%`;
   overlay.classList.toggle("no-regions", !$("#show-regions").checked);
   const stagger = view.fresh && !reducedMotion() ? Math.min(18, 600 / Math.max(p.blocks.length, 1)) : 0;
   p.blocks.forEach((b, i) => {
@@ -143,7 +144,7 @@ function drawMarks(p, overlay, img) {
     const box = place(m.bbox);
     const el = h("div", { class: `mark ${m.kind}`, title: m.title || "", style: style(box) });
     overlay.append(el);
-    if (m.label) overlay.append(h("div", { class: `mark-label ${m.kind}`, style: `left:${box[0] * 100}%;top:${box[1] * 100}%` }, m.label));
+    if (m.label) overlay.append(h("div", { class: `mark-label ${m.kind}`, style: `left:${pct(box[0])}%;top:${pct(box[1])}%` }, m.label));
     first = first || box;
   }
   if (first) {

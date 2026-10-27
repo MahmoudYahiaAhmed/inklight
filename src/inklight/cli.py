@@ -101,6 +101,11 @@ def _ensure_models(settings) -> None:  # type: ignore[no-untyped-def]
     for model, local in wanted:
         if modelstore.locate(model, local) is not None:
             continue
+        if modelstore.offline():
+            try:
+                modelstore.ensure(model, local)  # says what is missing and how to fetch it
+            except InklightError as exc:
+                _fail(exc)
         mb = model.size / 1e6
         console.print(Text(f"First use: downloading the {model.title} models ({mb:.0f} MB, once).", "accent"))
         with _progress() as bar:
@@ -609,21 +614,16 @@ def doctor(config: ConfigOpt = None) -> None:
     for role, info in Brain(settings).status().items():
         if role == "remote":
             rows.append(("remote model", "configured" if info["configured"] else "off (local only)", True))
-        else:
-            rows.append(
-                (
-                    f"{role} ({info['params']})",
-                    info["repo"] + (" ✓" if info["installed"] else " — not installed"),
-                    info["installed"] or role == "writer",
-                )
-            )
+        else:  # optional: used by Ask and English search only, so never a failure
+            note = "installed" if info["installed"] else "not installed (optional, for Ask)"
+            rows.append((f"Ask {role} ({info['params']})", note, True))
     for name, value, ok in rows:
         console.print(
-            Text.assemble(("✓ " if ok else "✗ ", "ok" if ok else "bad"), (f"{name:<18}", "muted"), (value, ""))
+            Text.assemble(("✓ " if ok else "✗ ", "ok" if ok else "bad"), (f"{name:<20}", "muted"), (value, ""))
         )
     if not all(ok for *_, ok in rows):
         console.print(
-            Text("\nMissing models? Run: inklight models pull   (or keep using rules mode — it works offline)", "warn")
+            Text("\nRun: inklight models pull   (downloads the missing models once; then it all works offline)", "warn")
         )
 
 

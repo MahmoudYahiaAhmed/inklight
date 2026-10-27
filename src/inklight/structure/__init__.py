@@ -50,6 +50,7 @@ def structure_document(
         "load_seconds": round(result.load_seconds, 2),
         "cells_delivered": result.cells_delivered,
         "pages_structured": result.pages,
+        "pages_without_text": result.without_text,  # structured with no OCR text cells: their layout keeps no text
     }
     return Structured(
         content=content.model_copy(update={"pages": tuple(adapted.pages)}),

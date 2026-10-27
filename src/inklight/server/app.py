@@ -255,11 +255,15 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         saved, rejected = await _save_uploads(files)
         if background:
             job = state["imports"].start_import(
-                saved, rejected, a.library.add, lambda report: _import_result(report, rejected)
+                saved,
+                rejected,
+                a.library.add,
+                lambda report: _import_result(report, rejected),
+                on_error=_discard_all,
             )
             return {"job": job}
         try:
-            report = await run_in_threadpool(a.library.add, list[str | Path](saved)) if saved else None
+            report = await run_in_threadpool(_add_exclusively, a, list[str | Path](saved)) if saved else None
         except Exception:
             for path in saved:  # never leave orphaned uploads behind
                 _discard(Path(path))
@@ -304,6 +308,14 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         job = state["imports"].start_import([path], [], lib.add, finish, kind="structure")
         return {"job": job}
 
+    def _discard_all(paths: list[Path]) -> None:
+        for path in paths:
+            _discard(path)
+
+    def _add_exclusively(a: DocumentAgent, paths: list[str | Path]) -> Any:
+        with state["imports"].runner:  # one library read at a time, background jobs included
+            return a.library.add(paths)
+
     @app.get("/api/jobs")
     def jobs() -> list[dict[str, Any]]:
         """Recent imports, newest first, so a reloaded page can find one still running."""
@@ -325,7 +337,7 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
         async def stream() -> AsyncIterator[str]:
             version = -1
             while True:
-                snap = await run_in_threadpool(state["imports"].wait, job_id, version, 15.0)
+                snap = await run_in_threadpool(state["imports"].wait, job_id, version, 5.0)
                 if snap is None:
                     return
                 if snap["version"] == version:

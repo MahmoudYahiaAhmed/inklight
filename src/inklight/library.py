@@ -261,6 +261,10 @@ class Library:
         try:
             content = engine.read(checked.path, max_pages=self.settings.limits.max_pages, password=password)
         except OCRError as exc:
+            if existing and existing.sha256 == checked.sha256 and existing.status == DocStatus.READY:
+                # Read again only to add its structure: the reading already stored stays as it was.
+                self.store.upsert_document(existing)
+                raise
             self.store.clear_content(doc_id)  # an old extraction of a changed file must not stay searchable
             self.store.upsert_document(base.model_copy(update={"status": DocStatus.FAILED, "error": str(exc)}))
             raise

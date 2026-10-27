@@ -128,6 +128,7 @@ TABLES_FAST = ModelSet(
 SETS = {s.key: s for s in (OCR, LAYOUT, TABLES, TABLES_FAST)}
 
 _LOCK = threading.Lock()
+_SET_LOCKS: dict[str, threading.Lock] = {}
 _STATUS: dict[str, dict[str, int | str]] = {}  # set key -> {"state", "done", "total"}: shown while downloading
 
 
@@ -250,7 +251,14 @@ def ensure(model: ModelSet, local_dir: str | Path | None = None, progress: Progr
             f"The {model.title} models are not installed and Inklight is offline. "
             "Run `inklight models pull` once with network access."
         )
-    return _download(model, progress)
+    with _set_lock(model.key):  # one download of a set at a time (a preload and a request may both ask)
+        found = locate(model, local_dir)
+        return found if found is not None else _download(model, progress)
+
+
+def _set_lock(key: str) -> threading.Lock:
+    with _LOCK:
+        return _SET_LOCKS.setdefault(key, threading.Lock())
 
 
 def _download(model: ModelSet, progress: Progress | None) -> Path:
@@ -271,7 +279,7 @@ def _download(model: ModelSet, progress: Progress | None) -> Path:
     except ModelUnavailable:
         _set_status(model.key, "failed", done, total)
         raise
-    except OSError as exc:
+    except Exception as exc:  # noqa: BLE001 - network, disk or protocol errors: one clear message
         _set_status(model.key, "failed", done, total)
         raise ModelUnavailable(
             f"Could not download the {model.title} models ({type(exc).__name__}: {exc}). Check the network "
@@ -296,18 +304,24 @@ def _fetch(model: ModelSet, spec: ModelFile, target: Path, done: int, total: int
         request.add_header("Range", f"bytes={have}-")
     if have < spec.size:
         with urllib.request.urlopen(request, timeout=60) as response:  # noqa: S310 - https checked above
+            final = getattr(response, "geturl", lambda: url)()
+            if not str(final).startswith("https://"):
+                raise ModelUnavailable(f"A model download was redirected to a non-https address ({final})")
             if have and response.status != 206:  # the server ignored the range: start over
                 have = 0
             with part.open("ab" if have else "wb") as out:
-                while chunk := response.read(_CHUNK):
-                    out.write(chunk)
+                while have < spec.size and (chunk := response.read(min(_CHUNK, spec.size - have))):
+                    out.write(chunk)  # never more than the file's known size
                     have += len(chunk)
                     _set_status(model.key, "downloading", done + have, total)
                     if progress:
                         progress(model.title, done + have, total)
     if _sha256(part) != spec.sha256:
         part.unlink()
-        raise ModelUnavailable(f"{spec.path} of {model.title} failed its hash check after download; run it again")
+        raise ModelUnavailable(
+            f"{spec.path} of {model.title} failed its hash check after download and was deleted; "
+            "run `inklight models pull` again to fetch it anew"
+        )
     os.replace(part, target)
     return done + spec.size
 

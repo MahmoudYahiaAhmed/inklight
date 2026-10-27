@@ -36,6 +36,7 @@ class StructureRun:
     components: dict[str, str]
     pages: list[int] = field(default_factory=list)  # the pages structured
     upright: list[int] = field(default_factory=list)  # pages the OCR read turned, structured turned upright
+    without_text: list[int] = field(default_factory=list)  # pages whose OCR lines could not be placed (frame mismatch)
 
 
 def available() -> bool:
@@ -91,10 +92,15 @@ def run(path: Path, content: DocumentContent, settings: StructureSettings, passw
     numbers = [p.number for p in chosen]
     backends = pdf_pages(path, numbers, password, turns) if pdf else image_pages(path, numbers, turns)
     delivered = 0
+    without_text: list[int] = []
 
     def cells_for(number: int, size: Any) -> list[Any]:  # pages are rendered one at a time, as they are structured
         nonlocal delivered
-        cells = _cells(chosen[number - 1], size)
+        page = chosen[number - 1]
+        cells = _cells(page, size)
+        if not cells and any(ln.text.strip() and ln.bbox for ln in page.lines):
+            without_text.append(page.number)
+            log.warning("structure: page %d's OCR lines do not fit its image frame; no text cells given", page.number)
         delivered += len(cells)
         return cells
 
@@ -108,6 +114,7 @@ def run(path: Path, content: DocumentContent, settings: StructureSettings, passw
         components=components(settings),
         pages=numbers,
         upright=sorted(turns),
+        without_text=without_text,
     )
 
 

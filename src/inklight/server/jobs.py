@@ -64,6 +64,7 @@ class Jobs:
         add: Callable[..., Any],
         finish: Callable[[Any], dict[str, Any]],
         kind: str = "import",
+        on_error: Callable[[list[Path]], None] | None = None,
     ) -> dict[str, Any]:
         """Queue an import of ``paths`` and return its first snapshot. ``add`` is the library's add; ``finish``
         turns its report into the job's result (and tidies uploads)."""
@@ -100,10 +101,15 @@ class Jobs:
                 self._cancel.pop(old, None)
                 self._paths.pop(old, None)
         thread = threading.Thread(
-            target=self._run, args=(job_id, paths, add, finish), name=f"inklight-import-{job_id}", daemon=True
+            target=self._run, args=(job_id, paths, add, finish, on_error), name=f"inklight-import-{job_id}", daemon=True
         )
         thread.start()
         return self.snapshot(job_id) or job
+
+    @property
+    def runner(self) -> threading.Lock:
+        """Held while a library reads files; an import outside the jobs takes it too, so reads never overlap."""
+        return self._runner
 
     def cancel(self, job_id: str) -> bool:
         """Stop the job before its next file (a file being read is finished). False for an unknown or ended job."""
@@ -115,13 +121,20 @@ class Jobs:
         self._update(job_id, lambda j: j.update(cancel_requested=True))
         return True
 
-    def _run(self, job_id: str, paths: list[Path], add: Callable[..., Any], finish: Callable[[Any], dict]) -> None:
-        index = {str(p): i for i, p in enumerate(paths)}
+    def _run(
+        self,
+        job_id: str,
+        paths: list[Path],
+        add: Callable[..., Any],
+        finish: Callable[[Any], dict],
+        on_error: Callable[[list[Path]], None] | None,
+    ) -> None:
+        index = {str(p.resolve()): i for i, p in enumerate(paths)}  # the library reports resolved paths
         with self._runner:
             self._update(job_id, lambda j: j.update(state="running", started=time.time()))
 
             def progress(event: str, path: str, info: dict[str, Any]) -> None:
-                i = index.get(path)
+                i = index.get(str(Path(path).resolve()))
                 if i is None:
                     return
 
@@ -150,14 +163,23 @@ class Jobs:
                 result = finish(report)
             except Exception as exc:  # noqa: BLE001 - the job reports it; the server keeps running
                 error = f"{type(exc).__name__}: {exc}"
-                self._update(
-                    job_id,
-                    lambda j: j.update(state="failed", finished=time.time(), active=None, result={"error": error}),
-                )
+
+                def failed(job: dict[str, Any]) -> None:
+                    for f in job["files"]:
+                        if f["state"] not in ("done", "failed", "cancelled"):
+                            f["state"], f["error"] = "failed", error
+                    job.update(state="failed", finished=time.time(), active=None, result={"error": error})
+
+                self._update(job_id, failed)
+                if on_error is not None:
+                    on_error(paths)
                 return
         by_path = {str(Path(d["path"]).resolve()): d["id"] for d in result.get("documents", [])}
 
         def end(job: dict[str, Any]) -> None:
+            for f in job["files"]:  # a file the library never reported (beyond the limit of files per task)
+                if f["state"] in ("queued", "reading", "structuring"):
+                    f["state"], f["error"] = "failed", f["error"] or "not read (over the limit of files per import)"
             states = {f["state"] for f in job["files"]}
             for i, path in enumerate(paths):
                 if job["files"][i]["state"] == "done":
