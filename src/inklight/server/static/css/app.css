@@ -217,7 +217,8 @@ label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
 .mark.hit { background: var(--hit); outline: 1px solid var(--hit-line); }
 .mark.evidence { border: 2px solid var(--evidence); box-shadow: 0 0 0 3px color-mix(in srgb, var(--evidence) 18%, transparent); }
 .mark.check { border: 2px dashed var(--check); }
-.mark.table { border: 1.5px solid var(--evidence); }
+.mark.table { border: 2px solid var(--evidence); background: color-mix(in srgb, var(--evidence) 7%, transparent); }
+.mark-label.table { background: var(--evidence); color: var(--on-accent); }
 .mark-label { position: absolute; transform: translateY(-100%); font-size: 11px; font-weight: 600; padding: 1px 6px;
   border-radius: 4px 4px 0 0; white-space: nowrap; }
 .mark-label.evidence { background: var(--evidence); color: var(--on-accent); }
@@ -310,6 +311,9 @@ table.grid { border-collapse: collapse; width: 100%; font-size: 13px; }
 .result b { font-size: 12.5px; font-weight: 600; }
 .result span { font-size: 13px; }
 .review-table td { vertical-align: top; }
+.review-table td:first-child { width: 24%; }
+.review-table td:nth-child(2) { width: 30%; }
+.review-table .row { gap: 4px; margin-top: 4px; }
 .decided { font-size: 12px; color: var(--ok); }
 .done-flash { animation: flash 900ms var(--ease); }
 @keyframes flash { 0% { background: var(--ok-soft); } 100% { background: transparent; } }

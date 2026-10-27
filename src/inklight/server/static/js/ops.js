@@ -155,8 +155,11 @@ function tableCard(t) {
 
 function showTableOnPage(t) {
   const page = store.pages.find((p) => p.number === t.page);
-  const boxes = (page?.blocks || []).filter((b) => b.label === "Table" && b.bbox);
-  const marks = boxes.map((b) => ({ page: t.page, bbox: b.bbox, kind: "table", title: "Table region" }));
+  // The table's own region (its block refers to it); every table region of the page when no block does.
+  const tables = (page?.blocks || []).filter((b) => b.label === "Table" && b.bbox);
+  const own = tables.filter((b) => b.ref === `#/tables/${t.index - 1}`);
+  const boxes = own.length ? own : tables;
+  const marks = boxes.map((b) => ({ page: t.page, bbox: b.bbox, kind: "table", title: "Table region", label: `Table ${t.index}` }));
   if (store.page !== t.page) openDoc(store.open.id, t.page, marks); else setMarks(marks, t.page);
   showView("viewer");
 }
