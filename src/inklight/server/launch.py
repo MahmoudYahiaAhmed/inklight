@@ -14,7 +14,16 @@ from typing import Literal
 
 from ..config import Settings
 from ..errors import ConfigError
-from .hosting import ANY_ADDRESS, LOCAL_HOSTS, DemoLimits, Hosting, host_name, is_local_bind, parse_public_url
+from .hosting import (
+    ANY_ADDRESS,
+    LOCAL_HOSTS,
+    DemoLimits,
+    Hosting,
+    host_name,
+    is_local_bind,
+    machine_addresses,
+    parse_public_url,
+)
 
 TOKEN_ENV = "INKLIGHT_SERVER_TOKEN"  # noqa: S105 - the variable's name, not a secret
 MAKE_TOKEN = 'python -c "import secrets; print(secrets.token_urlsafe(24))"'  # noqa: S105 - a command that makes one
@@ -43,6 +52,7 @@ def plan(
     trusted_proxies: list[str] | None = None,
     open_browser: bool = True,
     env: dict[str, str] | None = None,
+    addresses: list[str] | None = None,
 ) -> Launch:
     env = dict(os.environ) if env is None else env
     token = env.get(TOKEN_ENV, "")
@@ -79,6 +89,7 @@ def plan(
         public_url=url,
         demo=limits,
         demo_dir=Path(demo_dir).expanduser() if demo_dir else None,
+        ip_hosts=not local,  # opening the server by an IP address works, as with any web server
     )
 
     lines: list[tuple[str, str]] = []
@@ -94,15 +105,21 @@ def plan(
             lines.append(("", f"{host} is where the server listens, not an address to open in a browser"))
         if url:
             lines.append(("workspace", f"{url}  (from --public-url; not checked from here)"))
-        elif not wildcard:
+        if wildcard:
+            own = machine_addresses(ipv6=host == "::") if addresses is None else addresses
+            links = [f"http://{a}:{port}/" for a in own]
+            label = "also" if url else "workspace"
+            for i, link in enumerate(links):
+                lines.append((label if i == 0 else "", link + ("  (this machine's addresses; not checked from "
+                                                                "elsewhere)" if i == 0 else "")))  # fmt: skip
+            url = url or (links[0] if links else None)
+            lines.append(("", f"or this machine's public IP address (a cloud server's), if TCP {port} reaches it"))
+        elif not url:
             url = f"http://{shown_host}:{port}/"
             lines.append(("workspace", f"{url}  (not checked from here)"))
-        else:
-            lines.append(("workspace", f"http://localhost:{port}/ on this machine, or through a port mapping or an SSH "
-                                       "tunnel; for other machines pass --public-url http://<this machine's address "
-                                       f"or domain>:{port}/"))  # fmt: skip
-        extra = sorted(hosts - LOCAL_HOSTS)
-        lines.append(("hosts", ", ".join(["localhost", *extra]) + "  (requests for other host names are refused)"))
+        names = sorted(h for h in hosts - LOCAL_HOSTS if not h[0].isdigit() and not h.startswith("["))
+        lines.append(("hosts", ", ".join(["localhost", "any IP address", *names]) + "  (other host names are refused; "
+                               "add a domain with --public-url or --allowed-host)"))  # fmt: skip
         lines.append(("network", f"other machines reach it only if TCP {port} is open inbound (the machine's "
                                  "firewall, the cloud's security group), or through a reverse proxy"))  # fmt: skip
     if mode == "demo":

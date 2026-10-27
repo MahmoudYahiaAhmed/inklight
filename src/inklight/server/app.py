@@ -42,7 +42,7 @@ from ..safety import SUPPORTED_EXTENSIONS, safe_filename
 from ..structure.run import available as structure_available
 from . import review_api, workspace
 from .demo import DemoBusy, DemoSessions, Session
-from .hosting import LOCAL_HOSTS, DemoLimits, Hosting
+from .hosting import LOCAL_HOSTS, DemoLimits, Hosting, is_ip_host
 from .jobs import TERMINAL, Jobs
 from .render import preview_png, render_page
 
@@ -175,8 +175,14 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None, hosting: 
 
     @app.middleware("http")
     async def guard(request: Request, call_next):  # type: ignore[no-untyped-def]
-        if _hostname(request.headers.get("host", "")).lower() not in allowed_hosts:
-            return JSONResponse({"detail": "Host not allowed"}, status_code=403)
+        name = _hostname(request.headers.get("host", "")).lower()
+        if name not in allowed_hosts and not (hosting.ip_hosts and is_ip_host(name)):
+            shown = name[:80] or "(none)"
+            return JSONResponse(
+                {"detail": f"Host not allowed: {shown}. Inklight answers only for the host names it was started "
+                 f"with. To use this one, start it with --public-url https://{shown}/ (or --allowed-host {shown})."},
+                status_code=403,
+            )  # fmt: skip
         token_cookie = False
         if token and request.url.path.startswith("/api/"):
             # The page sends the token in a header; previews and event streams (which cannot) send the cookie set

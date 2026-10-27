@@ -6,14 +6,16 @@
 * **demo**: a public demo. Each visitor gets a temporary library of their own (``demo.py``); nobody reaches the
   owner's library.
 
-The Host-header allow-list is never switched off: a remote browser's host name (the server's IP, domain or proxy
-host) must be listed, through ``--public-url`` or ``--allowed-host``.
+The Host-header check is never switched off. On a network bind a browser may use any IP address of the server
+(``http://203.0.113.7:8765``): a DNS-rebinding attack always arrives with a domain name, never an IP address. A domain
+name (the server's own, or a reverse proxy's) must be listed, through ``--public-url`` or ``--allowed-host``.
 """
 
 from __future__ import annotations
 
 import ipaddress
 import os
+import socket
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
@@ -51,6 +53,7 @@ class Hosting:
     public_url: str | None = None
     demo: DemoLimits | None = None
     demo_dir: Path | None = None  # None: a new temporary folder, removed when the server stops
+    ip_hosts: bool = False  # on a network bind: any IP address is an accepted host (opening the server by its IP)
     extra: dict[str, str] = field(default_factory=dict)
 
     @classmethod
@@ -62,6 +65,47 @@ class Hosting:
 
 def is_local_bind(host: str) -> bool:
     return host in LOCAL_BINDS
+
+
+def is_ip_host(host: str) -> bool:
+    """A Host header's name part that is an IP address (IPv6 in brackets), not a domain name."""
+    if host.startswith("[") != host.endswith("]"):
+        return False
+    try:
+        ipaddress.ip_address(host[1:-1] if host.startswith("[") else host)
+    except ValueError:
+        return False
+    return True
+
+
+def machine_addresses(ipv6: bool = False) -> list[str]:
+    """This machine's own addresses that other machines can use, the one on the default route first. Nothing is sent:
+    connecting a UDP socket only picks the route. A server behind NAT (a cloud VM) does not see its public address."""
+    found: list[str] = []
+    for family, probe in ((socket.AF_INET, "192.0.2.1"), *(((socket.AF_INET6, "2001:db8::1"),) if ipv6 else ())):
+        try:
+            with socket.socket(family, socket.SOCK_DGRAM) as s:
+                s.connect((probe, 9))
+                found.append(s.getsockname()[0])
+        except OSError:
+            pass
+    try:
+        infos = socket.getaddrinfo(socket.gethostname(), None)
+    except OSError:
+        infos = []
+    found += [str(info[4][0]) for info in infos]
+    usable = []
+    for raw in found:
+        try:
+            ip = ipaddress.ip_address(raw.split("%")[0])
+        except ValueError:
+            continue
+        if ip.is_loopback or ip.is_link_local or ip.is_unspecified or (ip.version == 6 and not ipv6):
+            continue
+        text = f"[{ip}]" if ip.version == 6 else str(ip)
+        if text not in usable:
+            usable.append(text)
+    return usable
 
 
 def parse_public_url(url: str) -> tuple[str, str]:

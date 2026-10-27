@@ -48,16 +48,45 @@ def test_wildcard_bind_is_reported_as_a_bind_address_not_a_url(settings):
     assert "listening 0.0.0.0:8765 (every network interface" in text
     assert "not an address to open in a browser" in text
     assert "workspace http://203.0.113.7:8765/  (from --public-url; not checked from here)" in text
-    assert "TCP 8765 is open inbound" in text and "http://127.0.0.1" not in text
+    assert "TCP 8765 is open inbound" in text and "http://127.0.0.1:" not in text
     assert "203.0.113.7" in launch.hosting.allowed_hosts and launch.hosting.token == "s3"
     assert "s3" not in text  # the token is never printed
     assert launch.open_url is None  # never a browser for a network bind
     assert any("HTTPS" in w for w in launch.warnings)
 
 
-def test_wildcard_without_public_url_says_who_can_connect(settings):
-    text = _text(plan(settings, host="0.0.0.0", port=9000, env={"INKLIGHT_SERVER_TOKEN": "x"}))
-    assert "http://localhost:9000/ on this machine" in text and "--public-url" in text
+def test_wildcard_without_public_url_prints_this_machines_addresses(settings):
+    launch = plan(settings, host="0.0.0.0", port=9000, env={"INKLIGHT_SERVER_TOKEN": "x"}, addresses=["192.0.2.10"])
+    text = _text(launch)
+    assert "workspace http://192.0.2.10:9000/  (this machine's addresses; not checked from elsewhere)" in text
+    assert "public IP address" in text and "any IP address" in text and "127.0.0.1" not in text
+    assert launch.hosting.ip_hosts and launch.open_url is None
+
+
+def test_local_bind_accepts_no_other_ip(settings):
+    assert not plan(settings, host="127.0.0.1", port=8765, env={}).hosting.ip_hosts
+
+
+def test_opening_a_network_server_by_any_ip_works_but_names_must_be_listed(settings):
+    """Like any web server: http://<its IP>:8765 works. A domain (how a DNS-rebinding attack arrives) is refused."""
+    hosting = Hosting(mode="private", token="t", ip_hosts=True)
+    c = TestClient(create_app(settings, hosting=hosting))
+    tok = {"X-Inklight-Token": "t"}
+    for host in ("203.0.113.7:8765", "192.168.8.26:8765", "[2001:db8::1]:8765", "10.0.0.5"):
+        assert c.get("/api/status", headers={**tok, "host": host}).status_code == 200, host
+        assert c.get("/", headers={"host": host}).status_code == 200, host
+    refused = c.get("/api/status", headers={**tok, "host": "rebind.evil.example:8765"})
+    assert refused.status_code == 403
+    detail = refused.json()["detail"]
+    assert "rebind.evil.example" in detail and "--public-url https://rebind.evil.example/" in detail
+    for host in ("1.2.3.4.evil.example", "[evil.example]", "999.1.1.1", "0x7f.0.0.1"):
+        assert c.get("/", headers={"host": host}).status_code == 403, host
+
+
+def test_local_workspace_still_refuses_other_ips(settings):
+    c = TestClient(create_app(settings, hosting=Hosting()))
+    assert c.get("/", headers={"host": "192.168.8.26:8765"}).status_code == 403
+    assert c.get("/", headers={"host": "127.0.0.1:8765"}).status_code == 200
 
 
 def test_public_url_rules():
