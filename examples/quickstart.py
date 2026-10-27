@@ -1,36 +1,35 @@
-"""Quickstart: python examples/quickstart.py [folder]
+"""Quickstart: python examples/quickstart.py
 
-Regenerate the demo documents first with:  python tests/factory.py examples/documents
+Reads three sample documents from examples/documents (see examples/README.md) into your library and shows text,
+tables, a field with its source, and search. Tables need the structure extra: pip install "inklight[structure]".
 """
 
-import sys
 from pathlib import Path
 
 from inklight import DocumentAgent
 
-folder = Path(sys.argv[1] if len(sys.argv) > 1 else Path(__file__).parent / "documents")
+DOCS = Path(__file__).parent / "documents"
 
 
 def main() -> None:
-    agent = DocumentAgent(allow_write=True, output_dir=Path(__file__).parent / "out")
-    report = agent.add(folder)
-    print(f"Indexed {len(report.documents)} documents ({report.pages} new pages) in {report.seconds:.1f}s")
+    with DocumentAgent(structure={"engine": "inklight"}) as agent:
+        print(agent.text(DOCS / "invoice_initech_scan.png")[:400], "…\n")
 
-    result = agent.ask("Extract the invoice number, date, and total", files=[folder / "invoice_acme.pdf"])
-    print("\n", result.answer)
-    print("source:", result.sources[0].cite(), result.sources[0].bbox)
+        for table in agent.tables(DOCS / "suppliers.pdf"):
+            print("table on page", table["page"])
+            for row in table["rows"]:
+                print("  ", row)
 
-    for request in [
-        "Find every contract that expires within 90 days",
-        "Read all these invoices and create a CSV of vendor, date, tax, and total",
-        "What was revenue growth in Q2?",
-    ]:
-        result = agent.ask(request)
-        print(f"\n▶ {request}  [{result.state.value}, confidence {result.confidence:.2f}]")
-        print(result.answer)
-        for warning in result.warnings:
-            print("  ⚠", warning)
+        record = agent.extract([DOCS / "registration-card-turned.pdf"], fields=["company name", "tax office"])[0]
+        for name, value in record.fields.items():
+            where = f"page {value.source.page}, box {value.source.bbox}" if value.source else "not found"
+            print(f"\n{name}: {value.value!r} ({where})")
+            if value.warning:
+                print("  check:", value.warning)
+
+        for hit in agent.search("Golden Palm"):
+            print("\nfound in", hit.source.name, "page", hit.source.page)
 
 
-if __name__ == "__main__":  # required on Windows/macOS: Indra may use worker processes
+if __name__ == "__main__":  # required on Windows and macOS: OCR may use worker processes
     main()

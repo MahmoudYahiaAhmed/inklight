@@ -1,4 +1,4 @@
-# Release checklist (PyPI + GitHub)
+# Releasing (PyPI + GitHub)
 
 ## Before the first public release (one-time)
 
@@ -21,8 +21,9 @@
 - [ ] `pytest` is green locally and in CI on Linux, Windows and macOS for Python 3.11–3.13.
 - [ ] `python bench/run.py` (and `bench/memory.py`); update evaluation/BENCHMARKS.md only from that output.
 - [ ] Bump `version` in `pyproject.toml` **and** `src/inklight/__init__.py`; update CHANGELOG.md.
-- [ ] `python -m build && twine check dist/*`; install the wheel in a clean venv and run
-      `inklight doctor`, `inklight process examples/documents`, `inklight ask examples/documents "Find all invoices above $5,000"`.
+- [ ] `python -m build && twine check dist/* && python .github/scripts/check_dist.py dist`; install the wheel in a
+      clean venv with a fresh `INKLIGHT_HOME` and run `inklight doctor`, `inklight process examples/documents`,
+      `inklight extract examples/documents/registration-card-turned.pdf --fields "company name"` and `inklight serve`.
 - [ ] Commit, `git tag vX.Y.Z`, `git push --tags`. The release workflow tests, builds and publishes, then creates the GitHub release.
 - [ ] Verify `pip install inklight==X.Y.Z` from PyPI in a clean environment.
 - [ ] Optional: `docker build -t inklight .` and push the image. (The Dockerfile was not built in the release-candidate environment.)

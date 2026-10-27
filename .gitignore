@@ -1,19 +1,45 @@
+# Python and tooling
 .venv/
+venv/
 __pycache__/
 *.py[cod]
 *.egg-info/
 build/
 dist/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.scratch-home/
-.scratch-out/
-bench/last_run.txt
+.ipynb_checkpoints/
+.env
+.env.*
+
+# Inklight libraries, documents and exports: keep private data out of the repository
+.inklight/
+.scratch-*/
 *.db
 *.db-wal
 *.db-shm
-.env
+*.sqlite
+*.sqlite3
+/private/
+/data/
+/out/
+examples/out/
+*.part
 
+# Model files are downloaded at runtime and never committed
+/models/
+*.onnx
+*.safetensors
+*.npz
+*.pt
+*.pth
+
+# Evaluation output: commit only a run a report cites, deliberately (git add -f)
+bench/last_run.txt
+runs/
+evaluation/results/**/home/

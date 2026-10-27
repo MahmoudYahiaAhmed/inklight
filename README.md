@@ -95,10 +95,17 @@ The screenshots show synthetic documents and public UN letters, from the running
 
 ## Command line
 
+The examples use three synthetic documents from this repository's [examples/](examples/README.md) folder. They
+are not installed with the package; download them (on Windows PowerShell, type `curl.exe`):
+
 ```bash
-inklight text examples/documents/invoice_initech_scan.png
-inklight tables examples/documents/suppliers.pdf -o tables.csv
-inklight extract examples/documents/registration-card-turned.pdf --fields "company name, tax office"
+curl -L --remote-name-all https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/examples/documents/invoice_initech_scan.png https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/examples/documents/suppliers.pdf https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/examples/documents/registration-card-turned.pdf
+```
+
+```bash
+inklight text invoice_initech_scan.png
+inklight tables suppliers.pdf -o tables.csv
+inklight extract registration-card-turned.pdf --fields "company name, tax office"
 inklight search "Golden Palm"
 inklight review export --actor "Your name" -o approved.csv
 ```
@@ -113,10 +120,10 @@ fields to read; no schema is assumed. `inklight --help` lists the rest: the libr
 from inklight import DocumentAgent
 
 with DocumentAgent(structure={"engine": "inklight"}) as agent:
-    print(agent.text("examples/documents/invoice_initech_scan.png"))
-    for table in agent.tables("examples/documents/suppliers.pdf"):
+    print(agent.text("invoice_initech_scan.png"))
+    for table in agent.tables("suppliers.pdf"):
         print(table["page"], table["rows"])
-    record = agent.extract(["examples/documents/registration-card-turned.pdf"], fields=["company name"])[0]
+    record = agent.extract(["registration-card-turned.pdf"], fields=["company name"])[0]
     value = record.fields["company_name"]
     print(value.value, value.source.page, value.source.bbox)
     for hit in agent.search("Golden Palm"):
@@ -124,6 +131,7 @@ with DocumentAgent(structure={"engine": "inklight"}) as agent:
 ```
 
 `DocumentAgent()` without `structure` reads text and fields; `tables()` then says how to turn structure on.
+[examples/quickstart.py](examples/quickstart.py) runs the same steps from a checkout.
 The HTTP API is documented at `/api/docs` while `inklight serve` runs, and in [docs/API.md](docs/API.md).
 
 ## What is supported
@@ -173,6 +181,9 @@ file ─► Inklight OCR ─────────────► text lines w
   that runs them is in `src/inklight/backends/`, with each source project's license.
 - **Fields and answers** are read deterministically from labels, layout and tables. Optional small English models
   (`inklight models pull`) help English search and Ask only.
+- **Your library** (documents read, reviews, exports) is stored in `~/.inklight`, outside the Python environment, so
+  every installation opens the same library; `inklight serve` prints its folder. Set `INKLIGHT_HOME` to use another
+  folder, for example a fresh one to try Inklight. Nothing is added to it until you import a document.
 - **Configuration**: `~/.inklight/config.toml` (see [config.example.toml](config.example.toml)) or environment
   variables such as `INKLIGHT_LIMITS__MAX_PAGES=50`. Security: text inside documents is treated as data, never as
   instructions, and the workspace accepts requests only from this computer ([SECURITY.md](SECURITY.md)).
