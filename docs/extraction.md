@@ -53,12 +53,12 @@ Types: `text`, `money`, `number`, `date`, `email`, `phone`, `id`.
 - Ambiguous numeric dates (`03/04/2026`) are read month-first unless `[extraction] day_first = true`.
 - Currency symbols: `$` is read as USD (it is also used by CAD, AUD and others); `E£`/`EGP` is Egyptian pound.
 - Labels must be in English, apart from a few Indonesian receipt tax labels (`pajak`, `ppn`, `pb1`,
-  `p.rest`). Values in other languages are read when Indra recognises the script.
+  `p.rest`). Values in other languages are read when the OCR recognises the script.
 - A summary row with several amounts and no column titles takes the last amount and is flagged.
 - A suspected OCR misread of an amount (`63.000` read as `63.00`) is flagged, never corrected. The flag
   needs agreeing evidence: number format plus magnitude, OCR confidence or a disagreeing second reading of
   the image region. A second reading needs an image document at rotation 0, not a PDF.
 - Digit *misreads* that keep the format (`12.000` for 12,600) and signs read from a nearby line are not
   detected. They are the remaining silent receipt errors in evaluation/BENCHMARKS.md.
-- Values that appear only inside complex tables (merged cells, no ruling) may be missed. Indra itself
-  documents complex tables as a limitation.
+- Values that appear only inside complex tables (merged cells, no ruling) may be missed by the OCR's own layout;
+  document structure (`[structure]`) recovers such tables better.

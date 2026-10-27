@@ -14,6 +14,7 @@ Local folder names in stored results are shortened to `~` (the user folder) and 
 | [BENCHMARKS.md](BENCHMARKS.md) | Field extraction on two public receipt and invoice datasets (CORD, Voxel51), plus speed and memory on synthetic documents. | [results/external/](results/external/) (`bench/external.py`), `bench/results.json` (`bench/run.py`) |
 | [CAPABILITIES.md](CAPABILITIES.md) | What works, by capability and language, with the diagnostic runs behind it. | `results/capability-diag*.json`, `results/date-extraction-compare.txt` |
 | [../docs/STRUCTURE.md](../docs/STRUCTURE.md) | Document structure (layout, tables, reading order) on synthetic registration cards, with and without structure. | [results/structure/](results/structure/) (`bench/structure/compare.py`) |
+| [structure_showcase_0.2.ipynb](structure_showcase_0.2.ipynb) | A notebook of 0.2.0b1 (structure on scans, turned pages, speed settings), with its outputs. It uses the Docling runtime of that version and does not run on 0.3. | its own outputs |
 | [../pilot/README.md](../pilot/README.md) | The invoice pilot protocol: a rehearsal on synthetic invoices and second-reading latency. | [results/pilot/](results/pilot/) |
 
 The scripts that produced these results are still in `bench/` and `pilot/`. The tests use some of them.

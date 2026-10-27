@@ -1,65 +1,66 @@
-# Document structure: Docling on Indra's OCR
+# Document structure
 
-Optional. Off by default. Install it with `pip install "inklight[structure]"`, then turn it on in `config.toml`:
+Optional. Install it with `pip install "inklight[structure]"`. `inklight tables FILE`, and *Extract tables* in the
+workspace, turn it on for their own run. To structure every import, set it in `config.toml`:
 
 ```toml
 [structure]
-engine = "docling"        # "none" (default) keeps Indra's own layout blocks
-# The defaults below are the measured best without losing answers; see "Speed".
-table_mode = "accurate"   # "fast": tables about 30% faster, one Arabic answer lost in the comparison
-table_model = "tableformer"   # "tableformer_v2": faster, but lost two low-confidence flags
-layout_runtime = "onnx"   # Heron as Docling's ONNX export; "torch" is the same model on PyTorch
-pages = "all"             # "tables": only pages Indra's layout marked as table or form (misses ~half)
+engine = "inklight"       # "none" (default) keeps the OCR's own layout blocks
+table_mode = "accurate"   # "fast": tables about 30% faster, one Arabic answer lost in the comparison below
+pages = "all"             # "tables": only pages the OCR's layout marked as table or form (misses about half)
 threads = 0               # 0 = every CPU core
-# artifacts_path = "..."  # a local copy of Docling's model weights, for machines without network access
 ```
 
 Each component keeps one job:
 
-- **Indra** reads the text. It is the only OCR, and its lines are stored unchanged.
-- **Docling** turns those lines into structure, using its existing components: the Heron layout model, reading
-  order, headings, lists, pictures, and TableFormer for rows, columns, spans and header cells.
-- **Inklight** does the rest: indexing, retrieval, answers, citations, review and the workspace.
+- **Inklight OCR** reads the text. It is the only OCR, and its lines are stored unchanged.
+- **Inklight document structure** turns those lines into structure: layout regions (text, headings, lists,
+  pictures, captions, tables), reading order, and each table's rows, columns, spans and header cells.
+- The rest of Inklight does indexing, retrieval, answers, citations, review and the workspace.
 
-## How Indra's text gets into Docling
+## How it runs
 
-Docling has no API for handing it OCR results directly. It does have a supported extension point for OCR:
-- an OCR model class (`BaseOcrModel`), selected by its own options class;
-- registered in Docling's OCR factory.
+`inklight/structure/run.py` hands the stages in `inklight/backends/structure/` each page and its OCR lines:
 
-`inklight/structure/indra_ocr.py` implements such a model, `IndraLinesOcrModel`, which does **no recognition**:
+1. **The page image.** A PDF page is rendered at 144 dpi; an image file's frame is used as stored. A page the OCR
+   read turned (90, 180 or 270 degrees) is turned upright first, so its boxes share the OCR's upright frame.
+2. **The text cells** are the page's OCR lines, scaled from Inklight's pixel frame to the page's size in points. No
+   other text is read: a PDF's own text layer is not used here.
+3. **Layout**: the Heron layout model (an RT-DETR v2 detector, run as ONNX with ONNX Runtime) on the page at 72 dpi.
+   Its preprocessing (a bilinear, antialiased resize to 640 x 640) reproduces the model's own image processor
+   exactly. Detections under a score of 0.3 are dropped.
+4. **Layout post-processing** assigns the text cells to regions, resolves overlaps and keeps every cell (orphan cells
+   get regions of their own).
+5. **Tables**: TableFormer (PyTorch) on each table region at 144 dpi, its predicted cells matched to the text cells.
+6. **Page assembly and reading order** order the regions and build the document (docling-core's `DoclingDocument`
+   format), which is stored with the document.
 
-1. For each page, it hands Docling the lines Inklight stored from Indra as `TextCell`s. Their boxes are scaled from
-   Inklight's pixel frame to Docling's page units.
-2. `OcrMode.FULL_PAGE` makes Docling use these cells only. Its own PDF text extraction is skipped
-   (`resolve_skip_cell_extraction`).
-3. A PDF is handed to Docling as images of its pages. With no text layer, TableFormer cannot match its cells to the
-   PDF's own text, which it otherwise does. Without this step, Docling's tables on digital Arabic PDFs held the PDF
-   layer's presentation-form letters (62 tokens Indra never read).
-4. Docling's other components run unchanged: `DocumentConverter`, `StandardPdfPipeline`, the layout model,
-   TableFormer with cell matching, reading-order assembly, `DoclingDocument`, and its exporters.
-5. The engine is registered directly in Docling's OCR factory. Docling keeps `allow_external_plugins=False`, so no
-   other third-party plugin is loaded.
+The code of steps 3 to 6 is taken from Docling 2.142.1 and docling-ibm-models 4.0.4, cut down to what this path runs,
+and kept close to its source so it can be compared line by line; the model files are pinned in
+`inklight/modelstore.py`. Before the change, Inklight ran the same models through the `docling` package. On 17
+documents, the tables were identical. The OCR was identical too, as were 3 image files end to end. On PDFs, some
+layout block boundaries differ, because Docling's own PDF rasteriser is not reproduced bit for bit
+([CHANGELOG](../CHANGELOG.md), 0.3.0b1).
 
 **What is checked on every document** (stored with its structure; `inklight structure DOC --format meta` shows it):
 
-- `cells_delivered`: Indra lines handed to Docling. This equals the stored lines with text and a box.
-- `foreign_tokens`: words in Docling's output that are not in Indra's lines. It is 0 when Docling saw only Indra's
-  text. A value above 0 would mean another text source.
-- `orphan_lines`: Indra lines that no Docling item holds. These are kept as their own blocks, so no text
+- `cells_delivered`: OCR lines handed over as text cells. This equals the stored lines with text and a box.
+- `foreign_tokens`: words in the structure that are not in the OCR's lines. A value above 0 would mean another text
+  source.
+- `orphan_lines`: OCR lines that no structure item holds. These are kept as their own blocks, so no text
   disappears.
-- `components`: the Docling, docling-core and Indra versions, the layout and table models, and the OCR path.
+- `components`: the layout and table models with their pinned revisions.
 
-**Control experiment.** Replace every Indra line with a marker word. Docling's output is then the markers and
-nothing else: no second OCR runs (`tests/test_structure_docling.py::test_docling_runs_no_ocr_of_its_own`).
+**Control experiment.** Replace every OCR line with a marker word. The structure then holds the markers and nothing
+else: no second OCR runs (`tests/test_structure_models.py::test_structure_runs_no_ocr_of_its_own`).
 
-## What Inklight keeps from Docling's structure
+## What Inklight keeps from the structure
 
-- **Original OCR, unchanged.** `PageContent.lines` keeps Indra's text, boxes and confidences.
-- **Blocks follow Docling's reading order.** Each block has a `ref` back to its Docling item (`#/tables/0`). Its box
-  is converted from Docling's coordinates (page units, either origin) to Inklight's top-left pixel frame.
-- **The DoclingDocument itself** is stored per document (`structures` table). It is exported with Docling's own
-  exporters:
+- **Original OCR, unchanged.** `PageContent.lines` keeps the OCR's text, boxes and confidences.
+- **Blocks follow the structure's reading order.** Each block has a `ref` back to its item (`#/tables/0`). Its box
+  is converted from the structure's coordinates (points, either origin) to Inklight's top-left pixel frame.
+- **The structured document itself** is stored per document (`structures` table), in docling-core's format, and
+  exported with docling-core's exporters:
 
   ```bash
   inklight structure invoice.pdf --format md|json|html|meta
@@ -89,7 +90,7 @@ More rules:
 - Header qualifiers follow the label rules: "Tax registration number" does not answer "the registration number".
 - A blank cell is declined as a blank field.
 - A date that does not read as a date is declined.
-- A cell Indra read with confidence below 0.85 is flagged.
+- A cell the OCR read with confidence below 0.85 is flagged.
 - The citation is the cell, with its page and box.
 
 These checks also apply without structure:
@@ -102,6 +103,10 @@ These checks also apply without structure:
   "Unverified", flagged, and its confidence is capped at 0.2.
 
 ## Measured
+
+The measurements below were taken when the same models ran through the `docling` package (2.142.1), with
+the OCR through `indra-ocr` 1.1.2. The synthetic comparison was repeated after the change and gave the same answer
+on every question.
 
 ### Synthetic registration cards
 
@@ -201,40 +206,39 @@ Structure was not run on that corpus: it would need the documents to be processe
   - a contract-like document type.
 
   The real document's results are unknown.
-- **OCR errors are not structure errors.** Indra misreads Arabic-Indic digits on these scans ("EVY19"). Docling
-  cannot fix what was misread; Inklight flags it by Indra's line confidence.
-- **Indra gives lines, not words.** A line spanning two table cells, such as an Arabic label and an English value
+- **OCR errors are not structure errors.** The OCR misreads Arabic-Indic digits on these scans ("EVY19"). The
+  structure cannot fix what was misread; Inklight flags it by the OCR's line confidence.
+- **The OCR gives lines, not words.** A line spanning two table cells, such as an Arabic label and an English value
   read as one line, lands in one cell.
-- **Pages Indra read turned** (90°, 180° or 270°) are given to Docling turned upright, so its boxes share the upright
-  frame of Indra's lines (`inklight/frames.py`; recorded per document as `rotated_pages_structured`). A library
-  structured before this change keeps Indra's layout on those pages until `inklight reindex`. A page whose frames
-  still do not match is listed in `rotated_pages_kept` and keeps Indra's layout. On the evaluation's registers,
+- **Pages the OCR read turned** (90°, 180° or 270°) are structured turned upright, so their boxes share the upright
+  frame of the OCR's lines (`inklight/frames.py`; recorded per document as `rotated_pages_structured`). A page whose
+  frames still do not match is listed in `rotated_pages_kept` and keeps the OCR's layout. On the evaluation's registers,
   structure on turned pages did not improve task completion (evaluation/AGENT_EVALUATION.md, AM-1).
-- **Docling's HTML export leaves out text inside pictures**; there is no option for it. The Markdown export
+- **The HTML export (docling-core's) leaves out text inside pictures**; there is no option for it. The Markdown export
   (pictures traversed), the JSON, and Inklight's own blocks keep that text. The CLI warns, and the server sets an
   `X-Inklight-Note` header.
-- **Docling's `extract_form_fields`** reads native PDF form widgets only, so it is not used for scanned forms.
-  Label-value pairs outside tables still come from Inklight's label reader (`agent/labels.py`).
-- **Model weights** download from Hugging Face on Docling's first use, unless `artifacts_path` points to a local
-  copy. No document leaves the machine.
-- **Existing documents are not restructured automatically.** After turning structure on, run `inklight reindex`
-  (or `process --force`). A new copy of a file read before structure was on is processed again, not copied.
+- **Form widgets** of digital PDFs are not read; label-value pairs outside tables come from Inklight's label reader
+  (`agent/labels.py`).
+- **Model weights** (layout 171 MB, tables 213 MB) download from Hugging Face at pinned revisions the first time
+  structure runs, checked by SHA-256 (`inklight models pull --structure` fetches them ahead). No document leaves
+  the machine.
+- **A document read before structure was turned on** is read again, with its structure, the next time it is added
+  with structure on (`inklight tables`, *Extract tables*, or `inklight process` with structure on).
 - **With `privacy.store_text = false`:**
-  - The structure's text (the DoclingDocument) is not stored, so table answers are off.
+  - The structure's text (the stored document) is not stored, so table answers are off.
   - The stored `meta` holds only counts and versions.
   - Chunks keep their text as before, including the "header: value" rows used for search.
-- **Docling runs one document at a time** in a process. Its `DocumentConverter` is not thread-safe, and its models
-  are loaded once and kept.
-- **Pages are rendered for Docling at 144 dpi**, one at a time, into a temporary image PDF; its images are
-  JPEG-compressed.
+- **One document is structured at a time** in a process; the models are loaded once and kept.
+- **PDF pages (and turned image frames) are prepared as before the change**: a 144 dpi render stored as JPEG, seen at 72 dpi as an area average
+  (layout) and at 144 dpi as a bilinear resize of that (tables).
 - **A two-column table of three or more rows** whose first column (in reading order) is plain words, and whose other
   column holds a number, is read as fields and values, even when TableFormer marked its first row as a header. A
   two-row, two-column table reads either way; it is read as a heading over one row of values, so a two-field
   table ("Name | Acme / Tax number | 123") is misread.
 - **Older Inklight versions** cannot add documents to a library this build has opened. Blocks gain a `ref` column
   and the search index is re-indexed (schema 4).
-- **CI does not install Docling.** `tests/test_structure.py` runs everywhere: it uses fixed OCR and docling-core's
-  data model. `tests/test_structure_docling.py` runs the real models where Docling is installed.
+- **CI does not install the structure runtime.** `tests/test_structure.py` runs everywhere: it uses fixed OCR and
+  docling-core's data model. `tests/test_structure_models.py` runs the real models where PyTorch is installed.
 
 ## Reproduce
 

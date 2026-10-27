@@ -3,6 +3,79 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [SemVer](https://semver.org/).
 
+## [0.3.0b1] — Developer beta (GitHub only, not on PyPI)
+
+One product to install and run: the OCR and document structure models run inside Inklight. The workspace is
+redesigned around operations, and the repository is cleaned up.
+
+### Internal model backends
+- **Inklight OCR** (`inklight/backends/ocr`) runs the OCR models with ONNX Runtime, through Inklight's own code:
+  detection, recognition (Latin, Arabic and other scripts), page orientation, reading order, the PDF text-layer
+  checks. The code is taken from indra-ocr 1.1.2, without its CLI, viewer and process pool.
+- **Inklight document structure** (`inklight/backends/structure`) runs the Heron layout model (ONNX) and TableFormer
+  (PyTorch), with layout post-processing, table cell matching, page assembly and rule-based reading order. The code
+  is taken from Docling 2.142.1 and docling-ibm-models 4.0.4, cut down to the path Inklight uses. The RT-DETR image
+  preprocessing is reproduced exactly (same tensor, checked bit for bit) without transformers.
+- `indra-ocr`, `docling`, `docling-ibm-models`, `docling-parse` and `transformers` are no longer installed or
+  imported. `docling-core` stays in `[structure]`: it is the data model of the stored structure and its exporters.
+- **Model files are managed by Inklight** (`inklight/modelstore.py`):
+  - Exact revisions (until now, Docling fetched `main`), and every file checked by SHA-256.
+  - A persistent cache (`~/.cache/inklight`, or `INKLIGHT_MODEL_CACHE`). A Hugging Face cache copy of the same
+    revision is used in place.
+  - Downloads show their progress and resume after an interruption. A corrupt file is reported and fetched again.
+  - With `INKLIGHT_OFFLINE=1` nothing is downloaded.
+  - `inklight models status` shows where each set is, and `inklight models pull --structure` fetches everything.
+- **PDFium calls are serialised** across threads (`inklight/pdfium_lock.py`). The structure worker, the OCR and the
+  workspace's previews could call it at once, failing a page or crashing the process.
+- **Old versus new, same model files and settings, real models.** The subset was 17 documents: Arabic, English
+  and mixed text; scans, digital PDFs and images; rotated pages; tables; Arabic-Indic digits; and a broken file.
+  - OCR: identical on every page (text, boxes, confidences, orientation).
+  - The 3 image files: identical end to end, structure included.
+  - Tables: identical on all 17 (rows, columns, cells, header flags).
+  - Layout on PDFs: some region boundaries and labels differ. Docling rendered PDF pages with its own C++
+    rasteriser (docling-parse), which is not reproduced bit for bit; the page images are prepared as before (a
+    144 dpi render stored as JPEG, an area-average 72 dpi view) to stay as close as possible.
+  - Text: no OCR line is lost or added by structure on any document, and the broken file fails the same way.
+  - The synthetic structure benchmark (`bench/structure/compare.py`) gives the same answer, score and citation on
+    every question, with ingest 11.4 s instead of 18.1 s.
+  - The baseline itself was deterministic: two runs, identical output.
+  - A clean environment without the old packages gave the same output as the development environment.
+- Settings: `[ocr] engine = "inklight"` and `[structure] engine = "inklight"`; `"indra"` and `"docling"` are still
+  accepted. Removed: `structure.table_model` (TableFormer V2), `structure.layout_runtime` (the PyTorch layout
+  runtime) and `structure.artifacts_path` (models live in the model cache).
+
+### Workspace
+- **Operations first.** The top bar offers Extract text, Extract tables, Extract fields, Search, and Review & export;
+  Ask is secondary and marked experimental.
+- **Layout.** A library on the left, a large viewer in the middle, the operation and its result on the right. Each
+  operation shows its steps, its scope (the open document or the ticked ones) and one main next action.
+- **Imports run in the background** and the workspace follows them over server-sent events: each file waits, is
+  read (page by page, as the OCR reports), is structured, then is read or not read (with the reason). A reloaded page
+  finds a running import, which can be stopped before its next file.
+- **First-use downloads** show the bytes received.
+- **Extract tables** offers to read a document again with structure when it was read without.
+- **Marks on the page** distinguish detected regions, search matches, the source of a value and values to check.
+- **Motion is short and tied to real events**, paused in a hidden tab, and replaced by static states under
+  `prefers-reduced-motion`.
+- **Accessibility.** Keyboard focus is visible and status changes are announced. Light and dark themes and narrow
+  screens are supported.
+
+### Usage
+- **Direct operations.** `inklight text FILE` and `inklight tables FILE` print or save a document's text or tables.
+  In Python, `DocumentAgent.text()` and `.tables()` do the same.
+- `inklight extract` asks for the fields to read; it no longer assumes an invoice schema.
+- `inklight --help` groups the commands.
+- **A document read before structure was turned on** is read again with its structure when it is next added with
+  structure on.
+
+### Repository
+- Old showcase scripts, images and outputs are removed, along with an unused screenshot, the landing-page export,
+  and the one-time publishing guide.
+- Evaluation reports and raw results move to `evaluation/`, with an index. Local user folders in stored results are
+  shortened to `~` and `<scratch>`.
+- Two small synthetic samples are added to `examples/documents` (a registration card scanned sideways, a two-table
+  suppliers sheet).
+
 ## [0.2.0b1] — Developer beta (GitHub only, not on PyPI)
 
 A local document workspace built from the existing components (Indra OCR, optional Docling structure, review).

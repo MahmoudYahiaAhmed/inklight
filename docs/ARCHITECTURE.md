@@ -23,7 +23,7 @@
                                       ▲
                       Ingest: validate → hash → dedupe → OCR → chunk → classify → injection scan
                                       ▲
-                      OCR engines (pluggable): Indra OCR (PDF text layer first, OCR where needed),
+                      OCR engines (pluggable): Inklight OCR (PDF text layer first, OCR where needed),
                                                plain text / Markdown
 ```
 
@@ -33,7 +33,10 @@
 |---|---|
 | `config.py` | Validated, versioned settings: defaults < TOML < env (`INKLIGHT_SECTION__KEY`) < overrides. |
 | `safety.py` | File sniffing and limits, discovery, safe output paths, injection signals, prompt fencing. |
-| `ocr/` | `OCREngine` protocol, an `IndraEngine` that uses only Indra's public API, a `PlainTextEngine`, and a registry. |
+| `ocr/` | `OCREngine` protocol, `InklightOCR` (pages from `backends/ocr`, boxes in the rendered page's frame), a `PlainTextEngine`, and a registry. |
+| `backends/` | The model code: `ocr/` (detection, recognition, orientation, reading order; ONNX Runtime) and `structure/` (layout, tables, reading order; ONNX Runtime and PyTorch). |
+| `modelstore.py` | Pinned model files: exact revisions, SHA-256 checks, a persistent cache, resumable downloads, offline mode. |
+| `exports.py` | Raw exports (text, JSON with boxes, tables CSV), shared by the CLI, the Python API and the workspace. |
 | `chunking.py` | Layout-aware chunks: never cross pages, keep tables whole, keep headings with their text. |
 | `store.py` | SQLite repository (WAL, FTS5 with Porter stemming, cascade deletes, task history). |
 | `library.py` | Incremental ingest: an unchanged file is skipped, identical content at a new path reuses its OCR, and a changed file is re-read. |

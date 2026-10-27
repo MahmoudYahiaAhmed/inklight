@@ -6,8 +6,8 @@ Thanks for helping make Inklight better.
 
 ```bash
 python -m venv .venv && . .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-pytest                                            # downloads Indra's models on the first run
+pip install -e ".[structure,dev]"
+pytest                                            # downloads the OCR models on the first run
 inklight models pull                              # optional: enables the model tests
 ```
 
@@ -25,7 +25,8 @@ inklight models pull                              # optional: enables the model 
 
 ## Test markers
 
-- `ocr`: needs Indra (downloads ~76 MB on first use).
+- `ocr`: needs the OCR models (downloads ~76 MB on first use).
+- `structure`: needs the structure runtime (`[structure]`) and its models (~384 MB on first use).
 - `models`: needs `inklight models pull`; skipped otherwise.
 
 Run the fast subset with `pytest -m "not ocr"`.
