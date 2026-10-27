@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import threading
 import time
 from collections import deque
 from collections.abc import Callable
@@ -42,6 +43,7 @@ class IngestReport:
     failed: list[tuple[str, str]] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
     seconds: float = 0.0
+    cancelled: list[str] = field(default_factory=list)  # files not read because the run was stopped
 
     @property
     def documents(self) -> list[DocumentInfo]:
@@ -66,6 +68,7 @@ class _Read:
     base: DocumentInfo
     content: DocumentContent
     password: str | None
+    progress: Progress | None = None
 
 
 class Library:
@@ -105,8 +108,13 @@ class Library:
         password: str | None = None,
         force: bool = False,
         progress: Progress | None = None,
+        cancel: threading.Event | None = None,
     ) -> IngestReport:
-        """Add files and/or folders. Never raises for a single bad file; see report.failed."""
+        """Add files and/or folders. Never raises for a single bad file; see report.failed.
+
+        ``progress(event, path, info)`` is told what happens to each file: "start" ({index, total}), "page" ({page,
+        total}: a page read), "structuring" (the structure stage started), then "done", "failed" or "cancelled".
+        Setting ``cancel`` stops the run before the next file; a file already being read is finished."""
         started = time.perf_counter()
         if isinstance(paths, str | Path):
             paths = [paths]
@@ -120,10 +128,16 @@ class Library:
         waiting: deque[tuple[Path, Future[tuple[DocumentInfo, bool]]]] = deque()
         try:
             for i, path in enumerate(files):
+                if cancel is not None and cancel.is_set():
+                    for rest in files[i:]:
+                        report.cancelled.append(str(rest))
+                        if progress:
+                            progress("cancelled", str(rest), {})
+                    break
                 if progress:
                     progress("start", str(path), {"index": i, "total": len(files)})
                 try:
-                    step = self._read_one(path, password=password, force=force)
+                    step = self._read_one(path, password=password, force=force, progress=progress)
                 except InklightError as exc:
                     self._record(report, path, None, exc, progress)
                     continue
@@ -193,7 +207,9 @@ class Library:
         step = self._read_one(path, password=password, force=force)
         return self._finish(step) if isinstance(step, _Read) else step
 
-    def _read_one(self, path: Path, *, password: str | None, force: bool) -> _Read | tuple[DocumentInfo, bool]:
+    def _read_one(
+        self, path: Path, *, password: str | None, force: bool, progress: Progress | None = None
+    ) -> _Read | tuple[DocumentInfo, bool]:
         """Check and OCR a file; an unchanged file or an identical copy is done here."""
         checked = check_file(path, self.settings.limits.max_file_mb)
         doc_id = doc_id_for(checked.path)
@@ -239,17 +255,25 @@ class Library:
         engine = self._text_engine if checked.kind == "text" else self.engine
         if not engine.supports(checked.kind):
             raise InputRejected(f"{checked.path.name}: engine {engine.name} cannot read {checked.kind}")
+        hook = hasattr(engine, "on_page") and progress is not None
+        if hook:
+            engine.on_page = lambda page, total: progress("page", str(path), {"page": page, "total": total})  # type: ignore[attr-defined,misc]
         try:
             content = engine.read(checked.path, max_pages=self.settings.limits.max_pages, password=password)
         except OCRError as exc:
             self.store.clear_content(doc_id)  # an old extraction of a changed file must not stay searchable
             self.store.upsert_document(base.model_copy(update={"status": DocStatus.FAILED, "error": str(exc)}))
             raise
-        return _Read(checked.path, checked.kind, doc_id, base, content, password)
+        finally:
+            if hook:
+                engine.on_page = None  # type: ignore[attr-defined]
+        return _Read(checked.path, checked.kind, doc_id, base, content, password, progress)
 
     def _finish(self, step: _Read) -> tuple[DocumentInfo, bool]:
         """Structure (when on), chunk, classify and store a document the OCR has read."""
         doc_id, base = step.doc_id, step.base
+        if step.progress and self.settings.structure.enabled and step.kind != "text":
+            step.progress("structuring", str(step.path), {})
         content, structure = self._structure(step.path, step.kind, step.content, step.password)
         chunks = [c for page in content.pages for c in chunk_page(page)]
         flagged = {i for i, c in enumerate(chunks) if injection_signals(c.text)}

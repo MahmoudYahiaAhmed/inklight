@@ -6,8 +6,10 @@ boxes in the frame of the rendered page, so overlays and citations line up.
 
 from __future__ import annotations
 
+import contextlib
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +30,7 @@ class InklightOCR:
         self._converter: Any = None
         self._lock = threading.Lock()
         self.progress: modelstore.Progress | None = None  # set by a caller that shows the first download
+        self.on_page: Callable[[int, int], None] | None = None  # (page read, pages to read), set by a caller
 
     def supports(self, kind: str) -> bool:
         return kind == "pdf" or kind in _IMAGE_KINDS
@@ -109,6 +112,7 @@ class InklightOCR:
             if note:
                 content = content.model_copy(update={"note": f"{note}; {content.note}".rstrip("; ")})
             pages.append(content)
+            self._page_done(index + 1, min(total, max_pages))
         return pages, total
 
     def _reread_broken_page(
@@ -155,7 +159,13 @@ class InklightOCR:
             if int(getattr(page, "rotation", 0) or 0) in (90, 270):
                 width, height = height, width  # the OCR's boxes are in the upright frame
             pages.append(_to_page(index + 1, page, float(width), float(height)))
+            self._page_done(index + 1, min(len(frames), max_pages))
         return pages, len(frames)
+
+    def _page_done(self, number: int, total: int) -> None:
+        if self.on_page is not None:
+            with contextlib.suppress(Exception):  # a progress display must never stop the reading
+                self.on_page(number, total)
 
     def reread(self, path: Path, page: int, bbox: BBox, rotation: int = 0) -> str | None:
         """OCR one region of an image again, enlarged, to double-check a value read from it.

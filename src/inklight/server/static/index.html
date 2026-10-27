@@ -5,163 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inklight</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <header class="brand">
-        <img src="logo.svg" alt="" width="30" height="30">
-        <div>
-          <div class="wordmark">inklight</div>
-          <div class="tagline">See documents. Understand meaning. Take action.</div>
-        </div>
-      </header>
-
-      <label class="drop" id="drop" tabindex="0">
-        <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.txt,.md" hidden>
-        <span class="drop-icon">＋</span>
-        <span><strong>Drop documents</strong> or click to upload</span>
-        <small>PDF · PNG · JPEG · TIFF · text — processed locally</small>
-      </label>
-      <div class="upload-status" id="upload-status" aria-live="polite"></div>
-
-      <div class="section-head">
-        <span>Library</span>
-        <input id="filter" class="filter" placeholder="Filter…" aria-label="Filter documents">
+  <a class="skip" href="#ops-panel">Skip to the operation</a>
+  <div class="app" id="app" data-view="library">
+    <header class="topbar">
+      <div class="brand">
+        <img src="logo.svg" alt="" width="26" height="26">
+        <span class="wordmark">Inklight</span>
       </div>
-      <ul class="doc-list" id="docs"></ul>
+      <nav class="ops" aria-label="Operations">
+        <button class="op" data-op="text" aria-pressed="true">Extract text</button>
+        <button class="op" data-op="tables" aria-pressed="false">Extract tables</button>
+        <button class="op" data-op="fields" aria-pressed="false">Extract fields</button>
+        <button class="op" data-op="search" aria-pressed="false">Search</button>
+        <button class="op" data-op="review" aria-pressed="false">Review &amp; export</button>
+        <span class="ops-sep" aria-hidden="true"></span>
+        <button class="op op-secondary" data-op="ask" aria-pressed="false">Ask <span class="tag">experimental</span></button>
+      </nav>
+      <div class="top-tools">
+        <span class="status-chip" id="status-chip" title="Where documents are read">Runs on this computer</span>
+        <button class="btn quiet" id="open-settings">Settings</button>
+      </div>
+    </header>
 
-      <footer class="side-foot">
-        <button class="ghost" id="open-settings">Settings</button>
-        <span id="brain-pill" class="pill">rules</span>
-        <span id="build" class="build muted"></span>
-      </footer>
+    <nav class="mobile-views" aria-label="Views">
+      <button data-view="library" aria-pressed="true">Library</button>
+      <button data-view="viewer" aria-pressed="false">Document</button>
+      <button data-view="ops" aria-pressed="false">Results</button>
+    </nav>
+
+    <aside class="library" aria-label="Document library">
+      <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="drop-help">
+        <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.txt,.md" hidden>
+        <span class="drop-title">Add documents</span>
+        <span class="drop-help" id="drop-help">Drop files here or press to choose · PDF, images, text · read on this computer</span>
+      </div>
+      <section class="batch hidden" id="batch" aria-label="Import progress"></section>
+      <div class="lib-head">
+        <h2>Library</h2>
+        <input id="filter" class="filter" type="search" placeholder="Filter" aria-label="Filter documents">
+      </div>
+      <div class="selection" id="selection" aria-live="polite"></div>
+      <ul class="doc-list" id="docs" aria-label="Documents"></ul>
+      <footer class="lib-foot"><span id="build" class="muted"></span></footer>
     </aside>
 
-    <main class="workspace">
-      <nav class="tabs" role="tablist">
-        <button class="tab active" data-tab="doc" role="tab">Document</button>
-        <button class="tab" data-tab="search" role="tab">Search</button>
-        <button class="tab" data-tab="review" role="tab">Review &amp; export</button>
-        <button class="tab" data-tab="extract" role="tab">Extract fields</button>
-        <button class="tab" data-tab="ask" role="tab">Ask <span class="exp">experimental</span></button>
-        <button class="tab" data-tab="history" role="tab">History</button>
-      </nav>
-
-      <section class="panel active" id="panel-doc">
-        <div id="doc-out" class="results">
-          <article class="card muted">Import documents on the left, then select one: its pages open on the right, and its
-            text, tables and raw exports appear here.</article>
-        </div>
-      </section>
-
-      <section class="panel" id="panel-ask">
-        <div class="card notice">Experimental. Answers are drawn from the documents and each says what it is: a
-          <b>supported</b> answer is a value read at its printed label or in its table cell, with that place cited; a
-          <b>proposed</b> answer needs your review; several matches are listed for you to choose. OCR can misread any
-          value, so check the cited place before relying on it.</div>
-        <form id="ask-form" class="composer">
-          <textarea id="ask-input" rows="2" maxlength="4000"
-            placeholder="Ask anything, or give a task — “Find every contract that expires within 90 days”"></textarea>
-          <div class="composer-row">
-            <div class="scope" id="scope-label">Scope: all documents</div>
-            <label class="check"><input type="checkbox" id="allow-write"> Allow saving files</label>
-            <button type="button" class="ghost hidden" id="cancel">Stop</button>
-            <button type="submit" class="primary" id="ask-btn">Run</button>
-          </div>
-        </form>
-        <div class="examples" id="examples"></div>
-        <div id="results" class="results"></div>
-      </section>
-
-      <section class="panel" id="panel-extract">
-        <form id="extract-form" class="composer">
-          <input id="extract-fields" value="" placeholder="Fields, e.g. registration number, date, total" aria-label="Fields">
-          <div class="composer-row">
-            <div class="scope">Each value is read at a printed label of that name (dates, amounts and ids are typed) and keeps its page and box. Raw extraction: review before use.</div>
-            <button type="submit" class="primary">Extract</button>
-          </div>
-        </form>
-        <div id="extract-out" class="results"></div>
-      </section>
-
-      <section class="panel" id="panel-search">
-        <form id="search-form" class="composer">
-          <input id="search-input" placeholder="Search passages across the library" aria-label="Search">
-          <div class="composer-row"><div class="scope">Searches the text of every document (Arabic and English). Click a result to open its page.</div>
-            <button type="submit" class="primary">Search</button></div>
-        </form>
-        <div id="search-out" class="results"></div>
-      </section>
-
-      <section class="panel" id="panel-history">
-        <div id="history-out" class="results"></div>
-      </section>
-
-      <section class="panel" id="panel-review">
-        <form id="review-form" class="composer">
-          <div class="composer-row">
-            <input id="review-name" placeholder="Your name" maxlength="100" aria-label="Reviewer name" required>
-            <select id="review-mode" aria-label="Review mode">
-              <option value="review">Review: check the predicted values</option>
-              <option value="manual">Manual entry: type every value (predictions hidden)</option>
-            </select>
-            <input id="review-cohort" placeholder="Batch name (optional)" maxlength="64" aria-label="Batch name">
-            <input id="review-fields" placeholder="Fields, e.g. registration number, date (empty: a preset for the document type)" maxlength="400" aria-label="Fields to review">
-          </div>
-          <div class="scope review-scope">Review covers named fields: Inklight proposes each value from a printed label of
-            that name (or a typed field such as a date or total) and you accept, correct or mark it absent. It is not a
-            correction of the whole document's text. The original reading is kept next to your decision, and only
-            approved reviews are exported.</div>
-          <div class="composer-row">
-            <div class="scope" id="review-doc-label">Open a document in the viewer, then start its review.</div>
-            <button type="button" class="ghost" id="review-export">Export approved values (CSV)</button>
-            <button type="submit" class="primary">Start review</button>
-          </div>
-        </form>
-        <div id="review-out" class="results"></div>
-        <div id="review-queue" class="results"></div>
-      </section>
-    </main>
-
-    <section class="viewer" id="viewer">
+    <main class="viewer" id="viewer" aria-label="Document viewer">
       <div class="viewer-head">
-        <div>
-          <div class="viewer-title" id="viewer-title">No document selected</div>
-          <div class="viewer-meta" id="viewer-meta">Select a document or click a citation.</div>
+        <div class="viewer-id">
+          <div class="viewer-title" id="viewer-title" dir="auto">No document open</div>
+          <div class="viewer-meta" id="viewer-meta">Choose a document in the library.</div>
         </div>
         <div class="viewer-tools">
-          <button class="ghost small" id="prev-page" aria-label="Previous page">‹</button>
-          <span id="page-label">–</span>
-          <button class="ghost small" id="next-page" aria-label="Next page">›</button>
-          <button class="ghost small" id="toggle-text">Text</button>
-          <button class="ghost small" id="close-viewer" aria-label="Close the document viewer">✕</button>
+          <button class="btn quiet icon" id="prev-page" aria-label="Previous page">‹</button>
+          <span id="page-label" class="page-label" aria-live="polite">–</span>
+          <button class="btn quiet icon" id="next-page" aria-label="Next page">›</button>
+          <div class="seg" role="group" aria-label="Show the page as">
+            <button id="show-image" aria-pressed="true">Page</button>
+            <button id="show-text" aria-pressed="false">Text</button>
+          </div>
+          <label class="tick"><input type="checkbox" id="show-regions" checked> Regions</label>
         </div>
       </div>
-      <div class="page-wrap" id="page-wrap">
-        <div class="page" id="page"><img id="page-img" alt=""><div id="overlay" class="overlay"></div></div>
-        <pre class="page-text hidden" id="page-text"></pre>
+      <div class="legend" id="legend" aria-label="What the marks on the page mean">
+        <span><i class="key region"></i>Detected region</span>
+        <span><i class="key hit"></i>Search match</span>
+        <span><i class="key evidence"></i>Source of a value</span>
+        <span><i class="key check"></i>Value to check</span>
       </div>
+      <div class="page-wrap" id="page-wrap">
+        <div class="empty" id="viewer-empty">
+          <p class="empty-title">Open a document</p>
+          <p>Add documents on the left, or choose one in the library. Its pages open here, with the regions that were
+            read and the source of every value.</p>
+        </div>
+        <figure class="page hidden" id="page">
+          <img id="page-img" alt="">
+          <div id="overlay" class="overlay"></div>
+          <div class="processing hidden" id="processing" aria-hidden="true"><div class="sweep"></div></div>
+          <figcaption class="processing-label hidden" id="processing-label"></figcaption>
+        </figure>
+        <pre class="page-text hidden" id="page-text" dir="auto"></pre>
+      </div>
+    </main>
+
+    <section class="ops-panel" id="ops-panel" aria-label="Operation" tabindex="-1">
+      <div class="steps" id="steps" aria-label="Steps"></div>
+      <div class="ops-body" id="ops-body"></div>
     </section>
   </div>
 
-  <dialog id="settings">
+  <div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+
+  <dialog id="settings" aria-labelledby="settings-title">
     <form method="dialog" class="settings">
-      <h2>Settings</h2>
-      <label>Brain
-        <select id="set-brain">
-          <option value="auto">Auto — small local models when installed</option>
-          <option value="local">Local — require the small models</option>
-          <option value="rules">Rules — deterministic, no models</option>
-        </select>
-      </label>
-      <label class="check"><input type="checkbox" id="set-writer"> Let the 135M writer phrase answers (verified)</label>
-      <div id="set-models" class="models"></div>
-      <div id="set-info" class="info"></div>
-      <menu><button class="ghost" value="cancel">Close</button><button class="primary" id="save-settings" value="ok">Apply</button></menu>
+      <h2 id="settings-title">Settings</h2>
+      <section>
+        <h3>Ask (experimental)</h3>
+        <label>Models for Ask
+          <select id="set-brain">
+            <option value="auto">Auto: small local models when installed</option>
+            <option value="local">Local: require the small models</option>
+            <option value="rules">Rules: deterministic, no models</option>
+          </select>
+        </label>
+        <label class="tick"><input type="checkbox" id="set-writer"> Let the small writer phrase answers (checked against the evidence)</label>
+      </section>
+      <section>
+        <h3>Diagnostics</h3>
+        <div id="set-info" class="info"></div>
+      </section>
+      <menu><button class="btn quiet" value="cancel">Close</button><button class="btn primary" id="save-settings" value="ok">Apply</button></menu>
     </form>
   </dialog>
-  <script src="app.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

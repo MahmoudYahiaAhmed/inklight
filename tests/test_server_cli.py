@@ -24,7 +24,7 @@ def test_status_and_documents(client):
     status = client.get("/api/status").json()
     assert status["name"] == "Inklight" and status["stats"]["documents"] >= 8
     assert any(d["name"] == "invoice_acme.pdf" for d in client.get("/api/documents").json())
-    assert client.get("/").status_code == 200 and "inklight" in client.get("/").text
+    assert client.get("/").status_code == 200 and "inklight" in client.get("/").text.lower()
 
 
 def test_security_headers_and_guards(client):

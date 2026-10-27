@@ -55,3 +55,49 @@ def render_page(path: Path, number: int, page: PageContent, dpi: float) -> bytes
             img = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)
     ok, buf = cv2.imencode(".png", img)
     return bytes(buf) if ok else None
+
+
+PREVIEW_SIDE = 900  # long side of an import preview, in pixels
+
+
+def preview_png(path: Path) -> bytes | None:
+    """PNG of a file's first page as uploaded, before it is read: shown under the progress of an import."""
+    if not path.is_file():
+        return None
+    try:
+        import cv2
+        import numpy as np
+    except ImportError:  # pragma: no cover - opencv is a dependency
+        return None
+    with path.open("rb") as fh:
+        is_pdf = fh.read(5) == b"%PDF-"
+    if is_pdf:
+        import pypdfium2 as pdfium
+
+        try:
+            doc = pdfium.PdfDocument(str(path))
+        except pdfium.PdfiumError:
+            return None
+        try:
+            if not len(doc):
+                return None
+            page = doc[0]
+            w_pt, h_pt = page.get_size()
+            img = np.ascontiguousarray(page.render(scale=PREVIEW_SIDE / max(w_pt, h_pt, 1.0)).to_numpy())
+        finally:
+            doc.close()
+        if img.ndim == 3 and img.shape[2] == 4:
+            img = img[:, :, :3]
+    elif path.suffix.lower() in (".txt", ".md", ".markdown"):
+        return None
+    else:
+        ok, frames = cv2.imreadmulti(str(path), start=0, count=1, flags=cv2.IMREAD_COLOR)
+        found = frames[0] if ok and frames else cv2.imread(str(path), cv2.IMREAD_COLOR)
+        if found is None:
+            return None
+        img = found
+        k = PREVIEW_SIDE / max(img.shape[:2])
+        if k < 1:
+            img = cv2.resize(img, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)
+    ok, buf = cv2.imencode(".png", img)
+    return bytes(buf) if ok else None

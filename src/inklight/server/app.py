@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import contextlib
 import hmac
+import json
+import mimetypes
 import os
 import re
 import secrets
@@ -25,7 +27,7 @@ from typing import Any
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -35,10 +37,16 @@ from ..agent import DocumentAgent, Policy
 from ..config import Settings
 from ..errors import InklightError, InputRejected
 from ..safety import SUPPORTED_EXTENSIONS, safe_filename
+from ..structure.run import available as structure_available
 from . import review_api, workspace
-from .render import render_page
+from .jobs import TERMINAL, Jobs
+from .render import preview_png, render_page
 
 STATIC = Path(__file__).parent / "static"
+# The workspace's scripts are ES modules, which browsers run only when served as JavaScript; some Windows
+# registries map .js to text/plain, so the types are set here.
+mimetypes.add_type("text/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "[::1]", "::1"}
 
 
@@ -75,7 +83,7 @@ def _discard(path: Path) -> None:
 
 def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAPI:
     owned = None if agent is not None else DocumentAgent(settings)  # an agent passed in belongs to the caller
-    state: dict[str, Any] = {"agent": agent or owned, "jobs": {}, "swapped": []}
+    state: dict[str, Any] = {"agent": agent or owned, "jobs": {}, "imports": Jobs(), "swapped": []}
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -154,7 +162,11 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             "stats": a.library.store.stats(),
             "limits": a.settings.limits.model_dump(),
             "ocr": a.settings.ocr.model_dump(),
-            "structure": {"enabled": a.settings.structure.enabled, "table_mode": a.settings.structure.table_mode},
+            "structure": {
+                "enabled": a.settings.structure.enabled,
+                "installed": structure_available(),
+                "table_mode": a.settings.structure.table_mode,
+            },
             "downloads": modelstore.downloads(),  # model files being fetched on first use: {set: state, done, total}
             "privacy": a.settings.privacy.model_dump(),
             "outputs": str(a.settings.outputs),
@@ -184,15 +196,14 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
     def documents() -> list[dict[str, Any]]:
         return [d.model_dump(mode="json") for d in current().library.documents()]
 
-    @app.post("/api/documents")
-    async def upload(files: list[UploadFile] = File(...)) -> dict[str, Any]:
+    async def _save_uploads(files: list[UploadFile]) -> tuple[list[Path], list[dict[str, Any]]]:
         a = current()
         limit = int(a.settings.limits.max_file_mb * 1024 * 1024)
         if len(files) > a.settings.limits.max_files_per_task:
             raise HTTPException(413, "Too many files in one upload")
         folder = a.settings.uploads
         folder.mkdir(parents=True, exist_ok=True)
-        saved: list[str | Path] = []
+        saved: list[Path] = []
         rejected: list[dict[str, Any]] = []
         for up in files:
             name = safe_filename(Path(up.filename or "upload").name, "upload")
@@ -215,24 +226,126 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
                 rejected.append({"file": up.filename, "error": f"larger than {a.settings.limits.max_file_mb:g} MB"})
                 continue
             saved.append(target)
-        try:
-            report = await run_in_threadpool(a.library.add, saved) if saved else None
-        except Exception:
-            for path in saved:  # never leave orphaned uploads behind
-                _discard(Path(path))
-            raise
+        return saved, rejected
+
+    def _import_result(report: Any, rejected: list[dict[str, Any]]) -> dict[str, Any]:
+        """The response for an import; files that failed or were not read are removed from the uploads folder."""
         failed = [
             {"file": Path(p).name, "error": e.replace(f"{Path(p).name}: ", "")}
             for p, e in (report.failed if report else [])
         ]
         for p, _ in report.failed if report else []:
             _discard(Path(p))
+        for p in report.cancelled if report else []:
+            _discard(Path(p))
         return {
             "documents": [d.model_dump(mode="json") for d in (report.documents if report else [])],
             "failed": rejected + failed,
+            "cancelled": [Path(p).name for p in (report.cancelled if report else [])],
             "warnings": list(report.warnings) if report else [],
             "seconds": round(report.seconds, 2) if report else 0,
         }
+
+    @app.post("/api/documents")
+    async def upload(files: list[UploadFile] = File(...), background: bool = False) -> dict[str, Any]:
+        """Import files. By default the response comes when every file is read. With ``background=true`` it comes at
+        once, with a job to follow: /api/jobs/{id} and /api/jobs/{id}/events report each file and page as it is read.
+        """
+        a = current()
+        saved, rejected = await _save_uploads(files)
+        if background:
+            job = state["imports"].start_import(
+                saved, rejected, a.library.add, lambda report: _import_result(report, rejected)
+            )
+            return {"job": job}
+        try:
+            report = await run_in_threadpool(a.library.add, list[str | Path](saved)) if saved else None
+        except Exception:
+            for path in saved:  # never leave orphaned uploads behind
+                _discard(Path(path))
+            raise
+        return _import_result(report, rejected)
+
+    def _structured_library() -> Any:
+        """A library over the same store, OCR engine and models, with document structure on (made once)."""
+        a = current()
+        lib = state.get("structured")
+        if lib is None or lib.store is not a.library.store:
+            from ..library import Library
+
+            settings = a.settings.with_overrides(structure={"engine": "inklight"})
+            lib = Library(settings, store=a.library.store, engine=a.library.engine, brain=a.library.brain)
+            state["structured"] = lib
+        return lib
+
+    @app.post("/api/documents/{doc_id}/structure")
+    def structure_document_job(doc_id: str) -> dict[str, Any]:
+        """Read a document again with document structure (layout, reading order, tables), as a background job
+        followed like an import. Needs the structure install. The file itself is never removed."""
+        from ..structure.run import available
+
+        info = _doc(doc_id)
+        if not available():
+            raise HTTPException(409, 'Document structure is not installed: pip install "inklight[structure]"')
+        path = Path(info.path)
+        if not path.exists():
+            raise HTTPException(409, f"{info.name} is no longer on disk; import it again")
+        lib = _structured_library()
+
+        def finish(report: Any) -> dict[str, Any]:
+            return {
+                "documents": [d.model_dump(mode="json") for d in report.documents],
+                "failed": [{"file": Path(f).name, "error": e} for f, e in report.failed],
+                "cancelled": [Path(f).name for f in report.cancelled],
+                "warnings": list(report.warnings),
+                "seconds": round(report.seconds, 2),
+            }
+
+        job = state["imports"].start_import([path], [], lib.add, finish, kind="structure")
+        return {"job": job}
+
+    @app.get("/api/jobs")
+    def jobs() -> list[dict[str, Any]]:
+        """Recent imports, newest first, so a reloaded page can find one still running."""
+        return state["imports"].recent()  # type: ignore[no-any-return]
+
+    @app.get("/api/jobs/{job_id}")
+    def job(job_id: str) -> dict[str, Any]:
+        snap = state["imports"].snapshot(job_id)
+        if snap is None:
+            raise HTTPException(404, "Unknown job")
+        return snap  # type: ignore[no-any-return]
+
+    @app.get("/api/jobs/{job_id}/events")
+    async def job_events(job_id: str) -> StreamingResponse:
+        """Server-sent events: the job's state each time it changes, until it ends."""
+        if state["imports"].snapshot(job_id) is None:
+            raise HTTPException(404, "Unknown job")
+
+        async def stream() -> AsyncIterator[str]:
+            version = -1
+            while True:
+                snap = await run_in_threadpool(state["imports"].wait, job_id, version, 15.0)
+                if snap is None:
+                    return
+                if snap["version"] == version:
+                    yield ": still running\n\n"  # keeps the connection open through proxies
+                    continue
+                version = snap["version"]
+                yield f"data: {json.dumps(snap)}\n\n"
+                if snap["state"] in TERMINAL:
+                    return
+
+        return StreamingResponse(stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache"})
+
+    @app.get("/api/jobs/{job_id}/files/{index}/preview")
+    def job_preview(job_id: str, index: int) -> Response:
+        """The first page of a file in an import, as uploaded (before it is read), for the progress view."""
+        path = state["imports"].path(job_id, index)
+        png = preview_png(path) if path is not None and path.exists() else None
+        if png is None:
+            raise HTTPException(404, "No preview available")
+        return Response(png, media_type="image/png", headers={"Cache-Control": "private, max-age=600"})
 
     def _doc(doc_id: str):  # type: ignore[no-untyped-def]
         if not re.fullmatch(r"[0-9a-f]{16}", doc_id):
@@ -344,10 +457,12 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
 
     @app.post("/api/jobs/{job_id}/cancel")
     def cancel_job(job_id: str) -> dict[str, Any]:
+        """Stop a running request (Ask), or an import before its next file."""
         event = state["jobs"].get(job_id)
         if event is not None:
             event.set()
-        return {"cancelled": event is not None}
+            return {"cancelled": True}
+        return {"cancelled": state["imports"].cancel(job_id)}
 
     @app.post("/api/extract")
     async def extract(body: ExtractBody) -> dict[str, Any]:

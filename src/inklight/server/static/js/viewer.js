@@ -1,0 +1,175 @@
+// The document viewer: the page as the file shows it, the regions that were read, and marks that say what they are
+// (search match, source of a value, value to check, table). Stored boxes are in the upright frame of the page
+// (p.width x p.height); the image is the page as the file shows it, turned p.rotation degrees counter-clockwise
+// from upright (inklight/frames.py), so every box is turned the same way before it is drawn.
+
+import { $, api, changed, h, pageText, reducedMotion, store, withToken } from "./dom.js";
+
+const view = { mode: "image", processing: null, fresh: false };
+// processing: {jobId, index, label} while a file is being read; fresh: the open document has just been read, so its
+// regions appear one after another the first time they are drawn.
+
+export async function openDoc(id, page = 1, marks = [], { fresh = false } = {}) {
+  view.processing = null;
+  view.fresh = fresh;
+  if (store.open?.id !== id) {
+    const data = await api(`/api/documents/${id}`);
+    store.open = data.document;
+    store.pages = data.pages;
+    store.structure = data.structure;
+  }
+  store.page = Math.max(1, Math.min(page, store.pages.length || 1));
+  store.marks = marks;
+  render();
+  changed("open");
+}
+
+export async function reloadOpen() {
+  if (!store.open) return;
+  const id = store.open.id;
+  store.open = null;
+  await openDoc(id, store.page, store.marks);
+}
+
+export function closeDoc(id) {
+  if (store.open?.id !== id) return;
+  store.open = null; store.pages = []; store.structure = null; store.marks = [];
+  render();
+  changed("open");
+}
+
+export function setMarks(marks, page) {
+  store.marks = marks;
+  if (page && page !== store.page) store.page = page;
+  render();
+}
+
+// While a file is being read there is no stored page yet: the viewer shows the file as uploaded, under a quiet
+// sweep, with the stage the server reported. Nothing is drawn on the page until the reading is stored.
+export function showProcessing(jobId, index, label) {
+  const same = view.processing && view.processing.jobId === jobId && view.processing.index === index;
+  view.processing = { jobId, index, label };
+  if (!same) { store.open = null; store.pages = []; store.marks = []; changed("open"); }
+  render();
+}
+
+export function processingTarget() { return view.processing; }
+
+export function stopProcessing() {
+  if (!view.processing) return;
+  view.processing = null;
+  render();
+}
+
+export function render() {
+  const page = $("#page"), img = $("#page-img"), text = $("#page-text"), empty = $("#viewer-empty");
+  const proc = $("#processing"), procLabel = $("#processing-label"), overlay = $("#overlay");
+  overlay.replaceChildren();
+  if (view.processing) {
+    const { jobId, index, label } = view.processing;
+    $("#viewer-title").textContent = label.name;
+    $("#viewer-meta").textContent = "Being read. The page appears with its regions when the reading is stored.";
+    $("#page-label").textContent = label.page || "–";
+    empty.classList.add("hidden"); text.classList.add("hidden"); page.classList.remove("hidden");
+    const src = withToken(`/api/jobs/${jobId}/files/${index}/preview`);
+    if (img.dataset.src !== src) {
+      img.dataset.src = src; img.classList.add("loading-img"); img.alt = `First page of ${label.name}, as uploaded`;
+      img.onload = () => img.classList.remove("loading-img");
+      img.src = src;
+    }
+    img.onerror = () => { page.classList.add("hidden"); empty.classList.remove("hidden"); };
+    proc.classList.toggle("hidden", !label.active);
+    procLabel.classList.remove("hidden");
+    procLabel.textContent = label.stage;
+    return;
+  }
+  proc.classList.add("hidden"); procLabel.classList.add("hidden");
+  const doc = store.open;
+  if (!doc) {
+    $("#viewer-title").textContent = "No document open";
+    $("#viewer-meta").textContent = "Choose a document in the library.";
+    $("#page-label").textContent = "–";
+    page.classList.add("hidden"); text.classList.add("hidden"); empty.classList.remove("hidden");
+    img.removeAttribute("src"); delete img.dataset.src;
+    return;
+  }
+  empty.classList.add("hidden");
+  const p = store.pages.find((x) => x.number === store.page);
+  $("#viewer-title").textContent = doc.name;
+  $("#viewer-meta").textContent = meta(doc, p);
+  $("#page-label").textContent = `${store.page} / ${store.pages.length}`;
+  text.textContent = pageText(p);
+  const asText = view.mode === "text" || !p || !p.width;
+  page.classList.toggle("hidden", asText);
+  text.classList.toggle("hidden", !asText);
+  if (asText) return;
+  const src = withToken(`/api/documents/${doc.id}/pages/${store.page}/image`);
+  if (img.dataset.src !== src) {
+    img.dataset.src = src; img.classList.add("loading-img"); img.alt = `Page ${store.page} of ${doc.name}`;
+    img.onload = () => img.classList.remove("loading-img");
+    img.src = src;
+  }
+  img.onerror = () => { page.classList.add("hidden"); text.classList.remove("hidden"); };
+  drawMarks(p, overlay, img);
+}
+
+function meta(doc, p) {
+  const how = p ? (p.source === "text" ? "text layer" : p.source === "hybrid" ? "text layer and OCR" : p.source === "error" ? "page failed" : "OCR") : "";
+  const st = store.structure;
+  const structure = st?.available ? (st.pages[store.page] || "") : "no document structure";
+  const turned = p?.rotation ? `page turned ${p.rotation}°, shown as in the file` : "";
+  return [`${doc.pages} page${doc.pages === 1 ? "" : "s"}`, how, structure, turned].filter(Boolean).join(" · ");
+}
+
+function drawMarks(p, overlay, img) {
+  const turn = (((p.rotation || 0) % 360) + 360) % 360;
+  const [ow, oh] = turn === 90 || turn === 270 ? [p.height, p.width] : [p.width, p.height];
+  const shown = (x, y) => (turn === 90 ? [y, p.width - x] : turn === 180 ? [p.width - x, p.height - y] : turn === 270 ? [p.height - y, x] : [x, y]);
+  const place = (bbox) => {
+    const [ax, ay] = shown(bbox[0], bbox[1]);
+    const [bx, by] = shown(bbox[2], bbox[3]);
+    return [Math.min(ax, bx) / ow, Math.min(ay, by) / oh, Math.abs(bx - ax) / ow, Math.abs(by - ay) / oh];
+  };
+  const style = ([x, y, w, hh]) => `left:${x * 100}%;top:${y * 100}%;width:${w * 100}%;height:${hh * 100}%`;
+  overlay.classList.toggle("no-regions", !$("#show-regions").checked);
+  const stagger = view.fresh && !reducedMotion() ? Math.min(18, 600 / Math.max(p.blocks.length, 1)) : 0;
+  p.blocks.forEach((b, i) => {
+    if (!b.bbox) return;
+    overlay.append(h("div", { class: `mark region${view.fresh ? "" : " settled"}`, title: b.label, style: `${style(place(b.bbox))};animation-delay:${i * stagger}ms` }));
+  });
+  view.fresh = false;
+  let first = null;
+  for (const m of store.marks.filter((x) => x.page === store.page && x.bbox)) {
+    const box = place(m.bbox);
+    const el = h("div", { class: `mark ${m.kind}`, title: m.title || "", style: style(box) });
+    overlay.append(el);
+    if (m.label) overlay.append(h("div", { class: `mark-label ${m.kind}`, style: `left:${box[0] * 100}%;top:${box[1] * 100}%` }, m.label));
+    first = first || box;
+  }
+  if (first) {
+    const go = () => {
+      const wrap = $("#page-wrap");
+      wrap.scrollTo({ top: Math.max(0, first[1] * img.clientHeight - 120), behavior: reducedMotion() ? "auto" : "smooth" });
+    };
+    if (img.complete && img.naturalWidth && !img.classList.contains("loading-img")) go(); else img.addEventListener("load", go, { once: true });
+  }
+}
+
+export function wireViewer() {
+  $("#prev-page").addEventListener("click", () => store.open && openDoc(store.open.id, store.page - 1, store.marks));
+  $("#next-page").addEventListener("click", () => store.open && openDoc(store.open.id, store.page + 1, store.marks));
+  const seg = (mode) => {
+    view.mode = mode;
+    $("#show-image").setAttribute("aria-pressed", String(mode === "image"));
+    $("#show-text").setAttribute("aria-pressed", String(mode === "text"));
+    render();
+  };
+  $("#show-image").addEventListener("click", () => seg("image"));
+  $("#show-text").addEventListener("click", () => seg("text"));
+  $("#show-regions").addEventListener("change", render);
+  document.addEventListener("keydown", (e) => {
+    if (!store.open || e.target.closest("input, textarea, select")) return;
+    if (e.key === "PageDown") { e.preventDefault(); openDoc(store.open.id, store.page + 1, store.marks); }
+    if (e.key === "PageUp") { e.preventDefault(); openDoc(store.open.id, store.page - 1, store.marks); }
+  });
+}
