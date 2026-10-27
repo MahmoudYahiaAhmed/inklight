@@ -1,0 +1,18 @@
+# HTTPS in front of Inklight. Caddy gets a certificate for INKLIGHT_SITE (a domain pointing to this machine), or uses
+# its own local authority for localhost. It passes the original Host and sets X-Forwarded-For and -Proto.
+{$INKLIGHT_SITE} {
+	encode gzip
+
+	# The workspace's requests are relative to its page, so each one works under its prefix (with a trailing slash).
+	redir /inklight /inklight/
+	handle_path /inklight/* {
+		reverse_proxy 172.30.0.20:8765
+	}
+
+	redir /demo /demo/
+	handle_path /demo/* {
+		reverse_proxy 172.30.0.21:8765
+	}
+
+	respond / "Inklight: /inklight/ (private workspace) or /demo/ (public demo)" 200
+}

@@ -6,11 +6,11 @@
 
 <p align="center"><b>A local document workspace for Arabic, English and mixed documents.</b><br>
 Extract text, tables and named fields from scans and PDFs, search them, check each value against its place on the
-page, and export what you approved, on your own computer.</p>
+page, and export what you approved, on your own computer or on a server you run.</p>
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="status" src="https://img.shields.io/badge/status-developer%20beta%200.3.0b3-F5B544?style=flat-square&labelColor=0B0F14">
+  <img alt="status" src="https://img.shields.io/badge/release-0.3.0-F5B544?style=flat-square&labelColor=0B0F14">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
@@ -18,30 +18,55 @@ page, and export what you approved, on your own computer.</p>
 <p align="center"><img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-fields.png" width="900" alt="The Inklight workspace: a synthetic registration certificate scanned sideways, with the company name read at its label and its source outlined on the page as the file shows it."></p>
 
 Everything Inklight shows is either **what was read** (text, boxes, tables and search matches, each linked to its
-place on the page) or **a value for you to check**. Documents are read on your computer and never uploaded.
+place on the page) or **a value for you to check**. Documents are read where Inklight runs (your computer, or a
+server you host it on) and sent nowhere else.
 
-> **Developer beta (0.3.0b3).** For developers and careful users who check results against the page; see
-> [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations). It is a pre-release, so pip needs `--pre` or the exact version; a plain
-> `pip install inklight` installs the older 0.1.0.
+> **0.3.0.** For people who check results against the page: values are proposals to review, not facts, and
+> Inklight is not suited to unattended processing. See
+> [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations).
 
 ## Install and launch
 
 Python 3.11 or newer, on Windows, Linux or macOS, CPU only:
 
 ```bash
-pip install --pre "inklight[structure]"
+pip install "inklight[structure]"
 ```
 
 ```bash
 inklight serve
 ```
 
-The workspace opens at http://127.0.0.1:8765. The first time a document is read, Inklight downloads its OCR models
-(76 MB) with a progress bar. The first time tables are extracted, it downloads the document structure models (384 MB).
-Each file is checked against a pinned SHA-256, an interrupted download resumes, and after that everything works
-offline (set `INKLIGHT_OFFLINE=1` to make sure nothing is fetched). `inklight models pull --structure` fetches
-everything ahead of time; `inklight doctor` checks the installation. Without `[structure]` the install is smaller and
-everything except table extraction works.
+The workspace opens at http://127.0.0.1:8765, on this computer only. The first time a PDF or an image is read,
+Inklight downloads its OCR models (76 MB) with a progress bar; text files need none. The first time tables are
+extracted, it downloads the document structure models (384 MB). Each file is checked against a pinned SHA-256, an
+interrupted download resumes, and after that everything works offline (set `INKLIGHT_OFFLINE=1` to make sure nothing
+is fetched). `inklight models pull --structure` fetches everything ahead of time; `inklight doctor` checks the
+installation. Without `[structure]` the install is smaller and everything except table extraction works.
+
+## Host it on a machine
+
+**A private workspace** for you or a trusted team. Everyone with the token shares one library:
+
+```bash
+export INKLIGHT_SERVER_TOKEN="$(python -c "import secrets; print(secrets.token_urlsafe(24))")"
+inklight serve --host 0.0.0.0 --port 8765 --public-url http://<server address>:8765
+```
+
+Visitors open `http://<server address>:8765` and enter the token when the page asks. `0.0.0.0` is the address the
+server listens on, not one to open in a browser; `--public-url` is the address visitors use, and the only host name
+accepted besides localhost. The machine's firewall (and a cloud server's security group) must allow TCP 8765 inbound,
+or better, keep it closed and put an HTTPS reverse proxy in front.
+
+**A public demo** for strangers. Each visitor gets a temporary library of their own, deleted after 60 minutes, and
+never sees your library or other visitors' documents:
+
+```bash
+inklight serve --host 0.0.0.0 --port 8765 --demo --public-url https://demo.example.org/
+```
+
+HTTPS behind a reverse proxy, a tested Docker Compose example (Caddy), the demo's limits and Google Colab are in
+[docs/HOSTING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/HOSTING.md).
 
 ## The workspace
 
@@ -186,7 +211,7 @@ file ─► Inklight OCR ─────────────► text lines w
   folder, for example a fresh one to try Inklight. Nothing is added to it until you import a document.
 - **Configuration**: `~/.inklight/config.toml` (see [config.example.toml](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/config.example.toml)) or environment
   variables such as `INKLIGHT_LIMITS__MAX_PAGES=50`. Security: text inside documents is treated as data, never as
-  instructions, and the workspace accepts requests only from this computer ([SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md)).
+  instructions, and by default the workspace accepts requests only from this computer ([SECURITY.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/SECURITY.md)).
 
 ## Evaluation
 

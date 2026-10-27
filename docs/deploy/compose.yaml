@@ -1,0 +1,60 @@
+# Inklight behind Caddy (automatic HTTPS): a private workspace at /inklight/ and a public demo at /demo/.
+#
+#   cd docs/deploy
+#   export INKLIGHT_SITE=docs.example.org INKLIGHT_SERVER_TOKEN=$(python -c "import secrets; print(secrets.token_urlsafe(24))")
+#   docker compose up -d --build
+#
+# Then open https://docs.example.org/inklight/ (enter the token when asked) and https://docs.example.org/demo/.
+# The machine must accept TCP 80 and 443 from the internet (firewall, cloud security group) and the domain's DNS
+# must point to it; Caddy then obtains a certificate. To try it on one machine, leave INKLIGHT_SITE unset: the site is
+# https://localhost:8443/ with a certificate from Caddy's own local authority (the browser will warn).
+# Remove a service you do not want.
+
+name: inklight
+
+services:
+  workspace:  # private: one library, kept in a volume; a token is required
+    build: { context: ../.., args: { INKLIGHT_COMMIT: "${INKLIGHT_COMMIT:-}" } }
+    image: inklight:local
+    restart: unless-stopped
+    environment:
+      INKLIGHT_SERVER_TOKEN: "${INKLIGHT_SERVER_TOKEN:?set INKLIGHT_SERVER_TOKEN}"
+      INKLIGHT_PUBLIC_URL: "https://${INKLIGHT_SITE:-localhost:8443}/inklight/"
+      INKLIGHT_TRUSTED_PROXIES: 172.30.0.10  # Caddy, below: only its X-Forwarded headers are believed
+    volumes:
+      - inklight-home:/home/inklight/.inklight
+      - inklight-models:/home/inklight/.cache
+    networks: { inklight: { ipv4_address: 172.30.0.20 } }
+
+  demo:  # public: a temporary library per visitor, in memory-backed /tmp, gone when the container stops
+    image: inklight:local
+    depends_on: [workspace]
+    restart: unless-stopped
+    command: ["serve", "--host", "0.0.0.0", "--port", "8765", "--no-open", "--demo"]
+    environment:
+      INKLIGHT_PUBLIC_URL: "https://${INKLIGHT_SITE:-localhost:8443}/demo/"
+      INKLIGHT_TRUSTED_PROXIES: 172.30.0.10
+    tmpfs: ["/tmp:size=2g"]
+    volumes:
+      - inklight-models:/home/inklight/.cache  # the same model files; no documents are shared
+    networks: { inklight: { ipv4_address: 172.30.0.21 } }
+
+  caddy:
+    image: caddy:2.8
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "8443:8443"]
+    environment:
+      INKLIGHT_SITE: "${INKLIGHT_SITE:-localhost:8443}"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    networks: { inklight: { ipv4_address: 172.30.0.10 } }
+
+networks:
+  inklight:
+    ipam: { config: [{ subnet: 172.30.0.0/24 }] }
+
+volumes:
+  inklight-home:
+  inklight-models:
+  caddy-data:
