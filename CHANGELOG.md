@@ -5,6 +5,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.1] — 2026-10-27
+
+### Fixed
+- **Opening a server by its IP address said "Host not allowed".** `inklight serve --host 0.0.0.0` accepted only
+  localhost unless `--public-url` named the address, so `http://<server IP>:8765` was refused. On a network bind,
+  any IP address is now an accepted host, a cloud server's public IP included, and the start-up summary prints this
+  machine's addresses as links. Domain names still have to be given (`--public-url`, `--allowed-host`): DNS
+  rebinding arrives with a domain name, never an IP address. A refused host name now gets a message naming it and
+  saying how to allow it. A local workspace (`127.0.0.1`) and the private workspace's token are unchanged.
+- The Colab section of docs/HOSTING.md showed an untested example; it now says Colab's in-notebook view is not
+  supported in 0.3.x.
+
 ## [0.3.0] — 2026-10-27
 
 The 0.3 line as a normal release: `pip install inklight` now installs it. Nothing in it is new accuracy work; results

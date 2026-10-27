@@ -5,8 +5,8 @@
 | Mode | Command | Who uses it | Documents |
 |---|---|---|---|
 | **Local** (default) | `inklight serve` | you, on this computer | your library (`~/.inklight`) |
-| **Private workspace** | `inklight serve --host 0.0.0.0 --public-url …` with `INKLIGHT_SERVER_TOKEN` set | you or a trusted team | **one library shared by everyone who has the token** |
-| **Public demo** | `inklight serve --host 0.0.0.0 --demo --public-url …` | anyone with the link | a temporary library per visitor, deleted after 60 minutes |
+| **Private workspace** | `inklight serve --host 0.0.0.0` with `INKLIGHT_SERVER_TOKEN` set | you or a trusted team | **one library shared by everyone who has the token** |
+| **Public demo** | `inklight serve --host 0.0.0.0 --demo` | anyone with the link | a temporary library per visitor, deleted after 60 minutes |
 
 A token does not separate users: everyone with it sees, adds and deletes the same documents. To let strangers try
 Inklight, use the public demo, never a private workspace with a published token.
@@ -16,16 +16,18 @@ Inklight, use the public demo, never a private workspace with a published token.
 ```bash
 pip install "inklight[structure]"
 export INKLIGHT_SERVER_TOKEN="$(python -c "import secrets; print(secrets.token_urlsafe(24))")"
-inklight serve --host 0.0.0.0 --port 8765 --public-url http://203.0.113.7:8765
+inklight serve --host 0.0.0.0 --port 8765
 ```
 
 (On Windows PowerShell: `$env:INKLIGHT_SERVER_TOKEN = python -c "import secrets; print(secrets.token_urlsafe(24))"`.)
 
-- `0.0.0.0` is where the server listens (every network interface). It is not an address to open in a browser.
-- `--public-url` is the address visitors open: the machine's IP address or domain, or the reverse proxy's URL. Its
-  host name is the one the server accepts; requests for other host names are refused (this blocks DNS rebinding).
-  Add more with `--allowed-host`. The start-up summary says which hosts are accepted; it does not check that the
-  address is reachable from elsewhere.
+- `0.0.0.0` is where the server listens (every network interface). It is not an address to open in a browser. The
+  start-up summary prints this machine's addresses as links instead; it does not check they are reachable from
+  elsewhere.
+- Visitors open the server by any of its IP addresses, `http://203.0.113.7:8765`, including a cloud server's public
+  IP, which the machine itself does not see. Domain names are refused unless listed: give the one visitors use with
+  `--public-url https://docs.example.org/` (or `--allowed-host`). A DNS-rebinding attack always arrives with a domain
+  name, never an IP address, so this keeps that protection. A refused name gets a message saying how to add it.
 - Visitors open the address and type the token when the page asks for it (or open `…/#token=<token>` once; the
   page removes it from the address bar). The token is sent in a header; the server answers with a cookie holding a
   value derived from it, so the token never appears in a URL or a log. The server never prints it.
@@ -39,8 +41,10 @@ inklight serve --host 0.0.0.0 --port 8765 --public-url http://203.0.113.7:8765
 ## Public demo
 
 ```bash
-inklight serve --host 0.0.0.0 --port 8765 --demo --public-url https://demo.example.org/
+inklight serve --host 0.0.0.0 --port 8765 --demo
 ```
+
+(add `--public-url https://demo.example.org/` to serve it under a domain, behind HTTPS)
 
 - Each visitor gets a session (an HttpOnly cookie) with a library of its own in a temporary folder: their documents,
   index, questions, reviews, exports and import jobs. Ids from another session are unknown (404), whatever the
@@ -89,26 +93,9 @@ authority, for a test on one machine.
 
 ## Google Colab
 
-Colab reaches a server in the notebook through its own port proxy; binding to 0.0.0.0 does not make it reachable.
-Keep the default bind and give the proxy's URL as the public URL:
-
-```python
-!pip install -q inklight
-import subprocess
-from google.colab.output import eval_js
-
-url = eval_js("google.colab.kernel.proxyPort(8765)")
-server = subprocess.Popen(
-    ["inklight", "serve", "--port", "8765", "--no-open", "--public-url", url],
-    stdout=open("inklight.log", "w"), stderr=subprocess.STDOUT,
-)
-print("Open", url)
-```
-
-The library lives in the Colab machine's `~/.inklight` and disappears with the runtime. No tunnel or external account
-is involved. This example was not run in Colab for this release: the commands were tested on a local machine, and how
-Colab's proxy forwards requests (its Host header) is unverified. If the page says "Host not allowed", add the host it
-names with `--allowed-host`.
+Not supported in 0.3.x. Colab shows a server from the notebook inside an iframe through its own proxy domain, and
+Inklight answers only for host names it was given and refuses to be framed, so `serve_kernel_port_as_iframe` shows
+"Host not allowed". Run Inklight on a machine you can open by IP address instead (above).
 
 ## First use and offline
 

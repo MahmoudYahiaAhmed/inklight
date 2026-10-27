@@ -10,7 +10,7 @@ page, and export what you approved, on your own computer or on a server you run.
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="status" src="https://img.shields.io/badge/release-0.3.0-F5B544?style=flat-square&labelColor=0B0F14">
+  <img alt="status" src="https://img.shields.io/badge/release-0.3.1-F5B544?style=flat-square&labelColor=0B0F14">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
@@ -21,7 +21,7 @@ Everything Inklight shows is either **what was read** (text, boxes, tables and s
 place on the page) or **a value for you to check**. Documents are read where Inklight runs (your computer, or a
 server you host it on) and sent nowhere else.
 
-> **0.3.0.** For people who check results against the page: values are proposals to review, not facts, and
+> **0.3.1.** For people who check results against the page: values are proposals to review, not facts, and
 > Inklight is not suited to unattended processing. See
 > [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations).
 
@@ -50,13 +50,14 @@ installation. Without `[structure]` the install is smaller and everything except
 
 ```bash
 export INKLIGHT_SERVER_TOKEN="$(python -c "import secrets; print(secrets.token_urlsafe(24))")"
-inklight serve --host 0.0.0.0 --port 8765 --public-url http://<server address>:8765
+inklight serve --host 0.0.0.0 --port 8765
 ```
 
-Visitors open `http://<server address>:8765` and enter the token when the page asks. `0.0.0.0` is the address the
-server listens on, not one to open in a browser; `--public-url` is the address visitors use, and the only host name
-accepted besides localhost. The machine's firewall (and a cloud server's security group) must allow TCP 8765 inbound,
-or better, keep it closed and put an HTTPS reverse proxy in front.
+`inklight serve` prints this machine's addresses as links. Visitors open `http://<server IP>:8765` (a cloud server's
+public IP works too) and enter the token when the page asks. `0.0.0.0` is the address the server listens on, not one
+to open in a browser. To use a domain name instead of an IP, add `--public-url https://docs.example.org/`. The
+machine's firewall (and a cloud server's security group) must allow TCP 8765 inbound, or better, keep it closed and
+put an HTTPS reverse proxy in front.
 
 **A public demo** for strangers. Each visitor gets a temporary library of their own, deleted after 60 minutes, and
 never sees your library or other visitors' documents:
@@ -65,7 +66,7 @@ never sees your library or other visitors' documents:
 inklight serve --host 0.0.0.0 --port 8765 --demo --public-url https://demo.example.org/
 ```
 
-HTTPS behind a reverse proxy, a tested Docker Compose example (Caddy), the demo's limits and Google Colab are in
+HTTPS behind a reverse proxy, a tested Docker Compose example (Caddy), the demo's limits and Colab are in
 [docs/HOSTING.md](https://github.com/MahmoudYahiaAhmed/inklight/blob/main/docs/HOSTING.md).
 
 ## The workspace
