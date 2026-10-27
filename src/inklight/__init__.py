@@ -12,7 +12,7 @@ from .errors import InklightError, InputRejected, ModelUnavailable, OCRError, Pe
 from .library import Library
 from .schemas import AgentResult, DocumentInfo, ExtractedValue, Record, Source
 
-__version__ = "0.3.0b1"
+__version__ = "0.3.0b2"
 
 
 def build_commit() -> str:

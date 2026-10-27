@@ -5,6 +5,29 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0b2] — 2026-10-27 — Developer beta (first beta on PyPI)
+
+A beta for developers and careful users: check every value against its page. Install it with
+`pip install --pre "inklight[structure]"` or pin `inklight==0.3.0b2`; a plain `pip install inklight` still gets 0.1.0.
+
+### Packaging and repository
+- **Installed files.** The wheel holds only the `inklight` package: code, the workspace's static files and license
+  files. The sdist now holds only what builds that wheel; it used to ship tests that needed `bench/` and `pilot/`
+  helpers it did not include, plus docs and screenshots. CI fails a build that lets anything else in
+  (`.github/scripts/check_dist.py`).
+- **Build provenance.** A wheel built from the sdist (as `python -m build` does) said "commit unknown". The sdist
+  now records the source commit, and every wheel built from it keeps it; CI and the release check the exact commit.
+- **Your library is not part of the installation.** It lives in `~/.inklight` (or `INKLIGHT_HOME`), shared by every
+  installation, which is why a fresh install could open documents read earlier. `inklight serve` now says which
+  library it opens.
+- **Docker.** The image could not build: the Dockerfile did not copy the build hook or `NOTICE`. The build context
+  is now an allow-list of what the install needs.
+- **Repository.** Superseded evaluation runs, the 0.2 notebook and the unstarted invoice pilot moved out of the
+  active tree (13.6 MiB); they stay in Git at `146d275`, listed in [evaluation/ARCHIVE.md](evaluation/ARCHIVE.md).
+  The reports keep every result and failure. README examples now say how to get the sample files when installed
+  from PyPI; `examples/README.md` describes them.
+- `inklight process` shows how each document was read, as `inklight docs` does.
+
 ### Workspace
 - **Redesigned** as a light-table for documents: graphite (or paper, in the light theme) panels, one cyan accent for
   what is active, a framed page canvas, a readout of the marked box's page coordinates, and a theme switch (system,
