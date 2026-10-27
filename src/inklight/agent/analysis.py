@@ -454,7 +454,6 @@ _COMPARE_WORDS = set(
         "اثنين",
     ]
 )
-_DECLINED = ("I couldn't find", "I could not find")
 
 
 # Words that introduce the documents compared ("… in the contract and the register", "… في العقد").
@@ -546,35 +545,12 @@ def _named_field(request: str) -> str:
 def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
     """Read the named field in each document on its own (its printed label or table cell), show each value with its
     evidence, then say whether they match. Any document without a single readable value: cannot determine."""
-    from .context import Scratch
-    from .labels import label_answer
-    from .table_answer import table_answer
+    from .field_reader import read_field
 
-    question = f"ما {named}؟" if re.search(r"[؀-ۿ]", named) else f"What is the {named}?"
-    saved = ctx.scratch
     values: list[dict[str, Any]] = []
-    try:
-        for doc in docs:
-            ctx.check()
-            ctx.scratch = Scratch(doc_ids=[doc.id], explicit=True)
-            used = table_answer(ctx, question) or label_answer(ctx, question)
-            sub = ctx.scratch
-            head = sub.answer.split("\n\nEvidence:")[0].strip()
-            entry: dict[str, Any] = {"doc_id": doc.id, "document": doc.name, "value": None, "source": None}
-            if used and sub.outcome == "ambiguous":
-                entry["status"] = "several candidates"
-                entry["candidates"] = [c.value for c in sub.candidates]
-            elif used and head and not head.startswith(_DECLINED) and sub.sources:
-                entry |= {"status": "found", "value": head, "source": sub.sources[0].model_dump(mode="json")}
-                entry["warnings"] = list(sub.warnings)
-                conf = sub.sources[0].ocr_conf
-                if conf is not None and conf < _LOW_OCR and not any("confidence" in w for w in sub.warnings):
-                    entry["warnings"].append(f"OCR read this value with low confidence ({conf:.2f})")
-            else:
-                entry["status"] = "not found"
-            values.append(entry)
-    finally:
-        ctx.scratch = saved
+    for doc in docs:
+        entry = read_field(ctx, doc, named)
+        values.append({k: v for k, v in entry.items() if k not in ("at", "confidence")})
     for item in ctx.scratch.unavailable:
         values.append({**_entry_of(item), "status": "not available", "reason": unavailable_reason(item)})
     found = [v for v in values if v["status"] == "found"]
@@ -623,9 +599,6 @@ def _compare_field(ctx: ToolContext, docs: list[Any], named: str) -> str:
 
 def _entry_of(item: dict[str, Any]) -> dict[str, Any]:
     return {"doc_id": item["doc_id"], "document": item["document"], "value": None, "source": None}
-
-
-_LOW_OCR = 0.85  # the same bar extraction uses for "low OCR confidence"
 
 
 def _value_key(value: str) -> str:

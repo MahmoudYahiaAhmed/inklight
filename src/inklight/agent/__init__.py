@@ -22,7 +22,7 @@ from ..errors import InklightError, InputRejected
 from ..extract import resolve_field
 from ..library import IngestReport, Library, Progress
 from ..review import Mode, Review, ReviewStore
-from ..schemas import AgentResult, DocStatus, ExtractedValue, Record, TaskState
+from ..schemas import AgentResult, DocStatus, Record, TaskState
 from .context import Policy, Scratch, ToolContext
 from .coverage import unavailable_warning
 from .plan import Intent, Plan
@@ -234,35 +234,10 @@ class DocumentAgent:
         if doc is None:
             raise InputRejected(f"Unknown document {doc_id!r}")
         names = [resolve_field(f).name for f in fields]
-        record = self.extract([doc.path], fields=names)[0]
-        record = self._fill_from_labels(doc_id, record, names)
+        record = self.extract([doc.path], fields=names)[0]  # empty fields are read at their label or table cell
         return self.reviews.open(
             doc, record, names, mode=mode, reviewer=reviewer, cohort=cohort, split=split, baseline=baseline
         )
-
-    def _fill_from_labels(self, doc_id: str, record: Record, names: list[str]) -> Record:
-        """A field the typed extractor left empty is proposed from the same place an answer would come from: the
-        value printed at a label of that name, or in the table cell under that heading. Only such supported values
-        are used (a passage is never proposed as a field's value); the reviewer still decides each one."""
-        filled = dict(record.fields)
-        for name in names:
-            current = filled.get(name)
-            if current is not None and current.value is not None:
-                continue
-            result = self.ask(f"What is the {name.replace('_', ' ')}?", doc_ids=[doc_id], save=False)
-            if result.outcome != "supported" or not result.sources:
-                continue
-            value = result.answer.split("\n\nEvidence:")[0].strip()
-            filled[name] = ExtractedValue(
-                field=name,
-                value=value,
-                raw=value,
-                confidence=result.evidence_confidence,
-                method="label or table cell",
-                warning=None,
-                source=result.sources[0],
-            )
-        return record.model_copy(update={"fields": filled})
 
     def extract(
         self,
@@ -277,10 +252,12 @@ class DocumentAgent:
         if schema is not None:
             specs = schema_from_dict(schema) if isinstance(schema, dict) else load_schema(schema)
             names = [s.name for s in specs]
+            words = [s.labels[0] if s.labels else s.name.replace("_", " ") for s in specs]
         elif fields:
             # Named fields are read directly, in any language ("رقم القيد"), without going through the planner.
             specs = [resolve_field(f) for f in fields]
             names = [s.name for s in specs]
+            words = [f.replace("_", " ").strip() for f in fields]
         else:
             specs, names = None, []
         report = self.add(items)
@@ -297,11 +274,24 @@ class DocumentAgent:
         if specs is not None:
             # Custom specs carry labels/types the planner cannot know; extract them directly.
             from ..extract import extract_record
+            from .field_reader import complete_record, context_for
 
             docs = [d for d in (self.library.get(i) for i in scope) if d is not None]
             day_first = self.settings.extraction.day_first
+            # A field the typed reader leaves empty is read where an answer would read it: at its printed label or
+            # in its table cell (field_reader.py), so extraction and questions agree. Never from a passage.
+            ctx = context_for(self.library, [d.id for d in docs])
+            wanted = list(zip(specs, words, strict=True))
             return [
-                extract_record(d, self.library.pages(d.id), specs, day_first=day_first, reread=self.library.rereader(d))
+                complete_record(
+                    ctx,
+                    d,
+                    extract_record(
+                        d, self.library.pages(d.id), specs, day_first=day_first, reread=self.library.rereader(d)
+                    ),
+                    wanted,
+                    day_first=day_first,
+                )
                 for d in docs
             ]
         result = self.run_plan(plan.model_copy(update={"steps": steps_for(plan)}), scope, save=False)

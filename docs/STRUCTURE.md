@@ -93,6 +93,18 @@ More rules:
 - A cell the OCR read with confidence below 0.85 is flagged.
 - The citation is the cell, with its page and box.
 
+Field extraction uses the same reading (`agent/field_reader.py`), so `extract(fields=["registration number"])` and
+"What is the registration number?" give the same cell:
+
+- A field the typed extractor leaves empty is read at its printed label or table cell, with that cell as its source.
+  It must parse as the field's type (a date, an amount, an id with a digit); a passage is never used.
+- A value the typed extractor paired with its label by position across lines (under a heading, along a row) yields
+  to the table's own cell. When the heading has several cells (one per partner, one per supplier table), the
+  value is kept only if it is one of them, and every candidate is named in the field's warning.
+- Any other difference between the typed value and the table cell is flagged for review, never resolved silently.
+  A printed label outside a table fills an empty field but does not override or flag a typed value: on invoices
+  and receipts the typed extractor reads labels better.
+
 These checks also apply without structure:
 
 - An answer that only repeats the question's words ("اسم الشركة" for "ما اسم الشركة؟") is declined.
