@@ -3,7 +3,7 @@
 // (p.width x p.height); the image is the page as the file shows it, turned p.rotation degrees counter-clockwise
 // from upright (inklight/frames.py), so every box is turned the same way before it is drawn.
 
-import { $, api, changed, fill, h, pageText, reducedMotion, store, withToken } from "./dom.js";
+import { $, api, changed, fill, h, pageMethod, pageText, readAs, reducedMotion, sourcesOf, store, withToken } from "./dom.js";
 
 const view = { mode: "image", processing: null, fresh: false };
 // processing: {jobId, index, label} while a file is being read; fresh: the open document has just been read, so its
@@ -123,7 +123,8 @@ export function render() {
 }
 
 function meta(doc, p) {
-  const how = p ? (p.source === "text" ? "text layer" : p.source === "hybrid" ? "text layer and OCR" : p.source === "error" ? "page failed" : "OCR") : "";
+  const all = readAs(sourcesOf(store.pages));
+  const how = all.startsWith("mixed") && p ? `${all} · this page: ${pageMethod(p.source)}` : all;
   const st = store.structure;
   const structure = st?.available ? (st.pages[store.page] || "") : "no document structure";
   const turned = p?.rotation ? `page turned ${p.rotation}°, shown as in the file` : "";

@@ -194,7 +194,10 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
 
     @app.get("/api/documents")
     def documents() -> list[dict[str, Any]]:
-        return [d.model_dump(mode="json") for d in current().library.documents()]
+        lib = current().library
+        sources = lib.store.page_sources()
+        # read_as: how each document's text was obtained (pages by source), as the workspace labels it
+        return [d.model_dump(mode="json") | {"read_as": sources.get(d.id, {})} for d in lib.documents()]
 
     async def _save_uploads(files: list[UploadFile]) -> tuple[list[Path], list[dict[str, Any]]]:
         a = current()

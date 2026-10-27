@@ -10,6 +10,7 @@ from rich.text import Text
 from rich.theme import Theme
 
 from ._brand import AMBER, CYAN, NAME, TAGLINE
+from .read_as import read_as
 from .schemas import AgentResult, DocumentInfo, Record, SearchHit, StepStatus
 
 THEME = Theme(
@@ -31,9 +32,9 @@ def conf_style(conf: float | None) -> str:
     return "ok" if conf >= 0.8 else "warn" if conf >= 0.5 else "bad"
 
 
-def documents_table(docs: list[DocumentInfo]) -> Table:
+def documents_table(docs: list[DocumentInfo], sources: dict[str, dict[str, int]] | None = None) -> Table:
     table = Table(box=None, header_style="muted", pad_edge=False)
-    for col in ("id", "name", "type", "pages", "OCR conf", "status"):
+    for col in ("id", "name", "type", "pages", "read as", "OCR conf", "status"):
         table.add_column(col)
     for d in docs:
         conf = f"{d.mean_conf:.2f}" if d.mean_conf is not None else "—"
@@ -43,6 +44,7 @@ def documents_table(docs: list[DocumentInfo]) -> Table:
             d.name,
             d.doc_type,
             str(d.pages),
+            read_as((sources or {}).get(d.id, {})) or "—",
             Text(conf, conf_style(d.mean_conf)),
             Text(d.status.value, status),
         )

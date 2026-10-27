@@ -1,7 +1,7 @@
 // Extract named fields: each value is read at a printed label of that name and keeps its page and box. A value with
 // a warning is marked "check"; a value not found says so. Nothing here is approved: that is Review.
 
-import { announce, api, errorBox, fmt, h, loading, saveBlob, store } from "./dom.js";
+import { announce, api, errorBox, fmt, h, loading, readAs, saveBlob, store } from "./dom.js";
 import { showView } from "./library.js";
 import { rawNote, registerOp, renderOps, scopeBox, scopeIds, selectOp } from "./ops.js";
 import { openDoc } from "./viewer.js";
@@ -55,8 +55,10 @@ function resultsCard(records) {
     h("div", { class: "card-head" }, h("span", { class: "card-title" }, "Values"), h("span", {}, "Choose a value to see where it was read.")),
     h("div", { class: "grid-wrap" }, h("table", { class: "grid" },
       h("thead", {}, h("tr", {}, h("th", {}, "document"), ...cols.map((c) => h("th", {}, c.replace(/_/g, " "))))),
-      h("tbody", {}, ...records.map((r) => h("tr", {}, h("td", { dir: "auto" }, r.name), ...cols.map((c) => valueCell(r, c))))))));
+      h("tbody", {}, ...records.map((r) => h("tr", {}, h("td", { dir: "auto" }, r.name, h("div", { class: "muted small" }, howRead(r))), ...cols.map((c) => valueCell(r, c))))))));
 }
+
+const howRead = (r) => readAs(store.docs.find((d) => d.id === r.doc_id)?.read_as) || "";
 
 function valueCell(r, c) {
   const v = r.fields[c];
@@ -93,9 +95,9 @@ function nextActions(records) {
 function downloadRaw(records) {
   const cols = [...new Set(records.flatMap((r) => Object.keys(r.fields)))];
   const esc = (v) => { let s = v == null ? "" : String(v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
-  const note = "Raw extraction as read by OCR: not reviewed. OCR confidence is an estimate.";
-  const rows = [["document", ...cols, "note"].map(esc).join(",")]
-    .concat(records.map((r, i) => [r.name, ...cols.map((c) => r.fields[c]?.value), i === 0 ? note : ""].map(esc).join(",")));
+  const note = "Raw extraction: not reviewed. A value read by OCR can be misread; OCR confidence is an estimate.";
+  const rows = [["document", "read as", ...cols, "note"].map(esc).join(",")]
+    .concat(records.map((r, i) => [r.name, howRead(r), ...cols.map((c) => r.fields[c]?.value), i === 0 ? note : ""].map(esc).join(",")));
   saveBlob(new Blob(["﻿" + rows.join("\n")], { type: "text/csv" }), "inklight-values-raw.csv");
   announce("Values saved");
 }

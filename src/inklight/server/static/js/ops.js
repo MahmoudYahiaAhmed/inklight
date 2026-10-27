@@ -1,6 +1,6 @@
 // The operation panel: one operation at a time, with its steps, its scope and one obvious next action.
 
-import { $, announce, api, errorBox, h, loading, onChange, pageText, plural, reducedMotion, saveBlob, store } from "./dom.js";
+import { $, announce, api, errorBox, h, loading, onChange, pageMethod, pageText, plural, reducedMotion, saveBlob, store } from "./dom.js";
 import { showView, startStructure } from "./library.js";
 import { openDoc, setMarks } from "./viewer.js";
 
@@ -87,7 +87,7 @@ const rawBlob = (fmt) => () => api(`/api/documents/${store.open.id}/export?forma
 const stem = () => (store.open?.name || "document").replace(/\.[^.]+$/, "");
 
 export function rawNote() {
-  return h("p", { class: "note raw" }, h("span", { class: "label raw" }, "Raw extraction"), " As read, not reviewed. OCR can misread any value, and its confidence is only an estimate.");
+  return h("p", { class: "note raw" }, h("span", { class: "label raw" }, "Raw extraction"), " As read, not reviewed. A value read by OCR can be misread, and OCR confidence is only an estimate.");
 }
 
 // ------------------------------------------------------------------ extract text
@@ -103,7 +103,7 @@ registerOp("text", {
     body.append(rawNote(),
       h("div", { class: "card" },
         h("div", { class: "card-head" }, h("span", { class: "card-title" }, `Page ${store.page} of ${store.pages.length}`),
-          p ? h("span", {}, p.source === "text" ? "from the PDF's text layer" : p.source === "hybrid" ? "text layer and OCR" : "read by OCR") : null),
+          p ? h("span", {}, `read as ${pageMethod(p.source)}`) : null),
         h("pre", { class: "text-out", dir: "auto" }, pageText(p) || "(no text on this page)"),
         h("div", { class: "row" },
           h("button", { class: "btn small", type: "button", disabled: store.page <= 1 || null, onclick: () => openDoc(store.open.id, store.page - 1) }, "Previous page"),

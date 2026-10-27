@@ -251,6 +251,13 @@ class Store:
             rows = self._all("SELECT * FROM documents ORDER BY added_at DESC")
         return [self._doc(r) for r in rows]
 
+    def page_sources(self) -> dict[str, dict[str, int]]:
+        """For each document, how many of its stored pages came from each source (plain, text, ocr, hybrid, error)."""
+        out: dict[str, dict[str, int]] = {}
+        for r in self._all("SELECT doc_id, source, COUNT(*) AS n FROM pages GROUP BY doc_id, source"):
+            out.setdefault(r["doc_id"], {})[r["source"] or ""] = r["n"]
+        return out
+
     def delete_document(self, doc_id: str) -> bool:
         with self.tx() as db:
             cur = db.execute("DELETE FROM documents WHERE id = ?", (doc_id,))

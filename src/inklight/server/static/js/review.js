@@ -164,7 +164,7 @@ function predictionCell(f, r) {
   return h("td", { class: "value", dir: "auto", tabindex: "0", role: "button", onclick: go, onkeydown: (e) => { if (e.key === "Enter") go(); } },
     String(fmt(f.predicted)),
     f.flagged ? h("div", {}, h("span", { class: "label check" }, "check")) : null,
-    f.raw && f.raw !== String(f.predicted) ? h("div", { class: "muted" }, `OCR read: “${f.raw}”`) : null,
+    f.raw && f.raw !== String(f.predicted) ? h("div", { class: "muted" }, `As read: “${f.raw}”`) : null,
     f.warning ? h("div", { class: "warn" }, f.warning) : null);
 }
 

@@ -79,6 +79,18 @@ export function storageGet(key) { try { return localStorage.getItem(key); } catc
 export function storageSet(key, value) { try { localStorage.setItem(key, value); } catch (_) { /* private mode */ } }
 
 export const fmt = (v) => (typeof v === "number" ? v.toLocaleString(undefined, { maximumFractionDigits: 2 }) : v ?? "—");
+// How a page's text was obtained, in the same words as the CLI (src/inklight/read_as.py). Only a page read by OCR is
+// called OCR: a .txt file is plain text, a digital PDF its text layer.
+const READ_AS = { plain: "plain text", text: "PDF text layer", hybrid: "PDF text layer and OCR", ocr: "OCR", error: "page failed" };
+export const pageMethod = (source) => READ_AS[source] || source || "unknown";
+export function readAs(counts) {
+  const read = Object.entries(counts || {}).filter(([k, n]) => n && k !== "error").sort((a, b) => b[1] - a[1]);
+  if (!read.length) return counts?.error ? "page failed" : "";
+  if (read.length === 1) return pageMethod(read[0][0]);
+  return "mixed: " + read.map(([k, n]) => `${n} page${n === 1 ? "" : "s"} ${pageMethod(k)}`).join(", ");
+}
+export const sourcesOf = (pages) => pages.reduce((acc, p) => ({ ...acc, [p.source]: (acc[p.source] || 0) + 1 }), {});
+
 export const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 export function loading(text) {

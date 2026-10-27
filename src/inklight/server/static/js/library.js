@@ -3,7 +3,7 @@
 // structured, or has ended. Nothing is estimated; a stage the server does not measure is shown as running, not as a
 // percentage.
 
-import { $, announce, api, changed, errorBox, fill, h, onChange, plural, store, uploadWithProgress, withToken } from "./dom.js";
+import { $, announce, api, changed, errorBox, fill, h, onChange, plural, readAs, store, uploadWithProgress, withToken } from "./dom.js";
 import { closeDoc, openDoc, processingTarget, showProcessing, stopProcessing } from "./viewer.js";
 
 const TERMINAL = new Set(["completed", "partial", "failed", "cancelled"]);
@@ -47,7 +47,7 @@ function docItem(d) {
       h("span", { class: "doc-meta", title: failed ? d.error || "" : null },
         isOpen ? h("span", { class: "open-tag" }, svgIcon("i-eye"), "open") : null,
         failed ? h("span", { class: "badge failed" }, "not read") : pending ? h("span", { class: "badge pending" }, "being read") : null,
-        failed ? h("span", { class: "clamp" }, d.error || "") : pending ? "" : h("span", { class: "num" }, `${plural(d.pages, "page")}${d.doc_type && d.doc_type !== "unknown" ? ` · ${d.doc_type}` : ""}`))),
+        failed ? h("span", { class: "clamp" }, d.error || "") : pending ? "" : h("span", { class: "num" }, [plural(d.pages, "page"), readAs(d.read_as), d.doc_type !== "unknown" && d.doc_type].filter(Boolean).join(" · ")))),
     h("button", { class: "btn quiet icon doc-x", type: "button", title: "Remove from the library", "aria-label": `Remove ${d.name}`,
       onclick: () => removeDoc(d) }, "×"));
 }
@@ -178,9 +178,14 @@ async function finished(job, opened) {
   }
 }
 
+const isImage = (name) => /\.(png|jpe?g|tiff?|bmp|webp)$/i.test(name || "");
+
 function stageText(f, kind) {
   if (f.state === "queued") return "Waiting to be read";
-  if (f.state === "reading") return f.pages ? `Reading text (OCR): page ${f.page} of ${f.pages} done` : "Reading text (OCR)";
+  if (f.state === "reading") {
+    const how = isImage(f.name) ? "Reading text (OCR)" : "Reading text";
+    return f.pages ? `${how}: page ${f.page} of ${f.pages} done` : how;
+  }
   if (f.state === "structuring") return "Finding layout and tables";
   if (f.state === "done") return kind === "structure" ? "Read again with its structure" : `Read · ${plural(f.pages || 0, "page")}`;
   if (f.state === "failed") return `Not read: ${f.error || "unknown error"}`;
@@ -309,7 +314,8 @@ function timeline(job, f, i) {
     else if (k === now) cls = "now";
     else if (k === failedAt) cls = f.state === "failed" ? "failed" : "skipped";
     else if (failedAt >= 0) cls = "skipped";
-    const label = n === "OCR" && f.state === "reading" && f.pages ? `OCR ${f.page}/${f.pages}` : n;
+    const shown = n === "OCR" && !isImage(f.name) ? "Read" : n;  // "OCR" is the stage's key; a PDF or .txt may not need it
+    const label = n === "OCR" && f.state === "reading" && f.pages ? `${shown} ${f.page}/${f.pages}` : shown;
     return h("span", { class: `stage ${cls}` }, h("i"), label);
   }));
 }

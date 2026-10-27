@@ -386,9 +386,10 @@ def docs(config: ConfigOpt = None) -> None:
     """List indexed documents."""
     agent = _agent(config)
     items = agent.library.documents()
-    console.print(
-        documents_table(items) if items else Text("The library is empty. Try: inklight process ./docs", "muted")
-    )
+    if not items:
+        console.print(Text("The library is empty. Try: inklight process ./docs", "muted"))
+        return
+    console.print(documents_table(items, agent.library.store.page_sources()))
 
 
 @app.command(rich_help_panel="Library")
