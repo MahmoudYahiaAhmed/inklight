@@ -16,6 +16,7 @@ from typing import Any
 from .. import modelstore
 from ..config import OCRSettings
 from ..errors import ModelUnavailable, OCRError
+from ..pdfium_lock import PDFIUM
 from ..schemas import BBox, Block, DocumentContent, PageContent, TextLine
 from .textcheck import layer_is_broken
 
@@ -86,20 +87,27 @@ class InklightOCR:
     def _read_pdf(self, conv: Any, path: Path, max_pages: int, password: str | None) -> tuple[list[PageContent], int]:
         import pypdfium2 as pdfium
 
-        try:
-            doc = pdfium.PdfDocument(str(path), password=password)
-        except pdfium.PdfiumError as exc:
-            locked = "password" in str(exc).lower()
-            raise OCRError(
-                f"{path.name}: password-protected PDF" if locked else f"{path.name}: cannot open the PDF ({exc})"
-            ) from exc
-        try:
-            total = len(doc)
-            sizes = [doc[i].get_size() for i in range(min(total, max_pages))]
-        finally:
-            doc.close()
+        with PDFIUM:
+            try:
+                doc = pdfium.PdfDocument(str(path), password=password)
+            except pdfium.PdfiumError as exc:
+                locked = "password" in str(exc).lower()
+                raise OCRError(
+                    f"{path.name}: password-protected PDF" if locked else f"{path.name}: cannot open the PDF ({exc})"
+                ) from exc
+            try:
+                total = len(doc)
+                sizes = [doc[i].get_size() for i in range(min(total, max_pages))]
+            finally:
+                doc.close()
         pages = []
-        for index, page in conv.convert(path, max_pages=max_pages, password=password):
+        converted = conv.convert(path, max_pages=max_pages, password=password)
+        while True:
+            with PDFIUM:  # one page at a time, so a preview elsewhere waits for a page, not for the document
+                step = next(converted, None)
+            if step is None:
+                break
+            index, page = step
             w_pt, h_pt = sizes[index]
             scale = _pdf_scale(w_pt, h_pt, self.settings.dpi)
             note = None
@@ -123,11 +131,12 @@ class InklightOCR:
         import pypdfium2 as pdfium
 
         try:
-            doc = pdfium.PdfDocument(str(path), password=password)
-            try:
-                arr = doc[index].render(scale=scale, grayscale=True).to_numpy()  # the OCR's scale: same box frame
-            finally:
-                doc.close()
+            with PDFIUM:
+                doc = pdfium.PdfDocument(str(path), password=password)
+                try:
+                    arr = doc[index].render(scale=scale, grayscale=True).to_numpy()  # the OCR's scale: same box frame
+                finally:
+                    doc.close()
             page = conv.ocr(arr[..., 0] if arr.ndim == 3 else arr)
         except Exception as exc:  # noqa: BLE001 - recorded on the page, never fatal
             return layer_page, f"broken Arabic text layer; OCR failed ({type(exc).__name__}), kept the text layer"

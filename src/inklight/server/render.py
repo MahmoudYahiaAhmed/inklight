@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from ..pdfium_lock import PDFIUM
 from ..schemas import PageContent
 
 MAX_PREVIEW_PIXELS = 40_000_000  # ~160 MB of BGR; larger pages are scaled down
@@ -23,22 +24,23 @@ def render_page(path: Path, number: int, page: PageContent, dpi: float) -> bytes
     if is_pdf:
         import pypdfium2 as pdfium
 
-        try:
-            doc = pdfium.PdfDocument(str(path))
-        except pdfium.PdfiumError:
-            return None
-        try:
-            if number > len(doc):
+        with PDFIUM:
+            try:
+                doc = pdfium.PdfDocument(str(path))
+            except pdfium.PdfiumError:
                 return None
-            p = doc[number - 1]
-            w_pt, h_pt = p.get_size()
-            scale = (page.width / w_pt) if page.width and page.rotation in (0, 180) else dpi / 72.0
-            # Never trust page geometry from an untrusted PDF: cap the render size.
-            scale = min(scale, (MAX_PREVIEW_PIXELS / max(w_pt * h_pt, 1.0)) ** 0.5)
-            # pdfium renders BGR(A) — already OpenCV's channel order; no Pillow needed.
-            img = np.ascontiguousarray(p.render(scale=scale).to_numpy())
-        finally:
-            doc.close()
+            try:
+                if number > len(doc):
+                    return None
+                p = doc[number - 1]
+                w_pt, h_pt = p.get_size()
+                scale = (page.width / w_pt) if page.width and page.rotation in (0, 180) else dpi / 72.0
+                # Never trust page geometry from an untrusted PDF: cap the render size.
+                scale = min(scale, (MAX_PREVIEW_PIXELS / max(w_pt * h_pt, 1.0)) ** 0.5)
+                # pdfium renders BGR(A) — already OpenCV's channel order; no Pillow needed.
+                img = np.ascontiguousarray(p.render(scale=scale).to_numpy())
+            finally:
+                doc.close()
         if img.ndim == 3 and img.shape[2] == 4:
             img = img[:, :, :3]
     elif path.suffix.lower() in (".txt", ".md", ".markdown"):
@@ -74,18 +76,19 @@ def preview_png(path: Path) -> bytes | None:
     if is_pdf:
         import pypdfium2 as pdfium
 
-        try:
-            doc = pdfium.PdfDocument(str(path))
-        except pdfium.PdfiumError:
-            return None
-        try:
-            if not len(doc):
+        with PDFIUM:
+            try:
+                doc = pdfium.PdfDocument(str(path))
+            except pdfium.PdfiumError:
                 return None
-            page = doc[0]
-            w_pt, h_pt = page.get_size()
-            img = np.ascontiguousarray(page.render(scale=PREVIEW_SIDE / max(w_pt, h_pt, 1.0)).to_numpy())
-        finally:
-            doc.close()
+            try:
+                if not len(doc):
+                    return None
+                page = doc[0]
+                w_pt, h_pt = page.get_size()
+                img = np.ascontiguousarray(page.render(scale=PREVIEW_SIDE / max(w_pt, h_pt, 1.0)).to_numpy())
+            finally:
+                doc.close()
         if img.ndim == 3 and img.shape[2] == 4:
             img = img[:, :, :3]
     elif path.suffix.lower() in (".txt", ".md", ".markdown"):

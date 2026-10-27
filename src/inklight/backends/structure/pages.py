@@ -214,17 +214,22 @@ def pdf_pages(path: Path, numbers: list[int], password: str | None, turns: dict[
     """A PDF's pages ``numbers`` (1-based), rendered at 144 dpi and turned upright by ``turns``."""
     import pypdfium2 as pdfium
 
-    pdf = pdfium.PdfDocument(str(path), password=password)
-    try:
+    from ...pdfium_lock import PDFIUM
+
+    with PDFIUM:  # PDFium is not thread-safe; the OCR may be reading another PDF meanwhile
+        pdf = pdfium.PdfDocument(str(path), password=password)
         wanted = [n for n in numbers if 1 <= n <= len(pdf)]
+    try:
         if not wanted:
             raise ValueError("the PDF has none of the pages asked for")
         for index, number in enumerate(wanted):
-            image = pdf[number - 1].render(scale=PDF_RENDER_DPI / POINTS_PER_INCH).to_pil().convert("RGB")
+            with PDFIUM:
+                image = pdf[number - 1].render(scale=PDF_RENDER_DPI / POINTS_PER_INCH).to_pil().convert("RGB")
             image = upright(image, turns.get(number, 0))
             yield RenderedPageBackend(image, index)
     finally:
-        pdf.close()
+        with PDFIUM:
+            pdf.close()
 
 
 def upright(image: Image.Image, turn: int) -> Image.Image:
