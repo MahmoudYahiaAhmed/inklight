@@ -5,6 +5,21 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0b3] — 2026-10-27 — Developer beta
+
+A small patch to 0.3.0b2. Still a pre-release: install it with `pip install --pre "inklight[structure]"` or pin
+`inklight==0.3.0b3`; a plain `pip install inklight` still gets 0.1.0.
+
+### Fixed
+- **Text files needed the OCR models.** `inklight process` (and the other commands that read files) downloaded the
+  OCR models, and the structure models when structure is on, before reading anything, even when every file was
+  plain text; importing a batch of text files also loaded the structure models. Models are now fetched and loaded
+  only for files that need them (PDFs and images), so `.txt` and `.md` files are imported, shown and searched with
+  no model downloaded. A fresh container or a machine without a model cache can now read text files offline.
+- **README links on PyPI.** Links to the docs, examples, evaluation report, licenses and README sections were
+  relative to the repository and broke on PyPI; they now point at GitHub.
+- The Docker image records its source commit (`docker build --build-arg INKLIGHT_COMMIT=$(git rev-parse HEAD)`).
+
 ## [0.3.0b2] — 2026-10-27 — Developer beta (first beta on PyPI)
 
 A beta for developers and careful users: check every value against its page. Install it with

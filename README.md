@@ -10,7 +10,7 @@ page, and export what you approved, on your own computer.</p>
 
 <p align="center">
   <a href="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml"><img alt="ci" src="https://github.com/MahmoudYahiaAhmed/inklight/actions/workflows/ci.yml/badge.svg"></a>
-  <img alt="status" src="https://img.shields.io/badge/status-developer%20beta%200.3.0b2-F5B544?style=flat-square&labelColor=0B0F14">
+  <img alt="status" src="https://img.shields.io/badge/status-developer%20beta%200.3.0b3-F5B544?style=flat-square&labelColor=0B0F14">
   <img alt="python" src="https://img.shields.io/badge/python-3.11%2B-22D3EE?style=flat-square&labelColor=0B0F14">
   <img alt="license" src="https://img.shields.io/badge/code-Apache--2.0-F5B544?style=flat-square&labelColor=0B0F14">
 </p>
@@ -20,7 +20,7 @@ page, and export what you approved, on your own computer.</p>
 Everything Inklight shows is either **what was read** (text, boxes, tables and search matches, each linked to its
 place on the page) or **a value for you to check**. Documents are read on your computer and never uploaded.
 
-> **Developer beta (0.3.0b2).** For developers and careful users who check results against the page; see
+> **Developer beta (0.3.0b3).** For developers and careful users who check results against the page; see
 > [Limitations](https://github.com/MahmoudYahiaAhmed/inklight#limitations). It is a pre-release, so pip needs `--pre` or the exact version; a plain
 > `pip install inklight` installs the older 0.1.0.
 
