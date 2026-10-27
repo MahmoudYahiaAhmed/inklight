@@ -3,7 +3,7 @@
 // (p.width x p.height); the image is the page as the file shows it, turned p.rotation degrees counter-clockwise
 // from upright (inklight/frames.py), so every box is turned the same way before it is drawn.
 
-import { $, api, changed, h, pageText, reducedMotion, store, withToken } from "./dom.js";
+import { $, api, changed, fill, h, pageText, reducedMotion, store, withToken } from "./dom.js";
 
 const view = { mode: "image", processing: null, fresh: false };
 // processing: {jobId, index, label} while a file is being read; fresh: the open document has just been read, so its
@@ -77,13 +77,21 @@ export function render() {
       img.onload = () => img.classList.remove("loading-img");
       img.src = src;
     }
-    img.onerror = () => { page.classList.add("hidden"); empty.classList.remove("hidden"); };
-    proc.classList.toggle("hidden", !label.active);
+    // A file that cannot be drawn (a broken PDF) keeps an empty frame with its stage, not the start guide; the
+    // failure is remembered, since later renders do not load the image again.
+    const failed = img.dataset.failed === src;
+    page.classList.toggle("no-preview", failed);
+    img.onerror = () => { img.dataset.failed = img.dataset.src; page.classList.add("no-preview"); proc.classList.add("hidden"); };
+    // The scan line runs only while the OCR reads; structuring has no per-region progress, so it is a quiet frame.
+    proc.classList.toggle("hidden", !label.active || failed);
+    proc.classList.toggle("structuring", label.phase === "structuring");
+    page.classList.toggle("reading", Boolean(label.active));
     procLabel.classList.remove("hidden");
     procLabel.textContent = label.stage;
+    $("#readout").textContent = "";
     return;
   }
-  proc.classList.add("hidden"); procLabel.classList.add("hidden");
+  proc.classList.add("hidden"); procLabel.classList.add("hidden"); page.classList.remove("reading", "no-preview");
   const doc = store.open;
   if (!doc) {
     $("#viewer-title").textContent = "No document open";
@@ -91,6 +99,7 @@ export function render() {
     $("#page-label").textContent = "–";
     page.classList.add("hidden"); text.classList.add("hidden"); empty.classList.remove("hidden");
     img.removeAttribute("src"); delete img.dataset.src;
+    $("#readout").textContent = "";
     return;
   }
   empty.classList.add("hidden");
@@ -102,7 +111,7 @@ export function render() {
   const asText = view.mode === "text" || !p || !p.width;
   page.classList.toggle("hidden", asText);
   text.classList.toggle("hidden", !asText);
-  if (asText) return;
+  if (asText) { $("#readout").textContent = ""; return; }
   const src = withToken(`/api/documents/${doc.id}/pages/${store.page}/image`);
   if (img.dataset.src !== src) {
     img.dataset.src = src; img.classList.add("loading-img"); img.alt = `Page ${store.page} of ${doc.name}`;
@@ -140,13 +149,21 @@ function drawMarks(p, overlay, img) {
   });
   view.fresh = false;
   let first = null;
-  for (const m of store.marks.filter((x) => x.page === store.page && x.bbox)) {
+  const here = store.marks.filter((x) => x.page === store.page && x.bbox);
+  for (const m of here) {
     const box = place(m.bbox);
     const el = h("div", { class: `mark ${m.kind}`, title: m.title || "", style: style(box) });
     overlay.append(el);
     if (m.label) overlay.append(h("div", { class: `mark-label ${m.kind}`, style: `left:${pct(box[0])}%;top:${pct(box[1])}%` }, m.label));
     first = first || box;
   }
+  // The readout states the stored geometry of what is marked (page pixels, upright frame), or the regions found.
+  const b = here[0]?.bbox?.map(Number);
+  // The mark's name may be Arabic: it is isolated so the numbers after it keep their order.
+  fill($("#readout"), b && b.every(Number.isFinite)
+    ? [h("bdi", { dir: "auto" }, here[0].label || here[0].title || here[0].kind),
+      ` · p.${store.page} · x ${Math.round(b[0])} y ${Math.round(b[1])} · ${Math.round(b[2] - b[0])}×${Math.round(b[3] - b[1])} px${here.length > 1 ? ` · +${here.length - 1} more` : ""}`]
+    : p.blocks.length ? `${p.blocks.length} regions · p.${store.page}${turn ? ` · turned ${turn}°` : ""}` : "");
   if (first) {
     const go = () => {
       const wrap = $("#page-wrap");

@@ -4,7 +4,7 @@
 import "./fields.js";
 import "./review.js";
 import "./ask.js";
-import { $, announce, api, h } from "./dom.js";
+import { $, announce, api, h, storageSet } from "./dom.js";
 import { loadDocs, recoverJobs, wireLibrary } from "./library.js";
 import { renderOps, selectOp, setStructureInstalled, wireOps } from "./ops.js";
 import { wireReview } from "./review.js";
@@ -16,11 +16,12 @@ async function loadStatus() {
   setStructureInstalled(Boolean(s.structure?.installed));
   const downloading = Object.values(s.downloads || {}).find((d) => d.state === "downloading");
   const chip = $("#status-chip");
+  const text = chip.querySelector("span");
   if (downloading) {
-    chip.textContent = `Downloading models ${Math.round((100 * downloading.done) / downloading.total)}%`;
+    text.textContent = `Downloading models ${Math.round((100 * downloading.done) / downloading.total)}%`;
     setTimeout(loadStatus, 1500);
   } else {
-    chip.textContent = s.models.remote?.configured ? "Local + remote model" : "Runs on this computer";
+    text.textContent = s.models.remote?.configured ? "Local + remote model" : "On this computer";
   }
   chip.title = s.models.remote?.configured ? "A remote model is configured for Ask" : "Documents and models stay on this computer";
   $("#set-brain").value = s.brain;
@@ -33,6 +34,27 @@ async function loadStatus() {
     h("div", {}, `Limits: ${s.limits.max_file_mb} MB per file · ${s.limits.max_pages} pages`),
     h("div", {}, `Library: ${s.stats.documents} documents · ${s.stats.pages} pages`),
     h("div", {}, `Version ${s.version} · ${s.commit}`));
+}
+
+// Theme: follow the system, or keep light or dark (stored in this browser only). The button cycles the three.
+const THEMES = [["auto", "i-auto", "follows the system"], ["light", "i-sun", "light"], ["dark", "i-moon", "dark"]];
+function wireTheme() {
+  const btn = $("#theme");
+  const show = (name) => {
+    const [, icon, words] = THEMES.find(([n]) => n === name);
+    btn.querySelector("use").setAttribute("href", `#${icon}`);
+    btn.setAttribute("aria-label", `Theme: ${words}. Change theme`);
+    btn.title = `Theme: ${words}`;
+  };
+  let current = document.documentElement.dataset.theme || "auto";
+  show(current);
+  btn.addEventListener("click", () => {
+    current = THEMES[(THEMES.findIndex(([n]) => n === current) + 1) % THEMES.length][0];
+    if (current === "auto") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = current;
+    storageSet("inklight-theme", current);
+    show(current);
+    announce(`Theme: ${THEMES.find(([n]) => n === current)[2]}`);
+  });
 }
 
 function wire() {
@@ -48,6 +70,7 @@ function wire() {
     loadStatus();
     announce("Settings applied");
   });
+  wireTheme();
   // Continuous animations pause while the page is not visible.
   document.addEventListener("visibilitychange", () => document.body.classList.toggle("paused", document.hidden));
 }

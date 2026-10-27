@@ -3,6 +3,38 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [SemVer](https://semver.org/).
 
+## [Unreleased]
+
+### Workspace
+- **Redesigned** as a light-table for documents: graphite (or paper, in the light theme) panels, one cyan accent for
+  what is active, a framed page canvas, a readout of the marked box's page coordinates, and a theme switch (system,
+  light, dark).
+- **Import timeline** per file, built only from the states the server reports: upload, waiting, OCR (page n of m),
+  structure (shown only once the server reports it), stored, or the stage where it failed.
+- **Opening and ticking look different**: the name opens a document (accent bar, "open"); the box puts it in the scope
+  of an operation (counted above the list).
+- **Guided start**: an empty workspace explains the three steps, and each operation says what to do when nothing is
+  open yet.
+- Motion: a scan line only while OCR runs, a quiet frame while structuring (no per-region progress exists), regions and
+  table rows appearing as they arrive, a source mark locking onto its box. The panel eases in only when the operation
+  changes. Reduced motion keeps every state without movement.
+
+### Fixed
+- Approving or deciding a review opened from the list could send an empty reviewer name with no field to type one.
+  The review card now shows the reviewer field and blocks decisions until it is filled; the name typed works even
+  when the browser blocks storage.
+- Opening a review whose document was removed from the library did nothing; it now opens and says why the page is
+  not shown.
+- *Text with boxes (.json)* failed: the page parsed the JSON download and then asked it for its bytes.
+- An upload to a server started before Inklight was updated crashed the page; it now reports what that server read.
+- A type word ("receipts") dropped documents the classifier could not type; they now stay in scope, with a warning,
+  and the result is partial.
+- A file without a preview (a broken PDF) no longer shows the start guide while it is being read.
+
+### Evaluation
+- [Technical report](evaluation/REPORT.md) with current reruns, the 0.2 → 0.3 equivalence check and a sourced
+  comparison with five document parsers.
+
 ## [0.3.0b1] — Developer beta (GitHub only, not on PyPI)
 
 One product to install and run: the OCR and document structure models run inside Inklight. The workspace is

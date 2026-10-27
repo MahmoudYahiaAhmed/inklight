@@ -45,16 +45,19 @@ everything except table extraction works.
 
 ## The workspace
 
-Choose an operation at the top, choose documents in the library on the left, and the page opens in the middle with
-the result beside it. The marks on the page say what they are: a detected region, a search match, the source of a
-value, or a value to check.
+Choose an operation at the top, open a document from the library on the left (click its name; tick its box to use
+several in one operation), and the page opens on the canvas in the middle with the result beside it. The marks on the
+page say what they are: a detected region, a search match, the source of a value, or a value to check; the readout
+under the page gives the marked box's page coordinates. Dark and light themes (or the system's), keyboard use,
+screen-reader announcements and reduced motion are supported. Motion follows what the server reports: bytes uploaded,
+pages read, regions found, rows loaded; a stage it cannot measure is shown as running, never as a percentage.
 
-**Import.** Drop files on *Add documents*. Each file shows what is happening to it: uploading, waiting, reading (with
-each page as the OCR finishes it), finding layout and tables, read, or the reason it could not be read. The file
-being read is shown under a quiet sweep; it marks nothing on the page until the reading is stored. *Stop after the
+**Import.** Drop files on *Add documents*. Each file has a timeline of what the server reports: upload, waiting, OCR
+(with each page as it finishes), structure, stored, or the stage where it failed and why. The file being read is shown
+under a scan line; it marks nothing on the page until the reading is stored. *Stop after the
 current file* stops the import before its next file. A reloaded page finds a running import again.
 
-<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-import.png" width="760" alt="An import of three files: one read (3 pages), one being read by OCR under a sweep over its first page, one waiting.">
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-import.png" width="760" alt="An import of four files: the first being read by OCR under a scan line over its first page, three waiting; each file shows a timeline of upload, waiting, OCR and stored.">
 
 **Extract text.** The text of the open document page by page, in reading order, beside the page. Arabic is right
 to left and every line keeps its own direction. The downloads (`.txt`, and `.json` with boxes) are the raw reading
@@ -73,18 +76,20 @@ next to its label and keeps its page and box; choose a value to see its source (
 A value with a warning is marked *check*; a value not found says *not found*. **Search** finds passages in Arabic or
 English and opens each match at its place.
 
-<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-search.png" width="760" alt="Search for رقم القيد: four matches, the first highlighted in yellow on the Arabic card.">
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-search.png" width="760" alt="Search for السجل التجاري: one match, highlighted in yellow on the synthetic Arabic card.">
 
 **Review and export.** Name the fields, then accept, correct or mark each value absent, and approve. The OCR reading
 is kept next to your decision. *Download approved values* exports only approved reviews, one row per field with the
 extracted value, the decision, who approved it and its source page and box. A document reviewed again keeps its
 earlier rows, marked `superseded`.
 
-<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-review.png" width="760" alt="A review of three fields: the company name corrected to add 'Co.', the registration number not found, the tax office to decide.">
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-review.png" width="760" alt="A review of two fields on the turned card: the company name corrected to add 'Co.', the tax office accepted, ready to approve; the reviewer's name is shown with the decisions.">
 
 **Ask (experimental).** A question in plain words. Every result says what it is (*extracted text*, *proposed
 answer*, *supported answer* at a printed label, *partial*, *missing evidence*, *several candidates* or *failed*) and
 cites where it read. Treat every answer as a lead to check.
+
+<img src="https://raw.githubusercontent.com/MahmoudYahiaAhmed/inklight/main/docs/images/workspace-light.png" width="760" alt="The light theme: a synthetic Arabic card with its detected regions, and Ask marked experimental.">
 
 The screenshots show synthetic documents and public UN letters, from the running workspace.
 
@@ -173,6 +178,10 @@ file ─► Inklight OCR ─────────────► text lines w
   instructions, and the workspace accepts requests only from this computer ([SECURITY.md](SECURITY.md)).
 
 ## Evaluation
+
+**[Technical report](evaluation/REPORT.md)** ([printable HTML](evaluation/REPORT.html)): what Inklight 0.3 is, what
+was measured on the current build, a comparison with five document parsers using only their published numbers
+(Inklight has run no public parsing benchmark), selected examples and failures.
 
 The measurements behind earlier releases, with every failure, are in [evaluation/](evaluation/README.md): an
 agent-run workflow evaluation on scanned business documents (the tool completed at most 1 of 38 tasks), question

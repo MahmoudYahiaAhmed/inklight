@@ -28,6 +28,9 @@ export async function api(path, opts = {}) {
     try { detail = (await res.json()).detail || detail; } catch (_) { /* not JSON */ }
     throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
   }
+  // A download wants the bytes as served (a JSON file included), not the parsed value: { raw: true } returns the
+  // Response itself.
+  if (opts.raw) return res;
   return res.headers.get("content-type")?.includes("json") ? res.json() : res;
 }
 

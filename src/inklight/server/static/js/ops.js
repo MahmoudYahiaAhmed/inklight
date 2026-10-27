@@ -18,11 +18,30 @@ export function renderOps() {
   const op = OPS[store.op];
   if (!op) return;
   const [labels, now] = op.steps();
-  $("#steps").replaceChildren(...labels.map((l, i) => h("span", { class: `step ${i < now ? "done" : i === now ? "now" : ""}`,
-    "aria-current": i === now ? "step" : null }, `${i + 1}. ${l}`)));
+  $("#steps").replaceChildren(...labels.map((l, i) => h("li", { class: `step ${i < now ? "done" : i === now ? "now" : ""}`,
+    "aria-current": i === now ? "step" : null, title: l }, h("span", {}, l))));
   const body = $("#ops-body");
-  body.replaceChildren(h("h2", { class: "op-title" }, op.title), h("p", { class: "op-help" }, op.help));
+  // The panel eases in when the operation changes, not on every refresh of the same one.
+  if (body.dataset.op !== store.op) {
+    body.dataset.op = store.op;
+    body.classList.remove("entering");
+    void body.offsetWidth;
+    body.classList.add("entering");
+  }
+  body.replaceChildren(h("div", { class: "op-head" },
+    h("h2", { class: "op-title" }, op.title, op.experimental ? h("span", { class: "tag" }, "experimental") : null),
+    h("p", { class: "op-help" }, op.help)));
   op.render(body);
+}
+
+// What to do when an operation has nothing to work on yet: the next action, in words and as a button.
+export function startHint(what) {
+  const add = h("button", { class: "btn small", type: "button", onclick: () => $("#file").click() }, "Add documents");
+  const lib = h("button", { class: "btn small quiet", type: "button", onclick: () => showView("library") }, "Go to the library");
+  return h("div", { class: "hint-card" },
+    h("span", {}, store.docs.length ? h("b", {}, "Open a document first. ") : h("b", {}, "The library is empty. "),
+      store.docs.length ? `Click a name in the library; ${what}` : `Add a PDF, scan or photo; it is read on this computer. Then ${what}`),
+    h("div", { class: "row" }, store.docs.length ? lib : add));
 }
 
 // ------------------------------------------------------------------ shared pieces
@@ -64,7 +83,7 @@ export function exportButton(label, fetchBlob, name) {
   return btn;
 }
 
-const rawBlob = (fmt) => () => api(`/api/documents/${store.open.id}/export?format=${fmt}`).then((r) => r.blob());
+const rawBlob = (fmt) => () => api(`/api/documents/${store.open.id}/export?format=${fmt}`, { raw: true }).then((r) => r.blob());
 const stem = () => (store.open?.name || "document").replace(/\.[^.]+$/, "");
 
 export function rawNote() {
@@ -78,8 +97,8 @@ registerOp("text", {
   help: "The text of a document as it was read, page by page. Nothing is interpreted.",
   steps: () => [["Choose a document", "Read the text", "Export"], store.open ? 1 : 0],
   render(body) {
+    if (!store.open) { body.append(startHint("its text appears here, page by page, and downloads as .txt or .json.")); return; }
     body.append(scopeBox("open"));
-    if (!store.open) return;
     const p = store.pages.find((x) => x.number === store.page);
     body.append(rawNote(),
       h("div", { class: "card" },
@@ -115,8 +134,8 @@ registerOp("tables", {
   help: "Rows, columns and header cells, recovered by document structure. Cells hold the OCR text.",
   steps: () => [["Choose a document", "Find tables", "Check and export"], !store.open ? 0 : store.structure?.available ? 2 : 1],
   render(body) {
+    if (!store.open) { body.append(startHint("its tables appear here with their header rows, and download as .csv.")); return; }
     body.append(scopeBox("open"));
-    if (!store.open) return;
     if (!store.structure?.available) {
       body.append(h("div", { class: "card" },
         h("p", {}, "This document was read without document structure, so its tables were not recovered."),

@@ -5,28 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inklight</title>
   <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
   <a class="skip" href="#ops-panel">Skip to the operation</a>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-text" viewBox="0 0 20 20"><path d="M4 5h12M4 9h12M4 13h8" /></symbol>
+    <symbol id="i-table" viewBox="0 0 20 20"><rect x="3" y="4" width="14" height="12" rx="1.5" /><path d="M3 8.5h14M3 12.5h14M8.5 8.5V16" /></symbol>
+    <symbol id="i-field" viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="10" rx="2" /><path d="M6.5 10h4M13 8v4" /></symbol>
+    <symbol id="i-search" viewBox="0 0 20 20"><circle cx="8.5" cy="8.5" r="4.5" /><path d="m12 12 4.5 4.5" /></symbol>
+    <symbol id="i-review" viewBox="0 0 20 20"><path d="M4 10.5 8 14l8-8.5" /></symbol>
+    <symbol id="i-ask" viewBox="0 0 20 20"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h9A1.5 1.5 0 0 1 16 5.5v6a1.5 1.5 0 0 1-1.5 1.5H9l-3.5 3V13h0A1.5 1.5 0 0 1 4 11.5z" /></symbol>
+    <symbol id="i-add" viewBox="0 0 20 20"><path d="M10 4v12M4 10h12" /></symbol>
+    <symbol id="i-sun" viewBox="0 0 20 20"><circle cx="10" cy="10" r="3.5" /><path d="M10 2.5v2M10 15.5v2M2.5 10h2M15.5 10h2M4.7 4.7l1.4 1.4M13.9 13.9l1.4 1.4M4.7 15.3l1.4-1.4M13.9 6.1l1.4-1.4" /></symbol>
+    <symbol id="i-moon" viewBox="0 0 20 20"><path d="M15.5 12.5A6.5 6.5 0 0 1 7.5 4.5a6.5 6.5 0 1 0 8 8z" /></symbol>
+    <symbol id="i-auto" viewBox="0 0 20 20"><circle cx="10" cy="10" r="6.5" /><path d="M10 3.5v13A6.5 6.5 0 0 0 10 3.5z" fill="currentColor" /></symbol>
+    <symbol id="i-gear" viewBox="0 0 20 20"><path d="M4 6h7M15 6h1M4 14h1M9 14h7" /><circle cx="13" cy="6" r="2" /><circle cx="7" cy="14" r="2" /></symbol>
+    <symbol id="i-eye" viewBox="0 0 20 20"><path d="M2.5 10s2.8-5 7.5-5 7.5 5 7.5 5-2.8 5-7.5 5-7.5-5-7.5-5z" /><circle cx="10" cy="10" r="2.2" /></symbol>
+  </svg>
+
   <div class="app" id="app" data-view="library">
     <header class="topbar">
       <div class="brand">
-        <img src="logo.svg" alt="" width="26" height="26">
+        <img src="logo.svg" alt="" width="24" height="24">
         <span class="wordmark">Inklight</span>
       </div>
       <nav class="ops" aria-label="Operations">
-        <button class="op" data-op="text" aria-pressed="true">Extract text</button>
-        <button class="op" data-op="tables" aria-pressed="false">Extract tables</button>
-        <button class="op" data-op="fields" aria-pressed="false">Extract fields</button>
-        <button class="op" data-op="search" aria-pressed="false">Search</button>
-        <button class="op" data-op="review" aria-pressed="false">Review &amp; export</button>
+        <button class="op" data-op="text" aria-pressed="true" aria-label="Extract text"><svg class="ico"><use href="#i-text" /></svg><span>Extract text</span></button>
+        <button class="op" data-op="tables" aria-pressed="false" aria-label="Extract tables"><svg class="ico"><use href="#i-table" /></svg><span>Extract tables</span></button>
+        <button class="op" data-op="fields" aria-pressed="false" aria-label="Extract fields"><svg class="ico"><use href="#i-field" /></svg><span>Extract fields</span></button>
+        <button class="op" data-op="search" aria-pressed="false" aria-label="Search"><svg class="ico"><use href="#i-search" /></svg><span>Search</span></button>
+        <button class="op" data-op="review" aria-pressed="false" aria-label="Review and export"><svg class="ico"><use href="#i-review" /></svg><span>Review &amp; export</span></button>
         <span class="ops-sep" aria-hidden="true"></span>
-        <button class="op op-secondary" data-op="ask" aria-pressed="false">Ask <span class="tag">experimental</span></button>
+        <button class="op op-secondary" data-op="ask" aria-pressed="false" aria-label="Ask (experimental)"><svg class="ico"><use href="#i-ask" /></svg><span>Ask</span> <span class="tag">experimental</span></button>
       </nav>
       <div class="top-tools">
-        <span class="status-chip" id="status-chip" title="Where documents are read">Runs on this computer</span>
-        <button class="btn quiet" id="open-settings">Settings</button>
+        <span class="status-chip" id="status-chip" role="status" title="Where documents are read"><i class="pulse-dot" aria-hidden="true"></i><span>On this computer</span></span>
+        <button class="btn quiet icon" id="theme" type="button" aria-label="Theme: follows the system"><svg class="ico"><use href="#i-auto" /></svg></button>
+        <button class="btn quiet icon" id="open-settings" type="button" aria-label="Settings"><svg class="ico"><use href="#i-gear" /></svg></button>
       </div>
     </header>
 
@@ -39,17 +56,19 @@
     <aside class="library" aria-label="Document library">
       <div class="drop" id="drop" role="button" tabindex="0" aria-describedby="drop-help">
         <input type="file" id="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.txt,.md" hidden>
+        <span class="drop-icon" aria-hidden="true"><svg class="ico"><use href="#i-add" /></svg></span>
         <span class="drop-title">Add documents</span>
-        <span class="drop-help" id="drop-help">Drop files here or press to choose · PDF, images, text · read on this computer</span>
+        <span class="drop-help" id="drop-help">Drop files or choose · PDF, images, text · read on this computer</span>
       </div>
       <section class="batch hidden" id="batch" aria-label="Import progress"></section>
       <div class="lib-head">
         <h2>Library</h2>
+        <span class="lib-count" id="lib-count"></span>
         <input id="filter" class="filter" type="search" placeholder="Filter" aria-label="Filter documents">
       </div>
       <div class="selection" id="selection" aria-live="polite"></div>
       <ul class="doc-list" id="docs" aria-label="Documents"></ul>
-      <footer class="lib-foot"><span id="build" class="muted"></span></footer>
+      <footer class="lib-foot"><span class="hint">Click a name to open it · tick the box to use it in an operation</span><span id="build" class="build"></span></footer>
     </aside>
 
     <main class="viewer" id="viewer" aria-label="Document viewer">
@@ -59,40 +78,52 @@
           <div class="viewer-meta" id="viewer-meta">Choose a document in the library.</div>
         </div>
         <div class="viewer-tools">
-          <button class="btn quiet icon" id="prev-page" aria-label="Previous page">‹</button>
-          <span id="page-label" class="page-label" aria-live="polite">–</span>
-          <button class="btn quiet icon" id="next-page" aria-label="Next page">›</button>
+          <div class="pager">
+            <button class="btn quiet icon" id="prev-page" aria-label="Previous page">‹</button>
+            <span id="page-label" class="page-label" aria-live="polite">–</span>
+            <button class="btn quiet icon" id="next-page" aria-label="Next page">›</button>
+          </div>
           <div class="seg" role="group" aria-label="Show the page as">
             <button id="show-image" aria-pressed="true">Page</button>
             <button id="show-text" aria-pressed="false">Text</button>
           </div>
-          <label class="tick"><input type="checkbox" id="show-regions" checked> Regions</label>
+          <label class="switch"><input type="checkbox" id="show-regions" checked><span class="switch-ui" aria-hidden="true"></span>Regions</label>
         </div>
       </div>
-      <div class="legend" id="legend" aria-label="What the marks on the page mean">
-        <span><i class="key region"></i>Detected region</span>
-        <span><i class="key hit"></i>Search match</span>
-        <span><i class="key evidence"></i>Source of a value</span>
-        <span><i class="key check"></i>Value to check</span>
-      </div>
-      <div class="page-wrap" id="page-wrap">
-        <div class="empty" id="viewer-empty">
-          <p class="empty-title">Open a document</p>
-          <p>Add documents on the left, or choose one in the library. Its pages open here, with the regions that were
-            read and the source of every value.</p>
+      <div class="canvas" id="page-wrap">
+        <div class="empty guide" id="viewer-empty">
+          <p class="empty-kicker">Start here</p>
+          <p class="empty-title">Read a document in three steps</p>
+          <ol class="guide-steps">
+            <li><span><b>Add a document.</b> PDF, scan or photo. It is read on this computer.</span></li>
+            <li><span><b>Open it</b> by clicking its name in the library. Its pages appear here with what was read.</span></li>
+            <li><span><b>Choose an operation</b> above, such as <em>Extract text</em>. Every result points back to its place on the page.</span></li>
+          </ol>
+          <button class="btn primary" type="button" id="empty-add"><svg class="ico"><use href="#i-add" /></svg> Add documents</button>
         </div>
         <figure class="page hidden" id="page">
+          <span class="reg tl" aria-hidden="true"></span><span class="reg tr" aria-hidden="true"></span>
+          <span class="reg bl" aria-hidden="true"></span><span class="reg br" aria-hidden="true"></span>
           <img id="page-img" alt="">
           <div id="overlay" class="overlay"></div>
-          <div class="processing hidden" id="processing" aria-hidden="true"><div class="sweep"></div></div>
+          <div class="processing hidden" id="processing" aria-hidden="true"><div class="scanline"></div></div>
           <figcaption class="processing-label hidden" id="processing-label"></figcaption>
         </figure>
         <pre class="page-text hidden" id="page-text" dir="auto"></pre>
       </div>
+      <div class="viewer-foot">
+        <div class="legend" id="legend" aria-label="What the marks on the page mean">
+          <span><i class="key region"></i>Detected region</span>
+          <span><i class="key hit"></i>Search match</span>
+          <span><i class="key evidence"></i>Source of a value</span>
+          <span><i class="key check"></i>Value to check</span>
+        </div>
+        <output class="readout" id="readout" aria-live="off"></output>
+      </div>
     </main>
 
     <section class="ops-panel" id="ops-panel" aria-label="Operation" tabindex="-1">
-      <div class="steps" id="steps" aria-label="Steps"></div>
+      <ol class="steps" id="steps" aria-label="Steps"></ol>
       <div class="ops-body" id="ops-body"></div>
     </section>
   </div>

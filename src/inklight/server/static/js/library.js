@@ -22,32 +22,53 @@ export function renderDocs() {
   const docs = store.docs.filter((d) => !q || d.name.toLowerCase().includes(q));
   list.replaceChildren(...(docs.length ? docs.map(docItem)
     : [h("li", { class: "empty-lib" }, store.docs.length ? "No document matches the filter." : "No documents yet. Add some above.")]));
+  $("#lib-count").textContent = store.docs.length ? String(store.docs.length) : "";
   renderSelection();
 }
 
+const KIND = { pdf: "PDF", png: "IMG", jpg: "IMG", jpeg: "IMG", tif: "TIF", tiff: "TIF", bmp: "IMG", webp: "IMG", txt: "TXT", md: "MD" };
+
+// Two different actions on one row, and they look different: the name opens the document in the viewer (an accent
+// bar and "open" mark it); the box ticks it into the scope of an operation (a filled tick, counted above the list).
 function docItem(d) {
   const failed = d.status === "failed";
   const pending = d.status === "pending";
-  const pages = plural(d.pages, "page");
-  const box = h("input", { type: "checkbox", "aria-label": `Select ${d.name}`, checked: store.selected.has(d.id) || null,
-    onchange: (e) => { e.target.checked ? store.selected.add(d.id) : store.selected.delete(d.id); renderSelection(); changed("selection"); } });
-  return h("li", { class: `doc ${store.open?.id === d.id ? "open" : ""}` },
-    box,
-    h("button", { class: "doc-open", type: "button", "aria-current": store.open?.id === d.id ? "true" : null,
+  const isOpen = store.open?.id === d.id;
+  const ticked = store.selected.has(d.id);
+  const ext = (d.name.split(".").pop() || "").toLowerCase();
+  const box = h("input", { type: "checkbox", "aria-label": `Use ${d.name} in the operation`, checked: ticked || null,
+    onchange: (e) => { e.target.checked ? store.selected.add(d.id) : store.selected.delete(d.id); renderDocs(); changed("selection"); } });
+  return h("li", { class: `doc${isOpen ? " open" : ""}${ticked ? " selected" : ""}` },
+    h("label", { class: "pick", title: "Use in the operation" }, box, h("span", { class: "pick-box", "aria-hidden": "true" })),
+    h("button", { class: "doc-open", type: "button", "aria-current": isOpen ? "true" : null, title: `Open ${d.name}`,
       onclick: () => { openDoc(d.id, 1); showView("viewer"); } },
-      h("span", { class: "doc-name", dir: "auto", title: d.name }, d.name),
+      h("span", { class: "doc-glyph", "aria-hidden": "true" }, KIND[ext] || "DOC"),
+      h("span", { class: "doc-name", dir: "auto" }, d.name),
       h("span", { class: "doc-meta", title: failed ? d.error || "" : null },
-        failed ? h("span", { class: "badge failed" }, "not read") : pending ? h("span", { class: "badge" }, "being read") : null,
-        failed ? h("span", { class: "clamp" }, d.error || "") : pending ? "" : `${pages}${d.doc_type && d.doc_type !== "unknown" ? ` · ${d.doc_type}` : ""}`)),
+        isOpen ? h("span", { class: "open-tag" }, svgIcon("i-eye"), "open") : null,
+        failed ? h("span", { class: "badge failed" }, "not read") : pending ? h("span", { class: "badge pending" }, "being read") : null,
+        failed ? h("span", { class: "clamp" }, d.error || "") : pending ? "" : h("span", { class: "num" }, `${plural(d.pages, "page")}${d.doc_type && d.doc_type !== "unknown" ? ` · ${d.doc_type}` : ""}`))),
     h("button", { class: "btn quiet icon doc-x", type: "button", title: "Remove from the library", "aria-label": `Remove ${d.name}`,
       onclick: () => removeDoc(d) }, "×"));
+}
+
+export function svgIcon(id) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("class", "ico");
+  svg.setAttribute("aria-hidden", "true");
+  const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+  use.setAttribute("href", `#${id}`);
+  svg.append(use);
+  return svg;
 }
 
 function renderSelection() {
   const n = store.selected.size;
   const open = store.open ? store.open.name : null;
-  fill($("#selection"),
-    n ? h("span", {}, `${plural(n, "document")} selected`) : h("span", {}, open ? "Open: " : "Nothing selected", open ? h("b", { dir: "auto" }, open) : null),
+  const el = $("#selection");
+  el.classList.toggle("has", n > 0);
+  fill(el,
+    h("span", { class: "grow" }, n ? h("b", {}, `${plural(n, "document")} ticked`) : open ? [h("span", {}, "Scope: "), h("b", { dir: "auto" }, open)] : h("span", {}, "Open a document, or tick several")),
     n ? h("button", { class: "btn quiet small", type: "button", onclick: () => { store.selected.clear(); renderDocs(); changed("selection"); } }, "Clear") : null);
 }
 
@@ -93,6 +114,7 @@ export async function upload(files) {
 
 export function follow(job, { show = false } = {}) {
   batch.job = job;
+  remember(job);
   renderBatch();
   if (TERMINAL.has(job.state)) return;
   closeFollow();
@@ -103,6 +125,7 @@ export function follow(job, { show = false } = {}) {
     const prev = batch.job;
     const next = JSON.parse(e.data);
     batch.job = next;
+    remember(next);
     renderBatch();
     reportChanges(prev, next);
     const active = next.active;
@@ -136,7 +159,7 @@ function showFile(job, index) {
   // Follow the active file only while the viewer shows this import (the user may have opened something else).
   if (store.open && !target) return;
   const f = job.files[index];
-  showProcessing(job.id, index, { name: f.name, stage: stageText(f, job.kind), active: ["reading", "structuring"].includes(f.state),
+  showProcessing(job.id, index, { name: f.name, stage: stageText(f, job.kind), active: ["reading", "structuring"].includes(f.state), phase: f.state,
     page: f.pages ? `page ${f.page} of ${f.pages}` : null });
 }
 
@@ -178,6 +201,8 @@ function summary(job) {
 function renderBatch(error) {
   const el = $("#batch");
   const { upload: up, job } = batch;
+  // The status light is busy exactly while bytes are being sent or the server reports a file being read.
+  $("#status-chip")?.classList.toggle("busy", Boolean(up || (job && !TERMINAL.has(job.state))));
   if (batch.dismissed || (!up && !job && !error)) { el.classList.add("hidden"); return; }
   el.classList.remove("hidden");
   if (error) {
@@ -246,15 +271,52 @@ function downloadRows() {
   });
 }
 
+// The stages a file has been seen in, per job and file: the timeline shows a Structure stage only once the server has
+// reported one for that file, and a failure is drawn at the last stage it reached.
+const seen = new Map();
+function remember(job) {
+  job.files.forEach((f, i) => {
+    const key = `${job.id}:${i}`;
+    const s = seen.get(key) || new Set();
+    s.add(f.state);
+    seen.set(key, s);
+  });
+}
+
+function timeline(job, f, i) {
+  const was = seen.get(`${job.id}:${i}`) || new Set([f.state]);
+  const structured = job.kind === "structure" || was.has("structuring") || f.state === "structuring";
+  const names = job.kind === "structure" ? ["Waiting", "Structure", "Stored"]
+    : ["Upload", "Waiting", "OCR", ...(structured ? ["Structure"] : []), "Stored"];
+  const at = { queued: names.indexOf("Waiting"), reading: names.indexOf("OCR"), structuring: names.indexOf("Structure"), done: names.length };
+  let now = at[f.state] ?? -1;
+  let failedAt = -1;
+  if (f.state === "failed" || f.state === "cancelled") {
+    const reached = was.has("structuring") ? at.structuring : was.has("reading") ? at.reading : names.indexOf(job.kind === "structure" ? "Structure" : "OCR");
+    failedAt = reached;
+    now = -1;
+  }
+  return h("div", { class: "timeline", "aria-hidden": "true" }, ...names.map((n, k) => {
+    let cls = "";
+    if (f.state === "done" || k < now || (failedAt >= 0 && k < failedAt)) cls = "done";
+    else if (k === now) cls = "now";
+    else if (k === failedAt) cls = f.state === "failed" ? "failed" : "skipped";
+    else if (failedAt >= 0) cls = "skipped";
+    const label = n === "OCR" && f.state === "reading" && f.pages ? `OCR ${f.page}/${f.pages}` : n;
+    return h("span", { class: `stage ${cls}` }, h("i"), label);
+  }));
+}
+
 function fileRow(job, f, i) {
   const active = ["reading", "structuring"].includes(f.state);
-  const dot = f.state === "done" ? "done" : f.state === "failed" ? "failed" : f.state === "cancelled" ? "cancelled" : active ? "active" : "";
   const known = f.state === "reading" && f.pages;
   const pct = known ? Math.round((100 * f.page) / f.pages) : 0;
   return h("div", { class: "file" },
-    h("span", { class: `dot ${dot}`, "aria-hidden": "true" }),
-    h("button", { class: "doc-open file-name", type: "button", dir: "auto", title: active ? "Show it while it is read" : f.doc_id ? "Open" : f.name,
-      onclick: () => { if (f.doc_id) openDoc(f.doc_id, 1); else if (active) { stopProcessing(); store.open = null; showFile(job, i); } showView("viewer"); } }, f.name),
+    h("div", { class: "file-top" },
+      h("button", { class: "file-name", type: "button", dir: "auto", title: active ? "Show it while it is read" : f.doc_id ? "Open" : f.name,
+        onclick: () => { if (f.doc_id) openDoc(f.doc_id, 1); else if (active) { stopProcessing(); store.open = null; showFile(job, i); } showView("viewer"); } }, f.name),
+      known ? h("span", { class: "meter-text" }, `${f.page}/${f.pages}`) : null),
+    timeline(job, f, i),
     h("span", { class: `file-state ${f.state === "failed" ? "bad" : ""}` }, stageText(f, job.kind)),
     active ? h("div", { class: `meter ${known ? "" : "indeterminate"}`, role: "progressbar", "aria-label": `${f.name}: ${stageText(f, job.kind)}`,
       ...(known ? { "aria-valuenow": pct, "aria-valuemin": 0, "aria-valuemax": 100 } : {}) }, h("i", { style: known ? `width:${pct}%` : "" })) : null);
@@ -278,6 +340,7 @@ async function staleServerResult(res) {
 }
 
 function dismiss() {
+  if (batch.job && TERMINAL.has(batch.job.state)) for (const key of seen.keys()) if (key.startsWith(`${batch.job.id}:`)) seen.delete(key);
   batch.dismissed = true;  // closes the display only; a running job keeps going (Stop is the button that stops it)
   renderBatch();
 }
@@ -305,6 +368,7 @@ export function showView(name) {
 export function wireLibrary() {
   const drop = $("#drop");
   drop.addEventListener("click", () => $("#file").click());
+  $("#empty-add")?.addEventListener("click", () => $("#file").click());
   drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#file").click(); } });
   for (const t of ["dragenter", "dragover"]) drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); });
   for (const t of ["dragleave", "drop"]) drop.addEventListener(t, () => drop.classList.remove("over"));

@@ -20,8 +20,9 @@ const EXAMPLES = ["What is the registration number?", "ما اسم الشركة�
 const ask = { job: null, results: [], error: null, text: "" };
 
 registerOp("ask", {
+  experimental: true,
   title: "Ask",
-  help: "Experimental. A question in plain words, answered from the documents with the places it read. Treat every answer as a lead to check.",
+  help: "A question in plain words, answered from the documents with the places it read. Treat every answer as a lead to check.",
   steps: () => [["Choose the scope", "Ask", "Check the sources"], ask.results.length ? 2 : ask.job ? 1 : 0],
   render(body) {
     const n = scopeIds().length;

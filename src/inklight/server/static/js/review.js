@@ -22,7 +22,37 @@ function clockStop() {
   if (review.current) storageSet(`inklight-review-ms-${review.current.id}`, String(Math.round(review.activeMs)));
 }
 function activeSeconds() { clockStop(); clockStart(); return Math.round(review.activeMs) / 1000; }
-const reviewer = () => (storageGet("inklight-reviewer") || "").trim();
+// The name typed in this page, kept here too: with browser storage blocked it is the only copy.
+let typedName = "";
+const reviewer = () => (storageGet("inklight-reviewer") || typedName).trim();
+function setReviewer(value) { typedName = value.trim(); storageSet("inklight-reviewer", typedName); }
+
+// Every decision, approval and export records who made it, so the name is always on screen where it is used; a
+// review opened from the list (or after a reload in another browser) has no name until one is typed here.
+function reviewerBar() {
+  const input = h("input", { value: reviewer(), placeholder: "Your name (recorded with each decision)", maxlength: "100",
+    "aria-label": "Reviewer name", autocomplete: "name" });
+  const bar = h("div", { class: `reviewer ${reviewer() ? "" : "missing"}` }, h("label", {}, "Reviewer", input));
+  input.addEventListener("input", () => {
+    setReviewer(input.value);
+    bar.classList.toggle("missing", !input.value.trim());
+    if (input.value.trim()) { input.classList.remove("invalid"); bar.querySelector(".warn")?.remove(); }
+    for (const b of document.querySelectorAll("[data-needs-name]")) b.disabled = !input.value.trim() || b.dataset.blocked === "1";
+  });
+  return bar;
+}
+
+function needName() {
+  if (reviewer()) return false;
+  // No re-render: values typed in the decision cells stay where they are.
+  const bar = document.querySelector(".reviewer");
+  bar?.classList.add("missing");
+  const input = bar?.querySelector("input");
+  if (input) { input.classList.add("invalid"); input.focus(); }
+  announce("Enter your name in the Reviewer field: each decision and approval records who made it.");
+  if (bar && !bar.querySelector(".warn")) bar.append(h("span", { class: "warn", role: "alert" }, "Name required"));
+  return true;
+}
 
 registerOp("review", {
   title: "Review and export",
@@ -45,7 +75,7 @@ function startForm() {
   const name = h("input", { value: reviewer(), placeholder: "Your name", maxlength: "100", "aria-label": "Your name", required: true });
   const fields = h("input", { value: review.fields, placeholder: "Fields, e.g. registration number, date (empty: a preset for the document type)", maxlength: "400", "aria-label": "Fields to review", dir: "auto" });
   // What is typed is kept, so a refresh of the panel (a document opened, the list of reviews loaded) never loses it.
-  name.addEventListener("input", () => storageSet("inklight-reviewer", name.value.trim()));
+  name.addEventListener("input", () => setReviewer(name.value));
   fields.addEventListener("input", () => { review.fields = fields.value; });
   const mode = h("select", { "aria-label": "How to review" },
     h("option", { value: "review" }, "Check the extracted values"),
@@ -57,7 +87,7 @@ function startForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!name.value.trim()) { name.focus(); return; }
-    storageSet("inklight-reviewer", name.value.trim());
+    setReviewer(name.value);
     review.fields = fields.value;
     const btn = form.querySelector("button[type=submit]");
     btn.disabled = true; btn.textContent = "Reading the values…";
@@ -82,6 +112,7 @@ function show(r) {
 }
 
 async function decide(field, action, value) {
+  if (needName()) return;
   try {
     review.current = await api(`/api/reviews/${review.current.id}/decide`, { method: "POST", json: { field, action, value: value ?? null, reviewer: reviewer() } });
     review.error = null;
@@ -100,6 +131,7 @@ function reviewCard(r) {
       approved ? h("span", { class: "label approved" }, "approved")
         : undecided ? h("span", { class: "label check" }, `${undecided} to decide`) : h("span", { class: "label raw" }, "ready to approve"),
       h("span", {}, r.mode === "manual" ? "typing every value" : "checking extracted values")),
+    approved ? null : reviewerBar(),
     h("p", { class: "muted" }, r.mode === "manual" ? "Type each value from the page, or mark it absent." : "Choose a prediction to see where it was read. Values marked “check” need a closer look."),
     h("div", { class: "grid-wrap" }, h("table", { class: "grid review-table" },
       h("thead", {}, h("tr", {}, ...["field", "extracted", "decision"].map((c) => h("th", {}, c)))),
@@ -109,11 +141,13 @@ function reviewCard(r) {
           h("div", { class: "next" }, h("button", { class: "btn", type: "button", onclick: () => { review.current = null; renderOps(); } }, "Review another document")))
       : h("div", { class: "next" },
           h("button", { class: "btn quiet", type: "button", onclick: () => { clockStop(); review.current = null; renderOps(); } }, "Back"),
-          h("button", { class: "btn primary", type: "button", disabled: undecided > 0 || null, onclick: approve },
+          h("button", { class: "btn primary", type: "button", disabled: undecided > 0 || !reviewer() || null, onclick: approve,
+            "data-needs-name": "", "data-blocked": undecided > 0 ? "1" : "0" },
             undecided ? `Decide ${undecided} more to approve` : "Approve")));
 }
 
 async function approve() {
+  if (needName()) return;
   try {
     review.current = await api(`/api/reviews/${review.current.id}/approve`, { method: "POST", json: { reviewer: reviewer(), active_seconds: activeSeconds() } });
     clockStop();
@@ -154,6 +188,7 @@ function reopenForm(r) {
   return h("div", { class: "row" }, h("div", { class: "grow" }, reason),
     h("button", { class: "btn small", type: "button", onclick: async () => {
       if (!reason.value.trim()) { reason.focus(); return; }
+      if (needName()) return;
       try { show(await api(`/api/reviews/${r.id}/reopen`, { method: "POST", json: { reviewer: reviewer(), reason: reason.value.trim() } })); review.queue = null; }
       catch (err) { review.error = err.message; }
       renderOps();
@@ -162,11 +197,12 @@ function reopenForm(r) {
 
 function exportsCard() {
   const approvedCsv = () => {
-    if (!reviewer()) return Promise.reject(new Error("Enter your name above first: exports record who made them"));
-    return api("/api/reviews/export", { method: "POST", json: { actor: reviewer(), format: "csv", cohort: null } }).then((res) => res.blob());
+    if (!reviewer()) return Promise.reject(new Error("Enter your name in the Reviewer field first: exports record who made them"));
+    return api("/api/reviews/export", { method: "POST", json: { actor: reviewer(), format: "csv", cohort: null }, raw: true }).then((res) => res.blob());
   };
   return h("div", { class: "card" },
     h("div", { class: "card-head" }, h("span", { class: "card-title" }, "Export")),
+    review.current && review.current.status !== "open" ? reviewerBar() : null,  // the start form and an open review show their own
     h("p", { class: "note approved" }, h("span", { class: "label approved" }, "Approved values"),
       " Every approved review, one row per field: the extracted value, the decision, who approved it and where it was read."),
     h("div", { class: "next" }, exportButton("Download approved values (.csv)", approvedCsv, "inklight-approved.csv")),
@@ -187,8 +223,17 @@ function queueCard() {
   return card;
 }
 
+// A review stays when its document is removed from the library: it opens, and says the page cannot be shown.
+async function openReview(r) {
+  try { show(await api(`/api/reviews/${r.id}`)); }
+  catch (err) { review.error = err.message; renderOps(); return; }
+  try { await openDoc(r.doc_id, 1); }
+  catch (_) { review.error = "This review's document is no longer in the library, so its page cannot be shown. Its values can still be decided and exported."; }
+  renderOps();
+}
+
 function queueRows() {
-  const row = (r, detail) => h("button", { class: "result", type: "button", onclick: async () => { show(await api(`/api/reviews/${r.id}`)); await openDoc(r.doc_id, 1); renderOps(); } },
+  const row = (r, detail) => h("button", { class: "result", type: "button", onclick: () => openReview(r) },
     h("b", { dir: "auto" }, r.doc_name), h("span", { class: "muted" }, detail));
   const { open, approved } = review.queue;
   return [
