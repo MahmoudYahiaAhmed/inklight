@@ -15,7 +15,7 @@ from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeEl
 from rich.text import Text
 
 from . import __version__, build_commit
-from ._brand import CYAN, NAME, TAGLINE
+from ._brand import CYAN, HOME_ENV, NAME, TAGLINE
 from .cli_render import (
     banner,
     console,
@@ -532,6 +532,9 @@ def serve(
     shown = "127.0.0.1" if host in ("0.0.0.0", "::") else host  # noqa: S104 - display only, not a bind
     url = f"http://{shown}:{port}"
     console.print(Text.assemble(("  workspace  ", "muted"), (url, "brand")))
+    # The library lives in the Inklight home, not in the Python environment: every installation shares it.
+    home = (str(settings.home), "")
+    console.print(Text.assemble(("  library    ", "muted"), home, (f"  ({HOME_ENV} to change)", "muted")))
     if open_browser:
         threading.Timer(1.2, lambda: webbrowser.open(url)).start()
     uvicorn.run(create_app(settings), host=host, port=port, log_level="warning")
