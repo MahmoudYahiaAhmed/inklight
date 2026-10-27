@@ -5,6 +5,20 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-10-28
+
+### Added
+- **`inklight serve --share`: a public `https://` link from anywhere**, Colab and machines behind NAT included,
+  without opening a port. The server listens on 127.0.0.1; a Cloudflare quick tunnel (no account) gives a random
+  `trycloudflare.com` address, and Cloudflare carries the traffic. The link is printed only once the workspace has
+  answered through it. A private workspace keeps its token (16+ characters; never in the link, the tunnel's command
+  or the output); `--share --demo` gives each visitor a temporary library. The server accepts only the tunnel's exact
+  host name, and trusts forwarded addresses only from the tunnel on this machine. Cloudflare's `cloudflared` 2026.10.0
+  is downloaded on the first `--share` only, checked against pinned SHA-256 values, and kept in the model cache.
+  Ctrl+C stops the server and the tunnel; a killed Inklight takes the tunnel with it. A plain
+  `inklight serve` is unchanged.
+- Import progress falls back to asking every second when a proxy or tunnel holds the progress stream back.
+
 ## [0.3.1] — 2026-10-27
 
 ### Fixed
