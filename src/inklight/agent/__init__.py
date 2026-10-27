@@ -1,9 +1,12 @@
 """DocumentAgent — the public entry point.
 
 from inklight import DocumentAgent
-agent = DocumentAgent()
-result = agent.ask("Extract the invoice number, date, and total", files=["invoice.pdf"])
-print(result.answer, result.sources)
+with DocumentAgent() as agent:
+    print(agent.text("letter.pdf"))                                   # the text, page by page
+    record = agent.extract(["card.pdf"], fields=["registration number"])[0]
+    hits = agent.search("رقم القيد")                                   # passages, each with its page
+    # agent.tables("report.pdf") needs document structure: DocumentAgent(structure={"engine": "inklight"})
+    # agent.ask(...) is experimental
 """
 
 from __future__ import annotations
@@ -278,6 +281,31 @@ class DocumentAgent:
         if result.state == TaskState.FAILED:
             raise InputRejected(result.answer)
         return list(result.records)
+
+    def text(self, file: str | Path, *, password: str | None = None) -> str:
+        """A document's text as read, page by page (raw extraction: not reviewed). No question, plan or model."""
+        from .. import exports
+
+        return exports.export(self, self._one(file, password), "txt")[0]
+
+    def tables(self, file: str | Path, *, password: str | None = None) -> list[dict[str, Any]]:
+        """The tables document structure recovered, each ``{"index", "page", "header_rows", "rows"}`` with
+        ``rows`` a list of cell texts (raw extraction: not reviewed). Needs document structure turned on."""
+        from .. import exports
+
+        if not self.settings.structure.enabled:
+            raise InputRejected(
+                'Table extraction needs document structure: pip install "inklight[structure]", then '
+                'DocumentAgent(structure={"engine": "inklight"}) or [structure] engine = "inklight" in the config'
+            )
+        return exports.tables(self, self._one(file, password).id)
+
+    def _one(self, file: str | Path, password: str | None) -> Any:
+        report = self.add([file], password=password)
+        if not report.documents:
+            reasons = "; ".join(f"{Path(p).name}: {e}" for p, e in report.failed) or "not a supported file"
+            raise InputRejected(f"Could not read {Path(file).name} ({reasons})")
+        return report.documents[0]
 
     def search(self, query: str, k: int = 8) -> list[Any]:
         return self.library.search(query, k=k)

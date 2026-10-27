@@ -29,7 +29,7 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from .. import __version__, build_commit
+from .. import __version__, build_commit, modelstore
 from .._brand import NAME, TAGLINE
 from ..agent import DocumentAgent, Policy
 from ..config import Settings
@@ -154,6 +154,8 @@ def create_app(settings: Settings, agent: DocumentAgent | None = None) -> FastAP
             "stats": a.library.store.stats(),
             "limits": a.settings.limits.model_dump(),
             "ocr": a.settings.ocr.model_dump(),
+            "structure": {"enabled": a.settings.structure.enabled, "table_mode": a.settings.structure.table_mode},
+            "downloads": modelstore.downloads(),  # model files being fetched on first use: {set: state, done, total}
             "privacy": a.settings.privacy.model_dump(),
             "outputs": str(a.settings.outputs),
             "tools": DocumentAgent.tools(),

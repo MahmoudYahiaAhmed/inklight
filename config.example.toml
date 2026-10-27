@@ -15,11 +15,16 @@ max_retries = 1
 context_chars = 6000           # evidence budget handed to any model
 
 [ocr]
-engine = "indra"
+engine = "inklight"            # Inklight OCR (Arabic, English and other scripts), on this computer
 dpi = 200
 mode = "auto"                  # auto: PDF text layer where sound, OCR elsewhere | ocr | text
 threads = 4
-# model_dir = "/models/indra"  # use a local copy of the Indra models (no download)
+# model_dir = "/models/ocr"    # a local copy of the OCR model files (checked by hash; no download)
+
+[structure]                    # layout, reading order and tables: pip install "inklight[structure]"
+engine = "none"                # "inklight" to turn it on (`inklight tables` turns it on for its own run)
+# table_mode = "accurate"      # accurate | fast
+# pages = "all"                # all | tables (only pages whose OCR layout found a table or form)
 
 [models]
 brain = "auto"                 # auto: use small local models if installed | local: require them | rules: none

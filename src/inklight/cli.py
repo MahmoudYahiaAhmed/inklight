@@ -16,19 +16,30 @@ from rich.text import Text
 
 from . import __version__, build_commit
 from ._brand import CYAN, NAME, TAGLINE
-from .cli_render import banner, console, documents_table, err, hits_table, records_table, result_panel
+from .cli_render import (
+    banner,
+    console,
+    documents_table,
+    err,
+    hits_table,
+    records_table,
+    result_panel,
+    tables_table,
+)
 from .config import Settings, load_settings
 from .errors import InklightError, InputRejected
 
 app = typer.Typer(
     name="inklight", help=f"{NAME} — {TAGLINE}", no_args_is_help=True, add_completion=False, rich_markup_mode="rich"
 )
-models_app = typer.Typer(help="Install and inspect the small local models.", no_args_is_help=True)
-app.add_typer(models_app, name="models")
+models_app = typer.Typer(
+    help="Download (once) and check the models: OCR, document structure, Ask.", no_args_is_help=True
+)
+app.add_typer(models_app, name="models", rich_help_panel="Setup")
 review_app = typer.Typer(
     help="Human review of extracted values (open reviews in `inklight serve`).", no_args_is_help=True
 )
-app.add_typer(review_app, name="review")
+app.add_typer(review_app, name="review", rich_help_panel="Review and export")
 
 ConfigOpt = Annotated[Path | None, typer.Option("--config", "-c", help="Path to a config.toml.")]
 BrainOpt = Annotated[str | None, typer.Option("--brain", help="auto | local | rules")]
@@ -39,10 +50,14 @@ def _settings(config: Path | None, brain: str | None = None) -> Settings:
     return load_settings(config, **overrides)
 
 
-def _agent(config: Path | None, brain: str | None = None, out: Path | None = None, yes: bool = False):  # type: ignore[no-untyped-def]
+def _agent(
+    config: Path | None, brain: str | None = None, out: Path | None = None, yes: bool = False, structure: bool = False
+):  # type: ignore[no-untyped-def]  # noqa: E501
     from .agent import DocumentAgent
 
     settings = _settings(config, brain)
+    if structure and not settings.structure.enabled:  # an operation that needs it turns it on for this run
+        settings = settings.with_overrides(structure={"engine": "inklight"})
     agent = DocumentAgent(settings, allow_write=bool(out) or yes, output_dir=out)
     _OPENED.append(agent)  # closed by the root context's close callback
     return agent
@@ -130,7 +145,7 @@ def _root(
         raise typer.Exit()
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def process(
     paths: Annotated[list[str], typer.Argument(help="Files and/or folders.")],
     password: Annotated[str | None, typer.Option(help="Password for protected PDFs.")] = None,
@@ -162,7 +177,69 @@ def process(
         raise typer.Exit(1)
 
 
-@app.command()
+@app.command(rich_help_panel="Extract")
+def text(
+    file: Annotated[str, typer.Argument(help="A PDF, image or text file.")],
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write to this file.")] = None,
+    password: Annotated[str | None, typer.Option(help="Password for a protected PDF.")] = None,
+    config: ConfigOpt = None,
+) -> None:
+    """Extract a document's text, page by page (raw extraction: not reviewed)."""
+    try:
+        agent = _agent(config, brain="rules")
+        _ingest_with_progress(agent, [file], password)
+        body = agent.text(file, password=password)
+    except InklightError as exc:
+        _fail(exc)
+    _write_or_print(body, out)
+
+
+@app.command(rich_help_panel="Extract")
+def tables(
+    file: Annotated[str, typer.Argument(help="A PDF or image file.")],
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write a CSV (.csv) or JSON (.json) file.")] = None,
+    password: Annotated[str | None, typer.Option(help="Password for a protected PDF.")] = None,
+    config: ConfigOpt = None,
+) -> None:
+    """Extract a document's tables: rows, columns and header cells (needs document structure installed)."""
+    from . import exports
+    from .structure.run import available
+
+    if not available():
+        _fail(InputRejected('Table extraction needs document structure: pip install "inklight[structure]"'))
+    try:
+        agent = _agent(config, brain="rules", structure=True)
+        _ingest_with_progress(agent, [file], password)
+        found = agent.tables(file, password=password)
+        info = agent.library.find(file) or agent._one(file, password)
+        if out and out.suffix.lower() == ".csv":
+            body = exports.export(agent, info, "tables.csv")[0]
+        elif out:
+            body = json.dumps({"note": exports.RAW_NOTE, "tables": found}, ensure_ascii=False, indent=1)
+        else:
+            body = ""
+    except InklightError as exc:
+        _fail(exc)
+    if out:
+        _write_or_print(body, out)
+        return
+    if not found:
+        console.print(Text("No table found in this document.", "muted"))
+        return
+    for t in found:
+        console.print(tables_table(t))
+    console.print(Text(exports.RAW_NOTE, "muted"))
+
+
+def _write_or_print(body: str, out: Path | None) -> None:
+    if out:
+        out.write_text(body, encoding="utf-8", newline="")
+        err.print(Text.assemble(("✓ wrote ", "ok"), (str(out), "bold")))
+    else:
+        sys.stdout.write(body)
+
+
+@app.command(rich_help_panel="Experimental")
 def ask(
     args: Annotated[list[str], typer.Argument(help='[FILES/FOLDERS...] "REQUEST" — the last argument is the request.')],
     out: Annotated[Path | None, typer.Option("--out", "-o", help="Folder the agent may write results into.")] = None,
@@ -220,7 +297,7 @@ class _null:
         return None
 
 
-@app.command()
+@app.command(rich_help_panel="Extract")
 def extract(
     files: Annotated[list[str], typer.Argument(help="Files and/or folders.")],
     schema: Annotated[Path | None, typer.Option("--schema", "-s", help="JSON schema of fields.")] = None,
@@ -229,16 +306,16 @@ def extract(
     out: Annotated[Path | None, typer.Option("--out", "-o", help="Write to this file.")] = None,
     config: ConfigOpt = None,
 ) -> None:
-    """Extract typed fields (with confidence and page provenance)."""
+    """Extract named fields: each value read at its printed label, with its page and box (raw: review before use)."""
     from .agent.analysis import render
     from .agent.context import Policy, Scratch, ToolContext
     from .agent.plan import Intent, Plan
 
     if fmt not in ("table", "csv", "json"):
         _fail(InklightError("--format must be table, csv or json"))
-    names = [f.strip() for f in fields.split(",")] if fields else None
+    names = [f.strip() for f in fields.split(",") if f.strip()] if fields else None
     if not schema and not names:
-        names = ["invoice_number", "vendor", "date", "subtotal", "tax", "total"]
+        _fail(InputRejected('Name the fields to extract, e.g. --fields "registration number, date, total"'))
     try:
         agent = _agent(config)
         records = agent.extract(files, fields=names, schema=schema)
@@ -266,7 +343,7 @@ def extract(
         sys.stdout.write(content)
 
 
-@app.command()
+@app.command(rich_help_panel="Extract")
 def search(query: str, k: Annotated[int, typer.Option("-k", help="Results.")] = 8, config: ConfigOpt = None) -> None:
     """Search the library (keyword + semantic when installed)."""
     try:
@@ -276,7 +353,7 @@ def search(query: str, k: Annotated[int, typer.Option("-k", help="Results.")] = 
     console.print(hits_table(hits) if hits else Text("No matches.", "muted"))
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def docs(config: ConfigOpt = None) -> None:
     """List indexed documents."""
     agent = _agent(config)
@@ -286,7 +363,7 @@ def docs(config: ConfigOpt = None) -> None:
     )
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def show(
     doc: str,
     page: Annotated[int | None, typer.Option(help="Only this page.")] = None,
@@ -312,7 +389,7 @@ def show(
         sys.stdout.write((p.markdown if fmt == "md" else p.text) + "\n")
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def remove(doc: str, config: ConfigOpt = None) -> None:
     """Remove a document (and its index) from the library. The file itself is untouched."""
     agent = _agent(config)
@@ -322,7 +399,7 @@ def remove(doc: str, config: ConfigOpt = None) -> None:
     console.print(Text.assemble(("✓ removed ", "ok"), (info.name, "bold")))
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def reindex(
     doc: Annotated[str | None, typer.Argument(help="Document id/name; all when omitted.")] = None,
     config: ConfigOpt = None,
@@ -341,7 +418,7 @@ def reindex(
         console.print(Text.assemble(("⚠ ", "warn"), (w, "warn")))
 
 
-@app.command()
+@app.command(rich_help_panel="Experimental")
 def history(limit: int = 20, config: ConfigOpt = None) -> None:
     """Recent agent tasks."""
     from rich.table import Table
@@ -357,7 +434,7 @@ def history(limit: int = 20, config: ConfigOpt = None) -> None:
     console.print(table)
 
 
-@app.command()
+@app.command(rich_help_panel="Library")
 def watch(
     folder: Path,
     request: Annotated[str | None, typer.Option("--request", "-r", help="Run this on each new batch.")] = None,
@@ -398,7 +475,7 @@ def watch(
         console.print(Text("stopped", "muted"))
 
 
-@app.command()
+@app.command(rich_help_panel="Workspace")
 def serve(
     host: Annotated[str, typer.Option(help="Bind address. Keep 127.0.0.1 unless you add auth.")] = "127.0.0.1",
     port: int = 8765,
@@ -431,7 +508,7 @@ def serve(
     uvicorn.run(create_app(settings), host=host, port=port, log_level="warning")
 
 
-@app.command()
+@app.command(rich_help_panel="Experimental")
 def tools() -> None:
     """List the agent's tools, permissions and side effects."""
     from .agent import DocumentAgent
@@ -444,7 +521,7 @@ def tools() -> None:
             console.print(Text(f"{'':22}side effects: {t['side_effects']}", "muted"))
 
 
-@app.command()
+@app.command(rich_help_panel="Extract")
 def structure(
     doc: str,
     fmt: Annotated[str, typer.Option("--format", help="md | json | html | meta")] = "md",
@@ -487,7 +564,7 @@ def structure(
         sys.stdout.write(text + "\n")
 
 
-@app.command()
+@app.command(rich_help_panel="Setup")
 def doctor(config: ConfigOpt = None) -> None:
     """Check the installation, models and configuration."""
     import platform

@@ -198,7 +198,16 @@ class Library:
         checked = check_file(path, self.settings.limits.max_file_mb)
         doc_id = doc_id_for(checked.path)
         existing = self.store.get_document(doc_id)
-        if existing and existing.sha256 == checked.sha256 and existing.status == DocStatus.READY and not force:
+        unstructured = (
+            self.settings.structure.enabled and checked.kind != "text" and self.store.get_structure(doc_id) is None
+        )  # read before structure was turned on: read it again, with its structure
+        if (
+            existing
+            and existing.sha256 == checked.sha256
+            and existing.status == DocStatus.READY
+            and not force
+            and not unstructured
+        ):
             return existing, False
         base = DocumentInfo(
             id=doc_id,

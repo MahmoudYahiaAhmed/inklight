@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from rich import box
 from rich.console import Console, Group
 from rich.panel import Panel
 from rich.table import Table
@@ -146,6 +147,17 @@ def trace_table(result: AgentResult) -> None:
             step.error or step.summary,
         )
     console.print(table)
+
+
+def tables_table(table: dict) -> Table:
+    """One extracted table as rows and columns; header rows in bold. Cells keep their direction (Arabic or not)."""
+    out = Table(title=f"Table {table['index']} · page {table['page']}", box=box.SIMPLE_HEAD, show_header=False)
+    width = max((len(r) for r in table["rows"]), default=0)
+    for _ in range(width):
+        out.add_column(overflow="fold")
+    for i, row in enumerate(table["rows"]):
+        out.add_row(*row, *[""] * (width - len(row)), style="bold" if i in table["header_rows"] else None)
+    return out
 
 
 def hits_table(hits: list[SearchHit]) -> Table:
