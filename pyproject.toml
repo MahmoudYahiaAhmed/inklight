@@ -5,14 +5,14 @@ build-backend = "hatchling.build"
 [project]
 name = "inklight"
 version = "0.3.0b1"
-description = "Inklight — a local-first, OCR-powered document agent. See documents. Understand meaning. Take action."
+description = "A local document workspace for Arabic, English and mixed documents: text, tables, fields, search and review."
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]
 requires-python = ">=3.11"
 authors = [{ name = "Mahmoud AboEl-Wfa" }]
 maintainers = [{ name = "Mahmoud AboEl-Wfa" }]
-keywords = ["ocr", "document-ai", "agent", "pdf", "extraction", "rag", "invoice", "local-first"]
+keywords = ["ocr", "document-ai", "arabic", "pdf", "tables", "extraction", "search", "local-first"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Environment :: Console",
@@ -66,8 +66,10 @@ packages = ["src/inklight"]
 
 [tool.hatch.build.targets.wheel.hooks.custom]  # hatch_build.py: stamps the source commit into inklight/_build.py
 
+# The sdist builds the wheel and nothing else: the tests, their bench/ helpers, docs and examples stay in the repository
+# (see CONTRIBUTING.md). .github/scripts/check_dist.py checks both distributions in CI.
 [tool.hatch.build.targets.sdist]
-include = ["src/inklight", "tests", "docs", "hatch_build.py", "README.md", "LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md", "CHANGELOG.md"]
+only-include = ["src/inklight", "hatch_build.py", "README.md", "CHANGELOG.md", "LICENSE", "NOTICE", "THIRD_PARTY_LICENSES.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -92,6 +94,7 @@ ignore = ["S101", "S608", "B008"]
 "tests/*" = ["S"]
 "bench/*" = ["S"]
 "evaluation/report/build.py" = ["E501"]  # SVG markup in strings
+".github/scripts/*" = ["S"]
 
 [tool.mypy]
 python_version = "3.11"

@@ -55,12 +55,17 @@ jobs:
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
+      - name: Check the distributions hold only runtime files
+        run: python .github/scripts/check_dist.py dist
+      - name: Build a wheel from the sdist
+        run: pip wheel --no-deps -w /tmp/from-sdist dist/*.tar.gz
       - name: Smoke-test the wheel in a clean venv
         run: |
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl
           /tmp/clean/bin/inklight --version
           /tmp/clean/bin/inklight doctor
+          /tmp/clean/bin/inklight --help
       - uses: actions/upload-artifact@v4
         with:
           name: dist

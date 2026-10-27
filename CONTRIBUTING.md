@@ -23,6 +23,13 @@ inklight models pull                              # optional: enables the model 
 - Style: `ruff format`, `ruff check`, `mypy src` must pass. Keep modules focused (< 500 lines).
 - Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:` …).
 
+## What the distributions contain
+
+The wheel holds the `inklight` package: its code, the workspace's static files and the license files. The sdist
+holds what builds that wheel (`src/inklight`, `hatch_build.py`, `pyproject.toml`, README, CHANGELOG and licenses).
+Tests, their `bench/` helpers, docs, examples and evaluation results stay in this repository: run the tests from a
+checkout. CI runs `.github/scripts/check_dist.py dist` on every build and fails if anything else gets in.
+
 ## Test markers
 
 - `ocr`: needs the OCR models (downloads ~76 MB on first use).
