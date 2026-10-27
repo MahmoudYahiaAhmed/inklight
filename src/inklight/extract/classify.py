@@ -166,16 +166,31 @@ def _pattern(cue: str) -> str:
     return re.escape(cue)
 
 
+def _score(head: str, cues: dict[str, float]) -> float:
+    return sum(weight * min(len(re.findall(_pattern(cue), head)), 3) for cue, weight in cues.items())
+
+
+def cue_score(text: str, doc_type: str) -> float:
+    """How much of ``doc_type``'s vocabulary the text holds (0 when none, or the type is not known)."""
+    cues = DOC_TYPES.get(doc_type)
+    return _score(search_form(text[:6000]).lower(), cues) if cues else 0.0
+
+
+# Invoices and receipts are often typed "unknown" (a receipt photo prints no "receipt"), yet carry a total line.
+_TOTAL_LINE = re.compile(r"\b(?:sub\s*total|grand\s*total|total)\b|المجموع|الاجمالي|الإجمالي", re.IGNORECASE)
+
+
+def could_be(text: str, doc_type: str) -> bool:
+    """Whether a document the classifier could not type shows any sign of ``doc_type``."""
+    if cue_score(text, doc_type) > 0:
+        return True
+    return doc_type in ("invoice", "receipt") and bool(_TOTAL_LINE.search(text[:6000]))
+
+
 def classify(text: str) -> tuple[str, float]:
     """Return (doc_type, confidence in 0..1). ``unknown`` when nothing scores."""
     head = search_form(text[:6000]).lower()  # Arabic cues are written in search form (ة → ه, أ → ا)
-    scores = {}
-    for doc_type, cues in DOC_TYPES.items():
-        score = 0.0
-        for cue, weight in cues.items():
-            hits = len(re.findall(_pattern(cue), head))
-            score += weight * min(hits, 3)
-        scores[doc_type] = score
+    scores = {doc_type: _score(head, cues) for doc_type, cues in DOC_TYPES.items()}
     best = max(scores, key=lambda k: scores[k])
     total = sum(scores.values())
     if scores[best] < 3:

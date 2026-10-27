@@ -13,6 +13,7 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 from ..extract import SINGULAR
+from ..extract.classify import could_be
 from ..textnorm import mostly_arabic
 from . import analysis, answer
 from .context import ToolContext
@@ -82,14 +83,40 @@ def _inspect(ctx: ToolContext, a: InspectArgs) -> str:
     if a.doc_type:
         wanted = SINGULAR.get(a.doc_type, a.doc_type)
         keep = [d.id for d in docs if d.doc_type == wanted]
-        if ctx.scratch.explicit and len(keep) < len(docs) and not restricts(ctx.plan.query):
+        # Below the classifier's threshold but with some sign of the type (a receipt photo with "cash" or a "Total"
+        # line): possibly what the request names. An unknown document with none (a memo) is not.
+        unknown = [d.id for d in docs if d.doc_type == "unknown"]
+        untyped = [i for i in unknown if could_be(ctx.library.text(i), wanted)]
+        unlike = len(unknown) - len(untyped)
+        restricted = restricts(ctx.plan.query)
+        if ctx.scratch.explicit and len(keep) < len(docs) and not restricted:
             # The person chose these documents; "the contract and the register" describes them, it does not ask
             # to drop the ones the classifier typed otherwise. "Only the contracts" does.
             ctx.scratch.notes.append(
                 f"scope: kept all {len(docs)} documents you selected; the request's “{a.doc_type}” describes them"
             )
         elif keep:
-            ctx.scratch.doc_ids = keep
+            # A document the classifier could not type may be exactly what the request names (a receipt photo with
+            # no "receipt" on it), so it is kept unless the request restricts; either way the answer says so.
+            if untyped and not restricted:
+                ctx.scratch.doc_ids = [d.id for d in docs if d.id in set(keep) | set(untyped)]
+                ctx.scratch.partial = True  # which documents the request means is a guess for these
+                ctx.scratch.warn(
+                    f"{len(untyped)} document(s) of unknown type were included with the {len(keep)} classified as"
+                    f" '{wanted}'; check that they are {a.doc_type}"
+                )
+            else:
+                ctx.scratch.doc_ids = keep
+                if untyped:
+                    ctx.scratch.partial = True
+                    ctx.scratch.warn(
+                        f"{len(untyped)} document(s) of unknown type were left out; only the {len(keep)} classified"
+                        f" as '{wanted}' were used"
+                    )
+            if unlike:
+                ctx.scratch.warn(
+                    f"{unlike} document(s) of unknown type were left out: nothing in their text suggests '{wanted}'"
+                )
         else:
             ctx.scratch.warn(f"No document was classified as '{wanted}'; used all {len(docs)} documents")
     kinds: dict[str, int] = {}
