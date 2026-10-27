@@ -26,4 +26,5 @@
       `inklight extract examples/documents/registration-card-turned.pdf --fields "company name"` and `inklight serve`.
 - [ ] Commit, `git tag vX.Y.Z`, `git push --tags`. The release workflow tests, builds and publishes, then creates the GitHub release.
 - [ ] Verify `pip install inklight==X.Y.Z` from PyPI in a clean environment.
-- [ ] Optional: `docker build -t inklight .` and push the image. (The Dockerfile was not built in the release-candidate environment.)
+- [ ] Optional: `docker build --build-arg INKLIGHT_COMMIT=$(git rev-parse HEAD) -t inklight .`, check
+      `docker run --rm inklight --version` names the commit, and push the image.

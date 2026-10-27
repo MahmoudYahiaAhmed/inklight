@@ -1,4 +1,5 @@
-# Inklight — local document agent. Build: docker build -t inklight .
+# Inklight — local document agent.
+# Build: docker build --build-arg INKLIGHT_COMMIT=$(git rev-parse HEAD) -t inklight .
 # Run:   docker run --rm -p 8765:8765 -v "$PWD/docs:/data" -v inklight-home:/home/inklight/.inklight inklight
 FROM python:3.12-slim AS base
 
@@ -11,7 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends libglib2.0-0 &&
 WORKDIR /app
 COPY pyproject.toml hatch_build.py README.md LICENSE NOTICE THIRD_PARTY_LICENSES.md ./
 COPY src ./src
-RUN pip install .
+# .git is not in the build context; the commit comes in as a build argument (shown by `inklight --version`)
+ARG INKLIGHT_COMMIT=""
+RUN INKLIGHT_BUILD_COMMIT="$INKLIGHT_COMMIT" pip install .
 
 USER inklight
 # Models are fetched at runtime under their own licenses (see THIRD_PARTY_LICENSES.md); mount a volume to keep them.

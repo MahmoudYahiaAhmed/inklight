@@ -2,12 +2,14 @@
 
 Built from a git checkout, the sdist and the wheel record the short commit and whether the tree had uncommitted
 changes. The sdist carries that record as src/inklight/_build.py, so a wheel built later from the sdist (no git there)
-keeps the commit it came from. Built anywhere else, the record says "unknown". `inklight --version` and the
+keeps the commit it came from. A build without either (a Docker build: .git stays out of its context) takes
+INKLIGHT_BUILD_COMMIT from the environment. Otherwise the record says "unknown". `inklight --version` and the
 workspace show it.
 """
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 import tempfile
@@ -54,7 +56,9 @@ def _from_stamp(root: str) -> str:
 
 class CustomBuildHook(BuildHookInterface):
     def initialize(self, version: str, build_data: dict) -> None:  # noqa: ARG002
-        commit = _from_git(self.root) or _from_stamp(self.root) or "unknown"
+        given = os.environ.get("INKLIGHT_BUILD_COMMIT", "")
+        given = given if re.fullmatch(r"[0-9a-f]{7,40}", given) else ""
+        commit = _from_git(self.root) or _from_stamp(self.root) or given[:10] or "unknown"
         target = Path(tempfile.mkdtemp(prefix="inklight-build-")) / "_build.py"
         target.write_text(f'"""Written when the package was built."""\n\nCOMMIT = "{commit}"\n', encoding="utf-8")
         destination = STAMP if self.target_name == "sdist" else "inklight/_build.py"
