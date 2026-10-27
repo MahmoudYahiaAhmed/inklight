@@ -26,7 +26,16 @@ or browse a single file at `https://github.com/MahmoudYahiaAhmed/inklight/blob/1
 | `evaluation/structure_showcase_0.2.ipynb` | 1 | A 0.2.0b1 notebook with its outputs. It uses that version's Docling runtime and does not run on 0.3. | — |
 | `pilot/`, `evaluation/results/pilot/`, `tests/test_pilot.py` | 17 | The invoice-only pilot protocol, never started: no genuine invoice was collected and the human rehearsal was not run. Its frozen baseline (0.1.1.dev0 with the separate `indra-ocr` 1.1.2 package and its lock file) is two releases old, and its stored runs used baseline 1. The tooling still imported on 0.3 and its tests passed at `146d275`. To resume it, restore `pilot/` and `tests/test_pilot.py` and freeze a new baseline with `pilot/freeze.py`. | [pilot/README.md at 146d275](https://github.com/MahmoudYahiaAhmed/inklight/blob/146d27556684cdd872b41e3de37d619092e1fe02/pilot/README.md) |
 
-The exact list is the output of `git diff --name-status 146d275 <cleanup commit> -- evaluation pilot tests`.
+The exact list is the output of `git diff --name-status 146d275 a68d832 -- evaluation pilot tests`.
+
+### The pilot decision
+
+Only the pilot's own tooling was archived: its intake rules, vendor-grouped split, frozen-baseline scripts,
+rehearsal checker and their tests. The review workflow the pilot used is part of Inklight and stays tested in
+`tests/test_review.py`, `tests/test_entered.py` and `tests/test_beta_outcomes.py`: frozen predictions, decisions,
+approval, reopening, the append-only history, manual mode, export of approved values (CSV and JSON, formula
+neutralising, superseded rows) and the provenance a review is opened with (cohort, split and baseline, also set by
+`INKLIGHT_PILOT_BASELINE` in the workspace), which now has its own test.
 
 ## What stays
 

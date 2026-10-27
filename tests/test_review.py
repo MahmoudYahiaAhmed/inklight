@@ -152,6 +152,25 @@ def test_export_contains_only_approved_reviews_with_prediction_warning_and_decis
     assert "exported" in [e["kind"] for e in store.events(approved.id)]
 
 
+def test_export_records_cohort_and_baseline_and_filters_by_cohort(agent):
+    """The provenance a review is opened with (cohort, split, baseline) reaches every exported row; the archived
+    invoice pilot relied on this, and the review workflow still offers it."""
+    store = agent.reviews
+    first = agent.open_review(
+        _doc(agent, "acme").id, FIELDS, reviewer="ana", cohort="trial", split="dev", baseline="b1"
+    )
+    _decide_all(agent, first.id)
+    store.approve(first.id, reviewer="ana")
+    other = agent.open_review(_doc(agent, "globex").id, FIELDS, reviewer="ana", cohort="other", baseline="b2")
+    _decide_all(agent, other.id)
+    store.approve(other.id, reviewer="ana")
+    rows = list(csv.DictReader(io.StringIO(store.export("csv", actor="ana", cohort="trial"))))
+    assert {r["review_id"] for r in rows} == {first.id} and len(rows) == len(FIELDS)
+    assert {(r["cohort"], r["baseline"], r["mode"]) for r in rows} == {("trial", "b1", "review")}
+    assert store.get(first.id).split == "dev"
+    assert [e["kind"] for e in store.events(first.id)][0] == "opened"
+
+
 def test_formula_like_document_text_is_neutralised_in_csv(agent, tmp_path):
     _invoice(tmp_path / "more", "evil", 'INVOICE #INV-0009\nVendor: =HYPERLINK("x")\nTotal: USD 5.00\n')
     agent.add(tmp_path / "more")
