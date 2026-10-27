@@ -30,3 +30,16 @@ inklight models pull                              # optional: enables the model 
 - `models`: needs `inklight models pull`; skipped otherwise.
 
 Run the fast subset with `pytest -m "not ocr"`.
+
+## Pull requests
+
+1. Fork the repository and work on a branch in your fork. Only the maintainer can push to this repository.
+2. Open a pull request against `main` and fill in the template.
+3. CI does not run on a pull request from outside until the maintainer has looked at it and approved the
+   run. Fork pull requests never receive repository secrets.
+4. A pull request is merged only after the maintainer approves it, every CI check passes and every review
+   conversation is resolved. A new push after the approval needs a new approval.
+5. Pull requests are squash-merged, so keep the title in Conventional Commits form: it becomes the commit
+   message on `main`.
+
+Security problems go through private reporting, not a pull request: see [SECURITY.md](SECURITY.md).
