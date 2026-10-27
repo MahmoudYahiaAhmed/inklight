@@ -19,7 +19,7 @@ export function renderOps() {
   if (!op) return;
   const [labels, now] = op.steps();
   $("#steps").replaceChildren(...labels.map((l, i) => h("li", { class: `step ${i < now ? "done" : i === now ? "now" : ""}`,
-    "aria-current": i === now ? "step" : null, title: l }, h("span", {}, l))));
+    "aria-current": i === now ? "step" : null }, h("span", {}, l))));
   const body = $("#ops-body");
   // The panel eases in when the operation changes, not on every refresh of the same one.
   if (body.dataset.op !== store.op) {

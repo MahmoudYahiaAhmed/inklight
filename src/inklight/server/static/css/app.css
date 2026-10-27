@@ -381,11 +381,13 @@ label { display: grid; gap: 5px; font-size: 12.5px; color: var(--muted); }
 
 /* ------------------------------------------------------------------ operation panel */
 
-.steps { list-style: none; margin: 0; display: flex; gap: 0; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); counter-reset: st; }
-.step { flex: 1; counter-increment: st; display: grid; gap: 6px; font-size: 11px; color: var(--faint); position: relative; padding-top: 2px; min-width: 0; }
+/* Step labels are always shown in full: a label wraps onto a second line, and when even a word cannot fit (a narrow
+   panel, large text) the steps flow onto another row rather than being cut. */
+.steps { list-style: none; margin: 0; display: flex; flex-wrap: wrap; gap: 16px 10px; padding: 14px 16px 12px; border-bottom: 1px solid var(--line); counter-reset: st; }
+.step { flex: 1 1 6.5em; counter-increment: st; display: grid; gap: 6px; align-content: start; font-size: 11px; color: var(--faint); position: relative; padding-top: 2px; min-width: 0; }
 .step::before { content: counter(st, decimal-leading-zero); font: 600 10px var(--mono); letter-spacing: .06em; }
-.step::after { content: ""; position: absolute; top: 0; left: 0; right: 4px; height: 2px; border-radius: 2px; background: var(--line-2); transform: translateY(-6px); }
-.step span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.step::after { content: ""; position: absolute; top: 0; inset-inline: 0; height: 2px; border-radius: 2px; background: var(--line-2); transform: translateY(-6px); }
+.step span { line-height: 1.35; overflow-wrap: break-word; text-wrap: balance; }
 .step.done { color: var(--muted); }
 .step.done::after { background: var(--accent-line); }
 .step.now { color: var(--text); font-weight: 600; }
