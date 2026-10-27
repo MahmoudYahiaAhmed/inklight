@@ -205,7 +205,41 @@ function renderBatch(error) {
       job.cancel_requested ? h("span", { class: "muted" }, "Stopping after the current file…")
         : h("button", { class: "btn small", type: "button", title: "Files not yet started are not read. The file being read is finished.",
             onclick: () => api(`/api/jobs/${job.id}/cancel`, { method: "POST" }).then(() => announce("Stopping after the current file")) }, "Stop after the current file")) : null,
+    ...(running ? downloadRows() : []),
     ...job.files.map((f, i) => fileRow(job, f, i)));
+  if (running) watchDownloads();
+}
+
+// Models are fetched the first time they are needed; while an import runs, the bytes the server has received are
+// shown (from /api/status), so a first read that waits for a download says so.
+const MODEL_NAMES = { ocr: "OCR", layout: "layout", tables: "table structure", "tables-fast": "table structure" };
+let downloads = [];
+let poller = null;
+
+function watchDownloads() {
+  if (poller) return;
+  poller = setInterval(async () => {
+    if (!batch.job || TERMINAL.has(batch.job.state)) {
+      clearInterval(poller); poller = null; downloads = []; return;
+    }
+    try {
+      const s = await api("/api/status");
+      const now = Object.entries(s.downloads || {}).filter(([, d]) => d.state === "downloading");
+      if (now.length || downloads.length) { downloads = now; renderBatch(); }
+    } catch (_) { /* the next tick tries again */ }
+  }, 1500);
+}
+
+function downloadRows() {
+  const mb = (n) => (n / 1e6).toFixed(0);
+  return downloads.map(([key, d]) => {
+    const pct = d.total ? Math.round((100 * d.done) / d.total) : 0;
+    return h("div", { class: "file" }, h("span", { class: "dot active", "aria-hidden": "true" }),
+      h("span", { class: "file-name" }, `Downloading the ${MODEL_NAMES[key] || key} models (first use)`),
+      h("span", { class: "file-state" }, `${mb(d.done)} of ${mb(d.total)} MB`),
+      h("div", { class: "meter", role: "progressbar", "aria-label": `Model download ${pct}%`, "aria-valuenow": pct, "aria-valuemin": 0, "aria-valuemax": 100 },
+        h("i", { style: `width:${pct}%` })));
+  });
 }
 
 function fileRow(job, f, i) {
