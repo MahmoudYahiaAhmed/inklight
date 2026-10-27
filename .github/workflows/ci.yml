@@ -55,10 +55,13 @@ jobs:
       - run: pip install build twine
       - run: python -m build
       - run: twine check dist/*
-      - name: Check the distributions hold only runtime files
-        run: python .github/scripts/check_dist.py dist
-      - name: Build a wheel from the sdist
-        run: pip wheel --no-deps -w /tmp/from-sdist dist/*.tar.gz
+      - name: Check the distributions hold only runtime files and record this commit
+        run: python .github/scripts/check_dist.py dist --commit "$GITHUB_SHA"
+      - name: Build a wheel from the sdist; it keeps the commit
+        run: |
+          pip wheel --no-deps -w /tmp/from-sdist dist/*.tar.gz
+          cp dist/*.tar.gz /tmp/from-sdist/
+          python .github/scripts/check_dist.py /tmp/from-sdist --commit "$GITHUB_SHA"
       - name: Smoke-test the wheel in a clean venv
         run: |
           python -m venv /tmp/clean

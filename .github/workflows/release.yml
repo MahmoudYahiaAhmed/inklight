@@ -24,6 +24,7 @@ jobs:
           v=$(python -c "import inklight; print(inklight.__version__)")
           test "v$v" = "${GITHUB_REF_NAME}"
       - run: python -m build && twine check dist/*
+      - run: python .github/scripts/check_dist.py dist --commit "$GITHUB_SHA"
       - uses: pypa/gh-action-pypi-publish@release/v1
       - uses: softprops/action-gh-release@v2
         with:

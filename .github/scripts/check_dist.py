@@ -1,15 +1,18 @@
 """Check a built wheel and sdist contain only what an installation needs.
 
-Usage: python .github/scripts/check_dist.py dist/
+Usage: python .github/scripts/check_dist.py dist/ [--commit SHA]
 
 The wheel may hold the package's code, the workspace's static assets, the license files of bundled model code and
 package metadata. The sdist may hold the same sources plus the build hook, README, CHANGELOG and license files. Sample
 documents, screenshots, results, notebooks, databases, logs, model weights, caches and repository-only folders fail
-the check, wherever they are.
+the check, wherever they are. With --commit, both must also record that source commit (inklight/_build.py) with no
+uncommitted changes.
 """
 
 from __future__ import annotations
 
+import argparse
+import re
 import sys
 import tarfile
 import zipfile
@@ -61,7 +64,18 @@ def sdist_problems(names: list[str]) -> list[str]:
     return problems
 
 
-def main(folder: str) -> int:
+def stamp(text: str) -> str:
+    found = re.search(r'^COMMIT = "([^"]+)"', text, re.M)
+    return found.group(1) if found else ""
+
+
+def commit_problems(name: str, recorded: str, commit: str) -> list[str]:
+    if not recorded or recorded == "unknown" or recorded.endswith("+modified") or not commit.startswith(recorded):
+        return [f"{name} records commit {recorded or 'nothing'!r}, not {commit[:10]}"]
+    return []
+
+
+def main(folder: str, commit: str | None = None) -> int:
     dist = Path(folder)
     wheels, sdists = sorted(dist.glob("*.whl")), sorted(dist.glob("*.tar.gz"))
     if len(wheels) != 1 or len(sdists) != 1:
@@ -69,9 +83,16 @@ def main(folder: str) -> int:
         return 1
     with zipfile.ZipFile(wheels[0]) as z:
         wheel = [n for n in z.namelist() if not n.endswith("/")]
+        wheel_stamp = stamp(z.read(f"{PACKAGE}/_build.py").decode()) if f"{PACKAGE}/_build.py" in wheel else ""
     with tarfile.open(sdists[0]) as t:
         sdist = [m.name for m in t.getmembers() if m.isfile()]
+        member = next((m for m in t.getmembers() if m.name.endswith(f"/src/{PACKAGE}/_build.py")), None)
+        handle = t.extractfile(member) if member else None
+        sdist_stamp = stamp(handle.read().decode()) if handle else ""
     problems = wheel_problems(wheel) + sdist_problems(sdist)
+    if commit:
+        problems += commit_problems(wheels[0].name, wheel_stamp, commit)
+        problems += commit_problems(sdists[0].name, sdist_stamp, commit)
     for f, limit in ((wheels[0], WHEEL_MAX), (sdists[0], SDIST_MAX)):
         if f.stat().st_size > limit:
             problems.append(f"{f.name} is {f.stat().st_size / 2**20:.1f} MiB, over {limit / 2**20:.0f} MiB")
@@ -79,10 +100,14 @@ def main(folder: str) -> int:
         problems.append("the wheel has no workspace assets (server/static/index.html)")
     for p in problems:
         print("FAIL", p)
-    print(f"{wheels[0].name}: {len(wheel)} files, {wheels[0].stat().st_size / 1024:.0f} KiB")
-    print(f"{sdists[0].name}: {len(sdist)} files, {sdists[0].stat().st_size / 1024:.0f} KiB")
+    print(f"{wheels[0].name}: {len(wheel)} files, {wheels[0].stat().st_size / 1024:.0f} KiB, commit {wheel_stamp}")
+    print(f"{sdists[0].name}: {len(sdist)} files, {sdists[0].stat().st_size / 1024:.0f} KiB, commit {sdist_stamp}")
     return 1 if problems else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "dist"))
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("folder", nargs="?", default="dist")
+    parser.add_argument("--commit", help="the full source commit both distributions must record")
+    args = parser.parse_args()
+    sys.exit(main(args.folder, args.commit))

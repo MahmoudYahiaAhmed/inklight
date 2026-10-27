@@ -1,4 +1,5 @@
 # Python and tooling
+src/inklight/_build.py
 .venv/
 venv/
 __pycache__/

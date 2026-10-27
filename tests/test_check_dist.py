@@ -49,3 +49,11 @@ def test_documents_data_and_repository_folders_fail():
         "inklight-0.3.0/src/inklight/data/library.db",
     ]
     assert len(check_dist.sdist_problems(sdist)) == len(sdist)
+
+
+def test_release_must_record_its_clean_source_commit():
+    sha = "70fddfe4661a2b3c4d5e6f708192a3b4c5d6e7f8"
+    assert check_dist.commit_problems("w", "70fddfe466", sha) == []
+    for recorded in ("unknown", "", "70fddfe466+modified", "1234567890"):
+        assert check_dist.commit_problems("w", recorded, sha), recorded
+    assert check_dist.stamp('"""x"""\n\nCOMMIT = "70fddfe466"\n') == "70fddfe466"

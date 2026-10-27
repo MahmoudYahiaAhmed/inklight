@@ -66,6 +66,8 @@ packages = ["src/inklight"]
 
 [tool.hatch.build.targets.wheel.hooks.custom]  # hatch_build.py: stamps the source commit into inklight/_build.py
 
+[tool.hatch.build.targets.sdist.hooks.custom]  # ... and into the sdist, so a wheel built from it keeps the commit
+
 # The sdist builds the wheel and nothing else: the tests, their bench/ helpers, docs and examples stay in the repository
 # (see CONTRIBUTING.md). .github/scripts/check_dist.py checks both distributions in CI.
 [tool.hatch.build.targets.sdist]
