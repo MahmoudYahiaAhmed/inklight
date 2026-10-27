@@ -403,6 +403,8 @@ def _edge_get(host: str, path: str) -> tuple[int, str]:
 
 def _kill_on_close(process: subprocess.Popen[str]) -> object:  # pragma: no cover - Windows only
     """A job object that ends the tunnel when Inklight's process ends, however it ends."""
+    if sys.platform != "win32":
+        return None
     import ctypes
     from ctypes import wintypes
 
@@ -446,6 +448,8 @@ def _kill_on_close(process: subprocess.Popen[str]) -> object:  # pragma: no cove
 
 
 def _close_handle(handle: object) -> None:  # pragma: no cover - Windows only
+    if sys.platform != "win32":
+        return
     import ctypes
     from ctypes import wintypes
 
