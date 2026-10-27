@@ -61,7 +61,8 @@ def test_cli_docs_lists_how_each_document_was_read(tmp_path, monkeypatch):
     txt = tmp_path / "note.txt"
     txt.write_text(ARABIC, encoding="utf-8")
     runner = CliRunner()
-    assert runner.invoke(cli_app, ["process", str(txt)]).exit_code == 0
+    processed = runner.invoke(cli_app, ["process", str(txt)])
+    assert processed.exit_code == 0 and "plain text" in processed.output, processed.output
     out = runner.invoke(cli_app, ["docs"]).output
     assert "read as" in out and "plain text" in out and "OCR\n" not in out, out
 

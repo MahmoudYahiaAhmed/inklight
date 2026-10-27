@@ -165,7 +165,7 @@ def process(
     except InklightError as exc:
         _fail(exc)
     if report.documents:
-        console.print(documents_table(report.documents))
+        console.print(documents_table(report.documents, agent.library.store.page_sources()))
     for path, error in report.failed:
         console.print(Text.assemble(("✗ ", "bad"), (Path(path).name, "bold"), (f"  {error}", "muted")))
     for w in report.warnings:
