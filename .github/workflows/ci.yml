@@ -69,7 +69,7 @@ jobs:
           /tmp/clean/bin/inklight --version
           /tmp/clean/bin/inklight doctor
           /tmp/clean/bin/inklight --help
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
